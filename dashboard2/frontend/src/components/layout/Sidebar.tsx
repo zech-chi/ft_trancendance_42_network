@@ -6,7 +6,7 @@ import { JSX } from 'react';
 import { useState, useEffect } from 'react';
 
 export default function Sidebar(): JSX.Element {
-    const [selected, setSelected] = useState<string>('');
+    const [selected, setSelected] = useState<string>('home');
 
     const handleClick = (link: string): void => {
         setSelected(link);
