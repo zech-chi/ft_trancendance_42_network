@@ -1,5 +1,6 @@
 import next from "next";
 import { JSX } from "react";
+import { useState } from "react";
 
 const data: {
     year: number;
@@ -8,7 +9,7 @@ const data: {
     maxStreak: number;
     activeYears?: number[];
 } = {
-    year: 2022,
+    year: 2024,
     totalGames: 317,
     totalActiveDays:103,
     maxStreak: 30,
@@ -97,7 +98,7 @@ export default function CalendarDashboard(): JSX.Element {
         }
       }
 
-        if (nextMonth) {
+        if (nextMonth && !stop) {
             nextMonth = false;
             allBoxes.push(
                 <div key={i} className="flex flex-col gap-1 mx-0.5 mr-4.5">
@@ -137,7 +138,7 @@ export default function CalendarDashboard(): JSX.Element {
                     </div>
 
                 </div>
-                <div className="flex justify-around mx-5">
+                <div className="flex justify-around mx-4">
                 {[
                     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
