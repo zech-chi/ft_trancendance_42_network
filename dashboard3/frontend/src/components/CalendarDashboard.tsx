@@ -1,11 +1,18 @@
 import next from "next";
 import { JSX } from "react";
 
-const data = {
+const data: {
+    year: number;
+    totalGames: number;
+    totalActiveDays: number;
+    maxStreak: number;
+    activeYears?: number[];
+} = {
     year: 2022,
     totalGames: 317,
     totalActiveDays:103,
     maxStreak: 30,
+    activeYears: [2022, 2023, 2024],
 }
 
 function getJanFirstDay(year: number): number {
@@ -16,7 +23,14 @@ function getJanFirstDay(year: number): number {
 function getDaysInMonth(year: number, month: number) : number {
     return new Date(year, month, 0).getDate();
 }
-  
+
+function fillActiveDays(): { [key: number]: number } {
+    const activeDays: { [key: number]: number } = {};
+    for (let i = 1; i <= 366; i++) {
+      activeDays[i] = Math.random();
+    }
+    return activeDays;
+}
 
 // console.log(getDaysInMonth(2024, 2)); // 29 (February in leap year)
 
@@ -28,31 +42,56 @@ export default function CalendarDashboard(): JSX.Element {
     let curNumberOfDays = getDaysInMonth(data.year, curMonth);
     let daysCounter = 0;
     let divCounter = 0;
-    console.log("First day of January:", firstDay);
     let nextMonth = false;
+    let stop = false;
+    let totalDays = 1;
+    const color1 = '#FEDF7F';
+    const color2 = '#F9545B';
+    const color3 = '#FF9D24';
+    const color = color1;
 
-    for (let i = 0; i < 62; i++) {
+    const activeDays = fillActiveDays();
+
+    for (let i = 0; i < 63; i++) {
       const boxes = [];
       for (let j = 0; j < 7; j++) {
         if (divCounter < firstDay) {
             boxes.push(
-                <div key={j} className="w-5 h-5 rounded"></div>
+                <div key={j} className="w-4.5 h-4.5 rounded-[5px]"></div>
             );
             divCounter++;
             continue;
         }
-        boxes.push(
-          <div key={j} className="bg-black w-5 h-5 rounded"></div>
-        );
+        
+        if (totalDays in activeDays && activeDays[totalDays] > 0) {
+            if (activeDays[totalDays] == 1)
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: 1, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+            else if (activeDays[totalDays] >= 0.75)
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .8, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+            else if (activeDays[totalDays] >= 0.5) 
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .60, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+            else if (activeDays[totalDays] >= 0.25) 
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .40, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+            else if (activeDays[totalDays] > 0.1) 
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .20, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+            else 
+                boxes.push( <div key={j} className="bg-black/50 w-4.5 h-4.5 rounded-[5px]"></div> );
+        } else {
+            boxes.push(
+            //   <div key={j} className="bg-black/60 w-4.5 h-4.5 rounded-[5px]"></div>
+              <div key={j} className="bg-black/20 w-4.5 h-4.5 rounded-[5px]"></div>
+            );
+        }
         divCounter++;
         daysCounter++;
+        totalDays++;
         if (daysCounter == curNumberOfDays) {
             nextMonth = true;
             daysCounter = 0;
+            if (curMonth == 12)
+                stop = true;
             curMonth++;
             curNumberOfDays = getDaysInMonth(data.year, curMonth);
-            console.log("Current month:", curMonth, "Days in month:", curNumberOfDays);
-            console.log("divCounter:", divCounter, "firstDay:", firstDay);
             if ((divCounter) % 7 != 0)
                 firstDay = divCounter + 7;
         }
@@ -61,7 +100,7 @@ export default function CalendarDashboard(): JSX.Element {
         if (nextMonth) {
             nextMonth = false;
             allBoxes.push(
-                <div key={i} className="flex flex-col gap-1 mx-0.5 mr-2.5">
+                <div key={i} className="flex flex-col gap-1 mx-0.5 mr-4.5">
                     {boxes}
                 </div>
             );
@@ -72,7 +111,7 @@ export default function CalendarDashboard(): JSX.Element {
                 </div>
             );
         }
-        // divCounter++;
+        if (stop) break;
     }
 
     return (
@@ -98,12 +137,12 @@ export default function CalendarDashboard(): JSX.Element {
                     </div>
 
                 </div>
-                <div className="flex justify-around">
+                <div className="flex justify-around mx-5">
                 {[
                     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                 ].map((month) => (
-                    <div key={month} className="text-white/80 font-bold">
+                    <div key={month} className="text-white/70 font-bold text-lg">
                     {month}
                     </div>
                 ))}
