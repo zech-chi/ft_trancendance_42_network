@@ -1,6 +1,19 @@
 import { JSX } from "react";
 import TopDashboard from "@/components/TopDashboard";
 
+const TOTAL_USERS = 133742;
+
+const user = {
+  fullName: "Zakaria Ech.chifaouy",
+  userName: "zech-chi",
+  bio: "One heartbeat matters, the next one!",
+  imageUrl: "/gon.jpg",
+  rank: 1337,
+  level: 9,
+  progress: .7, // 75% progress
+  online: true,
+}
+
 export default function Home() : JSX.Element {
   return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24 relative">
@@ -11,7 +24,7 @@ export default function Home() : JSX.Element {
             backgroundBlendMode: 'overlay',
           }}
         >
-          <TopDashboard />
+          <TopDashboard user={user} totalUsers={TOTAL_USERS} />
         </div>
       </main>
   );

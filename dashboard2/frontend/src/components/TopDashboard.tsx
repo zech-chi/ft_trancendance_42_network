@@ -3,16 +3,21 @@ import Image from "next/image";
 
 const TOTAL_USERS = 133742;
 
-const user = {
-  fullName: "Zakaria Ech.chifaouy",
-  userName: "zech-chi",
-  bio: "One heartbeat matters, the next one!",
-  imageUrl: "/gon.jpg",
-  rank: 1337,
-  level: 9,
-  progress: .7, // 75% progress
-  online: true,
+interface User {
+  fullName: string;
+  userName: string;
+  bio: string;
+  imageUrl: string;
+  rank: number;
+  level: number;
+  progress: number;
+  online: boolean;
 }
+
+type TopDashboardProps = {
+  user: User;
+  totalUsers: number;
+};
 
 type ProfileImageProps = {
   imageUrl: string;
@@ -89,13 +94,13 @@ function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
   );
 }
 
-export default function TopDashboard(): JSX.Element {
+export default function TopDashboard({ user, totalUsers }: TopDashboardProps): JSX.Element {
   return (
     <div
       className="absolute top-0 left-0 w-full h-[175px] rounded-t-[50px]"
       style={{
         background:
-          'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), linear-gradient(to left, rgba(42, 21, 34, 1), rgba(96, 31, 48, 1 ) 100%)',
+          'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)), linear-gradient(to left, rgba(42, 21, 34, 1), rgba(96, 31, 48, 1 ) 100%)',
         backgroundBlendMode: 'overlay',
       }}
     >
@@ -113,7 +118,7 @@ export default function TopDashboard(): JSX.Element {
               level={user.level}
               progress={user.progress}
               rank={user.rank} // Assuming rank 1 for demonstration
-              totalUsers={TOTAL_USERS}
+              totalUsers={totalUsers}
             />
           </div>
 
