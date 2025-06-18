@@ -9,7 +9,7 @@ function Logo(): JSX.Element {
   return (
     <div className="mr-5">
       <Image
-        src="/pong-logo.png"
+        src="/PONG.png"
         alt="Logo"
         width={150}
         height={150}

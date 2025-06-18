@@ -8,8 +8,6 @@ import { usePathname } from 'next/navigation';
 
 export default function Sidebar(): JSX.Element {
     const [selected, setSelected] = useState<string>(usePathname());
-    // const pathname = usePathname();
-    // console.log(`Current pathname: ${pathname}`);
 
     const handleClick = (link: string): void => {
         setSelected(link);
@@ -24,7 +22,7 @@ export default function Sidebar(): JSX.Element {
                     className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex items-center justify-center transition"
                     onClick={() => handleClick('/')}
                 >
-                    <Image src={selected === '/' ? '/home-selected.png' : '/home.png'} alt="Home" width={25} height={25} />
+                    <Image src={selected === '/' ? '/HOME2.png' : '/HOME.png'} alt="Home" width={25} height={25} />
                 </Link>
                 
                 <Link 
@@ -32,7 +30,7 @@ export default function Sidebar(): JSX.Element {
                     className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex items-center justify-center transition"
                     onClick={() => handleClick('/chat')}
                 >
-                    <Image src={selected === '/chat' ? '/chat-selected.png' : '/chat.png'} alt="Chat" width={25} height={25} />
+                    <Image src={selected === '/chat' ? '/CHAT2.png' : '/CHAT.png'} alt="Chat" width={25} height={25} />
                 </Link>
                 
                 <Link
@@ -40,7 +38,7 @@ export default function Sidebar(): JSX.Element {
                     className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex items-center justify-center transition"
                     onClick={() => handleClick('/games')}    
                 >
-                    <Image src={selected === '/games' ? '/games-selected.png' : '/games.png'} alt="Games" width={25} height={25} />
+                    <Image src={selected === '/games' ? '/GAMES2.png' : '/GAMES.png'} alt="Games" width={25} height={25} />
                 </Link>
                 
                 <Link 
@@ -48,7 +46,7 @@ export default function Sidebar(): JSX.Element {
                     className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex items-center justify-center transition"
                     onClick={() => handleClick('/settings')}
                 >
-                    <Image src={selected === '/settings' ? '/settings-selected.png' : '/settings.png'} alt="Settings" width={25} height={25} />
+                    <Image src={selected === '/settings' ? '/SETTINGS2.png' : '/SETTINGS.png'} alt="Settings" width={25} height={25} />
                 </Link>
             </nav>
         </aside>
