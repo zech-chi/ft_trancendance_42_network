@@ -12,7 +12,7 @@ const user = {
   rank: 1337,
   level: 9,
   progress: .3, // 75% progress
-  online: false,
+  online: true,
 }
 
 
