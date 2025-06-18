@@ -15,7 +15,56 @@ const user = {
   online: false,
 }
 
+
+// calendar data
+
+type YearData = {
+  totalGames: number;
+  totalActiveDays: number;
+  maxStreak: number;
+  DaysData: { [key: string]: number };
+}
+
+const calendarData : { [year: number] : YearData} = {
+  2024: {
+      totalGames: 317,
+      totalActiveDays: 103,
+      maxStreak: 30,
+      DaysData: {
+      }
+  },
+  2023: {
+      totalGames: 250,
+      totalActiveDays: 90,
+      maxStreak: 25,
+      DaysData: {
+      }
+  },
+  2022: {
+      totalGames: 200,
+      totalActiveDays: 80,
+      maxStreak: 20,
+      DaysData: {
+      }
+  }
+}
+
+function fillDays(): { [key: number]: number } {
+  const activeDays: { [key: number]: number } = {};
+  for (let i = 1; i <= 366; i++) {
+    activeDays[i] = Math.random();
+  }
+  return activeDays;
+}
+
+// end calendar data
+
 export default function Home() : JSX.Element {
+  // fill days data
+  Object.keys(calendarData).forEach((year) => {
+    calendarData[+year].DaysData = fillDays();
+  })
+
   return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24 relative">
         <div className="absolute top-20 bottom-0 left-25 w-3/4 w-[calc(65%-1rem)] m-4 rounded-[50px]"

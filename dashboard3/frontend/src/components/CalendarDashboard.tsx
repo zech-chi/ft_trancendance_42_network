@@ -16,6 +16,7 @@ const data: {
     activeYears: [2022, 2023, 2024],
 }
 
+
 function getJanFirstDay(year: number): number {
     const date = new Date(year, 0, 1);
     return date.getDay();
@@ -32,8 +33,6 @@ function fillActiveDays(): { [key: number]: number } {
     }
     return activeDays;
 }
-
-// console.log(getDaysInMonth(2024, 2)); // 29 (February in leap year)
 
 export default function CalendarDashboard(): JSX.Element {
     const allBoxes = [];
@@ -66,15 +65,15 @@ export default function CalendarDashboard(): JSX.Element {
         
         if (totalDays in activeDays && activeDays[totalDays] > 0) {
             if (activeDays[totalDays] == 1)
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: 1, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: 1}}></div> );
             else if (activeDays[totalDays] >= 0.75)
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .8, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .8}}></div> );
             else if (activeDays[totalDays] >= 0.5) 
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .60, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .60}}></div> );
             else if (activeDays[totalDays] >= 0.25) 
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .40, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .40}}></div> );
             else if (activeDays[totalDays] > 0.1) 
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .20, backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2))', }}></div> );
+                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .20}}></div> );
             else 
                 boxes.push( <div key={j} className="bg-black/50 w-4.5 h-4.5 rounded-[5px]"></div> );
         } else {
