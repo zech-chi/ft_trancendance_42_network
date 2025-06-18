@@ -4,9 +4,12 @@ import Link from 'next/link';
 import Image from 'next/image'; 
 import { JSX } from 'react';
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function Sidebar(): JSX.Element {
-    const [selected, setSelected] = useState<string>('home');
+    const [selected, setSelected] = useState<string>(usePathname());
+    // const pathname = usePathname();
+    // console.log(`Current pathname: ${pathname}`);
 
     const handleClick = (link: string): void => {
         setSelected(link);
@@ -19,33 +22,33 @@ export default function Sidebar(): JSX.Element {
                 <Link 
                     href="/"
                     className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex items-center justify-center transition"
-                    onClick={() => handleClick('home')}
+                    onClick={() => handleClick('/')}
                 >
-                    <Image src={selected === 'home' ? '/home-selected.png' : '/home.png'} alt="Home" width={25} height={25} />
+                    <Image src={selected === '/' ? '/home-selected.png' : '/home.png'} alt="Home" width={25} height={25} />
                 </Link>
                 
                 <Link 
                     href="/chat"
                     className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex items-center justify-center transition"
-                    onClick={() => handleClick('chat')}
+                    onClick={() => handleClick('/chat')}
                 >
-                    <Image src={selected === 'chat' ? '/chat-selected.png' : '/chat.png'} alt="Chat" width={25} height={25} />
+                    <Image src={selected === '/chat' ? '/chat-selected.png' : '/chat.png'} alt="Chat" width={25} height={25} />
                 </Link>
                 
                 <Link
                     href="/games"
                     className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex items-center justify-center transition"
-                    onClick={() => handleClick('games')}    
+                    onClick={() => handleClick('/games')}    
                 >
-                    <Image src={selected === 'games' ? '/games-selected.png' : '/games.png'} alt="Games" width={25} height={25} />
+                    <Image src={selected === '/games' ? '/games-selected.png' : '/games.png'} alt="Games" width={25} height={25} />
                 </Link>
                 
                 <Link 
                     href="/settings"
                     className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex items-center justify-center transition"
-                    onClick={() => handleClick('settings')}
+                    onClick={() => handleClick('/settings')}
                 >
-                    <Image src={selected === 'settings' ? '/settings-selected.png' : '/settings.png'} alt="Settings" width={25} height={25} />
+                    <Image src={selected === '/settings' ? '/settings-selected.png' : '/settings.png'} alt="Settings" width={25} height={25} />
                 </Link>
             </nav>
         </aside>
