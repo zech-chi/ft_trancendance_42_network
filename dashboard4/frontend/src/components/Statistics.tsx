@@ -13,10 +13,15 @@ function FriendsStats(): JSX.Element {
                 backgroundBlendMode: 'overlay',
             }}
         >
-            <div className="flex justify-between mx-2 my-1 gap-5">
+            <div className="flex justify-between items-center justify-center mx-20 my-3 gap-5">
                 <div className="flex flex-col items-center justify-center m-3">
                     <div>
-                        
+                        <div className="flex flex-col item-center justify-center">
+                            <div className="w-70 h-70  rounded-full flex flex-col items-center border-25 border-[#FEDF7F]/60 justify-center gap-1">
+                                <h1 className="text-l text-white/90 font-bold">Total games with friends </h1>
+                                <h1 className="text-5xl text-white/50 font-bold">545</h1>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col">
@@ -43,10 +48,17 @@ function AIStats(): JSX.Element {
                 backgroundBlendMode: 'overlay',
             }}
         >
-            <div className="flex justify-between mx-2 my-1 gap-5">
+            <div className="flex justify-between items-center justify-center mx-20 my-2 gap-5">
                 <div className="flex flex-col items-center justify-center m-3">
                     <div>
-                        chart AI
+                        <div>
+                            <div className="flex flex-col item-center justify-center">
+                                <div className="w-70 h-70  rounded-full flex flex-col items-center border-25 border-[#FEDF7F]/60 justify-center gap-1">
+                                    <h1 className="text-l text-white/90 font-bold">Total games with AI</h1>
+                                    <h1 className="text-5xl text-white/50 font-bold">15</h1>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col">
@@ -64,6 +76,14 @@ function AIStats(): JSX.Element {
                     </div>
                 </div>
             </div>
+        </div>
+    );
+}
+
+function SpiderChart() : JSX.Element {
+    return (
+        <div className="w-160 h-160 bg-[#FEDF7F]/60 rounded-full flex items-center justify-center m-38 my-5">
+            <h1 className="text-5xl text-black font-bold">Spider Chart here</h1>
         </div>
     );
 }
@@ -88,16 +108,18 @@ export default function Statistics() : JSX.Element {
                 </div>
             </div>
 
-            <div className="flex items-center justify-center">
-                <div className="bg-white/50 m-1 text-white"
+            <div className="flex items-center justify-center gap-5">
+                <div className="bg-white/50 m-1 text-white rounded-2xl"
                     style={{
                         background:
                         'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), linear-gradient(to left, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
                         backgroundBlendMode: 'overlay',
                     }}
-                >spiderChart spiderChart spiderChart spiderChart spiderChart spiderChart spiderChart spiderChart</div>
+                >
+                    <SpiderChart />
+                </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-5">
                     <AIStats />
                     <FriendsStats />
                 </div>
