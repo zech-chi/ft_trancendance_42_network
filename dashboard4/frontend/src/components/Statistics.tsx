@@ -9,7 +9,7 @@ function FriendsStats(): JSX.Element {
         <div className="m-1 text-white rounded-2xl"
             style={{
                 background:
-                'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), linear-gradient(to right, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
+                'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), linear-gradient(to bottom, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
                 backgroundBlendMode: 'overlay',
             }}
         >
@@ -40,11 +40,13 @@ function FriendsStats(): JSX.Element {
 }
 
 function AIStats(): JSX.Element {
+    const radius = 80;
+
     return (
         <div className="m-1 text-white rounded-2xl"
             style={{
                 background:
-                'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), linear-gradient(to right, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
+                'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
                 backgroundBlendMode: 'overlay',
             }}
         >
@@ -53,10 +55,27 @@ function AIStats(): JSX.Element {
                     <div>
                         <div>
                             <div className="flex flex-col item-center justify-center">
-                                <div className="w-70 h-70  rounded-full flex flex-col items-center border-25 border-[#FEDF7F]/60 justify-center gap-1">
+                                {/* <div className="w-70 h-70  rounded-full flex flex-col items-center border-25 border-[#FEDF7F]/60 justify-center gap-1">
                                     <h1 className="text-l text-white/90 font-bold">Total games with AI</h1>
                                     <h1 className="text-5xl text-white/50 font-bold">15</h1>
-                                </div>
+                                </div> */}
+                            <svg viewBox="0 0 200 200" className="w-70 h-70">
+                            {/* Background circle */}
+                            <circle cx="100" cy="100" r="90" className="stroke-white/10 stroke-[15] fill-none"/>
+                            {/* Easy difficulty */}
+                            <circle
+    cx="100"
+    cy="100"
+    r="90"
+    className="stroke-yellow-400 stroke-[15] fill-none stroke-linecap-round"
+    style={{
+      strokeDasharray: `${(8 / 13) * (2 * Math.PI * 60)} ${2 * Math.PI * 20}`,
+      strokeDashoffset: 0,
+    }}
+  />
+
+                            </svg>
+
                             </div>
                         </div>
                     </div>
