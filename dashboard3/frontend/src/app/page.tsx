@@ -46,7 +46,29 @@ const calendarData : { [year: number] : YearData} = {
       maxStreak: 20,
       DaysData: {
       }
-  }
+  },
+
+  2021: {
+      totalGames: 150,
+      totalActiveDays: 70,
+      maxStreak: 15,
+      DaysData: {
+      }
+  },
+  2020: {
+      totalGames: 100,
+      totalActiveDays: 60,
+      maxStreak: 10,
+      DaysData: {
+      }
+  },
+  2019: {
+      totalGames: 50,
+      totalActiveDays: 40,
+      maxStreak: 5,
+      DaysData: {
+      }
+  },
 }
 
 function fillDays(): { [key: number]: number } {
@@ -84,7 +106,7 @@ export default function Home() : JSX.Element {
             backgroundBlendMode: 'overlay',
           }}
         >
-          <CalendarDashboard />
+          <CalendarDashboard calendarData={calendarData} />
         </div>
 
       </main>

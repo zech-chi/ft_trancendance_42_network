@@ -1,20 +1,35 @@
+'use client'
+
 import next from "next";
 import { JSX } from "react";
 import { useState } from "react";
+import Image from "next/image";
 
-const data: {
-    year: number;
+
+type YearData = {
     totalGames: number;
     totalActiveDays: number;
     maxStreak: number;
-    activeYears?: number[];
-} = {
-    year: 2024,
-    totalGames: 317,
-    totalActiveDays:103,
-    maxStreak: 30,
-    activeYears: [2022, 2023, 2024],
-}
+    DaysData: { [key: string]: number };
+};
+
+type CalendarDashboardProps = {
+    calendarData: { [year: number]: YearData };
+};
+
+// const data: {
+//     year: number;
+//     totalGames: number;
+//     totalActiveDays: number;
+//     maxStreak: number;
+//     activeYears?: number[];
+// } = {
+//     year: 2024,
+//     totalGames: 317,
+//     totalActiveDays:103,
+//     maxStreak: 30,
+//     activeYears: [2022, 2023, 2024],
+// }
 
 
 function getJanFirstDay(year: number): number {
@@ -34,12 +49,15 @@ function fillActiveDays(): { [key: number]: number } {
     return activeDays;
 }
 
-export default function CalendarDashboard(): JSX.Element {
-    const allBoxes = [];
+export default function CalendarDashboard({ calendarData }: CalendarDashboardProps): JSX.Element {
+    const years = Object.keys(calendarData).map(Number).sort((a, b) => b - a);
+    const [ selectedYear, setSelectedYear ] = useState(years[0]);
+    const data = calendarData[selectedYear];
 
-    let firstDay = getJanFirstDay(data.year);
+    const allBoxes = [];
+    let firstDay = getJanFirstDay(selectedYear);
     let curMonth = 1;
-    let curNumberOfDays = getDaysInMonth(data.year, curMonth);
+    let curNumberOfDays = getDaysInMonth(selectedYear, curMonth);
     let daysCounter = 0;
     let divCounter = 0;
     let nextMonth = false;
@@ -78,7 +96,6 @@ export default function CalendarDashboard(): JSX.Element {
                 boxes.push( <div key={j} className="bg-black/50 w-4.5 h-4.5 rounded-[5px]"></div> );
         } else {
             boxes.push(
-            //   <div key={j} className="bg-black/60 w-4.5 h-4.5 rounded-[5px]"></div>
               <div key={j} className="bg-black/20 w-4.5 h-4.5 rounded-[5px]"></div>
             );
         }
@@ -91,7 +108,7 @@ export default function CalendarDashboard(): JSX.Element {
             if (curMonth == 12)
                 stop = true;
             curMonth++;
-            curNumberOfDays = getDaysInMonth(data.year, curMonth);
+            curNumberOfDays = getDaysInMonth(selectedYear, curMonth);
             if ((divCounter) % 7 != 0)
                 firstDay = divCounter + 7;
         }
@@ -118,7 +135,7 @@ export default function CalendarDashboard(): JSX.Element {
         <div className="flex flex-col w-full h-full">
             <div className="flex justify-around">
                 <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
-                    <h2 className="text-white/80 text-xl font-bold">{data.totalGames} games in {data.year}</h2>
+                    <h2 className="text-white/80 text-xl font-bold">{data.totalGames} games in {selectedYear}</h2>
                 </div> 
                 <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
                     <h2 className="text-white/80 text-xl font-bold">Total active days: {data.totalActiveDays}</h2>
@@ -126,9 +143,25 @@ export default function CalendarDashboard(): JSX.Element {
                 <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
                     <h2 className="text-white/80 text-xl font-bold">Max streak: {data.maxStreak}</h2>
                 </div> 
-                <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
-                    <h2 className="text-white/80 text-xl font-bold">{data.year}</h2>
-                </div> 
+                
+                <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl flex">
+                    <select
+                        value={selectedYear}
+                        onChange={(event) => setSelectedYear(Number(event.target.value))}
+                        className="appearance-none text-white/80 text-xl font-bold"
+                    >
+                        {years.map((year) => (
+                            <option
+                                key={year}
+                                value={year}
+                                className="bg-black/30 hover:bg-black/40 text-white/80 text-xl font-bold"
+                                >
+                                {year}
+                            </option>
+                        ))}
+                    </select>
+                    <Image className="pointer-events-none ml-3" src='/select.png' alt="select" width={25} height={4} />
+                </div>
             </div>
             <div className="flex flex-col">
                 <div className="" >
@@ -151,35 +184,3 @@ export default function CalendarDashboard(): JSX.Element {
         </div>
     );
 }
-
-// export default function CalendarDashboard(): JSX.Element {
-//     return (
-//         <div className="flex flex-col w-full h-full">
-//             <div className="flex justify-around">
-//                 <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
-//                     <h2 className="text-white/80 text-xl font-bold">{data.totalGames} games in {data.year}</h2>
-//                 </div> 
-//                 <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
-//                     <h2 className="text-white/80 text-xl font-bold">Total active days: {data.totalActiveDays}</h2>
-//                 </div> 
-//                 <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
-//                     <h2 className="text-white/80 text-xl font-bold">Max streak: {data.maxStreak}</h2>
-//                 </div> 
-//                 <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
-//                     <h2 className="text-white/80 text-xl font-bold">{data.year}</h2>
-//                 </div> 
-//             </div>
-//             <div className="flex justify-around">
-//             {[
-//                 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-//                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-//             ].map((month) => (
-//                 <div key={month} className="text-white/80 font-bold">
-//                 {month}
-//                 </div>
-//             ))}
-//             </div>
-
-//         </div>
-//     );
-// }
