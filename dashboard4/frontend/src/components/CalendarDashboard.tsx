@@ -41,10 +41,24 @@ function getDaysInMonth(year: number, month: number) : number {
     return new Date(year, month, 0).getDate();
 }
 
+function isPrime(n: number): boolean {
+    if (n < 2) return false
+    for (let i = 2; i <= Math.sqrt(n); i++) {
+      if (n % i === 0) return false
+    }
+    return true
+  }
+  
+
 function fillActiveDays(): { [key: number]: number } {
     const activeDays: { [key: number]: number } = {};
     for (let i = 1; i <= 366; i++) {
-      activeDays[i] = Math.random();
+        // activeDays[i] = 0;
+        // continue;
+        if (isPrime(i))
+            activeDays[i] = 0;
+        else
+            activeDays[i] = Math.random();
     }
     return activeDays;
 }
@@ -90,13 +104,11 @@ export default function CalendarDashboard({ calendarData }: CalendarDashboardPro
                 boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .60}}></div> );
             else if (activeDays[totalDays] >= 0.25) 
                 boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .40}}></div> );
-            else if (activeDays[totalDays] > 0.1) 
+            else
                 boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .20}}></div> );
-            else 
-                boxes.push( <div key={j} className="bg-black/50 w-4.5 h-4.5 rounded-[5px]"></div> );
         } else {
             boxes.push(
-              <div key={j} className="bg-black/20 w-4.5 h-4.5 rounded-[5px]"></div>
+              <div key={j} className="bg-black/50 w-4.5 h-4.5 rounded-[5px]"></div>
             );
         }
         divCounter++;
