@@ -3,6 +3,7 @@
 import { JSX } from "react";
 import { useState } from "react";
 import Image from "next/image";
+import { motion } from 'framer-motion';
 
 export type ChartDataTypes = {
     // for games with AI
@@ -45,6 +46,9 @@ function FriendsStats({ data }: StatsProps): JSX.Element{
     const angleWins = (wins / totalGames) * 360;
     const angleLosses = (losses / totalGames) * 360;
 
+    const radius = 90;
+    const circumference = 2 * Math.PI * radius;
+
     return (
         <div className="m-1 text-white rounded-2xl"
             style={{
@@ -58,32 +62,37 @@ function FriendsStats({ data }: StatsProps): JSX.Element{
                     <div>
                         <div className="flex flex-col item-center justify-center">
                             <svg viewBox="0 0 200 200" className="w-70 h-70">
-                            {/* Background circle */}
-                            <circle cx="100" cy="100" r="90" className="stroke-white/10 stroke-[10] fill-none"/>
-                            {/* win */}
-                            <circle
-                                cx="100"
-                                cy="100"
-                                r="90"
-                                className="stroke-[#56BA1C] stroke-[10] fill-none stroke-linecap-round"
-                                style={{
-                                    strokeDasharray: `${90 * (angleWins * Math.PI) / 180} ${2 * Math.PI * 90}`,
-                                    strokeDashoffset: 0,
-                                }}
-                                transform="rotate(-90 100 100)"
+                                {/* Background circle */}
+                                <circle cx="100" cy="100" r="90" className="stroke-white/10 stroke-[10] fill-none"/>
+                                {/* win */}
+                                <motion.circle
+                                    cx="100"
+                                    cy="100"
+                                    r={radius}
+                                    className="stroke-[#56BA1C] stroke-[10] fill-none stroke-linecap-round"
+                                    initial={{ strokeDasharray: `0 ${circumference}` }}
+                                    animate={{ strokeDasharray: `${(radius * (angleWins * Math.PI)) / 180} ${circumference}` }}
+                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                    strokeDashoffset={0}
+                                    transform="rotate(-90 100 100)"
                                 />
-                            {/* loss */}
+                                {/* loss */}
 
-                            <circle
-                                cx="100"
-                                cy="100"
-                                r="90"
-                                className="stroke-[#F63737] stroke-[10] fill-none stroke-linecap-round"
-                                style={{
-                                    strokeDasharray: `${90 * (angleLosses * Math.PI) / 180} ${2 * Math.PI * 90}`,
-                                    strokeDashoffset: `-${90 * (angleWins * Math.PI) / 180}`,
-                                }}
-                                transform="rotate(-90 100 100)"
+                                <motion.circle
+                                    cx="100"
+                                    cy="100"
+                                    r={radius}
+                                    className="stroke-[#F63737] stroke-[10] fill-none stroke-linecap-round"
+                                    initial={{
+                                        strokeDasharray: `0 ${circumference}`,
+                                        strokeDashoffset: `0`,
+                                    }}
+                                    animate={{
+                                        strokeDasharray: `${(radius * (angleLosses * Math.PI)) / 180} ${circumference}`,
+                                        strokeDashoffset: `-${(radius * (angleWins * Math.PI)) / 180}`,
+                                    }}
+                                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                                    transform="rotate(-90 100 100)"
                                 />
 
                             </svg>
@@ -164,15 +173,15 @@ function AIStats({ data }: StatsProps): JSX.Element{
                                     />
                                     {/* hard wins */}
 
-                                    <circle
+                                    <motion.circle
                                         cx="100"
                                         cy="100"
                                         r="90"
                                         className="stroke-[#F63737] stroke-[10] fill-none stroke-linecap-round"
-                                        style={{
-                                            strokeDasharray: `${hardAngle} ${circumFerence}`,
-                                            strokeDashoffset: 0,
-                                        }}
+                                        animate={{ strokeDasharray: `${hardAngle} ${circumFerence}` }}
+                                        initial={{ strokeDasharray: `0 ${circumFerence}` }}
+                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                        strokeDashoffset={0}
                                         transform="rotate(-35 100 100)"
                                     />
 
@@ -190,15 +199,15 @@ function AIStats({ data }: StatsProps): JSX.Element{
                                     />
 
                                     {/* medium wins */}
-                                    <circle
+                                    <motion.circle
                                         cx="100"
                                         cy="100"
                                         r="90"
                                         className="stroke-[#FFB700] stroke-[10] fill-none stroke-linecap-round"
-                                        style={{
-                                            strokeDasharray: `${mediumAngle} ${circumFerence}`,
-                                            strokeDashoffset: 0,
-                                        }}
+                                        animate={{ strokeDasharray: `${mediumAngle} ${circumFerence}` }}
+                                        initial={{ strokeDasharray: `0 ${circumFerence}` }}
+                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                        strokeDashoffset={0}
                                         transform="rotate(-135 100 100)"
                                     />
 
@@ -216,15 +225,15 @@ function AIStats({ data }: StatsProps): JSX.Element{
                                     />
 
                                     {/* easy wins */}
-                                    <circle
+                                    <motion.circle
                                         cx="100"
                                         cy="100"
                                         r="90"
                                         className="stroke-[#1CBABA] stroke-[10] fill-none stroke-linecap-round"
-                                        style={{
-                                            strokeDasharray: `${easyAngle} ${circumFerence}`,
-                                            strokeDashoffset: 0,
-                                        }}
+                                        animate={{ strokeDasharray: `${easyAngle} ${circumFerence}` }}
+                                        initial={{ strokeDasharray: `0 ${circumFerence}` }}
+                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                        strokeDashoffset={0}
                                         transform="rotate(-235 100 100)"
                                     />
 

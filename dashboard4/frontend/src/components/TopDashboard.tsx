@@ -3,6 +3,7 @@
 import { JSX } from "react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { motion } from 'framer-motion';
 
 const TOTAL_USERS = 133742;
 
@@ -90,13 +91,23 @@ function DisplayRank({ level, progress, rank, totalUsers }: RankInfoProps): JSX.
 
 function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
 
+  // return (
+  //   <div className="relative bg-white/10 w-full h-4 mr-10 rounded-4xl border-2  border-[#F9545B]/30 overflow-hidden">
+  //     <div
+  //       className="absolute top-0 left-0 h-full rounded-4xl bg-[#FEDF7F] border-1  border-white/40 transition-all duration-500" 
+  //       style={{ width: `${progress * 100}%` }}
+  //     >  
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="relative bg-white/10 w-full h-4 mr-10 rounded-4xl border-2  border-[#F9545B]/30 overflow-hidden">
-      <div
+    <div className="relative bg-white/10 w-full h-4 mr-10 rounded-4xl border-2  border-[#F9545B]/30">
+      <motion.div
         className="absolute top-0 left-0 h-full rounded-4xl bg-[#FEDF7F] border-1  border-white/40" 
-        style={{ width: `${progress * 100}%` }}
-      >  
-      </div>
+        animate={{ width: `${progress * 100}%` }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
     </div>
   );
 }
