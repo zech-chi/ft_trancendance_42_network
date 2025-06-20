@@ -43,8 +43,8 @@ function FriendsStats({ data }: StatsProps): JSX.Element{
     const losses = data.friendsLosses;
     const totalGames = data.friendsTotalGames;
 
-    const angleWins = (wins / totalGames) * 360;
-    const angleLosses = (losses / totalGames) * 360;
+    const angleWins = (wins / totalGames) * 340;
+    const angleLosses = (losses / totalGames) * 340;
 
     const radius = 90;
     const circumference = 2 * Math.PI * radius;
@@ -63,35 +63,64 @@ function FriendsStats({ data }: StatsProps): JSX.Element{
                         <div className="flex flex-col item-center justify-center">
                             <svg viewBox="0 0 200 200" className="w-70 h-70">
                                 {/* Background circle */}
-                                <circle cx="100" cy="100" r="90" className="stroke-white/10 stroke-[10] fill-none"/>
+                                {/* <circle cx="100" cy="100" r="90" className="stroke-white/10 stroke-[10] fill-none"/> */}
                                 {/* win */}
-                                <motion.circle
+                                {/* <motion.circle
                                     cx="100"
                                     cy="100"
                                     r={radius}
-                                    className="stroke-[#56BA1C] stroke-[10] fill-none stroke-linecap-round"
+                                    className="stroke-[#56BA1C] stroke-[10] fill-none"
+                                    strokeLinecap="round"
                                     initial={{ strokeDasharray: `0 ${circumference}` }}
                                     animate={{ strokeDasharray: `${(radius * (angleWins * Math.PI)) / 180} ${circumference}` }}
-                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                    transition={{ duration: 0.8, ease: "easeIn" }}
                                     strokeDashoffset={0}
                                     transform="rotate(-90 100 100)"
-                                />
+                                /> */}
                                 {/* loss */}
 
-                                <motion.circle
+                                {/* <motion.circle
                                     cx="100"
                                     cy="100"
                                     r={radius}
-                                    className="stroke-[#F63737] stroke-[10] fill-none stroke-linecap-round"
+                                    className="stroke-[#F63737] stroke-[10] fill-none"
+                                    strokeLinecap="round"
                                     initial={{
                                         strokeDasharray: `0 ${circumference}`,
                                         strokeDashoffset: `0`,
                                     }}
                                     animate={{
                                         strokeDasharray: `${(radius * (angleLosses * Math.PI)) / 180} ${circumference}`,
-                                        strokeDashoffset: `-${(radius * (angleWins * Math.PI)) / 180}`,
+                                        strokeDashoffset: `-${(radius * ((angleWins + 10) * Math.PI)) / 180}`,
                                     }}
-                                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                                    transition={{ duration: 0.8, ease: 'easeIn' }}
+                                    transform="rotate(-90 100 100)"
+                                /> */}
+
+
+                                <circle
+                                    cx="100"
+                                    cy="100"
+                                    r="90"
+                                    className="stroke-[#56BA1C] stroke-[10] fill-none"
+                                    strokeLinecap="round"
+                                    style={{
+                                        strokeDasharray: `${90 * (angleWins * Math.PI) / 180} ${2 * Math.PI * 90}`,
+                                        strokeDashoffset: 0,
+                                    }}
+                                    transform="rotate(-90 100 100)"
+                                />
+
+                                <circle
+                                    cx="100"
+                                    cy="100"
+                                    r="90"
+                                    className="stroke-[#F63737] stroke-[10] fill-none"
+                                    strokeLinecap="round"
+                                    style={{
+                                        strokeDasharray: `${90 * (angleLosses * Math.PI) / 180} ${circumference}`,
+                                        strokeDashoffset: `-${90 * ((angleWins + 10) * Math.PI) / 180}`,
+                                    }}
                                     transform="rotate(-90 100 100)"
                                 />
 
@@ -164,7 +193,8 @@ function AIStats({ data }: StatsProps): JSX.Element{
                                         cx="100"
                                         cy="100"
                                         r="90"
-                                        className="stroke-[#512B2B] stroke-[10] fill-none stroke-linecap-round"
+                                        className="stroke-[#512B2B] stroke-[10] fill-none"
+                                        strokeLinecap="round"
                                         style={{
                                             strokeDasharray: `${baseLength} ${circumFerence}`,
                                             strokeDashoffset: 0,
@@ -177,24 +207,27 @@ function AIStats({ data }: StatsProps): JSX.Element{
                                         cx="100"
                                         cy="100"
                                         r="90"
-                                        className="stroke-[#F63737] stroke-[10] fill-none stroke-linecap-round"
+                                        className="stroke-[#F63737] stroke-[10] fill-none"
                                         animate={{ strokeDasharray: `${hardAngle} ${circumFerence}` }}
                                         initial={{ strokeDasharray: `0 ${circumFerence}` }}
                                         transition={{ duration: 0.8, ease: "easeOut" }}
                                         strokeDashoffset={0}
+                                        strokeLinecap="round"
                                         transform="rotate(-35 100 100)"
                                     />
 
+                                    
                                     {/* medium */}
                                     <circle
                                         cx="100"
                                         cy="100"
                                         r="90"
-                                        className="stroke-[#534520] stroke-[10] fill-none stroke-linecap-round"
+                                        className="stroke-[#534520] stroke-[10] fill-none"
                                         style={{
                                             strokeDasharray: `${baseLength} ${circumFerence}`,
                                             strokeDashoffset: 0,
                                         }}
+                                        strokeLinecap="round"
                                         transform="rotate(-135 100 100)"
                                     />
 
@@ -203,10 +236,11 @@ function AIStats({ data }: StatsProps): JSX.Element{
                                         cx="100"
                                         cy="100"
                                         r="90"
-                                        className="stroke-[#FFB700] stroke-[10] fill-none stroke-linecap-round"
+                                        className="stroke-[#FFB700] stroke-[10] fill-none"
                                         animate={{ strokeDasharray: `${mediumAngle} ${circumFerence}` }}
                                         initial={{ strokeDasharray: `0 ${circumFerence}` }}
                                         transition={{ duration: 0.8, ease: "easeOut" }}
+                                        strokeLinecap="round"
                                         strokeDashoffset={0}
                                         transform="rotate(-135 100 100)"
                                     />
@@ -216,11 +250,12 @@ function AIStats({ data }: StatsProps): JSX.Element{
                                         cx="100"
                                         cy="100"
                                         r="90"
-                                        className="stroke-[#264545] stroke-[10] fill-none stroke-linecap-round"
+                                        className="stroke-[#264545] stroke-[10] fill-none"
                                         style={{
                                             strokeDasharray: `${baseLength} ${circumFerence}`,
                                             strokeDashoffset: 0,
                                         }}
+                                        strokeLinecap="round"
                                         transform="rotate(-235 100 100)"
                                     />
 
@@ -229,10 +264,11 @@ function AIStats({ data }: StatsProps): JSX.Element{
                                         cx="100"
                                         cy="100"
                                         r="90"
-                                        className="stroke-[#1CBABA] stroke-[10] fill-none stroke-linecap-round"
+                                        className="stroke-[#1CBABA] stroke-[10] fill-none"
                                         animate={{ strokeDasharray: `${easyAngle} ${circumFerence}` }}
                                         initial={{ strokeDasharray: `0 ${circumFerence}` }}
                                         transition={{ duration: 0.8, ease: "easeOut" }}
+                                        strokeLinecap="round"
                                         strokeDashoffset={0}
                                         transform="rotate(-235 100 100)"
                                     />
