@@ -82,6 +82,63 @@ function fillDays(): { [key: number]: number } {
 
 // end calendar data
 
+
+// charts ai data
+
+export type ChartDataTypes = {
+  // for games with AI
+
+  totalGamesWithAi: number;
+  gamesWithAiEasy: number;
+  gamesWithAiMedium: number;
+  gamesWithAiHard: number;
+  totalWins: number;
+  easyWins: number;
+  mediumWins: number;
+  hardWins: number;
+
+  // for games with friends
+  friendsWins: number;
+  friendsLosses: number;
+  friendsTotalGames: number;
+}
+
+export type StatisticsProps = {
+  chartsData: { [game: string]: ChartDataTypes };
+};
+
+const chartsData = {
+  pong: {
+    totalGamesWithAi: 974,            // = 930 + 640 + 220
+    gamesWithAiEasy: 53,
+    gamesWithAiMedium: 451,
+    gamesWithAiHard: 470,
+    totalWins: 747,                   // = 165 + 527 + 895
+    easyWins: 50,
+    mediumWins: 408,
+    hardWins: 289,
+    friendsWins: 617,
+    friendsLosses: 235,
+    friendsTotalGames: 852,            // = 617 + 235
+  },
+  parchesi: {
+    totalGamesWithAi: 501,            // = 810 + 467 + 795
+    gamesWithAiEasy: 73,
+    gamesWithAiMedium: 209,
+    gamesWithAiHard: 219,
+    totalWins: 446,                   // = 457 + 170 + 837
+    easyWins: 73,
+    mediumWins: 198,
+    hardWins: 175,
+    friendsWins: 629,
+    friendsLosses: 486,
+    friendsTotalGames: 1115,           // = 486 + 629
+  }
+}
+
+// end charts data
+
+
 export default function Home() : JSX.Element {
   // fill days data
   Object.keys(calendarData).forEach((year) => {
@@ -110,7 +167,7 @@ export default function Home() : JSX.Element {
           <CalendarDashboard calendarData={calendarData} />
         </div>
         <div className="absolute top-143 h-190 left-29 w-3/4 w-[calc(65%-1rem)] flex flex-col">
-          <Statistics />
+          <Statistics chartsData={chartsData} />
         </div>
       </main>
   );

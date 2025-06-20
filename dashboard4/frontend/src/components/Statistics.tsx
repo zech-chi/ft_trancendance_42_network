@@ -4,10 +4,43 @@ import { JSX } from "react";
 import { useState } from "react";
 import Image from "next/image";
 
-function FriendsStats(): JSX.Element {
-    const wins = 532;
-    const losses = 137;
-    const totalGames = wins + losses;
+export type ChartDataTypes = {
+    // for games with AI
+  
+    totalGamesWithAi: number;
+    gamesWithAiEasy: number;
+    gamesWithAiMedium: number;
+    gamesWithAiHard: number;
+    totalWins: number;
+    easyWins: number;
+    mediumWins: number;
+    hardWins: number;
+  
+    // for games with friends
+    friendsWins: number;
+    friendsLosses: number;
+    friendsTotalGames: number;
+}
+
+type GameName = 'pong' | 'parchesi';
+
+type ChartsData = {
+    [game: string]: ChartDataTypes
+}
+type StatsProps = {
+    data: ChartDataTypes;
+};
+  
+
+type StatisticsProps = {
+    chartsData: { [game: string]: ChartDataTypes };
+};
+
+
+function FriendsStats({ data }: StatsProps): JSX.Element{
+    const wins = data.friendsWins;
+    const losses = data.friendsLosses;
+    const totalGames = data.friendsTotalGames;
 
     const angleWins = (wins / totalGames) * 360;
     const angleLosses = (losses / totalGames) * 360;
@@ -56,7 +89,7 @@ function FriendsStats(): JSX.Element {
                             </svg>
                             <div className="absolute w-70 h-70  rounded-full flex flex-col items-center border-25 border-transparent justify-center gap-1">
                                 <h1 className="text-l text-white/90 font-bold">Total games with friends </h1>
-                                <h1 className="text-5xl text-white/50 font-bold">545</h1>
+                                <h1 className="text-5xl text-white/50 font-bold">{totalGames}</h1>
                             </div>
                         </div>
                     </div>
@@ -64,11 +97,11 @@ function FriendsStats(): JSX.Element {
                 <div className="flex flex-col">
                     <div className="flex flex-col items-center justify-center bg-black/30 px-8 py-2 rounded-2xl m-3">
                         <h3 className="text-[#56BA1C] font-bold">Win</h3>
-                        <p className="text-xl text-white/75">532</p>
+                        <p className="text-xl text-white/75">{wins}</p>
                     </div>
                     <div className="flex flex-col items-center justify-center bg-black/30 px-8 py-2 rounded-2xl m-3">
                         <h3 className="text-[#F63737] font-bold">Loss</h3>
-                        <p className="text-xl text-white/75">137</p>
+                        <p className="text-xl text-white/75">{losses}</p>
                     </div>
                 </div>
             </div>
@@ -76,20 +109,25 @@ function FriendsStats(): JSX.Element {
     );
 }
 
-function AIStats(): JSX.Element {
-    const radius = 80;
-    const totalGamesWithAi = 13;
-    const gamesWithAiEasy = 5;
-    const gamesWithAiMedium = 5;
-    const gamesWithAiHard = 3;
-    const totalWins = 8;
-    const easyWins = 4;
-    const mediumWins = 3;
-    const hardWins = 1;
+function AIStats({ data }: StatsProps): JSX.Element{
+    const totalGamesWithAi = data.totalGamesWithAi;
+    const gamesWithAiEasy = data.gamesWithAiEasy;
+    const gamesWithAiMedium = data.gamesWithAiMedium;
+    const gamesWithAiHard = data.gamesWithAiHard;
+    const totalWins = data.totalWins;
+    const easyWins = data.easyWins;
+    const mediumWins = data.mediumWins;
+    const hardWins = data.hardWins;
 
-    const easyAngle = (easyWins / gamesWithAiEasy) * 90;
-    const mediumAngle = (mediumWins / gamesWithAiMedium) * 90;
-    const hardAngle = (hardWins / gamesWithAiHard) * 90;
+
+    const radius = 90;
+    const circumFerence = 2 * Math.PI * radius;
+    const baseAngel = 90; // 90 degrees for each section
+    const baseLength = (baseAngel / 360) * circumFerence;
+
+    const easyAngle = (easyWins / gamesWithAiEasy) * baseAngel;
+    const mediumAngle = (mediumWins / gamesWithAiMedium) * baseAngel;
+    const hardAngle = (hardWins / gamesWithAiHard) * baseAngel;
 
     return (
         <div className="m-1 text-white rounded-2xl"
@@ -106,9 +144,9 @@ function AIStats(): JSX.Element {
                             <div className="flex flex-col item-center justify-center">
                                 <div className="absolute w-70 h-70  rounded-full flex flex-col items-center border-25 border-transparent justify-center gap-1">
                                     <h1 className="text-l text-white/90 font-bold">Total games with AI</h1>
-                                    <h1 className="text-5xl text-white/50 font-bold">15</h1>
+                                    <h1 className="text-5xl text-white/50 font-bold">{totalGamesWithAi}</h1>
+                                    <h1 className="absolute pt-61 text-2xl text-white/60 font-bold">{totalWins} / {totalGamesWithAi}</h1>
                                 </div>
-                                <h1 className="absolute left-295 top-82 text-4xl text-white/60 font-bold">{totalWins} / {totalGamesWithAi}</h1>
                                 <svg viewBox="0 0 200 200" className="w-70 h-70">
                                     {/* Background circle */}
                                     <circle cx="100" cy="100" r="90" className="stroke-white/0 stroke-[10] fill-none"/>
@@ -119,7 +157,7 @@ function AIStats(): JSX.Element {
                                         r="90"
                                         className="stroke-[#512B2B] stroke-[10] fill-none stroke-linecap-round"
                                         style={{
-                                            strokeDasharray: `${90 * (90 * Math.PI) / 180} ${2 * Math.PI * 90}`,
+                                            strokeDasharray: `${baseLength} ${circumFerence}`,
                                             strokeDashoffset: 0,
                                         }}
                                         transform="rotate(-35 100 100)"
@@ -132,7 +170,7 @@ function AIStats(): JSX.Element {
                                         r="90"
                                         className="stroke-[#F63737] stroke-[10] fill-none stroke-linecap-round"
                                         style={{
-                                            strokeDasharray: `${90 * (hardAngle * Math.PI) / 180} ${2 * Math.PI * 90}`,
+                                            strokeDasharray: `${hardAngle} ${circumFerence}`,
                                             strokeDashoffset: 0,
                                         }}
                                         transform="rotate(-35 100 100)"
@@ -145,7 +183,7 @@ function AIStats(): JSX.Element {
                                         r="90"
                                         className="stroke-[#534520] stroke-[10] fill-none stroke-linecap-round"
                                         style={{
-                                            strokeDasharray: `${90 * (90 * Math.PI) / 180} ${2 * Math.PI * 90}`,
+                                            strokeDasharray: `${baseLength} ${circumFerence}`,
                                             strokeDashoffset: 0,
                                         }}
                                         transform="rotate(-135 100 100)"
@@ -158,7 +196,7 @@ function AIStats(): JSX.Element {
                                         r="90"
                                         className="stroke-[#FFB700] stroke-[10] fill-none stroke-linecap-round"
                                         style={{
-                                            strokeDasharray: `${90 * (mediumAngle * Math.PI) / 180} ${2 * Math.PI * 90}`,
+                                            strokeDasharray: `${mediumAngle} ${circumFerence}`,
                                             strokeDashoffset: 0,
                                         }}
                                         transform="rotate(-135 100 100)"
@@ -171,7 +209,7 @@ function AIStats(): JSX.Element {
                                         r="90"
                                         className="stroke-[#264545] stroke-[10] fill-none stroke-linecap-round"
                                         style={{
-                                            strokeDasharray: `${90 * (90 * Math.PI) / 180} ${2 * Math.PI * 90}`,
+                                            strokeDasharray: `${baseLength} ${circumFerence}`,
                                             strokeDashoffset: 0,
                                         }}
                                         transform="rotate(-235 100 100)"
@@ -184,7 +222,7 @@ function AIStats(): JSX.Element {
                                         r="90"
                                         className="stroke-[#1CBABA] stroke-[10] fill-none stroke-linecap-round"
                                         style={{
-                                            strokeDasharray: `${90 * (easyAngle * Math.PI) / 180} ${2 * Math.PI * 90}`,
+                                            strokeDasharray: `${easyAngle} ${circumFerence}`,
                                             strokeDashoffset: 0,
                                         }}
                                         transform="rotate(-235 100 100)"
@@ -198,15 +236,15 @@ function AIStats(): JSX.Element {
                 <div className="flex flex-col">
                     <div className="flex flex-col items-center justify-center bg-black/30 px-8 py-2 rounded-2xl m-3">
                         <h3 className="text-[#1CBABA] font-bold">Easy</h3>
-                        <p className="text-xl text-white/75 tracking-wider">4/5</p>
+                        <p className="text-xl text-white/75 tracking-wider">{easyWins} / {gamesWithAiEasy}</p>
                     </div>
                     <div className="flex flex-col items-center justify-center bg-black/30 px-8 py-2 rounded-2xl m-3">
                         <h3 className="text-[#FFB700] font-bold">Medium</h3>
-                        <p className="text-xl text-white/75">3/5</p>
+                        <p className="text-xl text-white/75">{mediumWins} / {gamesWithAiMedium}</p>
                     </div>
                     <div className="flex flex-col items-center justify-center bg-black/30 px-8 py-2 rounded-2xl m-3">
                         <h3 className="text-[#F63737] font-bold">Hard</h3>
-                        <p className="text-xl text-white/75">1/3</p>
+                        <p className="text-xl text-white/75">{hardWins} / {gamesWithAiHard}</p>
                     </div>
                 </div>
             </div>
@@ -222,19 +260,25 @@ function SpiderChart() : JSX.Element {
     );
 }
 
-export default function Statistics() : JSX.Element {
-    const [game, setGame] = useState<string>('pong');
+export default function Statistics({ chartsData }: StatisticsProps): JSX.Element {
+    const [game, setGame] = useState<GameName>('pong');
+    const [data, setData] = useState<ChartDataTypes>(chartsData[game]);
+
+    function handleChangeGame(newGame: GameName) {
+        setGame(newGame);
+        setData(chartsData[newGame]);
+    }
 
     return (
         <div>
             <div className="m-1 flex justify-center">
                 <div className="inline-flex bg-black/30 gap-3 rounded-4xl">
-                    <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => setGame('pong')}>
+                    <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => handleChangeGame('pong')}>
                         <Image src={game === 'pong' ? '/pong_pink.png' : '/pong_white.png'} alt="pong" width={40} height={40} 
                             className="p-2 cursor-pointer object-contain"
                         />
                     </div>
-                    <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => setGame('parchesi')}>
+                    <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => handleChangeGame('parchesi')}>
                         <Image src={game === 'parchesi' ? '/parchesi_pink.png' : '/parchesi_white.png'} alt="parchesi" width={40} height={40}
                             className="p-2 cursor-pointer"
                         />
@@ -254,8 +298,8 @@ export default function Statistics() : JSX.Element {
                 </div>
 
                 <div className="flex flex-col gap-5">
-                    <AIStats />
-                    <FriendsStats />
+                    <AIStats data={data} />
+                    <FriendsStats data={data} />
                 </div>
             </div>
         </div>
