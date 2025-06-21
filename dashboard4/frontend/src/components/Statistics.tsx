@@ -297,11 +297,60 @@ function AIStats({ data }: StatsProps): JSX.Element{
     );
 }
 
+
+const points1 = [
+    { x: 0, y: -90 },
+    { x: 57.9, y: -68.9 },
+    { x: 88.6, y: -15.6 },
+    { x: 77.9, y: 45.0 },
+    { x: 30.8, y: 84.6 },
+    { x: -30.8, y: 84.6 },
+    { x: -77.9, y: 45.0 },
+    { x: -88.6, y: -15.6 },
+    { x: -57.9, y: -68.9 },
+];
+
+const scaleFactor : number = 0.8;
+
+const points2 = points1.map((
+    {x, y}) => ({
+        x: x * scaleFactor,
+        y: y * scaleFactor,
+    }
+
+));
+
+const points3 = points2.map((
+    {x, y}) => ({
+        x: x * scaleFactor,
+        y: y * scaleFactor,
+    }
+));
+
+
+
+
 function SpiderChart() : JSX.Element {
+    const [hoveredPoint, setHoveredPoint] = useState(null);
+
     return (
-        <div className="w-160 h-160 bg-[#FEDF7F]/60 rounded-full flex items-center justify-center m-38 my-5">
-            <h1 className="text-5xl text-black font-bold">Spider Chart here</h1>
-        </div>
+        // <div className="w-160 h-160 bg-[#FEDF7F]/60 rounded-full flex items-center justify-center m-38 my-5">
+        //     <h1 className="text-5xl text-black font-bold">Spider Chart here</h1>
+        // </div>
+        <svg className="w-130 h-130" viewBox="-100 -100 200 200">
+            <polygon
+                points={points1.map(p => `${p.x},${p.y}`).join(' ')}
+                className="fill-[#FEDF7F]/20 stroke-white stroke-2"
+            />
+            <polygon
+                points={points2.map(p => `${p.x},${p.y}`).join(' ')}
+                className="fill-[#FEDF7F]/30 stroke-white stroke-2"
+            />
+            <polygon
+                points={points3.map(p => `${p.x},${p.y}`).join(' ')}
+                className="fill-[#FEDF7F]/40 stroke-white stroke-2"
+            />
+        </svg>
     );
 }
 

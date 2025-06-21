@@ -12,7 +12,7 @@ const user = {
   imageUrl: "/gon.jpg",
   rank: 1337,
   level: 9,
-  progress: .3, // 75% progress
+  progress: .75, // 75% progress
   online: true,
 }
 
