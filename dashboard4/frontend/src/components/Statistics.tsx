@@ -163,9 +163,12 @@ function AIStats({ data }: StatsProps): JSX.Element{
     const baseAngel = 90; // 90 degrees for each section
     const baseLength = (baseAngel / 360) * circumFerence;
 
-    const easyAngle = (easyWins / gamesWithAiEasy) * baseAngel;
-    const mediumAngle = (mediumWins / gamesWithAiMedium) * baseAngel;
-    const hardAngle = (hardWins / gamesWithAiHard) * baseAngel;
+
+    console.log(easyWins);
+    console.log(gamesWithAiEasy);
+    const easyAngle = (easyWins / gamesWithAiEasy) * baseLength;
+    const mediumAngle = (mediumWins / gamesWithAiMedium) * baseLength;
+    const hardAngle = (hardWins / gamesWithAiHard) * baseLength;
 
     return (
         <div className="m-1 text-white rounded-2xl"
@@ -260,6 +263,7 @@ function AIStats({ data }: StatsProps): JSX.Element{
                                     />
 
                                     {/* easy wins */}
+
                                     <motion.circle
                                         cx="100"
                                         cy="100"
@@ -317,40 +321,99 @@ const points2 = points1.map((
         x: x * scaleFactor,
         y: y * scaleFactor,
     }
-
 ));
 
-const points3 = points2.map((
+const points3 = points1.map((
     {x, y}) => ({
-        x: x * scaleFactor,
-        y: y * scaleFactor,
+        x: x * (2 * scaleFactor - 1),
+        y: y * (2 * scaleFactor - 1),
+    }
+));
+
+const points4 = points1.map((
+    {x, y}) => ({
+        x: x * (3 * scaleFactor - 2),
+        y: y * (3 * scaleFactor - 2),
     }
 ));
 
 
+const points5 = points1.map((
+    {x, y}) => ({
+        x: x * (4 * scaleFactor - 3),
+        y: y * (4 * scaleFactor - 3),
+    }
+));
+
+
+const pointsData =  [
+    13.1,
+    3,
+    14.6,
+    3.5,
+    9.1,
+    1,
+    3,
+    7.3,
+    13
+]
 
 
 function SpiderChart() : JSX.Element {
     const [hoveredPoint, setHoveredPoint] = useState(null);
+    const getScaleFactor = (x: number) => 0.2 + (x / 20) * 0.8;
+
+    const scaledPoints = pointsData.map((value, index) => {
+        const scale = getScaleFactor(value);
+        return {
+            x: points1[index].x * scale,
+            y: points1[index].y * scale,
+        }
+    });
 
     return (
-        // <div className="w-160 h-160 bg-[#FEDF7F]/60 rounded-full flex items-center justify-center m-38 my-5">
-        //     <h1 className="text-5xl text-black font-bold">Spider Chart here</h1>
-        // </div>
-        <svg className="w-130 h-130" viewBox="-100 -100 200 200">
-            <polygon
-                points={points1.map(p => `${p.x},${p.y}`).join(' ')}
-                className="fill-[#FEDF7F]/20 stroke-white stroke-2"
-            />
-            <polygon
-                points={points2.map(p => `${p.x},${p.y}`).join(' ')}
-                className="fill-[#FEDF7F]/30 stroke-white stroke-2"
-            />
-            <polygon
-                points={points3.map(p => `${p.x},${p.y}`).join(' ')}
-                className="fill-[#FEDF7F]/40 stroke-white stroke-2"
-            />
-        </svg>
+        <div className="w-160 h-160 rounded-full flex flex-col items-center justify-center m-38 my-5">
+            <svg className="w-130 h-130" viewBox="-100 -100 200 200">
+                <polygon
+                    points={points1.map(p => `${p.x},${p.y}`).join(' ')}
+                    className="fill-[#FEDF7F]/20 stroke-white/15 stroke-2"
+                />
+                <polygon
+                    points={points2.map(p => `${p.x},${p.y}`).join(' ')}
+                    className="fill-[#FEDF7F]/30 stroke-white/15 stroke-2"
+                />
+                <polygon
+                    points={points3.map(p => `${p.x},${p.y}`).join(' ')}
+                    className="fill-[#FEDF7F]/40 stroke-white/15 stroke-2"
+                />
+                <polygon
+                    points={points4.map(p => `${p.x},${p.y}`).join(' ')}
+                    className="fill-[#FEDF7F]/50 stroke-white/15 stroke-2"
+                />
+                <polygon
+                    points={points5.map(p => `${p.x},${p.y}`).join(' ')}
+                    className="fill-[#FEDF7F]/60 stroke-white/15 stroke-2"
+                />
+                <circle cx="0" cy="0" r="3" className="fill-white" />
+
+                {/* define gradient color */}
+                <defs>
+                    <linearGradient id="myGradient">
+                    <stop offset="0%" stopColor="#FE9734" stopOpacity="0.7"/>
+                    <stop offset="50%" stopColor="#ED66B7" stopOpacity="0.7"/>
+                    <stop offset="100%" stopColor="#5360CB" stopOpacity="0.7"/>
+                    </linearGradient>
+                </defs>
+
+
+                <polygon
+                    points={scaledPoints.map(p => `${p.x},${p.y}`).join(' ')}
+                    className="stroke-[#531E2E]/75 stroke-2"
+                    fill="url(#myGradient)"
+                />
+            </svg>
+            <h1 className="text-5xl text-[#FEDF7F] font-bold">Radar Chart here</h1>
+        </div>
     );
 }
 
