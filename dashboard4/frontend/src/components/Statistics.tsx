@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from 'framer-motion';
 import Cookies from "js-cookie";
+import {useRef} from "react";
 
 export type ChartDataTypes = {
     // for games with AI
@@ -368,6 +369,31 @@ const skills = [
     "Mind Games",
 ];
 
+function isPointBetweenLines(x1: number, y1: number, a1: number, a2: number): boolean {
+    const yLine1 = a1 * x1;
+    const yLine2 = a2 * x1;
+  
+    return y1 >= Math.min(yLine1, yLine2) && y1 <= Math.max(yLine1, yLine2);
+}
+
+function isPointBetweenAngles(x1: number, y1: number, sep1: { x: number, y: number }, sep2: { x: number, y: number }): boolean {
+    const pointAngle = Math.atan2(y1, x1);
+    const angle1 = Math.atan2(sep1.y, sep1.x);
+    const angle2 = Math.atan2(sep2.y, sep2.x);
+
+    const twoPi = Math.PI * 2;
+
+    const normalize = (angle: number) => (angle + twoPi) % twoPi;
+
+    const a = normalize(pointAngle);
+    const start = normalize(angle1);
+    const end = normalize(angle2);
+
+    if (start < end) return a >= start && a <= end;
+    return a >= start || a <= end;
+}
+
+
 function SpiderChart() : JSX.Element {
     const [hoveredIndex, setHoveredIndex] = useState<number>(Number(Cookies.get('hoveredIndex') || 0));
     const getScaleFactor = (x: number) => 0.2 + (x / 20) * 0.8;
@@ -384,9 +410,116 @@ function SpiderChart() : JSX.Element {
         }
     });
 
+    const sperators: { x: number; y: number }[] = [];
+
+    for (let i = 1; i < 9; i++) {
+        sperators.push(
+            {
+                x: (points1[i].x + points1[i - 1].x) / 2,
+                y: (points1[i].y + points1[i - 1].y) / 2
+            }
+        )
+    }
+
+    sperators.push(
+        {
+            x: (points1[0].x + points1[8].x) / 2,
+            y: (points1[0].y + points1[8].y) / 2
+        }
+    )
+
+
+    
+    const [coords, setCoords] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+    const svgRef = useRef<SVGSVGElement>(null);
+
+    console.log(sperators);
+
+    const setActivatedCircleIndex = (() => {
+        if (coords.x === 0 && coords.y === 0)
+            return ;
+
+        if (isPointBetweenLines(coords.x, coords.y, (sperators[0].y / sperators[0].x), (sperators[1].y / sperators[1].x))
+            && (coords.x > 0)
+        )
+            setHoveredIndex(1);
+        if (isPointBetweenLines(coords.x, coords.y, (sperators[1].y / sperators[1].x), (sperators[2].y / sperators[2].x))
+            && (coords.x > 0)
+        )
+            setHoveredIndex(2);
+        if (isPointBetweenLines(coords.x, coords.y, (sperators[2].y / sperators[2].x), (sperators[3].y / sperators[3].x))
+            && (coords.x > 0)
+        )
+            setHoveredIndex(3);
+        if (isPointBetweenLines(coords.x, coords.y, (sperators[3].y / sperators[3].x), (sperators[4].y / sperators[4].x))
+            && (coords.y > 0)
+        )
+            setHoveredIndex(4);
+        if (isPointBetweenAngles(coords.x, coords.y, sperators[4], sperators[5])
+            && (coords.y > 0)
+        )
+            setHoveredIndex(5);
+        if (isPointBetweenLines(coords.x, coords.y, (sperators[5].y / sperators[5].x), (sperators[6].y / sperators[6].x))
+            && (coords.y > 0)
+        )
+            setHoveredIndex(6);
+        if (isPointBetweenLines(coords.x, coords.y, (sperators[6].y / sperators[6].x), (sperators[7].y / sperators[7].x))
+            && (coords.x < 0)
+        )
+            setHoveredIndex(7);
+        if (isPointBetweenLines(coords.x, coords.y, (sperators[7].y / sperators[7].x), (sperators[8].y / sperators[8].x))
+            && (coords.x < 0)
+        )
+            setHoveredIndex(8);
+        if (isPointBetweenAngles(coords.x, coords.y, sperators[8], sperators[0])
+            && (coords.y < 0)
+        )
+            setHoveredIndex(0);
+        
+
+    })
+
+    const handleMouseMove = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+        const svg = svgRef.current;
+        if (!svg) return;
+        const rect = svg.getBoundingClientRect();
+        const px = ((event.clientX - rect.left) / rect.width) * 200 - 100;
+        const py = ((event.clientY - rect.top) / rect.height) * 200 - 100;
+
+        setCoords(
+            {
+                x: Number(px),
+                y: Number(py)
+            }
+        )
+
+        setActivatedCircleIndex();
+    }
+
+    const resetCoords = (() => {
+        setCoords(
+            {
+                x: Number(0),
+                y: Number(0)
+            }
+        )
+    });
+    
     return (
         <div className="w-160 h-160 rounded-full flex flex-col items-center justify-center m-38 my-5">
-            <svg className="w-130 h-130" viewBox="-100 -100 200 200">
+            <svg ref={svgRef} className="w-130 h-130" viewBox="-100 -100 200 200" onMouseMove={handleMouseMove} onMouseLeave={resetCoords}>
+                {
+                    sperators.map((point, index) => (
+                        <line
+                        key={index}
+                        x1={0}
+                        y1={0}
+                        x2={point.x}
+                        y2={point.y}
+                        className="stroke-2 stroke-white/10"
+                        />
+                    ))
+                }
                 <polygon
                     points={points1.map(p => `${p.x},${p.y}`).join(' ')}
                     className="fill-[#FEDF7F]/20 stroke-white/15 stroke-2"
@@ -431,12 +564,16 @@ function SpiderChart() : JSX.Element {
                             cx={point.x}
                             cy={point.y}
                             r={hoveredIndex === index ? 3.3 : 2.3}
-                            className={hoveredIndex === index ? "fill-[#F9545B]" : "fill-white/80"}
+                            className={hoveredIndex === index ? "fill-[#632133]" : "fill-[#632133]"}
                             onMouseEnter={() => setHoveredIndex(index)}
                         />
                     ))
                 }
+                
 
+                <circle cx={coords.x} cy={coords.y} r="2"
+                    className={(coords.x === 0 && coords.y === 0) ? "fill-transparent" : "fill-[#632133]"}
+                />
             </svg>
             <h1 className="text-4xl text-[#FEDF7F] font-bold">{skills[hoveredIndex]}</h1>
             <h1 className="text-2xl text-[#FEDF7F]/80 font-bold">{pointsData[hoveredIndex]} / 20</h1>
