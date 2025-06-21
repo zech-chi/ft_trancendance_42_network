@@ -1,9 +1,10 @@
 'use client'
 
 import { JSX } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from 'framer-motion';
+import Cookies from "js-cookie";
 
 export type ChartDataTypes = {
     // for games with AI
@@ -163,9 +164,6 @@ function AIStats({ data }: StatsProps): JSX.Element{
     const baseAngel = 90; // 90 degrees for each section
     const baseLength = (baseAngel / 360) * circumFerence;
 
-
-    console.log(easyWins);
-    console.log(gamesWithAiEasy);
     const easyAngle = (easyWins / gamesWithAiEasy) * baseLength;
     const mediumAngle = (mediumWins / gamesWithAiMedium) * baseLength;
     const hardAngle = (hardWins / gamesWithAiHard) * baseLength;
@@ -347,9 +345,9 @@ const points5 = points1.map((
 
 
 const pointsData =  [
-    13.1,
+    17.2,
     3,
-    14.6,
+    17,
     3.5,
     9.1,
     1,
@@ -358,10 +356,25 @@ const pointsData =  [
     13
 ]
 
+const skills = [
+    "Quick Reflexes",
+    "Strategic Thinking",
+    "Precision Shots",
+    "Pattern Recognition",
+    "Anticipating Moves",
+    "Board Control",
+    "Adaptive Playstyle",
+    "Risk Management",
+    "Mind Games",
+];
 
 function SpiderChart() : JSX.Element {
-    const [hoveredPoint, setHoveredPoint] = useState(null);
+    const [hoveredIndex, setHoveredIndex] = useState<number>(Number(Cookies.get('hoveredIndex') || 0));
     const getScaleFactor = (x: number) => 0.2 + (x / 20) * 0.8;
+
+    useEffect(() => {
+        Cookies.set('hoveredIndex', hoveredIndex.toString(), { expires: 365 });
+    }, [hoveredIndex]);
 
     const scaledPoints = pointsData.map((value, index) => {
         const scale = getScaleFactor(value);
@@ -394,7 +407,7 @@ function SpiderChart() : JSX.Element {
                     points={points5.map(p => `${p.x},${p.y}`).join(' ')}
                     className="fill-[#FEDF7F]/60 stroke-white/15 stroke-2"
                 />
-                <circle cx="0" cy="0" r="3" className="fill-white" />
+                <circle cx="0" cy="0" r="7.5" className="fill-black" />
 
                 {/* define gradient color */}
                 <defs>
@@ -405,26 +418,44 @@ function SpiderChart() : JSX.Element {
                     </linearGradient>
                 </defs>
 
-
                 <polygon
                     points={scaledPoints.map(p => `${p.x},${p.y}`).join(' ')}
                     className="stroke-[#531E2E]/75 stroke-2"
                     fill="url(#myGradient)"
                 />
+
+                {
+                    scaledPoints.map((point, index) => (
+                        <circle
+                            key={index}
+                            cx={point.x}
+                            cy={point.y}
+                            r={hoveredIndex === index ? 3.3 : 2.3}
+                            className={hoveredIndex === index ? "fill-[#F9545B]" : "fill-white/80"}
+                            onMouseEnter={() => setHoveredIndex(index)}
+                        />
+                    ))
+                }
+
             </svg>
-            <h1 className="text-5xl text-[#FEDF7F] font-bold">Radar Chart here</h1>
+            <h1 className="text-4xl text-[#FEDF7F] font-bold">{skills[hoveredIndex]}</h1>
+            <h1 className="text-2xl text-[#FEDF7F]/80 font-bold">{pointsData[hoveredIndex]} / 20</h1>
         </div>
     );
 }
 
 export default function Statistics({ chartsData }: StatisticsProps): JSX.Element {
-    const [game, setGame] = useState<GameName>('pong');
+    const [game, setGame] = useState<GameName>((Cookies.get('SelectedGame') as GameName) || 'pong');
     const [data, setData] = useState<ChartDataTypes>(chartsData[game]);
 
     function handleChangeGame(newGame: GameName) {
         setGame(newGame);
         setData(chartsData[newGame]);
     }
+
+    useEffect(() => {
+        Cookies.set('SelectedGame', game, { expires: 365 });
+    }, [game]);
 
     return (
         <div>
