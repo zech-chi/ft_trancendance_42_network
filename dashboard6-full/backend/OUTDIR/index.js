@@ -62,6 +62,21 @@ async function setupServer() {
             reply.send(user);
         }
     });
+    // get Dashboard data
+    app.get('/daysData/:userName', async (request, reply) => {
+        const { userName } = request.params;
+        const user = users_1.Users.find((user) => user.userName === userName); // Convert id to number
+        if (!user) {
+            reply.code(404).send({ error: 'user not found' });
+        }
+        else {
+            const daysData = users_1.daysDataMap[user.id];
+            if (daysData)
+                reply.send(user);
+            else
+                reply.code(404).send({ error: 'daysData not found' });
+        }
+    });
     app.listen({ port: 5000 }, (err, address) => {
         if (err) {
             app.log.error(err);

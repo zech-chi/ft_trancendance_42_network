@@ -1,5 +1,6 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import { Users } from './Data/users';
+import { Users, daysDataMap } from './Data/users';
+
 import cors from '@fastify/cors';
 
 
@@ -68,7 +69,22 @@ async function setupServer() {
       } else {
         reply.send(user);
       }  
-    });  
+    });
+
+    // get Dashboard data
+    app.get<{ Params: UserParams }>('/daysData/:userName', async (request, reply) => {
+      const { userName } = request.params;
+      const user = Users.find((user) => user.userName === userName); // Convert id to number
+      if (!user) {
+        reply.code(404).send({ error: 'user not found' });
+      } else {
+        const daysData = daysDataMap[user.id];
+        if (daysData)
+          reply.send(daysData);
+        else
+          reply.code(404).send({ error: 'daysData not found' });
+      }  
+    });
     
     app.listen({ port: 5000 }, (err, address) => {
       if (err) {

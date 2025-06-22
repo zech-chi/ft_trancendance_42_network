@@ -1,3 +1,8 @@
+import { ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData } from './UsersDashboardData/ARiX1k2UCch17pfe6hh6P0xjSCB';
+import { KJ5qt8Zh0tciqsgiXFzBhuYq4of_DaysData } from './UsersDashboardData/KJ5qt8Zh0tciqsgiXFzBhuYq4of';
+import { omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData } from './UsersDashboardData/omKLRQY9S0LYIrVMEkgjG2c3j6k';
+import { pi07DVZqUqr82Po0NuPjnXxD5Tn_DaysData } from './UsersDashboardData/pi07DVZqUqr82Po0NuPjnXxD5Tn';
+
 export interface User {
     id: string,
     fullName: string,
@@ -8,6 +13,13 @@ export interface User {
     level: number,
     progress: number,
     online: boolean
+}
+
+type YearData = {
+    totalGames: number;
+    totalActiveDays: number;
+    maxStreak: number;
+    DaysData: { [key: string]: number };
 }
 
 export const Users: User[] = [
@@ -56,3 +68,11 @@ export const Users: User[] = [
         online: true,
     }
 ]
+
+
+export const daysDataMap: {[userId: string] : { [year: number] : YearData}} = {
+    'omKLRQY9S0LYIrVMEkgjG2c3j6k': ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData,
+    'KJ5qt8Zh0tciqsgiXFzBhuYq4of': KJ5qt8Zh0tciqsgiXFzBhuYq4of_DaysData,
+    'pi07DVZqUqr82Po0NuPjnXxD5Tn': pi07DVZqUqr82Po0NuPjnXxD5Tn_DaysData,
+    'ARiX1k2UCch17pfe6hh6P0xjSCB': ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData,
+}

@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Users = void 0;
+exports.daysDataMap = exports.Users = void 0;
+const ARiX1k2UCch17pfe6hh6P0xjSCB_1 = require("./UsersDashboardData/ARiX1k2UCch17pfe6hh6P0xjSCB");
+const KJ5qt8Zh0tciqsgiXFzBhuYq4of_1 = require("./UsersDashboardData/KJ5qt8Zh0tciqsgiXFzBhuYq4of");
+const pi07DVZqUqr82Po0NuPjnXxD5Tn_1 = require("./UsersDashboardData/pi07DVZqUqr82Po0NuPjnXxD5Tn");
 exports.Users = [
     {
         id: 'omKLRQY9S0LYIrVMEkgjG2c3j6k',
@@ -39,7 +42,7 @@ exports.Users = [
         id: 'ARiX1k2UCch17pfe6hh6P0xjSCB',
         fullName: "SAW X",
         userName: "saw",
-        bio: "live or die the choice is yours!",
+        bio: "live or die! the choice is yours!",
         imageUrl: "/saw.jpg",
         rank: 22,
         level: 22,
@@ -47,3 +50,9 @@ exports.Users = [
         online: true,
     }
 ];
+exports.daysDataMap = {
+    'omKLRQY9S0LYIrVMEkgjG2c3j6k': ARiX1k2UCch17pfe6hh6P0xjSCB_1.ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData,
+    'KJ5qt8Zh0tciqsgiXFzBhuYq4of': KJ5qt8Zh0tciqsgiXFzBhuYq4of_1.KJ5qt8Zh0tciqsgiXFzBhuYq4of_DaysData,
+    'pi07DVZqUqr82Po0NuPjnXxD5Tn': pi07DVZqUqr82Po0NuPjnXxD5Tn_1.pi07DVZqUqr82Po0NuPjnXxD5Tn_DaysData,
+    'ARiX1k2UCch17pfe6hh6P0xjSCB': ARiX1k2UCch17pfe6hh6P0xjSCB_1.ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData,
+};
