@@ -345,6 +345,17 @@ const points5 = points1.map((
 ));
 
 
+// const pointsData =  [
+// 20,
+// 20,
+// 20,
+// 20,
+// 20,
+// 20,
+// 20,
+// 20,
+// 20
+// ]
 const pointsData =  [
     17.2,
     3,
@@ -352,7 +363,7 @@ const pointsData =  [
     3.5,
     9.1,
     1,
-    3,
+    15,
     7.3,
     13
 ]
@@ -368,13 +379,6 @@ const skills = [
     "Risk Management",
     "Mind Games",
 ];
-
-function isPointBetweenLines(x1: number, y1: number, a1: number, a2: number): boolean {
-    const yLine1 = a1 * x1;
-    const yLine2 = a2 * x1;
-  
-    return y1 >= Math.min(yLine1, yLine2) && y1 <= Math.max(yLine1, yLine2);
-}
 
 function isPointBetweenAngles(x1: number, y1: number, sep1: { x: number, y: number }, sep2: { x: number, y: number }): boolean {
     const pointAngle = Math.atan2(y1, x1);
@@ -395,12 +399,13 @@ function isPointBetweenAngles(x1: number, y1: number, sep1: { x: number, y: numb
 
 
 function SpiderChart() : JSX.Element {
-    const [hoveredIndex, setHoveredIndex] = useState<number>(Number(Cookies.get('hoveredIndex') || 0));
+    // const [hoveredIndex, setHoveredIndex] = useState<number>(Number(Cookies.get('hoveredIndex') || 0));
+    const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
     const getScaleFactor = (x: number) => 0.2 + (x / 20) * 0.8;
 
-    useEffect(() => {
-        Cookies.set('hoveredIndex', hoveredIndex.toString(), { expires: 365 });
-    }, [hoveredIndex]);
+    // useEffect(() => {
+    //     Cookies.set('hoveredIndex', hoveredIndex.toString(), { expires: 365 });
+    // }, [hoveredIndex]);
 
     const scaledPoints = pointsData.map((value, index) => {
         const scale = getScaleFactor(value);
@@ -433,50 +438,28 @@ function SpiderChart() : JSX.Element {
     const [coords, setCoords] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
     const svgRef = useRef<SVGSVGElement>(null);
 
-    console.log(sperators);
-
     const setActivatedCircleIndex = (() => {
         if (coords.x === 0 && coords.y === 0)
             return ;
 
-        if (isPointBetweenLines(coords.x, coords.y, (sperators[0].y / sperators[0].x), (sperators[1].y / sperators[1].x))
-            && (coords.x > 0)
-        )
+        if (isPointBetweenAngles(coords.x, coords.y, sperators[0], sperators[1]))
             setHoveredIndex(1);
-        if (isPointBetweenLines(coords.x, coords.y, (sperators[1].y / sperators[1].x), (sperators[2].y / sperators[2].x))
-            && (coords.x > 0)
-        )
+        else if (isPointBetweenAngles(coords.x, coords.y, sperators[1], sperators[2]))
             setHoveredIndex(2);
-        if (isPointBetweenLines(coords.x, coords.y, (sperators[2].y / sperators[2].x), (sperators[3].y / sperators[3].x))
-            && (coords.x > 0)
-        )
+        else if (isPointBetweenAngles(coords.x, coords.y, sperators[2], sperators[3]))
             setHoveredIndex(3);
-        if (isPointBetweenLines(coords.x, coords.y, (sperators[3].y / sperators[3].x), (sperators[4].y / sperators[4].x))
-            && (coords.y > 0)
-        )
+        else if (isPointBetweenAngles(coords.x, coords.y, sperators[3], sperators[4]))
             setHoveredIndex(4);
-        if (isPointBetweenAngles(coords.x, coords.y, sperators[4], sperators[5])
-            && (coords.y > 0)
-        )
+        else if (isPointBetweenAngles(coords.x, coords.y, sperators[4], sperators[5]))
             setHoveredIndex(5);
-        if (isPointBetweenLines(coords.x, coords.y, (sperators[5].y / sperators[5].x), (sperators[6].y / sperators[6].x))
-            && (coords.y > 0)
-        )
+        else if (isPointBetweenAngles(coords.x, coords.y, sperators[5], sperators[6]))
             setHoveredIndex(6);
-        if (isPointBetweenLines(coords.x, coords.y, (sperators[6].y / sperators[6].x), (sperators[7].y / sperators[7].x))
-            && (coords.x < 0)
-        )
+        else if (isPointBetweenAngles(coords.x, coords.y, sperators[6], sperators[7]))
             setHoveredIndex(7);
-        if (isPointBetweenLines(coords.x, coords.y, (sperators[7].y / sperators[7].x), (sperators[8].y / sperators[8].x))
-            && (coords.x < 0)
-        )
+        else if (isPointBetweenAngles(coords.x, coords.y, sperators[7], sperators[8]))
             setHoveredIndex(8);
-        if (isPointBetweenAngles(coords.x, coords.y, sperators[8], sperators[0])
-            && (coords.y < 0)
-        )
+        else if (isPointBetweenAngles(coords.x, coords.y, sperators[8], sperators[0]))
             setHoveredIndex(0);
-        
-
     })
 
     const handleMouseMove = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
@@ -503,11 +486,12 @@ function SpiderChart() : JSX.Element {
                 y: Number(0)
             }
         )
+        setHoveredIndex(-1);
     });
     
     return (
-        <div className="w-160 h-160 rounded-full flex flex-col items-center justify-center m-38 my-5">
-            <svg ref={svgRef} className="w-130 h-130" viewBox="-100 -100 200 200" onMouseMove={handleMouseMove} onMouseLeave={resetCoords}>
+        <div className="w-160 h-160 rounded-full flex flex-col items-center justify-center m-38 my-5 pb-25">
+            <svg ref={svgRef} className="absolute w-130 h-130" viewBox="-100 -100 200 200" onMouseMove={handleMouseMove} onMouseLeave={resetCoords}>
                 {
                     sperators.map((point, index) => (
                         <line
@@ -575,8 +559,12 @@ function SpiderChart() : JSX.Element {
                     className={(coords.x === 0 && coords.y === 0) ? "fill-transparent" : "fill-[#632133]"}
                 />
             </svg>
-            <h1 className="text-4xl text-[#FEDF7F] font-bold">{skills[hoveredIndex]}</h1>
-            <h1 className="text-2xl text-[#FEDF7F]/80 font-bold">{pointsData[hoveredIndex]} / 20</h1>
+            {hoveredIndex !== -1 && (
+                <div className="flex flex-col items-center justify-center pt-150">
+                    <h1 className="text-4xl text-[#FEDF7F] font-bold">{skills[hoveredIndex]}</h1>
+                    <h1 className="text-2xl text-[#FEDF7F]/80 font-bold">{pointsData[hoveredIndex]} / 20</h1>
+                </div>
+            )}
         </div>
     );
 }
