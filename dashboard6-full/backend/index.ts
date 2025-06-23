@@ -1,5 +1,5 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import { Users, daysDataMap } from './Data/users';
+import { Users, daysDataMap, chartsDataMap, radarDataMap } from './Data/users';
 
 import cors from '@fastify/cors';
 
@@ -71,10 +71,10 @@ async function setupServer() {
       }  
     });
 
-    // get Dashboard data
+    // get Dashboard
     app.get<{ Params: UserParams }>('/daysData/:userName', async (request, reply) => {
       const { userName } = request.params;
-      const user = Users.find((user) => user.userName === userName); // Convert id to number
+      const user = Users.find((user) => user.userName === userName);
       if (!user) {
         reply.code(404).send({ error: 'user not found' });
       } else {
@@ -85,6 +85,37 @@ async function setupServer() {
           reply.code(404).send({ error: 'daysData not found' });
       }  
     });
+
+    // get chartData
+    app.get<{ Params: UserParams }>('/chartsData/:userName', async (request, reply) => {
+      const { userName } = request.params;
+      const user = Users.find((user) => user.userName === userName); 
+      if (!user) {
+        reply.code(404).send({ error: 'user not found' });
+      } else {
+        const chartsData = chartsDataMap[user.id];
+        if (chartsData)
+          reply.send(chartsData);
+        else
+          reply.code(404).send({ error: 'chartsData not found' });
+      }  
+    });
+
+    // get radarData
+    app.get<{ Params: UserParams }>('/radarData/:userName', async (request, reply) => {
+      const { userName } = request.params;
+      const user = Users.find((user) => user.userName === userName); 
+      if (!user) {
+        reply.code(404).send({ error: 'user not found' });
+      } else {
+        const radarData = radarDataMap[user.id];
+        if (radarData)
+          reply.send(radarData);
+        else
+          reply.code(404).send({ error: 'radarData not found' });
+      }  
+    });
+
     
     app.listen({ port: 5000 }, (err, address) => {
       if (err) {

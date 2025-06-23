@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData = void 0;
+exports.omKLRQY9S0LYIrVMEkgjG2c3j6k_chartsData = exports.omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData = void 0;
 exports.omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData = {
     2024: {
         totalGames: 317,
@@ -1121,4 +1121,32 @@ exports.omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData = {
             '366': 0.69
         }
     },
+};
+exports.omKLRQY9S0LYIrVMEkgjG2c3j6k_chartsData = {
+    pong: {
+        totalGamesWithAi: 887,
+        gamesWithAiEasy: 61,
+        gamesWithAiMedium: 423,
+        gamesWithAiHard: 403,
+        totalWins: 682,
+        easyWins: 60,
+        mediumWins: 390,
+        hardWins: 232,
+        friendsWins: 587,
+        friendsLosses: 318,
+        friendsTotalGames: 905
+    },
+    parchesi: {
+        totalGamesWithAi: 1123,
+        gamesWithAiEasy: 89,
+        gamesWithAiMedium: 567,
+        gamesWithAiHard: 467,
+        totalWins: 824,
+        easyWins: 87,
+        mediumWins: 512,
+        hardWins: 225,
+        friendsWins: 693,
+        friendsLosses: 407,
+        friendsTotalGames: 1100
+    }
 };

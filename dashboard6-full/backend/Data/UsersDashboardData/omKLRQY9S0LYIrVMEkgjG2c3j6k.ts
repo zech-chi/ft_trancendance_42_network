@@ -1128,4 +1128,46 @@ export const omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData : { [year: number] : YearData}
           }
           
     },
-  }
+}
+
+export const omKLRQY9S0LYIrVMEkgjG2c3j6k_chartsData = {
+    pong: {
+        totalGamesWithAi: 887,
+        gamesWithAiEasy: 61,
+        gamesWithAiMedium: 423,
+        gamesWithAiHard: 403,
+        totalWins: 682,
+        easyWins: 60,
+        mediumWins: 390,
+        hardWins: 232,
+        friendsWins: 587,
+        friendsLosses: 318,
+        friendsTotalGames: 905
+    },
+    parchesi: {
+        totalGamesWithAi: 1123,
+        gamesWithAiEasy: 89,
+        gamesWithAiMedium: 567,
+        gamesWithAiHard: 467,
+        totalWins: 824,
+        easyWins: 87,
+        mediumWins: 512,
+        hardWins: 225,
+        friendsWins: 693,
+        friendsLosses: 407,
+        friendsTotalGames: 1100
+    }
+}
+
+export const omKLRQY9S0LYIrVMEkgjG2c3j6k_radarData  =  [
+    11.3,
+    2.7,
+    18.9,
+    6.4,
+    0.5,
+    13.8,
+    7.6,
+    16.2,
+    3.9
+];
+  

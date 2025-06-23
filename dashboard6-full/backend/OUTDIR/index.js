@@ -65,7 +65,7 @@ async function setupServer() {
     // get Dashboard data
     app.get('/daysData/:userName', async (request, reply) => {
         const { userName } = request.params;
-        const user = users_1.Users.find((user) => user.userName === userName); // Convert id to number
+        const user = users_1.Users.find((user) => user.userName === userName);
         if (!user) {
             reply.code(404).send({ error: 'user not found' });
         }
@@ -75,6 +75,21 @@ async function setupServer() {
                 reply.send(daysData);
             else
                 reply.code(404).send({ error: 'daysData not found' });
+        }
+    });
+    // get chartData data
+    app.get('/chartsData/:userName', async (request, reply) => {
+        const { userName } = request.params;
+        const user = users_1.Users.find((user) => user.userName === userName);
+        if (!user) {
+            reply.code(404).send({ error: 'user not found' });
+        }
+        else {
+            const chartsData = users_1.chartsDataMap[user.id];
+            if (chartsData)
+                reply.send(chartsData);
+            else
+                reply.code(404).send({ error: 'chartsData not found' });
         }
     });
     app.listen({ port: 5000 }, (err, address) => {

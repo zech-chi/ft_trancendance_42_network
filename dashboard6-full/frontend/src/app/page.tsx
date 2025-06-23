@@ -10,29 +10,6 @@ import Login from "@/components/Login";
 
 const TOTAL_USERS = 133742;
 
-const user1 = {
-  fullName: "Gon Freecss",
-  userName: "hunterGon",
-  bio: "One heartbeat matters, the next one!",
-  imageUrl: "/gon.jpg",
-  rank: 1337,
-  level: 9,
-  progress: .75,
-  online: true,
-}
-
-const user2 = {
-  fullName: "Zakaria Ech.chifaouy",
-  userName: "zech-chi",
-  bio: "we buy things we don't need with money we don't have to impress people we don't like!",
-  imageUrl: "/kilwa.png",
-  rank: 2541,
-  level: 12,
-  progress: .33,
-  online: false,
-}
-
-
 // calendar data
 
 type YearData = {
@@ -42,64 +19,6 @@ type YearData = {
   DaysData: { [key: string]: number };
 }
 
-const calendarData : { [year: number] : YearData} = {
-  2024: {
-      totalGames: 317,
-      totalActiveDays: 103,
-      maxStreak: 30,
-      DaysData: {
-      }
-  },
-  2023: {
-      totalGames: 250,
-      totalActiveDays: 90,
-      maxStreak: 25,
-      DaysData: {
-      }
-  },
-  2022: {
-      totalGames: 200,
-      totalActiveDays: 80,
-      maxStreak: 20,
-      DaysData: {
-      }
-  },
-
-  2021: {
-      totalGames: 150,
-      totalActiveDays: 70,
-      maxStreak: 15,
-      DaysData: {
-      }
-  },
-  2020: {
-      totalGames: 100,
-      totalActiveDays: 60,
-      maxStreak: 10,
-      DaysData: {
-      }
-  },
-  2019: {
-      totalGames: 50,
-      totalActiveDays: 40,
-      maxStreak: 5,
-      DaysData: {
-      }
-  },
-}
-
-function fillDays(): { [key: number]: number } {
-  const activeDays: { [key: number]: number } = {};
-  for (let i = 1; i <= 366; i++) {
-    activeDays[i] = Math.random();
-  }
-  return activeDays;
-}
-
-// end calendar data
-
-
-// charts ai data
 
 export type ChartDataTypes = {
   // for games with AI
@@ -181,6 +100,25 @@ const chartsData2 = {
   }
 };
 
+type GameStats = {
+  totalGamesWithAi: number;
+  gamesWithAiEasy: number;
+  gamesWithAiMedium: number;
+  gamesWithAiHard: number;
+  totalWins: number;
+  easyWins: number;
+  mediumWins: number;
+  hardWins: number;
+  friendsWins: number;
+  friendsLosses: number;
+  friendsTotalGames: number;
+};
+
+type ChartsData = {
+  pong: GameStats;
+  parchesi: GameStats;
+};
+
 // end charts data
 
 const fetchUser = async (userName: string) => {
@@ -203,13 +141,32 @@ const fetchDaysData = async (userName: string) => {
 }
 
 
+const fetchChartsData = async (userName: string) => {
+  const response = await fetch(`http://localhost:5000/chartsData/${userName}`);
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
+
+const fetchRadarData = async (userName: string) => {
+  const response = await fetch(`http://localhost:5000/radarData/${userName}`);
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
+
 export default function Home() : JSX.Element {
   // fill days data
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<any | null>(null);
   const [calendarData, setCalendarData] = useState<{ [year: number] : YearData } | null>(null);
+  const [chartsData, setChartsData] = useState<ChartsData | null>(null);
+  const [radarData, setRadarData] = useState<Number[] | null>(null);
 
-  let chartsData = chartsData1;
   useEffect(() => {
     if (username) {
       console.log('Fetching user for:', username);
@@ -223,6 +180,14 @@ export default function Home() : JSX.Element {
       fetchDaysData(username)
         .then((data) => setCalendarData(data))
         .catch((err) => console.error("Error: ", err));
+      
+      fetchChartsData(username)
+        .then((data) => setChartsData(data))
+        .catch((err) => console.error("Error: ", err));
+
+      fetchRadarData(username)
+        .then((data) => setRadarData(data))
+        .catch((err) => console.error("Error: ", err));
     }
   }, [username])
 
@@ -233,7 +198,7 @@ export default function Home() : JSX.Element {
   return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24 relative">
         {
-          (username && user && calendarData) ? (
+          (username && user && calendarData && chartsData && radarData) ? (
             <>
             <div className="absolute top-20 bottom-0 left-25 w-3/4 w-[calc(65%-1rem)] m-4 rounded-[50px]"
               style={{
@@ -255,7 +220,7 @@ export default function Home() : JSX.Element {
               <CalendarDashboard calendarData={calendarData} />
             </div>
             <div className="absolute top-143 h-190 left-29 w-3/4 w-[calc(65%-1rem)] flex flex-col">
-              <Statistics chartsData={chartsData} />
+              <Statistics chartsData={chartsData} radarData={radarData} />
             </div>
             </>
           ) : (

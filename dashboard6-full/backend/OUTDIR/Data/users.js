@@ -1,9 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.daysDataMap = exports.Users = void 0;
+exports.chartsDataMap = exports.daysDataMap = exports.Users = void 0;
 const ARiX1k2UCch17pfe6hh6P0xjSCB_1 = require("./UsersDashboardData/ARiX1k2UCch17pfe6hh6P0xjSCB");
 const KJ5qt8Zh0tciqsgiXFzBhuYq4of_1 = require("./UsersDashboardData/KJ5qt8Zh0tciqsgiXFzBhuYq4of");
+const omKLRQY9S0LYIrVMEkgjG2c3j6k_1 = require("./UsersDashboardData/omKLRQY9S0LYIrVMEkgjG2c3j6k");
 const pi07DVZqUqr82Po0NuPjnXxD5Tn_1 = require("./UsersDashboardData/pi07DVZqUqr82Po0NuPjnXxD5Tn");
+const ARiX1k2UCch17pfe6hh6P0xjSCB_2 = require("./UsersDashboardData/ARiX1k2UCch17pfe6hh6P0xjSCB");
+const KJ5qt8Zh0tciqsgiXFzBhuYq4of_2 = require("./UsersDashboardData/KJ5qt8Zh0tciqsgiXFzBhuYq4of");
+const omKLRQY9S0LYIrVMEkgjG2c3j6k_2 = require("./UsersDashboardData/omKLRQY9S0LYIrVMEkgjG2c3j6k");
+const pi07DVZqUqr82Po0NuPjnXxD5Tn_2 = require("./UsersDashboardData/pi07DVZqUqr82Po0NuPjnXxD5Tn");
 exports.Users = [
     {
         id: 'omKLRQY9S0LYIrVMEkgjG2c3j6k',
@@ -51,8 +56,14 @@ exports.Users = [
     }
 ];
 exports.daysDataMap = {
-    'omKLRQY9S0LYIrVMEkgjG2c3j6k': ARiX1k2UCch17pfe6hh6P0xjSCB_1.ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData,
+    'omKLRQY9S0LYIrVMEkgjG2c3j6k': omKLRQY9S0LYIrVMEkgjG2c3j6k_1.omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData,
     'KJ5qt8Zh0tciqsgiXFzBhuYq4of': KJ5qt8Zh0tciqsgiXFzBhuYq4of_1.KJ5qt8Zh0tciqsgiXFzBhuYq4of_DaysData,
     'pi07DVZqUqr82Po0NuPjnXxD5Tn': pi07DVZqUqr82Po0NuPjnXxD5Tn_1.pi07DVZqUqr82Po0NuPjnXxD5Tn_DaysData,
     'ARiX1k2UCch17pfe6hh6P0xjSCB': ARiX1k2UCch17pfe6hh6P0xjSCB_1.ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData,
+};
+exports.chartsDataMap = {
+    'omKLRQY9S0LYIrVMEkgjG2c3j6k': omKLRQY9S0LYIrVMEkgjG2c3j6k_2.omKLRQY9S0LYIrVMEkgjG2c3j6k_chartsData,
+    'KJ5qt8Zh0tciqsgiXFzBhuYq4of': KJ5qt8Zh0tciqsgiXFzBhuYq4of_2.KJ5qt8Zh0tciqsgiXFzBhuYq4of_chartsData,
+    'pi07DVZqUqr82Po0NuPjnXxD5Tn': pi07DVZqUqr82Po0NuPjnXxD5Tn_2.pi07DVZqUqr82Po0NuPjnXxD5Tn_chartsData,
+    'ARiX1k2UCch17pfe6hh6P0xjSCB': ARiX1k2UCch17pfe6hh6P0xjSCB_2.ARiX1k2UCch17pfe6hh6P0xjSCB_chartsData,
 };

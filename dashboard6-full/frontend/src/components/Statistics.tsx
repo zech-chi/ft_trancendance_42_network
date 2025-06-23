@@ -37,8 +37,13 @@ type StatsProps = {
 
 type StatisticsProps = {
     chartsData: { [game: string]: ChartDataTypes };
+    radarData: number[];
 };
 
+type SpiderChartProps = {
+    radarData: number[];
+};
+  
 
 function FriendsStats({ data }: StatsProps): JSX.Element{
     const wins = data.friendsWins;
@@ -345,17 +350,6 @@ const points5 = points1.map((
 ));
 
 
-// const pointsData =  [
-// 20,
-// 20,
-// 20,
-// 20,
-// 20,
-// 20,
-// 20,
-// 20,
-// 20
-// ]
 const pointsData =  [
     17.2,
     3,
@@ -398,7 +392,7 @@ function isPointBetweenAngles(x1: number, y1: number, sep1: { x: number, y: numb
 }
 
 
-function SpiderChart() : JSX.Element {
+function SpiderChart({ radarData }: SpiderChartProps): JSX.Element {
     // const [hoveredIndex, setHoveredIndex] = useState<number>(Number(Cookies.get('hoveredIndex') || 0));
     const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
     const getScaleFactor = (x: number) => 0.2 + (x / 20) * 0.8;
@@ -407,7 +401,7 @@ function SpiderChart() : JSX.Element {
     //     Cookies.set('hoveredIndex', hoveredIndex.toString(), { expires: 365 });
     // }, [hoveredIndex]);
 
-    const scaledPoints = pointsData.map((value, index) => {
+    const scaledPoints = radarData.map((value, index) => {
         const scale = getScaleFactor(value);
         return {
             x: points1[index].x * scale,
@@ -562,14 +556,14 @@ function SpiderChart() : JSX.Element {
             {hoveredIndex !== -1 && (
                 <div className="flex flex-col items-center justify-center pt-150">
                     <h1 className="text-4xl text-[#FEDF7F] font-bold">{skills[hoveredIndex]}</h1>
-                    <h1 className="text-2xl text-[#FEDF7F]/80 font-bold">{pointsData[hoveredIndex]} / 20</h1>
+                    <h1 className="text-2xl text-[#FEDF7F]/80 font-bold">{radarData[hoveredIndex]} / 20</h1>
                 </div>
             )}
         </div>
     );
 }
 
-export default function Statistics({ chartsData }: StatisticsProps): JSX.Element {
+export default function Statistics({ chartsData, radarData }: StatisticsProps): JSX.Element {
     const [game, setGame] = useState<GameName>((Cookies.get('SelectedGame') as GameName) || 'pong');
     const [data, setData] = useState<ChartDataTypes>(chartsData[game]);
 
@@ -607,7 +601,7 @@ export default function Statistics({ chartsData }: StatisticsProps): JSX.Element
                         backgroundBlendMode: 'overlay',
                     }}
                 >
-                    <SpiderChart />
+                    <SpiderChart radarData={radarData} />
                 </div>
 
                 <div className="flex flex-col gap-5">

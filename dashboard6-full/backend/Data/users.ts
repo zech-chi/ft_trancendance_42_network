@@ -3,6 +3,16 @@ import { KJ5qt8Zh0tciqsgiXFzBhuYq4of_DaysData } from './UsersDashboardData/KJ5qt
 import { omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData } from './UsersDashboardData/omKLRQY9S0LYIrVMEkgjG2c3j6k';
 import { pi07DVZqUqr82Po0NuPjnXxD5Tn_DaysData } from './UsersDashboardData/pi07DVZqUqr82Po0NuPjnXxD5Tn';
 
+import { ARiX1k2UCch17pfe6hh6P0xjSCB_chartsData } from './UsersDashboardData/ARiX1k2UCch17pfe6hh6P0xjSCB';
+import { KJ5qt8Zh0tciqsgiXFzBhuYq4of_chartsData } from './UsersDashboardData/KJ5qt8Zh0tciqsgiXFzBhuYq4of';
+import { omKLRQY9S0LYIrVMEkgjG2c3j6k_chartsData } from './UsersDashboardData/omKLRQY9S0LYIrVMEkgjG2c3j6k';
+import { pi07DVZqUqr82Po0NuPjnXxD5Tn_chartsData } from './UsersDashboardData/pi07DVZqUqr82Po0NuPjnXxD5Tn';
+
+import { ARiX1k2UCch17pfe6hh6P0xjSCB_radarData } from './UsersDashboardData/ARiX1k2UCch17pfe6hh6P0xjSCB';
+import { KJ5qt8Zh0tciqsgiXFzBhuYq4of_radarData } from './UsersDashboardData/KJ5qt8Zh0tciqsgiXFzBhuYq4of';
+import { omKLRQY9S0LYIrVMEkgjG2c3j6k_radarData } from './UsersDashboardData/omKLRQY9S0LYIrVMEkgjG2c3j6k';
+import { pi07DVZqUqr82Po0NuPjnXxD5Tn_radarData } from './UsersDashboardData/pi07DVZqUqr82Po0NuPjnXxD5Tn';
+
 export interface User {
     id: string,
     fullName: string,
@@ -71,8 +81,23 @@ export const Users: User[] = [
 
 
 export const daysDataMap: {[userId: string] : { [year: number] : YearData}} = {
-    'omKLRQY9S0LYIrVMEkgjG2c3j6k': ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData,
+    'omKLRQY9S0LYIrVMEkgjG2c3j6k': omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData,
     'KJ5qt8Zh0tciqsgiXFzBhuYq4of': KJ5qt8Zh0tciqsgiXFzBhuYq4of_DaysData,
     'pi07DVZqUqr82Po0NuPjnXxD5Tn': pi07DVZqUqr82Po0NuPjnXxD5Tn_DaysData,
     'ARiX1k2UCch17pfe6hh6P0xjSCB': ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData,
+}
+
+
+export const chartsDataMap: {[userId: string] : { [year: number] : YearData}} = {
+    'omKLRQY9S0LYIrVMEkgjG2c3j6k': omKLRQY9S0LYIrVMEkgjG2c3j6k_chartsData,
+    'KJ5qt8Zh0tciqsgiXFzBhuYq4of': KJ5qt8Zh0tciqsgiXFzBhuYq4of_chartsData,
+    'pi07DVZqUqr82Po0NuPjnXxD5Tn': pi07DVZqUqr82Po0NuPjnXxD5Tn_chartsData,
+    'ARiX1k2UCch17pfe6hh6P0xjSCB': ARiX1k2UCch17pfe6hh6P0xjSCB_chartsData,
+}
+
+export const radarDataMap: {[userId: string] : Number[] } = {
+    'omKLRQY9S0LYIrVMEkgjG2c3j6k': omKLRQY9S0LYIrVMEkgjG2c3j6k_radarData,
+    'KJ5qt8Zh0tciqsgiXFzBhuYq4of': KJ5qt8Zh0tciqsgiXFzBhuYq4of_radarData,
+    'pi07DVZqUqr82Po0NuPjnXxD5Tn': pi07DVZqUqr82Po0NuPjnXxD5Tn_radarData,
+    'ARiX1k2UCch17pfe6hh6P0xjSCB': ARiX1k2UCch17pfe6hh6P0xjSCB_radarData,
 }
