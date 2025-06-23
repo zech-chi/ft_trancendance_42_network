@@ -82,7 +82,8 @@ export default function CalendarDashboard({ calendarData }: CalendarDashboardPro
     const color3 = '#FF9D24';
     const color = color1;
 
-    const activeDays = fillActiveDays();
+    const activeDays = calendarData[selectedYear].DaysData;
+    console.log(calendarData);
 
     for (let i = 0; i < 63; i++) {
       const boxes = [];

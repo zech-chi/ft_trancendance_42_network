@@ -72,7 +72,7 @@ async function setupServer() {
         else {
             const daysData = users_1.daysDataMap[user.id];
             if (daysData)
-                reply.send(user);
+                reply.send(daysData);
             else
                 reply.code(404).send({ error: 'daysData not found' });
         }

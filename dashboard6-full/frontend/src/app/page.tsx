@@ -193,16 +193,21 @@ const fetchUser = async (userName: string) => {
 }
 
 
+const fetchDaysData = async (userName: string) => {
+  const response = await fetch(`http://localhost:5000/daysData/${userName}`);
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
 
 
 export default function Home() : JSX.Element {
   // fill days data
-  Object.keys(calendarData).forEach((year) => {
-    calendarData[+year].DaysData = fillDays();
-  })
-
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<any | null>(null);
+  const [calendarData, setCalendarData] = useState<{ [year: number] : YearData } | null>(null);
 
   let chartsData = chartsData1;
   useEffect(() => {
@@ -214,6 +219,10 @@ export default function Home() : JSX.Element {
           setUser(data)
         })
         .catch((err) => console.error("Error: ", err));
+
+      fetchDaysData(username)
+        .then((data) => setCalendarData(data))
+        .catch((err) => console.error("Error: ", err));
     }
   }, [username])
 
@@ -224,7 +233,7 @@ export default function Home() : JSX.Element {
   return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24 relative">
         {
-          (username && user) ? (
+          (username && user && calendarData) ? (
             <>
             <div className="absolute top-20 bottom-0 left-25 w-3/4 w-[calc(65%-1rem)] m-4 rounded-[50px]"
               style={{
