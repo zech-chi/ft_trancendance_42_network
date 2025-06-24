@@ -377,7 +377,7 @@ export const ARiX1k2UCch17pfe6hh6P0xjSCB_DaysData : { [year: number] : YearData}
             '364': 0.89,
             '365': 0,
             '366': 0.82
-          }
+        }
     },
 }
 

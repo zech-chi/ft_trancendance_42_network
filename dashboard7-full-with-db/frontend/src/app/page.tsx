@@ -186,7 +186,21 @@ export default function Home() : JSX.Element {
         .catch((err) => console.error("Error: ", err));
 
       fetchRadarData(username)
-        .then((data) => setRadarData(data))
+        .then((data) => {
+          const radarDataArray = [
+            data.Quick_Reflexes,
+            data.Strategic_Thinking,
+            data.Precision_Shots,
+            data.Pattern_Recognition,
+            data.Anticipating_Moves,
+            data.Board_Control,
+            data.Adaptive_Playstyle,
+            data.Risk_Management,
+            data.Mind_Games,
+          ]
+          setRadarData(radarDataArray);
+        }
+        )
         .catch((err) => console.error("Error: ", err));
     }
   }, [username])

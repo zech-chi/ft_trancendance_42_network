@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.radarDataMap = exports.chartsDataMap = exports.daysDataMap = exports.Users = void 0;
+exports.radarDataMap = exports.chartsDataMap = exports.daysDataMap = exports.RadarData = exports.Users = void 0;
 const ARiX1k2UCch17pfe6hh6P0xjSCB_1 = require("./UsersDashboardData/ARiX1k2UCch17pfe6hh6P0xjSCB");
 const KJ5qt8Zh0tciqsgiXFzBhuYq4of_1 = require("./UsersDashboardData/KJ5qt8Zh0tciqsgiXFzBhuYq4of");
 const omKLRQY9S0LYIrVMEkgjG2c3j6k_1 = require("./UsersDashboardData/omKLRQY9S0LYIrVMEkgjG2c3j6k");
@@ -57,6 +57,56 @@ exports.Users = [
         level: 22,
         progress: .73,
         online: true,
+    }
+];
+exports.RadarData = [
+    {
+        userId: 'omKLRQY9S0LYIrVMEkgjG2c3j6k',
+        Quick_Reflexes: 11.3,
+        Strategic_Thinking: 2.7,
+        Precision_Shots: 18.9,
+        Pattern_Recognition: 6.4,
+        Anticipating_Moves: 0.5,
+        Board_Control: 13.8,
+        Adaptive_Playstyle: 7.6,
+        Risk_Management: 16.2,
+        Mind_Games: 3.9
+    },
+    {
+        userId: 'KJ5qt8Zh0tciqsgiXFzBhuYq4of',
+        Quick_Reflexes: 12.4,
+        Strategic_Thinking: 19.7,
+        Precision_Shots: 4.3,
+        Pattern_Recognition: 8.6,
+        Anticipating_Moves: 17.1,
+        Board_Control: 0.9,
+        Adaptive_Playstyle: 15.5,
+        Risk_Management: 6.2,
+        Mind_Games: 2.8
+    },
+    {
+        userId: 'pi07DVZqUqr82Po0NuPjnXxD5Tn',
+        Quick_Reflexes: 4.6,
+        Strategic_Thinking: 19.2,
+        Precision_Shots: 7.1,
+        Pattern_Recognition: 12.8,
+        Anticipating_Moves: 0.3,
+        Board_Control: 16.5,
+        Adaptive_Playstyle: 2.9,
+        Risk_Management: 10.4,
+        Mind_Games: 8.7
+    },
+    {
+        userId: 'ARiX1k2UCch17pfe6hh6P0xjSCB',
+        Quick_Reflexes: 17.2,
+        Strategic_Thinking: 3,
+        Precision_Shots: 17,
+        Pattern_Recognition: 3.5,
+        Anticipating_Moves: 9.1,
+        Board_Control: 1,
+        Adaptive_Playstyle: 15,
+        Risk_Management: 7.3,
+        Mind_Games: 13
     }
 ];
 exports.daysDataMap = {

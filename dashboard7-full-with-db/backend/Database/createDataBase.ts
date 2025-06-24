@@ -1,11 +1,16 @@
 import sqlite3 from "sqlite3";
-import { Users } from "./Data/users"
+import { Users, RadarData } from "./Data/users"
 
 
 /*
     .headers on
     .mode column
     SELECT * FROM Users;
+
+
+    .headers on
+    .mode column
+    SELECT * FROM RadarData;
 */
 
 
@@ -40,6 +45,30 @@ db.serialize( () => {
         }
     });
 
+    // create RadarData table if it doesn't exist yet
+    db.run(`
+        CREATE TABLE IF NOT EXISTS RadarData (
+            userId TEXT PRIMARY KEY,
+            Quick_Reflexes REAL,
+            Strategic_Thinking REAL,
+            Precision_Shots REAL,
+            Pattern_Recognition REAL,
+            Anticipating_Moves REAL,
+            Board_Control REAL,
+            Adaptive_Playstyle REAL,
+            Risk_Management REAL,
+            Mind_Games REAL,
+            FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE
+        )
+    `, (err: any) => {
+        if (err) {
+            console.log("❌ Error creating RadarData table: ", err);
+        } else {
+            console.log("✅ RadarData table created (if not existed)!");
+        }
+    });
+
+    // insert Users in Users table
     const statementUsers = db.prepare(
         `
         INSERT OR REPLACE INTO Users (id, fullName, userName, bio, imageUrl, rank, level, progress, online)
@@ -47,7 +76,6 @@ db.serialize( () => {
         `
     )
 
-    
     Users.forEach( user => {
         statementUsers.run(
             [
@@ -65,19 +93,59 @@ db.serialize( () => {
     });
     
     statementUsers.finalize();
-    
-    const userNameToFind = 'sawf';
-    db.get(
-        `SELECT * FROM Users WHERE userName = ?`, [userNameToFind],
-        (err, row) => {
-            if (err)
-                console.log("❌ Error running query:", err);
-            else if (row)
-                console.log("✅ User found: ", row);
-            else
-                console.log("❌ No user found with userName = ", userNameToFind);
-        }
+
+
+    // insert RadarData in RadarData table
+
+    const statementRadarData = db.prepare(
+        `
+        INSERT OR REPLACE INTO RadarData (
+            userId             ,             
+            Quick_Reflexes     ,
+            Strategic_Thinking ,
+            Precision_Shots    ,
+            Pattern_Recognition,
+            Anticipating_Moves ,
+            Board_Control      ,
+            Adaptive_Playstyle ,
+            Risk_Management    ,
+            Mind_Games
+        )  
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `
     )
+
+    RadarData.forEach( item => {
+        statementRadarData.run(
+            [
+                item.userId             ,     
+                item.Quick_Reflexes     ,
+                item.Strategic_Thinking ,
+                item.Precision_Shots    ,
+                item.Pattern_Recognition,
+                item.Anticipating_Moves ,
+                item.Board_Control      ,
+                item.Adaptive_Playstyle ,
+                item.Risk_Management    ,
+                item.Mind_Games
+            ]
+        )
+    })
+
+    statementRadarData.finalize();
+
+    // const userNameToFind = 'sawf';
+    // db.get(
+    //     `SELECT * FROM Users WHERE userName = ?`, [userNameToFind],
+    //     (err, row) => {
+    //         if (err)
+    //             console.log("❌ Error running query:", err);
+    //         else if (row)
+    //             console.log("✅ User found: ", row);
+    //         else
+    //             console.log("❌ No user found with userName = ", userNameToFind);
+    //     }
+    // )
 
 
     db.close();

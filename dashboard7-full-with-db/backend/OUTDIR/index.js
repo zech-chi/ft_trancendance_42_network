@@ -73,6 +73,34 @@ async function getUser(userName) {
         throw err;
     }
 }
+async function getRadarData(userName) {
+    try {
+        const row = await dbGetAsync(`
+      SELECT
+        quick_reflexes,
+        strategic_thinking,
+        precision_shots,
+        pattern_recognition,
+        anticipating_moves,
+        board_control,
+        adaptive_playstyle,
+        risk_management,
+        mind_games
+      FROM
+        Users
+      JOIN
+        RadarData ON Users.id = RadarData.userId
+      WHERE
+        Users.userName = ?;
+    `, [userName]);
+        if (!row)
+            return null;
+        return row;
+    }
+    catch (err) {
+        throw err;
+    }
+}
 async function setupServer() {
     const app = (0, fastify_1.default)({
         logger: true,
@@ -81,26 +109,31 @@ async function setupServer() {
     await app.register(cors_1.default, {
         origin: '*',
     });
+    // get all users info
     app.get('/users', getUserOpts, async (request, reply) => {
         reply.send(users_1.Users);
     });
+    // get user info
     app.get('/users/:userName', getUserOpt, async (request, reply) => {
         const { userName } = request.params;
-        // db.get(
-        //   `SELECT * FROM Users WHERE userName = ?`, [userName],
-        //   (err, row) => {
-        //       if (err)
-        //           return reply.code(500).send({ error: '❌ Error running query' });
-        //       if (row)
-        //           return reply.send(row);
-        //       return reply.code(404).send({ error: 'user not found' });
-        //   }
-        // )
         try {
             const user = await getUser(userName);
             if (!user)
                 reply.code(404).send({ error: 'user not found' });
             return reply.send(user);
+        }
+        catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
+    });
+    // get radar data info for a user
+    app.get('/radarData/:userName', async (request, reply) => {
+        const { userName } = request.params;
+        try {
+            const radarData = await getRadarData(userName);
+            if (!radarData)
+                reply.code(404).send({ error: 'radarData not found' });
+            return reply.send(radarData);
         }
         catch (err) {
             return reply.code(500).send({ error: '❌ Error running query' });
@@ -137,20 +170,19 @@ async function setupServer() {
         }
     });
     // get radarData
-    app.get('/radarData/:userName', async (request, reply) => {
-        const { userName } = request.params;
-        const user = users_1.Users.find((user) => user.userName === userName);
-        if (!user) {
-            reply.code(404).send({ error: 'user not found' });
-        }
-        else {
-            const radarData = users_1.radarDataMap[user.id];
-            if (radarData)
-                reply.send(radarData);
-            else
-                reply.code(404).send({ error: 'radarData not found' });
-        }
-    });
+    // app.get<{ Params: UserParams }>('/radarData/:userName', async (request, reply) => {
+    //   const { userName } = request.params;
+    //   const user = Users.find((user) => user.userName === userName); 
+    //   if (!user) {
+    //     reply.code(404).send({ error: 'user not found' });
+    //   } else {
+    //     const radarData = radarDataMap[user.id];
+    //     if (radarData)
+    //       reply.send(radarData);
+    //     else
+    //       reply.code(404).send({ error: 'radarData not found' });
+    //   }  
+    // });
     app.listen({ port: 5000 }, (err, address) => {
         if (err) {
             app.log.error(err);
