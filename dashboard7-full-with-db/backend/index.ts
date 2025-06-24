@@ -4,6 +4,13 @@ import sqlite3 from "sqlite3";
 
 import cors from '@fastify/cors';
 
+type YearData = {
+  totalGames: number;
+  totalActiveDays: number;
+  maxStreak: number;
+  DaysData: { [key: string]: number };
+}
+
 const db = new sqlite3.Database('Database/DataBase.db', (err) => {
     if (err) {
         console.log("❌ Error opening database: ", err);
@@ -137,6 +144,83 @@ async function getChartsData(userName: string, game: string) {
   }
 }
 
+
+function dbGetAsyncAll(sqlQuery: string, params: any[]) : Promise<any> {
+  return new Promise((resolve, reject) => {
+    db.all(sqlQuery, params, (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    })
+  });
+}
+
+
+// async function getDailyActivityData(userName: string) {
+//   try {
+//     const data: { [year: number]: {
+//       totalGames: number,
+//       totalActiveDays: number,
+//       maxStreak: number,
+//       DailyActivity: { [day: number]: number }
+//     }} = {};
+
+//     const rows = await dbGetAsyncAll(
+//       `SELECT year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`,
+//       [userName]
+//     )
+    
+//     if (!rows)
+//         return null;
+
+//     rows.forEach((elem: { year: string | number; totalGames: any; totalActiveDays: any; maxStreak: any; }) => {
+//       data[Number(elem.year)] = {
+//         totalGames: elem.totalGames,
+//         totalActiveDays: elem.totalActiveDays,
+//         maxStreak: elem.maxStreak,
+//         DailyActivity: {}
+//       }
+//     });
+//     return data;
+//   } catch (err) {
+//     throw err;
+//   }
+// }
+
+
+async function getDailyActivityData(userName: string) {
+  try {
+    const data: { [year: number]: {
+      totalGames: number,
+      totalActiveDays: number,
+      maxStreak: number,
+      DailyActivity: { [day: string]: number }
+    }} = {};
+
+    const rows = await dbGetAsyncAll(
+      `SELECT year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`,
+      [userName]
+    )
+
+    if (!rows)
+        return null;
+
+    rows.forEach((elem: { year: string | number; totalGames: any; totalActiveDays: any; maxStreak: any; }) => {
+      data[Number(elem.year)] = {
+        totalGames: elem.totalGames,
+        totalActiveDays: elem.totalActiveDays,
+        maxStreak: elem.maxStreak,
+        DailyActivity: {}
+      }
+    });
+    return data;
+  } catch (err) {
+    throw err;
+  }
+}
+
 async function setupServer() {
     const app: FastifyInstance = Fastify({
       logger: true,
@@ -199,17 +283,30 @@ async function setupServer() {
     // get Dashboard
     app.get<{ Params: UserParams }>('/daysData/:userName', async (request, reply) => {
       const { userName } = request.params;
-      const user = Users.find((user) => user.userName === userName);
-      if (!user) {
-        reply.code(404).send({ error: 'user not found' });
-      } else {
-        const daysData = daysDataMap[user.id];
-        if (daysData)
-          reply.send(daysData);
-        else
-          reply.code(404).send({ error: 'daysData not found' });
-      }  
+      try {
+        const DailyActivityData = await getDailyActivityData(userName);
+        if (!DailyActivityData)
+          reply.code(404).send({ error: 'chartsData not found' });
+        return reply.send(DailyActivityData);
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
     });
+
+    // // get Dashboard
+    // app.get<{ Params: UserParams }>('/daysData/:userName', async (request, reply) => {
+    //   const { userName } = request.params;
+    //   const user = Users.find((user) => user.userName === userName);
+    //   if (!user) {
+    //     reply.code(404).send({ error: 'user not found' });
+    //   } else {
+    //     const daysData = daysDataMap[user.id];
+    //     if (daysData)
+    //       reply.send(daysData);
+    //     else
+    //       reply.code(404).send({ error: 'daysData not found' });
+    //   }  
+    // });
 
     // // get chartData
     // app.get<{ Params: UserParams }>('/chartsData/:userName', async (request, reply) => {

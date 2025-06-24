@@ -131,6 +131,38 @@ async function getChartsData(userName, game) {
         throw err;
     }
 }
+function dbGetAsyncAll(sqlQuery, params) {
+    return new Promise((resolve, reject) => {
+        db.all(sqlQuery, params, (err, row) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(row);
+            }
+        });
+    });
+}
+async function getDailyActivityData(userName) {
+    try {
+        const data = {};
+        const rows = await dbGetAsyncAll(`SELECT year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`, [userName]);
+        rows.forEach((elem) => {
+            data[Number(elem.year)] = {
+                totalGames: elem.totalGames,
+                totalActiveDays: elem.totalActiveDays,
+                maxStreak: elem.maxStreak,
+                DailyActivity: {}
+            };
+        });
+        if (!rows)
+            return null;
+        return rows;
+    }
+    catch (err) {
+        throw err;
+    }
+}
 async function setupServer() {
     const app = (0, fastify_1.default)({
         logger: true,
@@ -190,33 +222,44 @@ async function setupServer() {
     // get Dashboard
     app.get('/daysData/:userName', async (request, reply) => {
         const { userName } = request.params;
-        const user = users_1.Users.find((user) => user.userName === userName);
-        if (!user) {
-            reply.code(404).send({ error: 'user not found' });
-        }
-        else {
-            const daysData = users_1.daysDataMap[user.id];
-            if (daysData)
-                reply.send(daysData);
-            else
-                reply.code(404).send({ error: 'daysData not found' });
-        }
-    });
-    // // get chartData
-    app.get('/chartsData/:userName', async (request, reply) => {
-        const { userName } = request.params;
-        const user = users_1.Users.find((user) => user.userName === userName);
-        if (!user) {
-            reply.code(404).send({ error: 'user not found' });
-        }
-        else {
-            const chartsData = users_1.chartsDataMap[user.id];
-            if (chartsData)
-                reply.send(chartsData);
-            else
+        try {
+            const DailyActivityData = await getDailyActivityData(userName);
+            if (!DailyActivityData)
                 reply.code(404).send({ error: 'chartsData not found' });
+            return reply.send(DailyActivityData);
+        }
+        catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
         }
     });
+    // // get Dashboard
+    // app.get<{ Params: UserParams }>('/daysData/:userName', async (request, reply) => {
+    //   const { userName } = request.params;
+    //   const user = Users.find((user) => user.userName === userName);
+    //   if (!user) {
+    //     reply.code(404).send({ error: 'user not found' });
+    //   } else {
+    //     const daysData = daysDataMap[user.id];
+    //     if (daysData)
+    //       reply.send(daysData);
+    //     else
+    //       reply.code(404).send({ error: 'daysData not found' });
+    //   }  
+    // });
+    // // get chartData
+    // app.get<{ Params: UserParams }>('/chartsData/:userName', async (request, reply) => {
+    //   const { userName } = request.params;
+    //   const user = Users.find((user) => user.userName === userName); 
+    //   if (!user) {
+    //     reply.code(404).send({ error: 'user not found' });
+    //   } else {
+    //     const chartsData = chartsDataMap[user.id];
+    //     if (chartsData)
+    //       reply.send(chartsData);
+    //     else
+    //       reply.code(404).send({ error: 'chartsData not found' });
+    //   }  
+    // });
     // get radarData
     // app.get<{ Params: UserParams }>('/radarData/:userName', async (request, reply) => {
     //   const { userName } = request.params;
