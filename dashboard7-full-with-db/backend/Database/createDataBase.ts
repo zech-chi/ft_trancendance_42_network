@@ -1,5 +1,5 @@
 import sqlite3 from "sqlite3";
-import { Users, RadarData } from "./Data/users"
+import { Users, RadarData, ChartsData } from "./Data/users"
 
 
 /*
@@ -133,6 +133,37 @@ db.serialize( () => {
     })
 
     statementRadarData.finalize();
+
+
+
+    /*
+        Create ChartsData table
+    */
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS ChartsData (
+            userId TEXT PRIMARY KEY,
+            game               TEXT ,
+            totalGamesWithAi   INTEGER,
+            gamesWithAiEasy    INTEGER,
+            gamesWithAiMedium  INTEGER,
+            gamesWithAiHard    INTEGER,
+            totalWins          INTEGER,
+            easyWins           INTEGER,
+            mediumWins         INTEGER,
+            hardWins           INTEGER,
+            friendsWins        INTEGER,
+            friendsLosses      INTEGER,
+            friendsTotalGames  INTEGER,
+            FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE
+        )
+    `, (err: any) => {
+        if (err) {
+            console.log("❌ Error creating ChartsData table: ", err);
+        } else {
+            console.log("✅ ChartsData table created (if not existed)!");
+        }
+    });
 
     // const userNameToFind = 'sawf';
     // db.get(
