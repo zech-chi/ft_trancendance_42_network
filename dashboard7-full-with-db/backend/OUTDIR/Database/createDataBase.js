@@ -119,6 +119,72 @@ db.serialize(() => {
         ]);
     });
     statementRadarData.finalize();
+    /*
+        Create ChartsData table
+    */
+    db.run(`
+        CREATE TABLE IF NOT EXISTS ChartsData (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            userId             TEXT NOT NULL,
+            game               TEXT NOT NULL,
+            totalGamesWithAi   INTEGER,
+            gamesWithAiEasy    INTEGER,
+            gamesWithAiMedium  INTEGER,
+            gamesWithAiHard    INTEGER,
+            totalWins          INTEGER,
+            easyWins           INTEGER,
+            mediumWins         INTEGER,
+            hardWins           INTEGER,
+            friendsWins        INTEGER,
+            friendsLosses      INTEGER,
+            friendsTotalGames  INTEGER,
+            FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE
+        )
+    `, (err) => {
+        if (err) {
+            console.log("❌ Error creating ChartsData table: ", err);
+        }
+        else {
+            console.log("✅ ChartsData table created (if not existed)!");
+        }
+    });
+    // insert ChartsData in ChartsData table
+    const statementChartsData = db.prepare(`
+        INSERT OR REPLACE INTO ChartsData (
+            userId             ,
+            game               ,             
+            totalGamesWithAi   ,
+            gamesWithAiEasy    ,
+            gamesWithAiMedium  ,
+            gamesWithAiHard    ,
+            totalWins          ,
+            easyWins           ,
+            mediumWins         ,
+            hardWins           ,
+            friendsWins        ,
+            friendsLosses      ,
+            friendsTotalGames
+        )  
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+    users_1.ChartsData.forEach(item => {
+        statementChartsData.run([
+            item.userId,
+            item.game,
+            item.totalGamesWithAi,
+            item.gamesWithAiEasy,
+            item.gamesWithAiMedium,
+            item.gamesWithAiHard,
+            item.totalWins,
+            item.easyWins,
+            item.mediumWins,
+            item.hardWins,
+            item.friendsWins,
+            item.friendsLosses,
+            item.friendsTotalGames
+        ]);
+    });
+    statementChartsData.finalize();
     // const userNameToFind = 'sawf';
     // db.get(
     //     `SELECT * FROM Users WHERE userName = ?`, [userNameToFind],

@@ -101,6 +101,36 @@ async function getRadarData(userName) {
         throw err;
     }
 }
+async function getChartsData(userName, game) {
+    try {
+        const row = await dbGetAsync(`
+        SELECT
+          totalGamesWithAi ,
+          gamesWithAiEasy  ,
+          gamesWithAiMedium,
+          gamesWithAiHard  ,
+          totalWins        ,
+          easyWins         ,
+          mediumWins       ,
+          hardWins         ,
+          friendsWins      ,
+          friendsLosses    ,
+          friendsTotalGames
+        FROM
+          Users
+        JOIN 
+          ChartsData ON Users.id = ChartsData.userId
+        WHERE
+          Users.userName = ? AND ChartsData.game = ? ;
+      `, [userName, game]);
+        if (!row)
+            return null;
+        return row;
+    }
+    catch (err) {
+        throw err;
+    }
+}
 async function setupServer() {
     const app = (0, fastify_1.default)({
         logger: true,
@@ -139,6 +169,24 @@ async function setupServer() {
             return reply.code(500).send({ error: '❌ Error running query' });
         }
     });
+    // get chartData info for a user
+    app.get('/chartsData/:userName', async (request, reply) => {
+        const { userName } = request.params;
+        try {
+            const chartsDataPong = await getChartsData(userName, 'pong');
+            const chartsDataParchesi = await getChartsData(userName, 'parchesi');
+            if (!chartsDataPong || !chartsDataParchesi)
+                reply.code(404).send({ error: 'chartsData not found' });
+            const chartsData = {
+                pong: chartsDataPong,
+                parchesi: chartsDataParchesi
+            };
+            return reply.send(chartsData);
+        }
+        catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
+    });
     // get Dashboard
     app.get('/daysData/:userName', async (request, reply) => {
         const { userName } = request.params;
@@ -154,7 +202,7 @@ async function setupServer() {
                 reply.code(404).send({ error: 'daysData not found' });
         }
     });
-    // get chartData
+    // // get chartData
     app.get('/chartsData/:userName', async (request, reply) => {
         const { userName } = request.params;
         const user = users_1.Users.find((user) => user.userName === userName);

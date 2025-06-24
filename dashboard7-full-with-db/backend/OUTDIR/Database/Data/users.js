@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.radarDataMap = exports.chartsDataMap = exports.daysDataMap = exports.RadarData = exports.Users = void 0;
+exports.radarDataMap = exports.chartsDataMap = exports.daysDataMap = exports.ChartsData = exports.RadarData = exports.Users = void 0;
 const ARiX1k2UCch17pfe6hh6P0xjSCB_1 = require("./UsersDashboardData/ARiX1k2UCch17pfe6hh6P0xjSCB");
 const KJ5qt8Zh0tciqsgiXFzBhuYq4of_1 = require("./UsersDashboardData/KJ5qt8Zh0tciqsgiXFzBhuYq4of");
 const omKLRQY9S0LYIrVMEkgjG2c3j6k_1 = require("./UsersDashboardData/omKLRQY9S0LYIrVMEkgjG2c3j6k");
@@ -14,6 +14,7 @@ const KJ5qt8Zh0tciqsgiXFzBhuYq4of_3 = require("./UsersDashboardData/KJ5qt8Zh0tci
 const omKLRQY9S0LYIrVMEkgjG2c3j6k_3 = require("./UsersDashboardData/omKLRQY9S0LYIrVMEkgjG2c3j6k");
 const pi07DVZqUqr82Po0NuPjnXxD5Tn_3 = require("./UsersDashboardData/pi07DVZqUqr82Po0NuPjnXxD5Tn");
 exports.Users = [
+    // user1
     {
         id: 'omKLRQY9S0LYIrVMEkgjG2c3j6k',
         fullName: "Gon Freecss",
@@ -25,6 +26,7 @@ exports.Users = [
         progress: .75,
         online: true,
     },
+    // user2
     {
         id: 'KJ5qt8Zh0tciqsgiXFzBhuYq4of',
         fullName: "Zakaria Ech.chifaouy",
@@ -36,6 +38,7 @@ exports.Users = [
         progress: .33,
         online: false,
     },
+    // user3
     {
         id: 'pi07DVZqUqr82Po0NuPjnXxD5Tn',
         fullName: "Killua Zoldyck",
@@ -47,6 +50,7 @@ exports.Users = [
         progress: .42,
         online: false,
     },
+    // user4
     {
         id: 'ARiX1k2UCch17pfe6hh6P0xjSCB',
         fullName: "SAW X",
@@ -60,6 +64,7 @@ exports.Users = [
     }
 ];
 exports.RadarData = [
+    // user1 
     {
         userId: 'omKLRQY9S0LYIrVMEkgjG2c3j6k',
         Quick_Reflexes: 11.3,
@@ -72,6 +77,7 @@ exports.RadarData = [
         Risk_Management: 16.2,
         Mind_Games: 3.9
     },
+    // user2
     {
         userId: 'KJ5qt8Zh0tciqsgiXFzBhuYq4of',
         Quick_Reflexes: 12.4,
@@ -84,6 +90,7 @@ exports.RadarData = [
         Risk_Management: 6.2,
         Mind_Games: 2.8
     },
+    // user3
     {
         userId: 'pi07DVZqUqr82Po0NuPjnXxD5Tn',
         Quick_Reflexes: 4.6,
@@ -96,6 +103,7 @@ exports.RadarData = [
         Risk_Management: 10.4,
         Mind_Games: 8.7
     },
+    // user4
     {
         userId: 'ARiX1k2UCch17pfe6hh6P0xjSCB',
         Quick_Reflexes: 17.2,
@@ -108,6 +116,132 @@ exports.RadarData = [
         Risk_Management: 7.3,
         Mind_Games: 13
     }
+];
+exports.ChartsData = [
+    // user1 
+    {
+        userId: 'omKLRQY9S0LYIrVMEkgjG2c3j6k',
+        game: 'pong',
+        totalGamesWithAi: 887,
+        gamesWithAiEasy: 61,
+        gamesWithAiMedium: 423,
+        gamesWithAiHard: 403,
+        totalWins: 682,
+        easyWins: 60,
+        mediumWins: 390,
+        hardWins: 232,
+        friendsWins: 587,
+        friendsLosses: 318,
+        friendsTotalGames: 905
+    },
+    {
+        userId: 'omKLRQY9S0LYIrVMEkgjG2c3j6k',
+        game: 'parchesi',
+        totalGamesWithAi: 1123,
+        gamesWithAiEasy: 89,
+        gamesWithAiMedium: 567,
+        gamesWithAiHard: 467,
+        totalWins: 824,
+        easyWins: 87,
+        mediumWins: 512,
+        hardWins: 225,
+        friendsWins: 693,
+        friendsLosses: 407,
+        friendsTotalGames: 1100
+    },
+    // user2
+    {
+        userId: 'KJ5qt8Zh0tciqsgiXFzBhuYq4of',
+        game: 'pong',
+        totalGamesWithAi: 974,
+        gamesWithAiEasy: 53,
+        gamesWithAiMedium: 451,
+        gamesWithAiHard: 470,
+        totalWins: 747,
+        easyWins: 50,
+        mediumWins: 408,
+        hardWins: 289,
+        friendsWins: 617,
+        friendsLosses: 235,
+        friendsTotalGames: 852,
+    },
+    {
+        userId: 'KJ5qt8Zh0tciqsgiXFzBhuYq4of',
+        game: 'parchesi',
+        totalGamesWithAi: 501,
+        gamesWithAiEasy: 73,
+        gamesWithAiMedium: 209,
+        gamesWithAiHard: 219,
+        totalWins: 446,
+        easyWins: 73,
+        mediumWins: 198,
+        hardWins: 175,
+        friendsWins: 629,
+        friendsLosses: 486,
+        friendsTotalGames: 1115,
+    },
+    // user3
+    {
+        userId: 'pi07DVZqUqr82Po0NuPjnXxD5Tn',
+        game: 'pong',
+        totalGamesWithAi: 763,
+        gamesWithAiEasy: 48,
+        gamesWithAiMedium: 367,
+        gamesWithAiHard: 348,
+        totalWins: 529,
+        easyWins: 47,
+        mediumWins: 328,
+        hardWins: 154,
+        friendsWins: 412,
+        friendsLosses: 284,
+        friendsTotalGames: 696
+    },
+    {
+        userId: 'pi07DVZqUqr82Po0NuPjnXxD5Tn',
+        game: 'parchesi',
+        totalGamesWithAi: 1054,
+        gamesWithAiEasy: 94,
+        gamesWithAiMedium: 508,
+        gamesWithAiHard: 452,
+        totalWins: 723,
+        easyWins: 91,
+        mediumWins: 442,
+        hardWins: 190,
+        friendsWins: 578,
+        friendsLosses: 352,
+        friendsTotalGames: 930
+    },
+    // user4
+    {
+        userId: 'ARiX1k2UCch17pfe6hh6P0xjSCB',
+        game: 'pong',
+        totalGamesWithAi: 842,
+        gamesWithAiEasy: 67,
+        gamesWithAiMedium: 417,
+        gamesWithAiHard: 358,
+        totalWins: 613,
+        easyWins: 65,
+        mediumWins: 382,
+        hardWins: 166,
+        friendsWins: 534,
+        friendsLosses: 291,
+        friendsTotalGames: 825
+    },
+    {
+        userId: 'ARiX1k2UCch17pfe6hh6P0xjSCB',
+        game: 'parchesi',
+        totalGamesWithAi: 1265,
+        gamesWithAiEasy: 142,
+        gamesWithAiMedium: 583,
+        gamesWithAiHard: 540,
+        totalWins: 887,
+        easyWins: 139,
+        mediumWins: 528,
+        hardWins: 220,
+        friendsWins: 721,
+        friendsLosses: 438,
+        friendsTotalGames: 1159
+    },
 ];
 exports.daysDataMap = {
     'omKLRQY9S0LYIrVMEkgjG2c3j6k': omKLRQY9S0LYIrVMEkgjG2c3j6k_1.omKLRQY9S0LYIrVMEkgjG2c3j6k_DaysData,

@@ -106,6 +106,37 @@ async function getRadarData(userName: string) {
   }
 }
 
+async function getChartsData(userName: string, game: string) {
+  try {
+    const row = await dbGetAsync(
+      `
+        SELECT
+          totalGamesWithAi ,
+          gamesWithAiEasy  ,
+          gamesWithAiMedium,
+          gamesWithAiHard  ,
+          totalWins        ,
+          easyWins         ,
+          mediumWins       ,
+          hardWins         ,
+          friendsWins      ,
+          friendsLosses    ,
+          friendsTotalGames
+        FROM
+          Users
+        JOIN 
+          ChartsData ON Users.id = ChartsData.userId
+        WHERE
+          Users.userName = ? AND ChartsData.game = ? ;
+      `, [userName, game]);
+      if (!row)
+        return null;
+      return row;
+  } catch (err) {
+    throw err;
+  }
+}
+
 async function setupServer() {
     const app: FastifyInstance = Fastify({
       logger: true,
@@ -147,6 +178,24 @@ async function setupServer() {
       }
     });
 
+    // get chartData info for a user
+    app.get<{ Params: UserParams }>('/chartsData/:userName', async (request, reply) => {
+      const { userName } = request.params;
+      try {
+        const chartsDataPong = await getChartsData(userName, 'pong');
+        const chartsDataParchesi = await getChartsData(userName, 'parchesi');
+        if (!chartsDataPong || !chartsDataParchesi)
+          reply.code(404).send({ error: 'chartsData not found' });
+        const chartsData = {
+          pong: chartsDataPong,
+          parchesi: chartsDataParchesi
+        }
+        return reply.send(chartsData);
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
+    });
+
     // get Dashboard
     app.get<{ Params: UserParams }>('/daysData/:userName', async (request, reply) => {
       const { userName } = request.params;
@@ -162,20 +211,20 @@ async function setupServer() {
       }  
     });
 
-    // get chartData
-    app.get<{ Params: UserParams }>('/chartsData/:userName', async (request, reply) => {
-      const { userName } = request.params;
-      const user = Users.find((user) => user.userName === userName); 
-      if (!user) {
-        reply.code(404).send({ error: 'user not found' });
-      } else {
-        const chartsData = chartsDataMap[user.id];
-        if (chartsData)
-          reply.send(chartsData);
-        else
-          reply.code(404).send({ error: 'chartsData not found' });
-      }  
-    });
+    // // get chartData
+    // app.get<{ Params: UserParams }>('/chartsData/:userName', async (request, reply) => {
+    //   const { userName } = request.params;
+    //   const user = Users.find((user) => user.userName === userName); 
+    //   if (!user) {
+    //     reply.code(404).send({ error: 'user not found' });
+    //   } else {
+    //     const chartsData = chartsDataMap[user.id];
+    //     if (chartsData)
+    //       reply.send(chartsData);
+    //     else
+    //       reply.code(404).send({ error: 'chartsData not found' });
+    //   }  
+    // });
 
     // get radarData
     // app.get<{ Params: UserParams }>('/radarData/:userName', async (request, reply) => {
