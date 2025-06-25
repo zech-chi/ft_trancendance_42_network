@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sqlite3_1 = __importDefault(require("sqlite3"));
-const users_1 = require("./Data/users");
+const users_1 = require("./users");
 /*
     .headers on
     .mode column

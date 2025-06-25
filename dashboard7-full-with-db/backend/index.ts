@@ -1,8 +1,9 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import { Users, daysDataMap, chartsDataMap, radarDataMap } from './Data/users';
+import { Users } from './Database/users';
 import sqlite3 from "sqlite3";
 
 import cors from '@fastify/cors';
+import { callbackify } from 'util';
 
 type YearData = {
   totalGames: number;
@@ -158,6 +159,7 @@ function dbGetAsyncAll(sqlQuery: string, params: any[]) : Promise<any> {
 }
 
 
+
 // async function getDailyActivityData(userName: string) {
 //   try {
 //     const data: { [year: number]: {
@@ -190,36 +192,60 @@ function dbGetAsyncAll(sqlQuery: string, params: any[]) : Promise<any> {
 // }
 
 
+async function dbGetDailyActivity (yearlyStatsId: number) : Promise<any> {
+    return new Promise((resolve, reject) => {
+      db.all(
+        `
+            SELECT day, activity
+            FROM DailyActivity
+            WHERE yearlyStatsId = ? ;
+        `, [yearlyStatsId], (err, rows) => {
+            if (err) return (reject(err));
+            return resolve(rows);
+      })
+    });
+}
+
 async function getDailyActivityData(userName: string) {
   try {
     const data: { [year: number]: {
       totalGames: number,
       totalActiveDays: number,
       maxStreak: number,
-      DailyActivity: { [day: string]: number }
+      DaysData: { [day: number]: number }
     }} = {};
 
     const rows = await dbGetAsyncAll(
-      `SELECT year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`,
+      `SELECT YearlyStats.id, year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`,
       [userName]
     )
 
     if (!rows)
         return null;
 
-    rows.forEach((elem: { year: string | number; totalGames: any; totalActiveDays: any; maxStreak: any; }) => {
-      data[Number(elem.year)] = {
-        totalGames: elem.totalGames,
-        totalActiveDays: elem.totalActiveDays,
-        maxStreak: elem.maxStreak,
-        DailyActivity: {}
-      }
-    });
+    for (const elem of rows) {
+        data[Number(elem.year)] = {
+            totalGames: elem.totalGames,
+            totalActiveDays: elem.totalActiveDays,
+            maxStreak: elem.maxStreak,
+            DaysData: {}
+        }
+
+        //   console.log(elem.id);
+        const dailyActivityRows = await dbGetDailyActivity(Number(elem.id));
+        // console.log(dailyActivityRows);
+        dailyActivityRows.forEach(({day, activity} : { day: number, activity: number}) => {
+            // console.log(day, activity);
+            data[Number(elem.year)].DaysData[day] = activity;
+        });
+    };
+
     return data;
   } catch (err) {
     throw err;
   }
 }
+
 
 async function setupServer() {
     const app: FastifyInstance = Fastify({
@@ -350,3 +376,8 @@ async function setupServer() {
 
 
 setupServer();
+
+function callback(err: Error): void {
+  throw new Error('err' + err);
+}
+

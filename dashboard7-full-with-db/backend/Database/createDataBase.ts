@@ -1,5 +1,5 @@
 import sqlite3 from "sqlite3";
-import { Users, RadarData, ChartsData, YearlyStats } from "./Data/users"
+import { Users, RadarData, ChartsData, YearlyStats } from "./users"
 
 
 /*

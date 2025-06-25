@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fastify_1 = __importDefault(require("fastify"));
-const users_1 = require("./Data/users");
+const users_1 = require("./Database/users");
 const sqlite3_1 = __importDefault(require("sqlite3"));
 const cors_1 = __importDefault(require("@fastify/cors"));
 const db = new sqlite3_1.default.Database('Database/DataBase.db', (err) => {
@@ -143,21 +143,69 @@ function dbGetAsyncAll(sqlQuery, params) {
         });
     });
 }
+// async function getDailyActivityData(userName: string) {
+//   try {
+//     const data: { [year: number]: {
+//       totalGames: number,
+//       totalActiveDays: number,
+//       maxStreak: number,
+//       DailyActivity: { [day: number]: number }
+//     }} = {};
+//     const rows = await dbGetAsyncAll(
+//       `SELECT year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`,
+//       [userName]
+//     )
+//     if (!rows)
+//         return null;
+//     rows.forEach((elem: { year: string | number; totalGames: any; totalActiveDays: any; maxStreak: any; }) => {
+//       data[Number(elem.year)] = {
+//         totalGames: elem.totalGames,
+//         totalActiveDays: elem.totalActiveDays,
+//         maxStreak: elem.maxStreak,
+//         DailyActivity: {}
+//       }
+//     });
+//     return data;
+//   } catch (err) {
+//     throw err;
+//   }
+// }
+async function dbGetDailyActivity(yearlyStatsId) {
+    return new Promise((resolve, reject) => {
+        db.all(`
+            SELECT day, activity
+            FROM DailyActivity
+            WHERE yearlyStatsId = ? ;
+        `, [yearlyStatsId], (err, rows) => {
+            if (err)
+                return (reject(err));
+            return resolve(rows);
+        });
+    });
+}
 async function getDailyActivityData(userName) {
     try {
         const data = {};
-        const rows = await dbGetAsyncAll(`SELECT year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`, [userName]);
-        rows.forEach((elem) => {
+        const rows = await dbGetAsyncAll(`SELECT YearlyStats.id, year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`, [userName]);
+        if (!rows)
+            return null;
+        for (const elem of rows) {
             data[Number(elem.year)] = {
                 totalGames: elem.totalGames,
                 totalActiveDays: elem.totalActiveDays,
                 maxStreak: elem.maxStreak,
-                DailyActivity: {}
+                DaysData: {}
             };
-        });
-        if (!rows)
-            return null;
-        return rows;
+            //   console.log(elem.id);
+            const dailyActivityRows = await dbGetDailyActivity(Number(elem.id));
+            // console.log(dailyActivityRows);
+            dailyActivityRows.forEach(({ day, activity }) => {
+                // console.log(day, activity);
+                data[Number(elem.year)].DaysData[day] = activity;
+            });
+        }
+        ;
+        return data;
     }
     catch (err) {
         throw err;
@@ -283,3 +331,6 @@ async function setupServer() {
     });
 }
 setupServer();
+function callback(err) {
+    throw new Error('err' + err);
+}
