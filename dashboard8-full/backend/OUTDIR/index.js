@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fastify_1 = __importDefault(require("fastify"));
-const users_1 = require("./Database/users");
 const sqlite3_1 = __importDefault(require("sqlite3"));
 const cors_1 = __importDefault(require("@fastify/cors"));
 const db = new sqlite3_1.default.Database('Database/DataBase.db', (err) => {
@@ -24,6 +23,27 @@ const getUserOpts = {
                     type: 'object',
                     properties: {
                         userName: { type: 'string' },
+                    },
+                }
+            }
+        }
+    }
+};
+const getUserRankOpts = {
+    schema: {
+        response: {
+            200: {
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        fullName: { type: 'string' },
+                        userName: { type: 'string' },
+                        imageUrl: { type: 'string' },
+                        rank: { type: 'number' },
+                        level: { type: 'number' },
+                        progress: { type: 'number' },
+                        online: { type: 'boolean' },
                     },
                 }
             }
@@ -143,33 +163,27 @@ function dbGetAsyncAll(sqlQuery, params) {
         });
     });
 }
-// async function getDailyActivityData(userName: string) {
-//   try {
-//     const data: { [year: number]: {
-//       totalGames: number,
-//       totalActiveDays: number,
-//       maxStreak: number,
-//       DailyActivity: { [day: number]: number }
-//     }} = {};
-//     const rows = await dbGetAsyncAll(
-//       `SELECT year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`,
-//       [userName]
-//     )
-//     if (!rows)
-//         return null;
-//     rows.forEach((elem: { year: string | number; totalGames: any; totalActiveDays: any; maxStreak: any; }) => {
-//       data[Number(elem.year)] = {
-//         totalGames: elem.totalGames,
-//         totalActiveDays: elem.totalActiveDays,
-//         maxStreak: elem.maxStreak,
-//         DailyActivity: {}
-//       }
-//     });
-//     return data;
-//   } catch (err) {
-//     throw err;
-//   }
-// }
+function dbGetAllUsers() {
+    return new Promise((resolve, reject) => {
+        db.all(`SELECT * FROM Users`, [], (err, rows) => {
+            if (err)
+                reject(err);
+            else
+                resolve(rows);
+        });
+    });
+}
+async function getUsers() {
+    try {
+        const rows = await dbGetAllUsers();
+        if (!rows)
+            return null;
+        return rows;
+    }
+    catch (err) {
+        throw err;
+    }
+}
 async function dbGetDailyActivity(yearlyStatsId) {
     return new Promise((resolve, reject) => {
         db.all(`
@@ -220,8 +234,27 @@ async function setupServer() {
         origin: '*',
     });
     // get all users info
+    // app.get('/users', getUserOpts, async (request, reply) => {
+    //   reply.send(Users);
+    // });
     app.get('/users', getUserOpts, async (request, reply) => {
-        reply.send(users_1.Users);
+        try {
+            const users = await getUsers();
+            return reply.send(users);
+        }
+        catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
+    });
+    app.get('/rank', getUserRankOpts, async (request, reply) => {
+        try {
+            const users = await getUsers();
+            const sortedUsersByRank = users.sort((u1, u2) => u1.rank - u2.rank);
+            return reply.send(sortedUsersByRank);
+        }
+        catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
     });
     // get user info
     app.get('/users/:userName', getUserOpt, async (request, reply) => {

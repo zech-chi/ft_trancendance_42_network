@@ -4,9 +4,12 @@ import { JSX } from "react";
 import TopDashboard from "@/components/TopDashboard";
 import CalendarDashboard from "@/components/CalendarDashboard";
 import Statistics from "@/components/Statistics";
+import Frineds from "@/components/Friends";
+import History from "@/components/History";
+import Rank from "@/components/Rank";
 import {useEffect, useState} from 'react';
 import Login from "@/components/Login";
-
+import Image from "next/image";
 
 const TOTAL_USERS = 133742;
 
@@ -166,6 +169,7 @@ export default function Home() : JSX.Element {
   const [calendarData, setCalendarData] = useState<{ [year: number] : YearData } | null>(null);
   const [chartsData, setChartsData] = useState<ChartsData | null>(null);
   const [radarData, setRadarData] = useState<Number[] | null>(null);
+  const [buttonChoice, setButtonChoice] = useState<string>('rank');
 
   useEffect(() => {
     if (username) {
@@ -217,7 +221,7 @@ export default function Home() : JSX.Element {
             <div className="absolute top-20 bottom-0 left-25 w-3/4 w-[calc(65%-1rem)] m-4 rounded-[50px]"
               style={{
                 background:
-                  'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
+                'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
                 backgroundBlendMode: 'overlay',
               }}
             >
@@ -227,7 +231,7 @@ export default function Home() : JSX.Element {
             <div className="absolute top-72 h-70 left-34 w-3/4 w-[calc(63.5%-1rem)] rounded-4xl justify-center items-center flex"
               style={{
                 background:
-                  'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
+                'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
                 backgroundBlendMode: 'overlay',
               }}
             >
@@ -236,6 +240,57 @@ export default function Home() : JSX.Element {
             <div className="absolute top-143 h-190 left-29 w-3/4 w-[calc(65%-1rem)] flex flex-col">
               <Statistics chartsData={chartsData} radarData={radarData} />
             </div>
+
+            <div
+              className="absolute top-20 bottom-0 right-25 w-[calc(26.6%-1rem)] m-4 rounded-[50px] text-white flex flex-col items-center justify-center"
+              style={{
+                background:
+                  'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
+                backgroundBlendMode: 'overlay',
+              }}
+            >
+              <div className="rounded-[50px] w-[95%] h-[97.5%] bg-black/40">
+                {buttonChoice === 'friends' && <Frineds />}
+                {buttonChoice === 'history' && <History />}
+                {buttonChoice === 'rank' && <Rank />}
+              </div>
+            </div>
+
+            <aside className="fixed right-2 top-1/2 -translate-y-1/2 h-113 w-23 rounded-full bg-black/60 backdrop-blur p-4 z-10 flex flex-col item-center justify-center gap-10">
+                <button className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex item-center justify-center transition"
+                  onClick={() => setButtonChoice('friends')}
+                >
+                  <Image
+                    src={buttonChoice === 'friends' ? '/friends_pink.png' : '/friends.png'}
+                    alt='friends'
+                    width={27}
+                    height={27}
+                    className="object-contain"
+                  />
+                </button>
+                <button className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex item-center justify-center transition"
+                  onClick={() => setButtonChoice('history')}
+                >
+                  <Image
+                    src={buttonChoice === 'history' ? '/history_pink.png' : '/history.png'}
+                    alt='history'
+                    width={27}
+                    height={27}
+                    className="object-contain"
+                  />
+                </button>
+                <button className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex item-center justify-center transition"
+                  onClick={() => setButtonChoice('rank')}
+                >
+                  <Image
+                    src={buttonChoice === 'rank' ? '/rank_pink.png' : '/rank.png'}
+                    alt='rank'
+                    width={27}
+                    height={27}
+                    className="object-contain"
+                  />
+                </button>
+            </aside>
             </>
           ) : (
             <Login onLogin={setUsername}/>

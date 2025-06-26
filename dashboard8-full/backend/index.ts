@@ -36,6 +36,28 @@ const getUserOpts = {
   }
 };
 
+const getUserRankOpts = {
+  schema: {
+    response: {
+      200: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            fullName: { type: 'string' },
+            userName: { type: 'string' },
+            imageUrl: { type: 'string' },
+            rank: { type: 'number' },
+            level: { type: 'number' },
+            progress: { type: 'number' },
+            online: { type: 'boolean' },
+          },
+        }
+      }
+    }
+  }
+};
+
 const getUserOpt = {
   schema: {
     response: {
@@ -85,6 +107,9 @@ async function getUser(userName: string) {
     throw err;
   }
 }
+
+
+
 
 async function getRadarData(userName: string) {
   try {
@@ -159,37 +184,25 @@ function dbGetAsyncAll(sqlQuery: string, params: any[]) : Promise<any> {
 }
 
 
+function dbGetAllUsers() : Promise<any> {
+  return new Promise((resolve, reject) => {
+    db.all(`SELECT * FROM Users`, [], (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    })
+  });
+} 
 
-// async function getDailyActivityData(userName: string) {
-//   try {
-//     const data: { [year: number]: {
-//       totalGames: number,
-//       totalActiveDays: number,
-//       maxStreak: number,
-//       DailyActivity: { [day: number]: number }
-//     }} = {};
-
-//     const rows = await dbGetAsyncAll(
-//       `SELECT year, totalGames, totalActiveDays, maxStreak FROM Users JOIN YearlyStats ON Users.id == YearlyStats.userId WHERE Users.userName = ?;`,
-//       [userName]
-//     )
-    
-//     if (!rows)
-//         return null;
-
-//     rows.forEach((elem: { year: string | number; totalGames: any; totalActiveDays: any; maxStreak: any; }) => {
-//       data[Number(elem.year)] = {
-//         totalGames: elem.totalGames,
-//         totalActiveDays: elem.totalActiveDays,
-//         maxStreak: elem.maxStreak,
-//         DailyActivity: {}
-//       }
-//     });
-//     return data;
-//   } catch (err) {
-//     throw err;
-//   }
-// }
+async function getUsers() {
+  try {
+    const rows = await dbGetAllUsers();
+    if (!rows)
+      return null;
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+}
 
 
 async function dbGetDailyActivity (yearlyStatsId: number) : Promise<any> {
@@ -258,8 +271,29 @@ async function setupServer() {
     });
 
     // get all users info
+    // app.get('/users', getUserOpts, async (request, reply) => {
+    //   reply.send(Users);
+    // });
+
     app.get('/users', getUserOpts, async (request, reply) => {
-      reply.send(Users);
+      try {
+        const users = await getUsers();
+        return reply.send(users);
+
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
+    });
+
+    app.get('/rank', getUserRankOpts, async (request, reply) => {
+      try {
+        const users = await getUsers();
+        const sortedUsersByRank = users.sort((u1: { rank: number; }, u2: { rank: number; }) => u1.rank - u2.rank);
+        return reply.send(sortedUsersByRank);
+
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
     });
 
     // get user info
