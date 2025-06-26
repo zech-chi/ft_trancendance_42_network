@@ -5,6 +5,7 @@ import { JSX } from "react";
 import {useEffect, useState} from 'react';
 import Image from "next/image";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
+import { motion } from 'framer-motion';
 
 export function SearchForm(): JSX.Element {
     return (
@@ -60,7 +61,7 @@ interface User {
 
 function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
   return (
-    <div className="relative rounded-full w-[100px] h-[100px] overflow-hidden border-3 border-black m-3">
+    <div className="relative rounded-full w-[100px] h-[100px] overflow-hidden border-2 border-[#FEDF7F] m-3">
       <Image
         src={imageUrl}
         alt="Profile"
@@ -72,12 +73,11 @@ function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
   );
 }
 
-function ProfileInfo({ fullName, userName, bio }: ProfileInfoProps): JSX.Element {
+function ProfileInfo({ fullName, userName }: ProfileInfoProps): JSX.Element {
   return (
     <div className="flex flex-col justify-center h-full gap-2 mt-4">
-      <h2 className="text-xl font-bold text-white">{fullName}</h2>
-      <h3 className="text-white">@{userName}</h3>
-      <p className="text-white/75 bg-black/30 text-sm p-2 rounded-4xl w-max">{bio}</p>
+      <h2 className="text-l font-bold text-white">{fullName}</h2>
+      <h3 className="text-s text-white">@{userName}</h3>
     </div>
   );
 }
@@ -86,22 +86,48 @@ function DisplayRank({ level, progress, rank}: RankInfoProps): JSX.Element {
   return (
     <div className="flex flex-col justify-center items-center h-full gap-2 mt-2 mr-10">
       <h2
-        className="text-4xl font-bold bg-clip-text text-transparent "
+        className="text-xl font-bold bg-clip-text text-transparent "
         style={{
           backgroundImage: "linear-gradient(to right, #FE9634 0%, #FC709B 40%, #FC709B 100%)",
         }}
       >
       {rank}
       </h2>
-      <h2 className="text-xl font-bold text-[#FEDF7F]">Level {level} - {progress * 100} %</h2>
+      <h2 className="text-l font-bold text-[#FEDF7F]">Level {level} - {progress * 100} %</h2>
     </div>
   );
 }
 
+type LevelInfoProps = {
+  progress: number;
+};
+
+function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
+  return (
+    <div className="relative bg-white/10 w-full h-4 mr-10 rounded-4xl border-2  border-[#F9545B]/30">
+      <motion.div
+        className="absolute top-0 left-0 h-full rounded-4xl bg-[#FEDF7F] border-1  border-white/40" 
+        animate={{ width: `${progress * 100}%` }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
+    </div>
+  );
+}
 
 function DisplayUserData({ user } : User) : JSX.Element {
   return (
-    <div className="w-full flex flex-row items-center h-30 bg-black/50 text-white rounded-full">
+    // <div
+    //   className={`w-full flex flex-row items-center h-30 border-[1px] border-white/30 text-white rounded-full ${
+    //     user.rank === 1
+    //       ? 'bg-[#FFD700]/20' // Gold
+    //       : user.rank === 2
+    //       ? 'bg-[#C0C0C0]/20' // Silver
+    //       : user.rank === 3
+    //       ? 'bg-[#CD7F32]/20' // Bronze
+    //       : 'bg-black/20'
+    //   }`}
+    // >
+    <div className="w-full flex flex-row items-center h-30 bg-black/20 border-[1px] border-white/30 text-white rounded-full">
        <ProfileImage imageUrl={user.imageUrl} />
        <div className="flex flex-col h-full gap-4 flex-1">
         <div className="flex justify-between ml-2">
@@ -111,6 +137,9 @@ function DisplayUserData({ user } : User) : JSX.Element {
               progress={user.progress}
               rank={user.rank}
             />
+        </div>
+        <div className="flex-1 flex ml-2">
+            <DisplayLevel progress={user.progress} />
         </div>
        </div>
     </div>
@@ -139,7 +168,7 @@ export default function Rank(): JSX.Element {
             console.log(users);
           })
           .catch((err) => console.log('Error: ', err));
-      }, 1000);
+      }, 800);
     }
   }, [users]);
 
@@ -151,11 +180,21 @@ export default function Rank(): JSX.Element {
             <SearchForm />
           </div>
 
-          <div className="m-3 flex-1 overflow-y-auto px-4 py-2 space-y-4" >
+          <div className="m-3 flex-1 overflow-y-auto px-4 py-2 space-y-2" >
             {
-              users.map((user: any) => {
+              users.map((user: User) => (
                 <DisplayUserData user={user} />
-              })
+              ))
+            }
+            {
+              users.map((user: User) => (
+                <DisplayUserData user={user} />
+              ))
+            }
+            {
+              users.map((user: User) => (
+                <DisplayUserData user={user} />
+              ))
             }
           </div>
         </>
