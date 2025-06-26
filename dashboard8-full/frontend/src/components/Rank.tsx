@@ -2,7 +2,7 @@
 
 import next from "next";
 import { JSX } from "react";
-import { useState } from "react";
+import {useEffect, useState} from 'react';
 import Image from "next/image";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 
@@ -47,6 +47,16 @@ type RankInfoProps = {
   rank: number;
 };
 
+interface User {
+  fullName: string;
+  userName: string;
+  imageUrl: string;
+  rank: number;
+  level: number;
+  progress: number;
+  online: boolean;
+}
+
 
 function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
   return (
@@ -89,17 +99,17 @@ function DisplayRank({ level, progress, rank}: RankInfoProps): JSX.Element {
 }
 
 
-function DisplayUserData() : JSX.Element {
+function DisplayUserData({ user } : User) : JSX.Element {
   return (
     <div className="w-full flex flex-row items-center h-30 bg-black/50 text-white rounded-full">
-       <ProfileImage imageUrl={userX.imageUrl} />
+       <ProfileImage imageUrl={user.imageUrl} />
        <div className="flex flex-col h-full gap-4 flex-1">
         <div className="flex justify-between ml-2">
-          <ProfileInfo fullName={userX.fullName} userName={userX.userName}/>
+          <ProfileInfo fullName={user.fullName} userName={user.userName}/>
           <DisplayRank
-              level={userX.level}
-              progress={userX.progress}
-              rank={userX.rank}
+              level={user.level}
+              progress={user.progress}
+              rank={user.rank}
             />
         </div>
        </div>
@@ -107,28 +117,54 @@ function DisplayUserData() : JSX.Element {
   );
 }
 
+
+const fetchRankData = async () => {
+  const response = await fetch(`http://localhost:5000/rank/`);
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
+
+
 export default function Rank(): JSX.Element {
+  const [users, setUsers] = useState<any | null>(null);
+  useEffect(() => {
+    if (users === null) {
+      setTimeout(() => {
+        fetchRankData()
+          .then((data) => {
+            setUsers(data);
+            console.log(users);
+          })
+          .catch((err) => console.log('Error: ', err));
+      }, 1000);
+    }
+  }, [users]);
+
   return (
     <div className="h-full flex flex-col">
-      <div className="shrink-0">
-        <SearchForm />
-      </div>
+      {users ? (
+        <>
+          <div className="shrink-0">
+            <SearchForm />
+          </div>
 
-      <div className="m-3 flex-1 overflow-y-auto px-4 py-2 space-y-4" >
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-        <DisplayUserData />
-      </div>
+          <div className="m-3 flex-1 overflow-y-auto px-4 py-2 space-y-4" >
+            {
+              users.map((user: any) => {
+                <DisplayUserData user={user} />
+              })
+            }
+          </div>
+        </>
+      ) : (
+        <div className="flex justify-center items-center h-full">
+          <div className="w-10 h-10 border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+
     </div>
   );
 }

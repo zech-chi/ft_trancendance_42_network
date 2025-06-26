@@ -250,9 +250,9 @@ export default function Home() : JSX.Element {
               }}
             >
               <div className="rounded-[50px] w-[95%] h-[97.5%] bg-black/40">
-                {/* {buttonChoice === 'friends' && <Frineds />}
+                {buttonChoice === 'friends' && <Frineds />}
                 {buttonChoice === 'history' && <History />}
-                {buttonChoice === 'rank' && <Rank />} */}
+                {buttonChoice === 'rank' && <Rank />}
               </div>
             </div>
 
