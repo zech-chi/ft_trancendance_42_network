@@ -28,41 +28,58 @@ export function SearchForm(): JSX.Element {
 const userX = {
     fullName    :   "Gon Freecss",
     userName    :   "hunterGon",
-    imageUrl    :   "/gon.jpg",
+    imageUrl    :   "/kilwa.png",
     rank	    :   1337,
     level	    :   9,
     progress    :   0.75,
     online	    :   true
 }
 
-function DisplayUserData() : JSX.Element {
+function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
   return (
-    <div className="w-full h-20 bg-black text-white">
-      testing
+    <div className="relative rounded-full w-[100px] h-[100px] overflow-hidden border-3 border-black m-3">
+      <Image
+        src={imageUrl}
+        alt="Profile"
+        fill
+        style={{ objectFit: 'cover', objectPosition: 'center' }}
+        priority
+      />
     </div>
   );
 }
 
+function DisplayUserData() : JSX.Element {
+  return (
+    <div className="w-full flex flex-row items-center h-30 bg-black/50 text-white rounded-full">
+       <ProfileImage imageUrl={userX.imageUrl} />
+    </div>
+  );
+}
 
 export default function Rank(): JSX.Element {
-    return (
-        <div>
-            <SearchForm />
-            <div className="flex-1 overflow-y-auto flex flex-col gap-5">
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-              <DisplayUserData />
-            </div>
-        </div>
-    )
+  return (
+    <div className="h-full flex flex-col">
+      <div className="shrink-0">
+        <SearchForm />
+      </div>
+
+      <div className="m-3 flex-1 overflow-y-auto px-4 py-2 space-y-4" >
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+        <DisplayUserData />
+      </div>
+    </div>
+  );
 }
+
