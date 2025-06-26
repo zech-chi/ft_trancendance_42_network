@@ -35,6 +35,19 @@ const userX = {
     online	    :   true
 }
 
+type ProfileInfoProps = {
+  fullName: string;
+  userName: string;
+  bio?: string;
+};
+
+type RankInfoProps = {
+  level: number;
+  progress: number;
+  rank: number;
+};
+
+
 function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
   return (
     <div className="relative rounded-full w-[100px] h-[100px] overflow-hidden border-3 border-black m-3">
@@ -49,10 +62,47 @@ function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
   );
 }
 
+function ProfileInfo({ fullName, userName, bio }: ProfileInfoProps): JSX.Element {
+  return (
+    <div className="flex flex-col justify-center h-full gap-2 mt-4">
+      <h2 className="text-xl font-bold text-white">{fullName}</h2>
+      <h3 className="text-white">@{userName}</h3>
+      <p className="text-white/75 bg-black/30 text-sm p-2 rounded-4xl w-max">{bio}</p>
+    </div>
+  );
+}
+
+function DisplayRank({ level, progress, rank}: RankInfoProps): JSX.Element {
+  return (
+    <div className="flex flex-col justify-center items-center h-full gap-2 mt-2 mr-10">
+      <h2
+        className="text-4xl font-bold bg-clip-text text-transparent "
+        style={{
+          backgroundImage: "linear-gradient(to right, #FE9634 0%, #FC709B 40%, #FC709B 100%)",
+        }}
+      >
+      {rank}
+      </h2>
+      <h2 className="text-xl font-bold text-[#FEDF7F]">Level {level} - {progress * 100} %</h2>
+    </div>
+  );
+}
+
+
 function DisplayUserData() : JSX.Element {
   return (
     <div className="w-full flex flex-row items-center h-30 bg-black/50 text-white rounded-full">
        <ProfileImage imageUrl={userX.imageUrl} />
+       <div className="flex flex-col h-full gap-4 flex-1">
+        <div className="flex justify-between ml-2">
+          <ProfileInfo fullName={userX.fullName} userName={userX.userName}/>
+          <DisplayRank
+              level={userX.level}
+              progress={userX.progress}
+              rank={userX.rank}
+            />
+        </div>
+       </div>
     </div>
   );
 }
