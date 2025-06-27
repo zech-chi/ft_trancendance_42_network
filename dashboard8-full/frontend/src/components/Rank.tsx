@@ -114,7 +114,7 @@ function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
   );
 }
 
-function DisplayUserData({ user } : User) : JSX.Element {
+function DisplayUserData({ user }: { user: User }): JSX.Element {
   return (
     <div
       className={`w-full flex flex-row items-center h-30 border-[1px] border-white/30 text-white rounded-full ${
