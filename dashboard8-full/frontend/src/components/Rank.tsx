@@ -61,7 +61,7 @@ interface User {
 
 function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
   return (
-    <div className="relative rounded-full w-[100px] h-[100px] overflow-hidden border-2 border-[#FEDF7F] m-3">
+    <div className="relative rounded-full w-[80px] h-[80px] overflow-hidden border-2 border-black m-3">
       <Image
         src={imageUrl}
         alt="Profile"
@@ -75,8 +75,8 @@ function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
 
 function ProfileInfo({ fullName, userName }: ProfileInfoProps): JSX.Element {
   return (
-    <div className="flex flex-col justify-center h-full gap-2 mt-4">
-      <h2 className="text-l font-bold text-white">{fullName}</h2>
+    <div className="flex flex-col justify-center h-full gap-1 mt-1">
+      <h2 className="text-s font-bold text-white">{fullName}</h2>
       <h3 className="text-s text-white">@{userName}</h3>
     </div>
   );
@@ -84,7 +84,7 @@ function ProfileInfo({ fullName, userName }: ProfileInfoProps): JSX.Element {
 
 function DisplayRank({ level, progress, rank}: RankInfoProps): JSX.Element {
   return (
-    <div className="flex flex-col justify-center items-center h-full gap-2 mt-2 mr-10">
+    <div className="flex flex-col justify-center items-center h-full gap-1 mt-1 mr-10">
       <h2
         className="text-xl font-bold bg-clip-text text-transparent "
         style={{
@@ -104,7 +104,7 @@ type LevelInfoProps = {
 
 function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
   return (
-    <div className="relative bg-white/10 w-full h-4 mr-10 rounded-4xl border-2  border-[#F9545B]/30">
+    <div className="relative bg-white/10 w-full h-2.5 mr-10 rounded-4xl border-2  border-[#F9545B]/30">
       <motion.div
         className="absolute top-0 left-0 h-full rounded-4xl bg-[#FEDF7F] border-1  border-white/40" 
         animate={{ width: `${progress * 100}%` }}
@@ -116,17 +116,7 @@ function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
 
 function DisplayUserData({ user }: { user: User }): JSX.Element {
   return (
-    <div
-      className={`w-full flex flex-row items-center h-30 border-[1px] border-white/30 text-white rounded-full ${
-        user.rank === 1
-          ? 'bg-[#FFD700]/30' // Gold
-          : user.rank === 2
-          ? 'bg-[#C0C0C0]/30' // Silver
-          : user.rank === 3
-          ? 'bg-[#CD7F32]/30' // Bronze
-          : 'bg-white/5'
-      }`}
-    >
+    <div className="w-full flex flex-row items-center h-25 border-[1px] border-white/30 text-white rounded-full bg-black/20">
     {/* <div className="w-full flex flex-row items-center h-30 bg-black/20 border-[1px] border-white/30 text-white rounded-full"> */}
        <ProfileImage imageUrl={user.imageUrl} />
        <div className="flex flex-col h-full gap-4 flex-1">
