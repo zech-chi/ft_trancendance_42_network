@@ -576,6 +576,12 @@ export default function Statistics({ chartsData, radarData }: StatisticsProps): 
         Cookies.set('SelectedGame', game, { expires: 365 });
     }, [game]);
 
+    useEffect(() => {
+        if (chartsData && game in chartsData) {
+          setData(chartsData[game]);
+        }
+    }, [chartsData, game]);
+
     return (
         <div>
             <div className="m-1 flex justify-center">

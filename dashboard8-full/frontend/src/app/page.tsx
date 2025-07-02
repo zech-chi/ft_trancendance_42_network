@@ -239,7 +239,7 @@ export default function Home() : JSX.Element {
               <CalendarDashboard calendarData={calendarData} />
             </div>
             <div className="absolute top-143 h-190 left-29 w-3/4 w-[calc(65%-1rem)] flex flex-col">
-              <Statistics chartsData={chartsData} radarData={radarData as number[]} />
+                <Statistics chartsData={chartsData} radarData={radarData as number[]} />
             </div>
 
             <div

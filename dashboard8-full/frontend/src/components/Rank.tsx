@@ -84,7 +84,7 @@ function ProfileInfo({ fullName, userName }: ProfileInfoProps): JSX.Element {
   return (
     <div className="flex flex-col justify-center h-full gap-1 mt-1">
       <h2 className="text-s font-bold text-white">{fullName}</h2>
-      <h3 className="text-s text-white cursor-pointer hover:text-[#FEDF7F]/50 transition-all duration-300 ease-in-out"
+      <h3 className="text-s text-white cursor-pointer hover:underline hover:text-[#FEDF7F]/50 transition-all duration-300 ease-in-out"
           onClick={handleClick}
       >@{userName}</h3>
     </div>
@@ -125,7 +125,7 @@ function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
 
 function DisplayUserData({ user }: { user: User }): JSX.Element {
   return (
-    <div className="w-full flex flex-row items-center h-25 border-[1px] border-white/30 text-white rounded-full bg-black/20">
+    <div className="w-full flex flex-row items-center h-25 border-[1px] border-black text-white rounded-full bg-white/7">
     {/* <div className="w-full flex flex-row items-center h-30 bg-black/20 border-[1px] border-white/30 text-white rounded-full"> */}
        <ProfileImage imageUrl={user.imageUrl} />
        <div className="flex flex-col h-full gap-4 flex-1">
