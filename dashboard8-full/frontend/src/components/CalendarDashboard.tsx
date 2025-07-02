@@ -4,6 +4,7 @@ import next from "next";
 import { JSX } from "react";
 import { useState } from "react";
 import Image from "next/image";
+import { useEffect, useMemo } from "react";
 
 
 type YearData = {
@@ -64,10 +65,22 @@ function fillActiveDays(): { [key: number]: number } {
 }
 
 export default function CalendarDashboard({ calendarData }: CalendarDashboardProps): JSX.Element {
-    const years = Object.keys(calendarData).map(Number).sort((a, b) => b - a);
+    // const years = Object.keys(calendarData).map(Number).sort((a, b) => b - a);
+      // Memoize years so it only recalculates when calendarData changes
+    const years = useMemo(() => {
+        return Object.keys(calendarData).map(Number).sort((a, b) => b - a);
+    }, [calendarData]);
     const [ selectedYear, setSelectedYear ] = useState(years[0]);
+    
+    useEffect(() => {
+        if (years.length > 0 && selectedYear !== years[0])
+            setSelectedYear(years[0]);
+    }, [calendarData, years, setSelectedYear]);
+    
+    if (!selectedYear || !calendarData[selectedYear])
+        return <div className="flex justify-center items-center h-full">Loading...</div>;
+    
     const data = calendarData[selectedYear];
-
     const allBoxes = [];
     let firstDay = getJanFirstDay(selectedYear);
     let curMonth = 1;
@@ -82,7 +95,13 @@ export default function CalendarDashboard({ calendarData }: CalendarDashboardPro
     const color3 = '#FF9D24';
     const color = color1;
 
+
+
+    console.log('years          ', years);
+    console.log('selected year', selectedYear);
+    console.log('calendar data    ', calendarData);
     const activeDays = calendarData[selectedYear].DaysData;
+    
     console.log(calendarData);
 
     for (let i = 0; i < 63; i++) {

@@ -10,6 +10,7 @@ import Rank from "@/components/Rank";
 import {useEffect, useState} from 'react';
 import Login from "@/components/Login";
 import Image from "next/image";
+import { useUserName } from "@/context/UserNameContext";
 
 const TOTAL_USERS = 133742;
 
@@ -164,7 +165,7 @@ const fetchRadarData = async (userName: string) => {
 
 export default function Home() : JSX.Element {
   // fill days data
-  const [username, setUsername] = useState<string | null>(null);
+  const { username, setUserName } = useUserName();
   const [user, setUser] = useState<any | null>(null);
   const [calendarData, setCalendarData] = useState<{ [year: number] : YearData } | null>(null);
   const [chartsData, setChartsData] = useState<ChartsData | null>(null);
@@ -207,7 +208,7 @@ export default function Home() : JSX.Element {
         )
         .catch((err) => console.error("Error: ", err));
     }
-  }, [username])
+  }, [username]);
 
   useEffect(() => {
     console.log('Updated user:', user);
@@ -238,7 +239,7 @@ export default function Home() : JSX.Element {
               <CalendarDashboard calendarData={calendarData} />
             </div>
             <div className="absolute top-143 h-190 left-29 w-3/4 w-[calc(65%-1rem)] flex flex-col">
-              <Statistics chartsData={chartsData} radarData={radarData} />
+              <Statistics chartsData={chartsData} radarData={radarData as number[]} />
             </div>
 
             <div
@@ -293,7 +294,7 @@ export default function Home() : JSX.Element {
             </aside>
             </>
           ) : (
-            <Login onLogin={setUsername}/>
+            <Login onLogin={setUserName}/>
           )
         }
 

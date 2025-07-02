@@ -6,6 +6,7 @@ import {useEffect, useState} from 'react';
 import Image from "next/image";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
+import { useUserName } from "@/context/UserNameContext";
 
 export function SearchForm(): JSX.Element {
     return (
@@ -74,10 +75,18 @@ function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
 }
 
 function ProfileInfo({ fullName, userName }: ProfileInfoProps): JSX.Element {
+  const { setUserName } = useUserName();
+  const handleClick = () => {
+    setUserName(userName);
+    console.log("User set to: ", userName);
+  }
+
   return (
     <div className="flex flex-col justify-center h-full gap-1 mt-1">
       <h2 className="text-s font-bold text-white">{fullName}</h2>
-      <h3 className="text-s text-white">@{userName}</h3>
+      <h3 className="text-s text-white cursor-pointer hover:text-[#FEDF7F]/50 transition-all duration-300 ease-in-out"
+          onClick={handleClick}
+      >@{userName}</h3>
     </div>
   );
 }

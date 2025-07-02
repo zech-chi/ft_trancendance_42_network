@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'; // Default font from create-next-app
 import './globals.css';
 import Navbar from '@/components/layout/Navbar'; // <-- Import your Navbar
 import Sidebar from '@/components/layout/Sidebar';
+import { UserNameProvider } from "@/context/UserNameContext";
 
 const inter = Inter({ subsets: ['latin'] });
 const BG_URL = 'https://images6.alphacoders.com/134/1344450.jpeg';
@@ -27,11 +28,13 @@ export default function RootLayout({
         {/* <div className="absolute inset-0 bg-black/40" /> */}
         <Sidebar />
         <Navbar /> {/* <-- Add your Navbar component here */}
-        <main className="relative bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('${BG_URL}')` }}
-        >
-          {children} {/* This renders the content of your page.tsx files */}
-        </main>
+        <UserNameProvider>
+          <main className="relative bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url('${BG_URL}')` }}
+          >
+            {children} {/* This renders the content of your page.tsx files */}
+          </main>
+        </UserNameProvider>
       </body>
     </html>
   );
