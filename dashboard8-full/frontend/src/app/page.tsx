@@ -170,7 +170,7 @@ export default function Home() : JSX.Element {
   const [calendarData, setCalendarData] = useState<{ [year: number] : YearData } | null>(null);
   const [chartsData, setChartsData] = useState<ChartsData | null>(null);
   const [radarData, setRadarData] = useState<Number[] | null>(null);
-  const [buttonChoice, setButtonChoice] = useState<string>('rank');
+  const [buttonChoice, setButtonChoice] = useState<string>('history');
 
   useEffect(() => {
     if (username) {

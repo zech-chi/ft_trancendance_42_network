@@ -125,7 +125,7 @@ function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
 
 function DisplayUserData({ user }: { user: User }): JSX.Element {
   return (
-    <div className="w-full flex flex-row items-center h-25 border-[1px] border-black text-white rounded-full bg-white/7">
+    <div className="w-full flex flex-row items-center h-25 border-[1px] border-white/8 text-white rounded-full bg-black/40">
     {/* <div className="w-full flex flex-row items-center h-30 bg-black/20 border-[1px] border-white/30 text-white rounded-full"> */}
        <ProfileImage imageUrl={user.imageUrl} />
        <div className="flex flex-col h-full gap-4 flex-1">
@@ -167,7 +167,7 @@ export default function Rank(): JSX.Element {
             console.log(users);
           })
           .catch((err) => console.log('Error: ', err));
-      }, 800);
+      }, 0);
     }
   }, [users]);
 
