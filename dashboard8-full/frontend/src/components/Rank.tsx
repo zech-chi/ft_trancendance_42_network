@@ -125,7 +125,7 @@ function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
 
 function DisplayUserData({ user }: { user: User }): JSX.Element {
   return (
-    <div className="w-full flex flex-row items-center h-25 border-[1px] border-white/8 text-white rounded-full bg-black/40">
+    <div className="w-full flex flex-row items-center h-25 border-[1px] border-white/8 text-white rounded-full bg-[#612132]/30">
     {/* <div className="w-full flex flex-row items-center h-30 bg-black/20 border-[1px] border-white/30 text-white rounded-full"> */}
        <ProfileImage imageUrl={user.imageUrl} />
        <div className="flex flex-col h-full gap-4 flex-1">

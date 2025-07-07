@@ -74,31 +74,40 @@ function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
 
 function DisplayData({ user1, user2, user1Won }: { user1: User, user2: User, user1Won: Boolean }): JSX.Element {
   return (
-    <div className="w-full  flex items-center justify-between px-6 rounded-full bg-black/25 text-white">
+    <div className="w-full flex items-center h-25 justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
       {/* Left Profile (user1) */}
-      <div className="relative">
-        <div className="w-32 h-32 rounded-full border-[10px] 
-          border-red-100 border-l-transparent border-b-transparent 
-          border-t-red-600 border-r-red-600 flex items-center justify-center overflow-hidden">
-          <img src={user1.imageUrl} alt={user1.userName} className="w-full h-full object-cover rounded-full" />
+      <div className="relative w-[100px] h-[100px]">
+        <div className="w-full h-full rounded-full border-[15px] 
+          border-[#F63737] border-l-transparent border-b-transparent 
+          border-t-[#F63737] border-r-[#F63737] flex items-center justify-center overflow-hidden rotate-225">
+          <img src={user1.imageUrl} alt={user1.userName} className="w-full h-full object-cover rounded-full -rotate-225 border-5 border-black" />
         </div>
-        <div className="absolute bottom-[13px] right-[18px] w-4 h-4 bg-[#00FF04] rounded-full border-2 border-black" />
+        <div className="absolute bottom-[20px] right-[25px] w-3 h-3 bg-[#00FF04] rounded-full border-2 border-black" />
       </div>
 
       {/* Center Score & Date */}
       <div className="flex flex-col items-center justify-center">
-        <div className="text-6xl font-bold">
-          {user1Won ? '9 - 4' : '4 - 9'}
+        <div className="text-5xl font-bold">
+          {user1Won ? (
+            <>
+              9  <span>–</span>  4
+            </>
+          ) : (
+            <>
+              4  <span>–</span>  9
+            </>
+          )}
         </div>
-        <div className="text-yellow-400 text-sm mt-2">09.03.2024</div>
+
+        <div className="text-[#FEDF7F] text-sm mt-2">09.03.2024</div>
       </div>
 
       {/* Right Profile (user2) */}
-      <div className="relative">
-        <div className="w-32 h-32 rounded-full border-[10px] 
-          border-green-600 border-r-transparent border-b-transparent 
-          border-t-green-600 border-l-green-600 flex items-center justify-center overflow-hidden">
-          <img src={user2.imageUrl} alt={user2.userName} className="w-full h-full object-cover rounded-full" />
+      <div className="relative w-[100px] h-[100px]">
+        <div className="w-full h-full rounded-full border-[15px] 
+          border-[#56BA1C] border-r-transparent border-b-transparent 
+          border-t-[#56BA1C] border-l-[#56BA1C] flex items-center justify-center overflow-hidden -rotate-225">
+          <img src={user2.imageUrl} alt={user2.userName} className="w-full h-full object-cover rounded-full border-5 border-black rotate-225" />
         </div>
       </div>
     </div>
@@ -143,20 +152,7 @@ export default function History(): JSX.Element {
             </div>
 
           {/* display data */}
-          <div className="mt-2 flex-1 overflow-y-auto px-4 py-2 space-y-3" >
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
+          <div className="m-3 flex-1 overflow-y-auto px-4 py-2 space-y-2" >
             <DisplayData user1={userX} user2={userY} user1Won={false}/>
             <DisplayData user1={userX} user2={userY} user1Won={false}/>
             <DisplayData user1={userX} user2={userY} user1Won={false}/>
