@@ -82,7 +82,7 @@ function DisplayData({ user1, user2, user1Won }: { user1: User, user2: User, use
           border-t-[#F63737] border-r-[#F63737] flex items-center justify-center overflow-hidden rotate-225">
           <img src={user1.imageUrl} alt={user1.userName} className="w-full h-full object-cover rounded-full -rotate-225 border-5 border-black" />
         </div>
-        <div className="absolute bottom-[20px] right-[25px] w-3 h-3 bg-[#00FF04] rounded-full border-2 border-black" />
+        <div className="absolute bottom-[18px] right-[23px] w-3 h-3 bg-[#00FF04] rounded-full border-2 border-black" />
       </div>
 
       {/* Center Score & Date */}

@@ -52,8 +52,8 @@ export default function Frineds(): JSX.Element {
                     <div className="inline-flex bg-white/5 gap-3 rounded-4xl">
                         {
                             (choice === 'friends') ? (
-                                <div className="bg-[#612132]/80 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friends')}>
-                                    <p className="py-2 px-10 cursor-pointer">friends</p>
+                                <div className="bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friends')}>
+                                    <p className="py-2 px-10 cursor-pointer text-[#F9545B]">friends</p>
                                 </div>
                             ) : (
                                 <div className="bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friends')}>
@@ -64,8 +64,8 @@ export default function Frineds(): JSX.Element {
 
                         {
                             (choice === 'friend request') ? (
-                                <div className="bg-[#612132]/80 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friend request')}>
-                                    <p className="py-2 px-4 cursor-pointer">friend request</p>
+                                <div className="bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friend request')}>
+                                    <p className="py-2 px-4 cursor-pointer text-[#F9545B]">friend request</p>
                                 </div>
                             ) : (
                                 <div className="bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friend request')}>
