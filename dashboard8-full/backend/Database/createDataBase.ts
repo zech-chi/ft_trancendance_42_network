@@ -1,5 +1,5 @@
 import sqlite3 from "sqlite3";
-import { Users, RadarData, ChartsData, YearlyStats } from "./users"
+import { Users, RadarData, ChartsData, YearlyStats, Games } from "./users"
 
 
 /*
@@ -333,6 +333,54 @@ db.serialize( () => {
         )
     });
     
+
+    // Games Table for history staff
+    db.run(`
+        CREATE TABLE Games (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user1 INTEGER NOT NULL,
+            user2 INTEGER NOT NULL,
+            user1_score INTEGER NOT NULL,
+            user2_score INTEGER NOT NULL,
+            user1_win BOOLEAN NOT NULL,
+            date_played DATETIME DEFAULT CURRENT_TIMESTAMP,
+            game_type TEXT CHECK (game_type IN ('pong', 'parchesi')),
+            FOREIGN KEY (user1) REFERENCES Users(username),
+            FOREIGN KEY (user2) REFERENCES Users(username)
+        );
+    `, (err: any) => {
+        if (err) {
+            console.log("❌ Error creating Games table: ", err);
+        } else {
+            console.log("✅ Games table created (if not existed)!");
+        }
+    });
+
+    // insert Games in Games table
+    const statementGames = db.prepare(
+        `
+        INSERT INTO Games (
+            user1, user2, user1_score, user2_score, user1_win, game_type
+        )  
+        VALUES (?, ?, ?, ?, ?, ?)
+        `
+    );
+
+    Games.forEach(item => {
+        statementGames.run(
+            [
+                item.user1,
+                item.user2,
+                item.user1_score,
+                item.user2_score,
+                item.user1_win,
+                item.game_type
+            ]
+        );
+    });
+
+    statementGames.finalize();
+    console.log("✅ Games data inserted!");
 
     // const userNameToFind = 'sawf';
     // db.get(

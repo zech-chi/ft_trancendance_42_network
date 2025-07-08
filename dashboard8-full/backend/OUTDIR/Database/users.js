@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.YearlyStats = exports.ChartsData = exports.RadarData = exports.Users = void 0;
+exports.Games = exports.YearlyStats = exports.ChartsData = exports.RadarData = exports.Users = void 0;
 exports.Users = [
     // user1
     {
@@ -1307,4 +1307,33 @@ exports.YearlyStats = [
         maxStreak: 5,
         DailyActivity: [0.53, 0.82, 0, 0, 0, 0.89, 0.71, 0, 0, 0.87, 0, 0.71, 0.43, 0, 0.99, 0.7, 0.46, 0.39, 0.24, 0.18, 0.76, 0.72, 0, 0, 0.27, 0.96, 0.55, 0.23, 0.69, 0.94, 0.69, 0.75, 0.54, 0.56, 0.15, 0, 0.67, 0.39, 0.06, 0.22, 0, 0.95, 0.52, 0.06, 0.36, 0.25, 0, 0.7, 0.48, 0.9, 0.05, 0.79, 0.47, 0.79, 0.38, 0, 0.84, 0.04, 0.52, 0, 0.52, 0, 0.7, 0.47, 0.14, 0, 0.33, 0.89, 0.55, 0, 0.61, 0.63, 0.06, 0, 0.03, 0.65, 0.79, 0, 0.56, 0.08, 0.37, 0.13, 0.45, 0.8, 0.84, 0.08, 0.1, 0.4, 0.48, 0.36, 0.33, 0, 0.75, 0.77, 0.15, 0.53, 0.39, 0.73, 0, 0.04, 0.31, 0.79, 0.04, 0.01, 0.67, 0, 0.98, 0.99, 0.06, 0.84, 0, 0, 0.31, 0.47, 0.15, 0.75, 0.59, 0, 0, 0.15, 0.01, 0.6, 0.33, 0.8, 0.68, 0, 0, 0, 0.01, 0.33, 0.0, 0.32, 0.7, 0.69, 0, 0.58, 0.32, 0.71, 0.65, 0.22, 0.89, 0.09, 0.79, 0.39, 0, 0.12, 0.62, 0.48, 0.46, 0.47, 0.42, 0.39, 0.59, 0.98, 0.82, 0.44, 0, 0.58, 0.02, 0.74, 0, 0, 0.19, 0.83, 0.85, 0.13, 0.23, 0.35, 0.27, 0.27, 0.85, 0.9, 0, 0.63, 0.21, 0, 0, 0.46, 0.68, 0.57, 0, 0.69, 0.05, 0.39, 0.9, 0.13, 0, 0.32, 0.82, 0.91, 0.5, 0.45, 0.61, 0.24, 0.5, 0.72, 0.9, 0.04, 0.62, 0.42, 0.98, 0.01, 0.56, 0, 0.81, 0.86, 0, 0.44, 0.51, 0.14, 0.23, 0.62, 0, 0.78, 0, 0.99, 0.89, 0.8, 0.34, 0.5, 0.99, 0.19, 0.15, 0.55, 0, 0, 0.7, 0.51, 0, 0.95, 0, 0.03, 0, 0.05, 0.87, 0.66, 0.07, 0.67, 0.52, 0, 0.74, 0, 0.32, 0.93, 0.21, 0.18, 0.17, 0.46, 0, 0.05, 0.42, 0.14, 0.54, 0.48, 0, 0, 0.42, 0.13, 0.17, 0.91, 0.02, 0, 0.25, 0.11, 0.29, 0.8, 0.71, 0.63, 0.14, 0.0, 0.36, 0, 0.29, 0.19, 0.34, 0, 0.97, 0.04, 0, 0, 0.98, 0, 0.89, 0.24, 0.45, 0.94, 0.88, 0.02, 0.09, 0.21, 0.69, 0, 0.11, 0.18, 0.19, 0.14, 0.09, 0.33, 0.57, 0.95, 0.29, 0.88, 0.51, 0.28, 0, 0.34, 0.17, 0, 0.51, 0.08, 0.28, 0.23, 0.84, 0.78, 0.9, 0.6, 0.49, 0.26, 0.16, 0.53, 0.05, 0.65, 0.67, 0.85, 0.59, 0.48, 0.88, 0.86, 0.34, 0.83, 0.89, 0.55, 0, 0.77, 0, 0.35, 0.45, 0, 0.17, 0.3, 0.52, 0, 0.58, 0.24, 0, 0, 0.39, 0, 0, 0.89, 0.85, 0, 0.7, 0.48, 0.03, 0, 0, 0.09, 0.67, 0.7, 0, 0.11, 0.8, 0.39, 0.73, 0.09]
     },
+];
+exports.Games = [
+    { id: 1, user1: 'user1_id', user2: 'user2_id', user1_score: 5, user2_score: 3, user1_win: true, date_played: '2025-07-01T10:00:00Z', game_type: 'pong' },
+    { id: 2, user1: 'user3_id', user2: 'user4_id', user1_score: 2, user2_score: 6, user1_win: false, date_played: '2025-07-01T11:00:00Z', game_type: 'parchesi' },
+    { id: 3, user1: 'user5_id', user2: 'user6_id', user1_score: 7, user2_score: 7, user1_win: true, date_played: '2025-07-01T12:00:00Z', game_type: 'pong' },
+    { id: 4, user1: 'user7_id', user2: 'user8_id', user1_score: 4, user2_score: 2, user1_win: true, date_played: '2025-07-02T10:00:00Z', game_type: 'parchesi' },
+    { id: 5, user1: 'user9_id', user2: 'user10_id', user1_score: 3, user2_score: 5, user1_win: false, date_played: '2025-07-02T11:00:00Z', game_type: 'pong' },
+    { id: 6, user1: 'user11_id', user2: 'user12_id', user1_score: 1, user2_score: 1, user1_win: true, date_played: '2025-07-02T12:00:00Z', game_type: 'parchesi' },
+    { id: 7, user1: 'user13_id', user2: 'user14_id', user1_score: 9, user2_score: 8, user1_win: true, date_played: '2025-07-03T10:00:00Z', game_type: 'pong' },
+    { id: 8, user1: 'user15_id', user2: 'user1_id', user1_score: 2, user2_score: 4, user1_win: false, date_played: '2025-07-03T11:00:00Z', game_type: 'parchesi' },
+    { id: 9, user1: 'user2_id', user2: 'user3_id', user1_score: 3, user2_score: 3, user1_win: true, date_played: '2025-07-03T12:00:00Z', game_type: 'pong' },
+    { id: 10, user1: 'user4_id', user2: 'user5_id', user1_score: 5, user2_score: 7, user1_win: false, date_played: '2025-07-04T10:00:00Z', game_type: 'pong' },
+    { id: 11, user1: 'user6_id', user2: 'user7_id', user1_score: 6, user2_score: 5, user1_win: true, date_played: '2025-07-04T11:00:00Z', game_type: 'parchesi' },
+    { id: 12, user1: 'user8_id', user2: 'user9_id', user1_score: 2, user2_score: 2, user1_win: true, date_played: '2025-07-04T12:00:00Z', game_type: 'pong' },
+    { id: 13, user1: 'user10_id', user2: 'user11_id', user1_score: 8, user2_score: 4, user1_win: true, date_played: '2025-07-05T10:00:00Z', game_type: 'parchesi' },
+    { id: 14, user1: 'user12_id', user2: 'user13_id', user1_score: 6, user2_score: 9, user1_win: false, date_played: '2025-07-05T11:00:00Z', game_type: 'pong' },
+    { id: 15, user1: 'user14_id', user2: 'user15_id', user1_score: 1, user2_score: 0, user1_win: true, date_played: '2025-07-05T12:00:00Z', game_type: 'parchesi' },
+    { id: 16, user1: 'omKLRQY9S0LYIrVMEkgjG2c3j6k', user2: 'KJ5qt8Zh0tciqsgiXFzBhuYq4of', user1_score: 5, user2_score: 7, user1_win: false, date_played: '2025-07-06T10:00:00Z', game_type: 'pong' },
+    { id: 17, user1: 'pi07DVZqUqr82Po0NuPjnXxD5Tn', user2: 'ARiX1k2UCch17pfe6hh6P0xjSCB', user1_score: 4, user2_score: 4, user1_win: true, date_played: '2025-07-06T11:00:00Z', game_type: 'parchesi' },
+    { id: 18, user1: 'user1_id', user2: 'user4_id', user1_score: 6, user2_score: 1, user1_win: true, date_played: '2025-07-06T12:00:00Z', game_type: 'pong' },
+    { id: 19, user1: 'user6_id', user2: 'user8_id', user1_score: 7, user2_score: 7, user1_win: true, date_played: '2025-07-07T10:00:00Z', game_type: 'parchesi' },
+    { id: 20, user1: 'user10_id', user2: 'user2_id', user1_score: 9, user2_score: 6, user1_win: true, date_played: '2025-07-07T11:00:00Z', game_type: 'pong' },
+    { id: 21, user1: 'user3_id', user2: 'user7_id', user1_score: 2, user2_score: 2, user1_win: true, date_played: '2025-07-07T12:00:00Z', game_type: 'parchesi' },
+    { id: 22, user1: 'user5_id', user2: 'user9_id', user1_score: 0, user2_score: 3, user1_win: false, date_played: '2025-07-08T10:00:00Z', game_type: 'pong' },
+    { id: 23, user1: 'user11_id', user2: 'user13_id', user1_score: 4, user2_score: 4, user1_win: true, date_played: '2025-07-08T11:00:00Z', game_type: 'parchesi' },
+    { id: 24, user1: 'user14_id', user2: 'omKLRQY9S0LYIrVMEkgjG2c3j6k', user1_score: 3, user2_score: 5, user1_win: false, date_played: '2025-07-08T12:00:00Z', game_type: 'pong' },
+    { id: 25, user1: 'KJ5qt8Zh0tciqsgiXFzBhuYq4of', user2: 'user12_id', user1_score: 5, user2_score: 5, user1_win: true, date_played: '2025-07-09T10:00:00Z', game_type: 'parchesi' },
+    { id: 26, user1: 'user6_id', user2: 'pi07DVZqUqr82Po0NuPjnXxD5Tn', user1_score: 8, user2_score: 6, user1_win: true, date_played: '2025-07-09T11:00:00Z', game_type: 'pong' },
+    { id: 27, user1: 'ARiX1k2UCch17pfe6hh6P0xjSCB', user2: 'user9_id', user1_score: 2, user2_score: 2, user1_win: true, date_played: '2025-07-09T12:00:00Z', game_type: 'parchesi' }
 ];
