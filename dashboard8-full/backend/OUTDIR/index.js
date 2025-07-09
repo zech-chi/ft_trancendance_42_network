@@ -104,7 +104,13 @@ async function getGames(userName, gameType) {
 }
 async function getFriends(userName, status) {
     try {
-        const rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE userName = ? AND status = ?;`, [userName, status]);
+        let rows = [];
+        if (status === 'accepted') {
+            rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE (sender_userName = ? OR receiver_userName = ?) AND status = ?;`, [userName, userName, status]);
+        }
+        else if (status === 'pending') {
+            rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE receiver_userName = ? AND status = ?;`, [userName, status]);
+        }
         return rows;
     }
     catch (err) {
