@@ -102,6 +102,15 @@ async function getGames(userName, gameType) {
         throw err;
     }
 }
+async function getFriends(userName, status) {
+    try {
+        const rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE userName = ? AND status = ?;`, [userName, status]);
+        return rows;
+    }
+    catch (err) {
+        throw err;
+    }
+}
 async function getRadarData(userName) {
     try {
         const row = await dbGetAsync(`
@@ -265,6 +274,21 @@ async function setupServer() {
         try {
             const games = await getGames(userName, gameType);
             return reply.send(games);
+        }
+        catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
+    });
+    app.get('/Friends/:userName', async (request, reply) => {
+        const { userName } = request.params;
+        const query = request.query;
+        const status = query.status;
+        if (!userName || !status) {
+            return reply.code(400).send({ error: 'Missing userName or status' });
+        }
+        try {
+            const rows = await getFriends(userName, status);
+            return reply.send(rows);
         }
         catch (err) {
             return reply.code(500).send({ error: '❌ Error running query' });

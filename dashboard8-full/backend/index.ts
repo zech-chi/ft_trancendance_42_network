@@ -124,6 +124,19 @@ async function getGames(userName: string, gameType: string) {
   }
 }
 
+async function getFriends(userName: string, status: string) {
+  try {
+    let rows = [];
+    if (status === 'accepted') {
+      rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE (sender_userName = ? OR receiver_userName = ?) AND status = ?;`, [userName, userName, status]);
+    } else if (status === 'pending') {
+      rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE receiver_userName = ? AND status = ?;`, [userName, status]);
+    }
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+}
 
 
 async function getRadarData(userName: string) {
@@ -317,6 +330,24 @@ async function setupServer() {
         return reply.code(500).send({ error: '❌ Error running query' });
       }
     });
+
+    app.get('/Friends/:userName', async (request, reply) => {
+      const {userName } = request.params as UserParams;
+      const query = request.query as { status: string };
+      const status = query.status;
+
+      if (!userName || !status) {
+        return reply.code(400).send({ error: 'Missing userName or status' });
+      }
+
+      try {
+        const rows = await getFriends(userName, status);
+        return reply.send(rows);
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
+    });
+
     // app.get('/Games/:userName', async (request, reply) => {
     //   const { userName } = request.params as UserParams;
     //   const query = request.query as { gameType: string };

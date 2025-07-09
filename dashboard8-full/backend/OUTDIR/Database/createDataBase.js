@@ -333,17 +333,39 @@ db.serialize(() => {
     });
     statementGames.finalize();
     console.log("✅ Games data inserted!");
-    // const userNameToFind = 'sawf';
-    // db.get(
-    //     `SELECT * FROM Users WHERE userName = ?`, [userNameToFind],
-    //     (err, row) => {
-    //         if (err)
-    //             console.log("❌ Error running query:", err);
-    //         else if (row)
-    //             console.log("✅ User found: ", row);
-    //         else
-    //             console.log("❌ No user found with userName = ", userNameToFind);
-    //     }
-    // )
+    // Friends Table for history staff
+    db.run(`
+        CREATE TABLE Friends (
+            sender_userName TEXT NOT NULL,
+            receiver_userName TEXT NOT NULL,
+            status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'rejected')),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (sender_userName) REFERENCES Users(userName),
+            FOREIGN KEY (receiver_userName) REFERENCES Users(userName),
+            PRIMARY KEY (sender_userName, receiver_userName)
+        );
+    `, (err) => {
+        if (err) {
+            console.log("❌ Error creating Friends table: ", err);
+        }
+        else {
+            console.log("✅ Friends table created (if not existed)!");
+        }
+    });
+    const statementFriends = db.prepare(`
+        INSERT INTO Friends (
+            sender_userName, receiver_userName, status
+        )  
+        VALUES (?, ?, ?)
+        `);
+    users_1.friendsData.forEach(item => {
+        statementFriends.run([
+            item.sender_userName,
+            item.receiver_userName,
+            item.status
+        ]);
+    });
+    statementFriends.finalize();
 });
 // db.close();

@@ -1,5 +1,6 @@
 import sqlite3 from "sqlite3";
-import { Users, RadarData, ChartsData, YearlyStats, Games } from "./users"
+import { Users, RadarData, ChartsData, YearlyStats, Games, friendsData } from "./users"
+import { stat } from "fs";
 
 
 /*
@@ -355,7 +356,7 @@ db.serialize( () => {
             console.log("✅ Games table created (if not existed)!");
         }
     });
-
+    
     // insert Games in Games table
     const statementGames = db.prepare(
         `
@@ -365,7 +366,7 @@ db.serialize( () => {
         VALUES (?, ?, ?, ?, ?, ?)
         `
     );
-
+    
     Games.forEach(item => {
         statementGames.run(
             [
@@ -378,23 +379,51 @@ db.serialize( () => {
             ]
         );
     });
-
+    
     statementGames.finalize();
     console.log("✅ Games data inserted!");
+    
+    // Friends Table for history staff
+    db.run(`
+        CREATE TABLE Friends (
+            sender_userName TEXT NOT NULL,
+            receiver_userName TEXT NOT NULL,
+            status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'rejected')),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (sender_userName) REFERENCES Users(userName),
+            FOREIGN KEY (receiver_userName) REFERENCES Users(userName),
+            PRIMARY KEY (sender_userName, receiver_userName)
+        );
+    `, (err: any) => {
+        if (err) {
+            console.log("❌ Error creating Friends table: ", err);
+        } else {
+            console.log("✅ Friends table created (if not existed)!");
+        }
+    });
 
-    // const userNameToFind = 'sawf';
-    // db.get(
-    //     `SELECT * FROM Users WHERE userName = ?`, [userNameToFind],
-    //     (err, row) => {
-    //         if (err)
-    //             console.log("❌ Error running query:", err);
-    //         else if (row)
-    //             console.log("✅ User found: ", row);
-    //         else
-    //             console.log("❌ No user found with userName = ", userNameToFind);
-    //     }
-    // )
+    const statementFriends = db.prepare(
+        `
+        INSERT INTO Friends (
+            sender_userName, receiver_userName, status
+        )  
+        VALUES (?, ?, ?)
+        `
+    );
 
+    friendsData.forEach(item => {
+        statementFriends.run(
+            [
+                item.sender_userName,
+                item.receiver_userName,
+                item.status
+            ]
+        );
+    }
+    );
+
+    statementFriends.finalize();
 
 });
 

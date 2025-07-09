@@ -52,26 +52,6 @@ export function SearchForm(): JSX.Element {
     );
 }
 
-const userX = {
-  fullName    :   "Gon Freecss",
-  userName    :   "hunterGon",
-  imageUrl    :   "/kilwa.png",
-  rank	    :   1337,
-  level	    :   9,
-  progress    :   0.75,
-  online	    :   true
-}
-
-const userY = {
-  fullName    :   "Gon Freecss",
-  userName    :   "hunterGon",
-  imageUrl    :   "/gon.jpg",
-  rank	    :   1337,
-  level	    :   9,
-  progress    :   0.75,
-  online	    :   true
-}
-
 
 const fetchUser = async (userName: string) => {
   const response = await fetch(`http://localhost:5000/users/${userName}`);
@@ -81,68 +61,6 @@ const fetchUser = async (userName: string) => {
   const data = await response.json();
   return data;
 }
-
-
-// function DisplayData({game}: {game : Game}): JSX.Element {
-//   const [userCur, setUserCur] = useState<any | null>(null);
-//   const [userOther, setUserOther] = useState<any | null>(null);
-//   const { username } = useUserName();
-
-//   useEffect(() => {
-//     if (username === game.user1) {
-//       fetchUser(game.user1).then(setUserOther).catch(console.error);
-//       fetchUser(game.user2).then(setUserCur).catch(console.error);
-//     } else {
-//       fetchUser(game.user1).then(setUserCur).catch(console.error);
-//       fetchUser(game.user2).then(setUserOther).catch(console.error);
-//     }
-//   }, [game]);
-
-//   if (!userCur || !userOther) {
-//     return <div className="text-center text-gray-500">Loading...</div>;
-//   }
-
-//   const user1Won = true;
-//   return (
-//     <div className="w-full flex items-center h-25 justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
-//       {/* Left Profile (user1) */}
-//       <div className="relative w-[100px] h-[100px]">
-//         <div className="w-full h-full rounded-full border-[15px] 
-//           border-[#F63737] border-l-transparent border-b-transparent 
-//           border-t-[#F63737] border-r-[#F63737] flex items-center justify-center overflow-hidden rotate-225">
-//           <img src={userCur.imageUrl} alt={userCur.userName} className="w-full h-full object-cover rounded-full -rotate-225 border-5 border-black" />
-//         </div>
-//         <div className="absolute bottom-[18px] right-[23px] w-3 h-3 bg-[#00FF04] rounded-full border-2 border-black" />
-//       </div>
-
-//       {/* Center Score & Date */}
-//       <div className="flex flex-col items-center justify-center">
-//         <div className="text-5xl font-bold">
-//           {user1Won ? (
-//             <>
-//               9  <span>–</span>  4
-//             </>
-//           ) : (
-//             <>
-//               4  <span>–</span>  9
-//             </>
-//           )}
-//         </div>
-
-//         <div className="text-[#FEDF7F]/70 text-sm mt-2">{game.date_played}</div>
-//       </div>
-
-//       {/* Right Profile (user2) */}
-//       <div className="relative w-[100px] h-[100px]">
-//         <div className="w-full h-full rounded-full border-[15px] 
-//           border-[#56BA1C] border-r-transparent border-b-transparent 
-//           border-t-[#56BA1C] border-l-[#56BA1C] flex items-center justify-center overflow-hidden -rotate-225">
-//           <img src={userOther.imageUrl} alt={userOther.userName} className="w-full h-full object-cover rounded-full border-5 border-black rotate-225" />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 
 function DisplayData({ game }: { game: Game }): JSX.Element {
   const [userCur, setUserCur] = useState<any | null>(null);
