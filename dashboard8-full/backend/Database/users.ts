@@ -1449,6 +1449,5 @@ export const Games = [
     { id: 25, user1: 'zech-chi', user2: 'user12',   user1_score: 5, user2_score: 5, user1_win: true,  date_played: '2025-07-09T10:00:00Z', game_type: 'parchesi' },
     { id: 26, user1: 'user6',    user2: 'killzold', user1_score: 8, user2_score: 6, user1_win: true,  date_played: '2025-07-09T11:00:00Z', game_type: 'pong' },
     { id: 27, user1: 'saw',      user2: 'user9',    user1_score: 2, user2_score: 2, user1_win: true,  date_played: '2025-07-09T12:00:00Z', game_type: 'parchesi' },
-  ];
-  
+];
   

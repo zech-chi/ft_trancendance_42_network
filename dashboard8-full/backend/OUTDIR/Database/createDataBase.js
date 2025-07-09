@@ -303,8 +303,8 @@ db.serialize(() => {
             user1_win BOOLEAN NOT NULL,
             date_played DATETIME DEFAULT CURRENT_TIMESTAMP,
             game_type TEXT CHECK (game_type IN ('pong', 'parchesi')),
-            FOREIGN KEY (user1) REFERENCES Users(id),
-            FOREIGN KEY (user2) REFERENCES Users(id)
+            FOREIGN KEY (user1) REFERENCES Users(username),
+            FOREIGN KEY (user2) REFERENCES Users(username)
         );
     `, (err) => {
         if (err) {

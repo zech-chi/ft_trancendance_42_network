@@ -3,8 +3,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Games = void 0;
 const fastify_1 = __importDefault(require("fastify"));
 const sqlite3_1 = __importDefault(require("sqlite3"));
+exports.Games = [
+    { id: 1, user1: 'user1', user2: 'user2', user1_score: 5, user2_score: 3, user1_win: true, date_played: '2025-07-01T10:00:00Z', game_type: 'pong' },
+    { id: 2, user1: 'user3', user2: 'user4', user1_score: 2, user2_score: 6, user1_win: false, date_played: '2025-07-01T11:00:00Z', game_type: 'parchesi' },
+    { id: 3, user1: 'user5', user2: 'user6', user1_score: 7, user2_score: 7, user1_win: true, date_played: '2025-07-01T12:00:00Z', game_type: 'pong' },
+    { id: 4, user1: 'user7', user2: 'user8', user1_score: 4, user2_score: 2, user1_win: true, date_played: '2025-07-02T10:00:00Z', game_type: 'parchesi' },
+    { id: 5, user1: 'user9', user2: 'user10', user1_score: 3, user2_score: 5, user1_win: false, date_played: '2025-07-02T11:00:00Z', game_type: 'pong' },
+    { id: 6, user1: 'user11', user2: 'user12', user1_score: 1, user2_score: 1, user1_win: true, date_played: '2025-07-02T12:00:00Z', game_type: 'parchesi' },
+    { id: 7, user1: 'user13', user2: 'user14', user1_score: 9, user2_score: 8, user1_win: true, date_played: '2025-07-03T10:00:00Z', game_type: 'pong' },
+    { id: 8, user1: 'user15', user2: 'user1', user1_score: 2, user2_score: 4, user1_win: false, date_played: '2025-07-03T11:00:00Z', game_type: 'parchesi' },
+    { id: 9, user1: 'user2', user2: 'user3', user1_score: 3, user2_score: 3, user1_win: true, date_played: '2025-07-03T12:00:00Z', game_type: 'pong' },
+    { id: 10, user1: 'user4', user2: 'user5', user1_score: 5, user2_score: 7, user1_win: false, date_played: '2025-07-04T10:00:00Z', game_type: 'pong' },
+    { id: 11, user1: 'user6', user2: 'user7', user1_score: 6, user2_score: 5, user1_win: true, date_played: '2025-07-04T11:00:00Z', game_type: 'parchesi' },
+    { id: 12, user1: 'user8', user2: 'user9', user1_score: 2, user2_score: 2, user1_win: true, date_played: '2025-07-04T12:00:00Z', game_type: 'pong' },
+    { id: 13, user1: 'user10', user2: 'user11', user1_score: 8, user2_score: 4, user1_win: true, date_played: '2025-07-05T10:00:00Z', game_type: 'parchesi' },
+    { id: 14, user1: 'user12', user2: 'user13', user1_score: 6, user2_score: 9, user1_win: false, date_played: '2025-07-05T11:00:00Z', game_type: 'pong' },
+    { id: 15, user1: 'user14', user2: 'user15', user1_score: 1, user2_score: 0, user1_win: true, date_played: '2025-07-05T12:00:00Z', game_type: 'parchesi' },
+    { id: 16, user1: 'hunterGon', user2: 'zech-chi', user1_score: 5, user2_score: 7, user1_win: false, date_played: '2025-07-06T10:00:00Z', game_type: 'pong' },
+    { id: 17, user1: 'killzold', user2: 'saw', user1_score: 4, user2_score: 4, user1_win: true, date_played: '2025-07-06T11:00:00Z', game_type: 'parchesi' },
+    { id: 18, user1: 'user1', user2: 'user4', user1_score: 6, user2_score: 1, user1_win: true, date_played: '2025-07-06T12:00:00Z', game_type: 'pong' },
+    { id: 19, user1: 'user6', user2: 'user8', user1_score: 7, user2_score: 7, user1_win: true, date_played: '2025-07-07T10:00:00Z', game_type: 'parchesi' },
+    { id: 20, user1: 'user10', user2: 'user2', user1_score: 9, user2_score: 6, user1_win: true, date_played: '2025-07-07T11:00:00Z', game_type: 'pong' },
+    { id: 21, user1: 'user3', user2: 'user7', user1_score: 2, user2_score: 2, user1_win: true, date_played: '2025-07-07T12:00:00Z', game_type: 'parchesi' },
+    { id: 22, user1: 'user5', user2: 'user9', user1_score: 0, user2_score: 3, user1_win: false, date_played: '2025-07-08T10:00:00Z', game_type: 'pong' },
+    { id: 23, user1: 'user11', user2: 'user13', user1_score: 4, user2_score: 4, user1_win: true, date_played: '2025-07-08T11:00:00Z', game_type: 'parchesi' },
+    { id: 24, user1: 'user14', user2: 'hunterGon', user1_score: 3, user2_score: 5, user1_win: false, date_played: '2025-07-08T12:00:00Z', game_type: 'pong' },
+    { id: 25, user1: 'zech-chi', user2: 'user12', user1_score: 5, user2_score: 5, user1_win: true, date_played: '2025-07-09T10:00:00Z', game_type: 'parchesi' },
+    { id: 26, user1: 'user6', user2: 'killzold', user1_score: 8, user2_score: 6, user1_win: true, date_played: '2025-07-09T11:00:00Z', game_type: 'pong' },
+    { id: 27, user1: 'saw', user2: 'user9', user1_score: 2, user2_score: 2, user1_win: true, date_played: '2025-07-09T12:00:00Z', game_type: 'parchesi' },
+];
 const cors_1 = __importDefault(require("@fastify/cors"));
 const db = new sqlite3_1.default.Database('Database/DataBase.db', (err) => {
     if (err) {
@@ -88,6 +118,15 @@ async function getUser(userName) {
         if (!row)
             return null;
         return row;
+    }
+    catch (err) {
+        throw err;
+    }
+}
+async function getGames(userName, gameType) {
+    try {
+        const rows = await dbGetAsyncAll('SELECT * FROM Games WHERE (user1 = ? OR user2 = ?) AND game_type = ? ORDER BY date_played DESC;', [userName, userName, gameType]);
+        return rows;
     }
     catch (err) {
         throw err;
@@ -246,6 +285,42 @@ async function setupServer() {
             return reply.code(500).send({ error: '❌ Error running query' });
         }
     });
+    app.get('/Games/:userName', async (request, reply) => {
+        const { userName } = request.params;
+        const query = request.query;
+        const gameType = query.gameType;
+        if (!userName || !gameType) {
+            return reply.code(400).send({ error: 'Missing userName or gameType' });
+        }
+        try {
+            const games = await getGames(userName, gameType);
+            return reply.send(games);
+        }
+        catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
+    });
+    // app.get('/Games/:userName', async (request, reply) => {
+    //   const { userName } = request.params as UserParams;
+    //   const query = request.query as { gameType: string };
+    //   const gameType = query.gameType;
+    //   if (!userName || !gameType) {
+    //     return reply.code(400).send({ error: 'Missing userName or gameType' });
+    //   }
+    //   let filteredGames = Games.filter(
+    //     (game) =>
+    //       game.user1 === userName || game.user2 === userName
+    //   );
+    //   console.log(filteredGames);
+    //   if (gameType) {
+    //     filteredGames = filteredGames.filter((game) => game.game_type === gameType);
+    //   }
+    //   console.log(gameType);
+    //   if (filteredGames.length === 0) {
+    //     return reply.code(404).send({ error: 'No games found for this user' });
+    //   }
+    //     return reply.send(filteredGames);
+    // });
     app.get('/rank', getUserRankOpts, async (request, reply) => {
         try {
             const users = await getUsers();

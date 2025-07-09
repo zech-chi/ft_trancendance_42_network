@@ -158,6 +158,15 @@ async function getUser(userName: string) {
 }
 
 
+async function getGames(userName: string, gameType: string) {
+  try {
+    const rows = await dbGetAsyncAll('SELECT * FROM Games WHERE (user1 = ? OR user2 = ?) AND game_type = ? ORDER BY date_played DESC;', [userName, userName, gameType]);
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+}
+
 
 
 async function getRadarData(userName: string) {
@@ -342,22 +351,39 @@ async function setupServer() {
       if (!userName || !gameType) {
         return reply.code(400).send({ error: 'Missing userName or gameType' });
       }
+      
+      try {
+        const games = await getGames(userName, gameType);
+        return reply.send(games);
 
-      let filteredGames = Games.filter(
-        (game) =>
-          game.user1 === userName || game.user2 === userName
-      );
-    
-      console.log(filteredGames);
-      if (gameType) {
-        filteredGames = filteredGames.filter((game) => game.game_type === gameType);
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
       }
-      console.log(gameType);
-      if (filteredGames.length === 0) {
-        return reply.code(404).send({ error: 'No games found for this user' });
-      }
-        return reply.send(filteredGames);
     });
+    // app.get('/Games/:userName', async (request, reply) => {
+    //   const { userName } = request.params as UserParams;
+    //   const query = request.query as { gameType: string };
+    //   const gameType = query.gameType;
+
+    //   if (!userName || !gameType) {
+    //     return reply.code(400).send({ error: 'Missing userName or gameType' });
+    //   }
+
+    //   let filteredGames = Games.filter(
+    //     (game) =>
+    //       game.user1 === userName || game.user2 === userName
+    //   );
+    
+    //   console.log(filteredGames);
+    //   if (gameType) {
+    //     filteredGames = filteredGames.filter((game) => game.game_type === gameType);
+    //   }
+    //   console.log(gameType);
+    //   if (filteredGames.length === 0) {
+    //     return reply.code(404).send({ error: 'No games found for this user' });
+    //   }
+    //     return reply.send(filteredGames);
+    // });
 
     app.get('/rank', getUserRankOpts, async (request, reply) => {
       try {
