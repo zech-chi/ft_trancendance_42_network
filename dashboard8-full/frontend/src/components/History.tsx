@@ -1,11 +1,13 @@
 'use client'
 
 import next from "next";
-import { JSX } from "react";
+import { JSX, use } from "react";
 import { useState, useEffect } from "react";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import Image from "next/image";
 import Cookies from "js-cookie";
+import { useUserName } from "@/context/UserNameContext";
+import { data } from "framer-motion/client";
 
 type GameName = 'pong' | 'parchesi';
 
@@ -18,6 +20,18 @@ interface User {
   progress: number;
   online: boolean;
 }
+
+type Game = {
+  id: number;
+  user1: string;
+  user2: string;
+  user1_score: number;
+  user2_score: number;
+  user1_win: boolean;
+  date_played: string;
+  game_type: string;
+};
+
 
 export function SearchForm(): JSX.Element {
     return (
@@ -58,29 +72,125 @@ const userY = {
   online	    :   true
 }
 
-function ProfileImage({ imageUrl }: { imageUrl: string }): JSX.Element {
-  return (
-    <div className="relative rounded-full w-[80px] h-[80px] overflow-hidden border-2 border-black m-3">
-      <Image
-        src={imageUrl}
-        alt="Profile"
-        fill
-        style={{ objectFit: 'cover', objectPosition: 'center' }}
-        priority
-      />
-    </div>
-  );
+
+const fetchUser = async (userName: string) => {
+  const response = await fetch(`http://localhost:5000/users/${userName}`);
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
 }
 
-function DisplayData({ user1, user2, user1Won }: { user1: User, user2: User, user1Won: Boolean }): JSX.Element {
+
+// function DisplayData({game}: {game : Game}): JSX.Element {
+//   const [userCur, setUserCur] = useState<any | null>(null);
+//   const [userOther, setUserOther] = useState<any | null>(null);
+//   const { username } = useUserName();
+
+//   useEffect(() => {
+//     if (username === game.user1) {
+//       fetchUser(game.user1).then(setUserOther).catch(console.error);
+//       fetchUser(game.user2).then(setUserCur).catch(console.error);
+//     } else {
+//       fetchUser(game.user1).then(setUserCur).catch(console.error);
+//       fetchUser(game.user2).then(setUserOther).catch(console.error);
+//     }
+//   }, [game]);
+
+//   if (!userCur || !userOther) {
+//     return <div className="text-center text-gray-500">Loading...</div>;
+//   }
+
+//   const user1Won = true;
+//   return (
+//     <div className="w-full flex items-center h-25 justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+//       {/* Left Profile (user1) */}
+//       <div className="relative w-[100px] h-[100px]">
+//         <div className="w-full h-full rounded-full border-[15px] 
+//           border-[#F63737] border-l-transparent border-b-transparent 
+//           border-t-[#F63737] border-r-[#F63737] flex items-center justify-center overflow-hidden rotate-225">
+//           <img src={userCur.imageUrl} alt={userCur.userName} className="w-full h-full object-cover rounded-full -rotate-225 border-5 border-black" />
+//         </div>
+//         <div className="absolute bottom-[18px] right-[23px] w-3 h-3 bg-[#00FF04] rounded-full border-2 border-black" />
+//       </div>
+
+//       {/* Center Score & Date */}
+//       <div className="flex flex-col items-center justify-center">
+//         <div className="text-5xl font-bold">
+//           {user1Won ? (
+//             <>
+//               9  <span>–</span>  4
+//             </>
+//           ) : (
+//             <>
+//               4  <span>–</span>  9
+//             </>
+//           )}
+//         </div>
+
+//         <div className="text-[#FEDF7F]/70 text-sm mt-2">{game.date_played}</div>
+//       </div>
+
+//       {/* Right Profile (user2) */}
+//       <div className="relative w-[100px] h-[100px]">
+//         <div className="w-full h-full rounded-full border-[15px] 
+//           border-[#56BA1C] border-r-transparent border-b-transparent 
+//           border-t-[#56BA1C] border-l-[#56BA1C] flex items-center justify-center overflow-hidden -rotate-225">
+//           <img src={userOther.imageUrl} alt={userOther.userName} className="w-full h-full object-cover rounded-full border-5 border-black rotate-225" />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+function DisplayData({ game }: { game: Game }): JSX.Element {
+  const [userCur, setUserCur] = useState<any | null>(null);
+  const [userOther, setUserOther] = useState<any | null>(null);
+  const { username } = useUserName();
+
+  const isCurrentUserUser1 = username === game.user1;
+  const currentUserWon = (game.user1_win && isCurrentUserUser1) || (!game.user1_win && !isCurrentUserUser1);
+  const opponentWon = !currentUserWon;
+
+  useEffect(() => {
+    setTimeout(() => {
+      const fetchData = async () => {
+        const cur = await fetchUser(isCurrentUserUser1 ? game.user1 : game.user2);
+        const other = await fetchUser(isCurrentUserUser1 ? game.user2 : game.user1);
+        setUserCur(cur);
+        setUserOther(other);
+      };
+      fetchData();
+    }, 500);
+  }, [game, username]);
+
+  if (!userCur || !userOther) {
+    return (
+      <div className="w-full flex items-center justify-center h-25 rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+        <div className="flex justify-center items-center h-full">
+          <div className="w-5 h-5 border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full flex items-center h-25 justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
-      {/* Left Profile (user1) */}
+      
+      {/* Left Profile (Opponent) */}
       <div className="relative w-[100px] h-[100px]">
-        <div className="w-full h-full rounded-full border-[15px] 
-          border-[#F63737] border-l-transparent border-b-transparent 
-          border-t-[#F63737] border-r-[#F63737] flex items-center justify-center overflow-hidden rotate-225">
-          <img src={user1.imageUrl} alt={user1.userName} className="w-full h-full object-cover rounded-full -rotate-225 border-5 border-black" />
+        <div className={`w-full h-full rounded-full border-[15px] 
+          ${opponentWon ? 'border-[#56BA1C]' : 'border-[#F63737]'} 
+          border-l-transparent border-b-transparent 
+          border-t-${opponentWon ? '[#56BA1C]' : '[#F63737]'} 
+          border-r-${opponentWon ? '[#56BA1C]' : '[#F63737]'} 
+          flex items-center justify-center overflow-hidden rotate-225`}>
+          <img
+            src={userOther.imageUrl}
+            alt={userOther.userName}
+            className="w-full h-full object-cover rounded-full -rotate-225 border-5 border-black"
+          />
         </div>
         <div className="absolute bottom-[18px] right-[23px] w-3 h-3 bg-[#00FF04] rounded-full border-2 border-black" />
       </div>
@@ -88,35 +198,53 @@ function DisplayData({ user1, user2, user1Won }: { user1: User, user2: User, use
       {/* Center Score & Date */}
       <div className="flex flex-col items-center justify-center">
         <div className="text-5xl font-bold">
-          {user1Won ? (
+          {isCurrentUserUser1 ? (
             <>
-              9  <span>–</span>  4
+              {game.user2_score} <span>–</span> {game.user1_score}
             </>
           ) : (
             <>
-              4  <span>–</span>  9
+              {game.user1_score} <span>–</span> {game.user2_score}
             </>
           )}
         </div>
-
-        <div className="text-[#FEDF7F] text-sm mt-2">09.03.2024</div>
+        <div className="text-[#FEDF7F]/70 text-sm mt-2">
+          {game.date_played.slice(0, 16)}
+        </div>
       </div>
 
-      {/* Right Profile (user2) */}
+      {/* Right Profile (Current User) */}
       <div className="relative w-[100px] h-[100px]">
-        <div className="w-full h-full rounded-full border-[15px] 
-          border-[#56BA1C] border-r-transparent border-b-transparent 
-          border-t-[#56BA1C] border-l-[#56BA1C] flex items-center justify-center overflow-hidden -rotate-225">
-          <img src={user2.imageUrl} alt={user2.userName} className="w-full h-full object-cover rounded-full border-5 border-black rotate-225" />
+        <div className={`w-full h-full rounded-full border-[15px] 
+          ${currentUserWon ? 'border-[#56BA1C]' : 'border-[#F63737]'} 
+          border-r-transparent border-b-transparent 
+          border-t-${currentUserWon ? '[#56BA1C]' : '[#F63737]'} 
+          border-l-${currentUserWon ? '[#56BA1C]' : '[#F63737]'} 
+          flex items-center justify-center overflow-hidden -rotate-225`}>
+          <img
+            src={userCur.imageUrl}
+            alt={userCur.userName}
+            className="w-full h-full object-cover rounded-full border-5 border-black rotate-225"
+          />
         </div>
       </div>
     </div>
   );
 }
 
+const fetchGames = async (userName: string, gameType: string) => {
+  const response = await fetch(`http://localhost:5000/Games/${userName}?gameType=${gameType}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch games');
+  }
+  const data = await response.json();
+  return data;
+}
 
 export default function History(): JSX.Element {
     const [game, setGame] = useState<GameName>((Cookies.get('SelectedGameHistory') as GameName) || 'pong');
+    const [games, setGames] = useState<any[]>([]);
+    const { username, setUserName } = useUserName();
     
     function handleChangeGame(newGame: GameName) {
       setGame(newGame);
@@ -124,8 +252,16 @@ export default function History(): JSX.Element {
 
     useEffect(() => {
         Cookies.set('SelectedGameHistory', game, { expires: 365 });
-    }, [game]);
-
+        if (username) {
+          fetchGames(username, game)
+            .then((games) => {
+              setGames(games)
+              // console.log("Games fetched: ", games);
+            }
+          )
+          .catch((err) => console.error("Error: ", err));
+        }
+    }, [game, username]);
 
     return (
         <div className="h-full flex flex-col">
@@ -153,16 +289,14 @@ export default function History(): JSX.Element {
 
           {/* display data */}
           <div className="m-3 flex-1 overflow-y-auto overflow-x-hidden px-4 py-2 space-y-2  custom-scrollbar" >
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
-            <DisplayData user1={userX} user2={userY} user1Won={false}/>
+            {/* <DisplayData user1={userX} user2={userY} user1Won={false}/> */}
+            { games.length > 0 ? (
+              games.map((game, index) => (
+                <DisplayData game={game} key={game.id}/>
+              ))
+            ) : (
+              <div className="text-center font-bold text-[#FEDF7F]/50">No games found</div>
+            )}
           </div>
         </div>
     )
