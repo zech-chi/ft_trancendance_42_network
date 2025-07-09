@@ -1,10 +1,11 @@
 'use client'
 
 import next from "next";
-import { JSX } from "react";
+import { JSX, use } from "react";
 import { useState, useEffect } from "react";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import Image from "next/image";
+import { useUserName } from "@/context/UserNameContext";
 import Cookies from "js-cookie";
 
 export function SearchForm(): JSX.Element {
@@ -28,8 +29,194 @@ export function SearchForm(): JSX.Element {
 
 type FriendsChoice = 'friends' | 'friend request';
 
+const fetchFriends = async (userName: string, choice: string) => {
+    let status: string;
+    if (choice === 'friends') {
+        status = 'accepted';
+    } else if (choice === 'friend request') {
+        status = 'pending';
+    }
+    const response = await fetch(`http://localhost:5000/Friends/${userName}?status=${status}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch games');
+    }
+    const data = await response.json();
+    return data;
+}
+
+type Friends = {
+    sender_userName: string;
+    receiver_userName: string;
+    status: string;
+}
+
+const fetchUser = async (userName: string) => {
+    const response = await fetch(`http://localhost:5000/users/${userName}`);
+    if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+}
+
+type ProfileInfoProps = {
+    fullName: string;
+    userName: string;
+    bio?: string;
+  };
+
+function ProfileInfo({ fullName, userName }: ProfileInfoProps): JSX.Element {
+    const { setUserName } = useUserName();
+    const handleClick = () => {
+      setUserName(userName);
+      console.log("User set to: ", userName);
+    }
+  
+    return (
+      <div className="flex flex-col justify-center h-full gap-1.5 mb-1">
+        <h2 className="text-s font-bold text-white">{fullName}</h2>
+        <h3 className="text-s text-white cursor-pointer hover:underline hover:text-[#FEDF7F]/50 transition-all duration-300 ease-in-out"
+            onClick={handleClick}
+        >@{userName}</h3>
+      </div>
+    );
+  }
+
+  function DisplayFriendsRequest({friends} : {friends: Friends}) : JSX.Element {
+    const [friend, setFriend] = useState<any | null>(null);
+    const { username } = useUserName();
+
+    useEffect(() => {
+        setFriend(null);
+        setTimeout(() => {
+          const fetchData = async () => {
+            const user1 = await fetchUser(friends.sender_userName);
+            const user2 = await fetchUser(friends.receiver_userName);
+            if (user1.userName === username) {
+                setFriend(user2);
+            } else {
+                setFriend(user1);
+            }
+          };
+          fetchData();
+        }, 200);
+    }, [friends, username]);
+
+    if (!friend) {
+        return (
+          <div className="w-full flex items-center justify-center h-25 rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+            <div className="flex justify-center items-center h-full">
+              <div className="w-5 h-5 border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          </div>
+        )
+    }
+
+    return (
+        <div className="w-full flex items-center h-25 justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+            <div className="flex items-center">
+                <div className="relative px-2.5">
+                    <img
+                        src={friend.imageUrl}
+                        alt={friend.userName}
+                        className="w-20 h-20 object-cover rounded-full border-5 border-black"
+                    />
+                    { friend.online ? (
+                        <div className="absolute bottom-[10px] right-[14px] w-3 h-3 bg-[#56BA1C] rounded-full border-2 border-black" />
+                    ) : (
+                        <div className="absolute bottom-[10px] right-[14px] w-3 h-3 bg-[#F63737] rounded-full border-2 border-black" />
+                    )}
+                </div>
+                <ProfileInfo fullName={friend.fullName} userName={friend.userName}/>
+
+            </div>
+            <div className="flex gap-3 mx-6">
+                <button className="bg-[#F63737] rounded-full">
+                    <p className="px-5 py-2 font-bold">Refuse</p>
+                </button>
+                <button className="bg-[#56BA1C] rounded-full">
+                    <p className="px-5 py-2 font-bold">Accept</p>
+                </button>
+            </div>
+        </div>
+    );
+}
+
+
+function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
+    const [friend, setFriend] = useState<any | null>(null);
+    const { username } = useUserName();
+    const [hoveredChat, setHoveredChat] = useState(false);
+    const [hoveredGames, setHoveredGames] = useState(false);
+
+    useEffect(() => {
+        setFriend(null);
+        setTimeout(() => {
+          const fetchData = async () => {
+            const user1 = await fetchUser(friends.sender_userName);
+            const user2 = await fetchUser(friends.receiver_userName);
+            if (user1.userName === username) {
+                setFriend(user2);
+            } else {
+                setFriend(user1);
+            }
+          };
+          fetchData();
+        }, 200);
+    }, [friends, username]);
+
+    if (!friend) {
+        return (
+          <div className="w-full flex items-center justify-center h-25 rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+            <div className="flex justify-center items-center h-full">
+              <div className="w-5 h-5 border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          </div>
+        )
+    }
+
+    return (
+        <div className="w-full flex items-center h-25 justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+            <div className="flex items-center">
+                <div className="relative px-2.5">
+                    <img
+                        src={friend.imageUrl}
+                        alt={friend.userName}
+                        className="w-20 h-20 object-cover rounded-full border-5 border-black"
+                    />
+                    { friend.online ? (
+                        <div className="absolute bottom-[10px] right-[14px] w-3 h-3 bg-[#56BA1C] rounded-full border-2 border-black" />
+                    ) : (
+                        <div className="absolute bottom-[10px] right-[14px] w-3 h-3 bg-[#F63737] rounded-full border-2 border-black" />
+                    )}
+                </div>
+                <ProfileInfo fullName={friend.fullName} userName={friend.userName}/>
+
+            </div>
+            <div className="flex gap-5 mx-10">
+                <img
+                    src={hoveredChat ? '/CHAT2.png' : '/CHAT.png'}
+                    alt="chat"
+                    className="w-5 h-5 transition-transform duration-500"
+                    onMouseEnter={() => setHoveredChat(true)}
+                    onMouseLeave={() => setHoveredChat(false)}
+                />
+                <img
+                    src={hoveredGames ? '/GAMES2.png' : '/GAMES.png'}
+                    alt="games"
+                    className="w-6 h-6 transition-transform duration-500"
+                    onMouseEnter={() => setHoveredGames(true)}
+                    onMouseLeave={() => setHoveredGames(false)}
+                />
+            </div>
+        </div>
+    );
+}
+
 export default function Frineds(): JSX.Element {
     const [choice, setChoice] = useState<FriendsChoice>((Cookies.get('SelectedChoiceFriends') as FriendsChoice) || 'pong');
+    const { username } = useUserName();
+    const [friends, setFriends] = useState<any[]>([]);
 
     function handleChangeChoice(newChoice: FriendsChoice) {
         setChoice(newChoice);
@@ -37,7 +224,17 @@ export default function Frineds(): JSX.Element {
   
     useEffect(() => {
         Cookies.set('SelectedChoiceFriends', choice, { expires: 365 });
-    }, [choice]);
+        if (username) {
+            fetchFriends(username, choice)
+                .then((data) => {
+                    setFriends(data);
+                    console.log("Friends data: ", data);
+                }
+            )
+            .catch((err) => console.error("Error: ", err));
+
+        }
+    }, [choice, username]);
 
     return (
         <div className="h-full flex flex-col">
@@ -75,6 +272,22 @@ export default function Frineds(): JSX.Element {
                         }
                     </div>
             </div>
+
+            {/* display data */}
+            <div className="m-3 flex-1 overflow-y-auto overflow-x-hidden px-4 py-2 space-y-2 custom-scrollbar">
+                {friends.length > 0 ? (
+                    friends.map((friend, index) =>
+                    choice === 'friend request' ? (
+                        <DisplayFriendsRequest friends={friend} key={index} />
+                    ) : (
+                        <DisplayFriends friends={friend} key={index} />
+                    )
+                    )
+                ) : (
+                    <div className="text-center font-bold text-[#FEDF7F]/50">No {choice} found</div>
+                )}
+            </div>
+
 
         </div>
     )
