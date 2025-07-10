@@ -110,7 +110,12 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
             className="w-full h-full object-cover rounded-full -rotate-225 border-5 border-black"
           />
         </div>
-        <div className="absolute bottom-[18px] right-[23px] w-3 h-3 bg-[#00FF04] rounded-full border-2 border-black" />
+        {
+          userOther.online && <div className="absolute bottom-[18px] right-[23px] w-3 h-3 bg-[#00FF04] rounded-full border-2 border-black" />
+        }
+        {
+          !userOther.online && <div className="absolute bottom-[18px] right-[23px] w-3 h-3 bg-[#FF0000] rounded-full border-2 border-black" />
+        }
       </div>
 
       {/* Center Score & Date */}
