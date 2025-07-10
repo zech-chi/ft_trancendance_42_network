@@ -27,10 +27,10 @@ export function SearchForm(): JSX.Element {
     );
 }
 
-type FriendsChoice = 'friends' | 'friend request';
+type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
 const fetchFriends = async (userName: string, choice: string) => {
-    let status: string;
+    let status: string = '';
     if (choice === 'friends') {
         status = 'accepted';
     } else if (choice === 'friend request') {
@@ -314,27 +314,51 @@ export default function Frineds(): JSX.Element {
 
             {/* select choice from friends or friend request */}
             <div className="mt-5 flex justify-center">
-                    <div className="inline-flex bg-white/5 gap-3 rounded-4xl">
+                    <div className="inline-flex bg-white/4 gap-3 rounded-4xl">
                         {
                             (choice === 'friends') ? (
-                                <div className="bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friends')}>
-                                    <p className="py-2 px-10 cursor-pointer text-[#F9545B]">friends</p>
+                                <div className="flex justify-center  bg-black/50 w-[130px] bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friends')}>
+                                    <p className="py-2 cursor-pointer text-[#F9545B]">friends</p>
                                 </div>
                             ) : (
-                                <div className="bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friends')}>
-                                    <p className="py-2 px-10 cursor-pointer">friends</p>
+                                <div className="flex justify-center  bg-black/50 w-[130px] bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friends')}>
+                                    <p className="py-2 cursor-pointer">friends</p>
                                 </div>
                             )
                         }
 
                         {
                             (choice === 'friend request') ? (
-                                <div className="bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friend request')}>
-                                    <p className="py-2 px-4 cursor-pointer text-[#F9545B]">friend request</p>
+                                <div className="flex justify-center  bg-black/50 w-[130px] bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friend request')}>
+                                    <p className="py-2 cursor-pointer text-[#F9545B]">friend request</p>
                                 </div>
                             ) : (
-                                <div className="bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friend request')}>
-                                    <p className="py-2 px-4 cursor-pointer">friend request</p>
+                                <div className=" flex justify-center  bg-black/50 w-[130px] bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friend request')}>
+                                    <p className="py-2 cursor-pointer">friend request</p>
+                                </div>
+                            )
+                        }
+
+                        {
+                            (choice === 'sent request') ? (
+                                <div className="flex justify-center  bg-black/50 w-[130px] bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('sent request')}>
+                                    <p className="py-2 cursor-pointer text-[#F9545B]">sent request</p>
+                                </div>
+                            ) : (
+                                <div className=" flex justify-center  bg-black/50 w-[130px] bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('sent request')}>
+                                    <p className="py-2 cursor-pointer">sent request</p>
+                                </div>
+                            )
+                        }
+
+                        {
+                            (choice === 'blocked') ? (
+                                <div className="flex justify-center  bg-black/50 w-[130px] rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('blocked')}>
+                                    <p className="py-2 cursor-pointer text-[#F9545B]">blocked</p>
+                                </div>
+                            ) : (
+                                <div className="flex justify-center  bg-black/50 w-[130px] rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('blocked')}>
+                                    <p className="py-2 cursor-pointer">blocked</p>
                                 </div>
                             )
                         }
@@ -355,8 +379,6 @@ export default function Frineds(): JSX.Element {
                     <div className="text-center font-bold text-[#FEDF7F]/50">No {choice} found</div>
                 )}
             </div>
-
-
         </div>
     )
 }
