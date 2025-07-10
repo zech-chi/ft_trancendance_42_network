@@ -294,8 +294,13 @@ async function setupServer() {
       ignoreTrailingSlash: true,
     });
     
+    // await app.register(cors, {
+    //   origin: '*',
+    // });
+
     await app.register(cors, {
-      origin: '*',
+      origin: 'http://localhost:3000', // allow your frontend's origin
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ✅ important
     });
 
     // get all users info
@@ -488,6 +493,7 @@ async function setupServer() {
 
     app.put('/Friends/Accept', async (request, reply) => {
       const { user1, user2 } = request.body as { user1: string, user2: string };
+      console.log(request.body);
       if (!user1 || !user2) {
         return reply.code(400).send({ error: 'Missing user1 or user2' });
       }

@@ -82,14 +82,16 @@ function ProfileInfo({ fullName, userName }: ProfileInfoProps): JSX.Element {
     );
   }
 
-  function DisplayFriendsRequest({friends} : {friends: Friends}) : JSX.Element {
+function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : {friends: Friends, changeComponent:boolean, setChangeComponent: React.Dispatch<React.SetStateAction<boolean>>}) : JSX.Element {
     const [friend, setFriend] = useState<any | null>(null);
     const { username } = useUserName();
+    
 
     useEffect(() => {
         setFriend(null);
         setTimeout(() => {
           const fetchData = async () => {
+            setFriend(null);
             const user1 = await fetchUser(friends.sender_userName);
             const user2 = await fetchUser(friends.receiver_userName);
             if (user1.userName === username) {
@@ -99,7 +101,7 @@ function ProfileInfo({ fullName, userName }: ProfileInfoProps): JSX.Element {
             }
           };
           fetchData();
-        }, 200);
+        }, 100);
     }, [friends, username]);
 
     if (!friend) {
@@ -131,10 +133,72 @@ function ProfileInfo({ fullName, userName }: ProfileInfoProps): JSX.Element {
 
             </div>
             <div className="flex gap-3 mx-6">
-                <button className="bg-[#F63737] rounded-full">
+                <button className="bg-[#F63737] rounded-full hover:border-white/80 hover:border-2 transition-all duration-100 ease-in-out cursor-pointer"
+                    onClick = {
+                    async () => {
+                        try {
+                            const response = await fetch(`http://localhost:5000/Friends/Reject/`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    user1: friends.sender_userName,
+                                    user2: friends.receiver_userName,
+                                }),
+                            });
+                            const data = await response.json();
+                            console.log('Response data:', data);
+                            if (!response.ok) {
+                                console.error('❌Error refusing friend request:', data);
+                                // alert('❌ Error refusing friend request');
+                                return;
+                            } else {
+                                console.log('✅ Friend request refused:', data);
+                                // alert('✅ Friend request refused');
+                            }
+                            setChangeComponent(!changeComponent);
+
+                        } catch (error) {
+                            console.error('❌ Network error:', error);
+                            // alert('❌ Network error');
+                        }
+
+                    }}
+                >
                     <p className="px-5 py-2 font-bold">Refuse</p>
                 </button>
-                <button className="bg-[#56BA1C] rounded-full">
+                <button className="bg-[#56BA1C] rounded-full hover:border-white/80 hover:border-2 transition-all duration-100 ease-in-out cursor-pointer"
+                    onClick = {
+                    async () => {
+                        try {
+                            const response = await fetch(`http://localhost:5000/Friends/Accept/`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    user1: friends.sender_userName,
+                                    user2: friends.receiver_userName,
+                                }),
+                            });
+                            const data = await response.json();
+                            console.log('Response data:', data);
+                            if (!response.ok) {
+                                console.error('❌Error accepting friend request:', data);
+                                // alert('❌ Error accepting friend request');
+                                return;
+                            } else {
+                                console.log('✅ Friend request accepted:', data);
+                                // alert('✅ Friend request accepted');
+                            }
+                            setChangeComponent(!changeComponent);
+                        } catch (error) {
+                            console.error('❌ Network error:', error);
+                            // alert('❌ Network error');
+                        }
+
+                    }}>
                     <p className="px-5 py-2 font-bold">Accept</p>
                 </button>
             </div>
@@ -148,11 +212,13 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
     const { username } = useUserName();
     const [hoveredChat, setHoveredChat] = useState(false);
     const [hoveredGames, setHoveredGames] = useState(false);
+    
 
     useEffect(() => {
         setFriend(null);
         setTimeout(() => {
-          const fetchData = async () => {
+            setFriend(null);
+            const fetchData = async () => {
             const user1 = await fetchUser(friends.sender_userName);
             const user2 = await fetchUser(friends.receiver_userName);
             if (user1.userName === username) {
@@ -162,7 +228,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
             }
           };
           fetchData();
-        }, 200);
+        }, 100);
     }, [friends, username]);
 
     if (!friend) {
@@ -217,12 +283,14 @@ export default function Frineds(): JSX.Element {
     const [choice, setChoice] = useState<FriendsChoice>((Cookies.get('SelectedChoiceFriends') as FriendsChoice) || 'pong');
     const { username } = useUserName();
     const [friends, setFriends] = useState<any[]>([]);
+    const [changeComponent, setChangeComponent] = useState(false);
 
     function handleChangeChoice(newChoice: FriendsChoice) {
         setChoice(newChoice);
     }
   
     useEffect(() => {
+        setFriends([]);
         Cookies.set('SelectedChoiceFriends', choice, { expires: 365 });
         if (username) {
             fetchFriends(username, choice)
@@ -234,7 +302,7 @@ export default function Frineds(): JSX.Element {
             .catch((err) => console.error("Error: ", err));
 
         }
-    }, [choice, username]);
+    }, [choice, username, changeComponent]);
 
     return (
         <div className="h-full flex flex-col">
@@ -278,7 +346,7 @@ export default function Frineds(): JSX.Element {
                 {friends.length > 0 ? (
                     friends.map((friend, index) =>
                     choice === 'friend request' ? (
-                        <DisplayFriendsRequest friends={friend} key={index} />
+                        <DisplayFriendsRequest friends={friend} changeComponent={changeComponent} setChangeComponent={setChangeComponent}  key={index} />
                     ) : (
                         <DisplayFriends friends={friend} key={index} />
                     )

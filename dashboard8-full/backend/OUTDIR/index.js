@@ -254,8 +254,12 @@ async function setupServer() {
         logger: true,
         ignoreTrailingSlash: true,
     });
+    // await app.register(cors, {
+    //   origin: '*',
+    // });
     await app.register(cors_1.default, {
-        origin: '*',
+        origin: 'http://localhost:3000', // allow your frontend's origin
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ✅ important
     });
     // get all users info
     // app.get('/users', getUserOpts, async (request, reply) => {
@@ -430,6 +434,48 @@ async function setupServer() {
     //       reply.code(404).send({ error: 'radarData not found' });
     //   }  
     // });
+    app.put('/Friends/Accept', async (request, reply) => {
+        const { user1, user2 } = request.body;
+        console.log(request.body);
+        if (!user1 || !user2) {
+            return reply.code(400).send({ error: 'Missing user1 or user2' });
+        }
+        try {
+            const rows = await dbGetAsyncAll(`
+          UPDATE Friends
+          SET status = 'accepted'
+          WHERE status = 'pending'
+            AND (
+              (sender_userName = ? AND receiver_userName = ?)
+          OR (sender_userName = ? AND receiver_userName = ?)
+          );
+        `, [user1, user2, user2, user1]);
+            return reply.send({ message: 'Friend request accepted' });
+        }
+        catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
+    });
+    app.delete('/Friends/Reject', async (request, reply) => {
+        const { user1, user2 } = request.body;
+        if (!user1 || !user2) {
+            return reply.code(400).send({ error: 'Missing user1 or user2' });
+        }
+        try {
+            const rows = await dbGetAsyncAll(`
+          DELETE FROM Friends
+          WHERE status = 'pending'
+            AND (
+              (sender_userName = ? AND receiver_userName = ?)
+          OR (sender_userName = ? AND receiver_userName = ?)
+          );
+        `, [user1, user2, user2, user1]);
+            return reply.send({ message: 'Friend request rejected' });
+        }
+        catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
+    });
     app.listen({ port: 5000 }, (err, address) => {
         if (err) {
             app.log.error(err);
