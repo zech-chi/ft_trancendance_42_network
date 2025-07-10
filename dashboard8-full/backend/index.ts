@@ -486,7 +486,48 @@ async function setupServer() {
     //   }  
     // });
 
+    app.put('/Friends/Accept', async (request, reply) => {
+      const { user1, user2 } = request.body as { user1: string, user2: string };
+      if (!user1 || !user2) {
+        return reply.code(400).send({ error: 'Missing user1 or user2' });
+      }
+      try {
+        const rows = await dbGetAsyncAll(`
+          UPDATE Friends
+          SET status = 'accepted'
+          WHERE status = 'pending'
+            AND (
+              (sender_userName = ? AND receiver_userName = ?)
+          OR (sender_userName = ? AND receiver_userName = ?)
+          );
+        `, [user1, user2, user2, user1]);
+        return reply.send({ message: 'Friend request accepted' });
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
+    }
+    );
 
+    app.delete('/Friends/Reject', async (request, reply) => {
+      const { user1, user2 } = request.body as { user1: string, user2: string };
+      if (!user1 || !user2) {
+        return reply.code(400).send({ error: 'Missing user1 or user2' });
+      }
+      try {
+        const rows = await dbGetAsyncAll(`
+          DELETE FROM Friends
+          WHERE status = 'pending'
+            AND (
+              (sender_userName = ? AND receiver_userName = ?)
+          OR (sender_userName = ? AND receiver_userName = ?)
+          );
+        `, [user1, user2, user2, user1]);
+        return reply.send({ message: 'Friend request rejected' });
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
+    }
+    );
 
     
     app.listen({ port: 5000 }, (err, address) => {

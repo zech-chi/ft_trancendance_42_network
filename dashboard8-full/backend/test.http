@@ -1,1 +1,9 @@
-GET http://localhost:3000/users/zech HTTP/1.1
+PUT /Friends/Accept HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+Content-Length: 41
+
+{
+  "user1": "alice",
+  "user2": "bob"
+}
