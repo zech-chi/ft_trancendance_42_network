@@ -388,7 +388,8 @@ db.serialize( () => {
         CREATE TABLE Friends (
             sender_userName TEXT NOT NULL,
             receiver_userName TEXT NOT NULL,
-            status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'rejected')),
+            status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'blocked')),
+            blockedBy TEXT REFERENCES Users(userName),
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (sender_userName) REFERENCES Users(userName),
@@ -406,9 +407,9 @@ db.serialize( () => {
     const statementFriends = db.prepare(
         `
         INSERT INTO Friends (
-            sender_userName, receiver_userName, status
+            sender_userName, receiver_userName, status, blockedBy
         )  
-        VALUES (?, ?, ?)
+        VALUES (?, ?, ?, ?)
         `
     );
 
@@ -417,14 +418,20 @@ db.serialize( () => {
             [
                 item.sender_userName,
                 item.receiver_userName,
-                item.status
-            ]
+                item.status,
+                item.blockedBy
+            ],
+        (err: any) => {
+            if (err) {
+                console.error("❌ Error inserting into Friends table:", err, "Data:", item);
+            }
+        }
         );
     }
     );
 
     statementFriends.finalize();
-
+    console.log("✅ Friends data inserted!");
 });
 
 // db.close();

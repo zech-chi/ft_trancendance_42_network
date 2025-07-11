@@ -35,10 +35,18 @@ const fetchFriends = async (userName: string, choice: string) => {
         status = 'accepted';
     } else if (choice === 'friend request') {
         status = 'pending';
+    } else if (choice === 'blocked') {
+        status = 'blocked';
     }
-    const response = await fetch(`http://localhost:5000/Friends/${userName}?status=${status}`);
+    let response ;
+    if (status !== '')
+        response = await fetch(`http://localhost:5000/Friends/${userName}?status=${status}`);
+    else 
+        response = await fetch(`http://localhost:5000/SentRequestFriends/${userName}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch games');
+    //   throw new Error('Failed to fetch games');
+      console.log("Error");
+      return [];
     }
     const data = await response.json();
     return data;
@@ -279,6 +287,185 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
     );
 }
 
+function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friends: Friends, changeComponent:boolean, setChangeComponent: React.Dispatch<React.SetStateAction<boolean>>}) : JSX.Element {
+    const [friend, setFriend] = useState<any | null>(null);
+    const { username } = useUserName();
+    
+
+    useEffect(() => {
+        setFriend(null);
+        setTimeout(() => {
+          const fetchData = async () => {
+            setFriend(null);
+            const user1 = await fetchUser(friends.sender_userName);
+            const user2 = await fetchUser(friends.receiver_userName);
+            if (user1.userName === username) {
+                setFriend(user2);
+            } else {
+                setFriend(user1);
+            }
+          };
+          fetchData();
+        }, 100);
+    }, [friends, username]);
+
+    if (!friend) {
+        return (
+          <div className="w-full flex items-center justify-center h-25 rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+            <div className="flex justify-center items-center h-full">
+              <div className="w-5 h-5 border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          </div>
+        )
+    }
+
+    return (
+        <div className="w-full flex items-center h-25 justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+            <div className="flex items-center">
+                <div className="relative px-2.5">
+                    <img
+                        src={friend.imageUrl}
+                        alt={friend.userName}
+                        className="w-20 h-20 object-cover rounded-full border-5 border-black"
+                    />
+                    { friend.online ? (
+                        <div className="absolute bottom-[10px] right-[14px] w-3 h-3 bg-[#56BA1C] rounded-full border-2 border-black" />
+                    ) : (
+                        <div className="absolute bottom-[10px] right-[14px] w-3 h-3 bg-[#F63737] rounded-full border-2 border-black" />
+                    )}
+                </div>
+                <ProfileInfo fullName={friend.fullName} userName={friend.userName}/>
+
+            </div>
+            <div className="flex gap-3 mx-6">
+                <button className="bg-[#56BA1C] rounded-full hover:border-white/80 hover:border-2 transition-all duration-100 ease-in-out cursor-pointer"
+                    onClick = {
+                    async () => {
+                        try {
+                            const response = await fetch(`http://localhost:5000/Friends/Unblock/`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    user1: friends.sender_userName,
+                                    user2: friends.receiver_userName,
+                                }),
+                            });
+                            const data = await response.json();
+                            console.log('Response data:', data);
+                            if (!response.ok) {
+                                console.error('❌Error accepting friend request:', data);
+                                // alert('❌ Error accepting friend request');
+                                return;
+                            } else {
+                                console.log('✅ Friend request accepted:', data);
+                                // alert('✅ Friend request accepted');
+                            }
+                            setChangeComponent(!changeComponent);
+                        } catch (error) {
+                            console.error('❌ Network error:', error);
+                            // alert('❌ Network error');
+                        }
+
+                    }}>
+                    <p className="px-5 py-2 font-bold">Unblock</p>
+                </button>
+            </div>
+        </div>
+    );
+}
+
+
+function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent} : {friends: Friends, changeComponent:boolean, setChangeComponent: React.Dispatch<React.SetStateAction<boolean>>}) : JSX.Element {
+    const [friend, setFriend] = useState<any | null>(null);
+    const { username } = useUserName();
+    
+
+    useEffect(() => {
+        setFriend(null);
+        setTimeout(() => {
+          const fetchData = async () => {
+            setFriend(null);
+            const user1 = await fetchUser(friends.sender_userName);
+            const user2 = await fetchUser(friends.receiver_userName);
+            if (user1.userName === username) {
+                setFriend(user2);
+            } else {
+                setFriend(user1);
+            }
+          };
+          fetchData();
+        }, 100);
+    }, [friends, username]);
+
+    if (!friend) {
+        return (
+          <div className="w-full flex items-center justify-center h-25 rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+            <div className="flex justify-center items-center h-full">
+              <div className="w-5 h-5 border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          </div>
+        )
+    }
+
+    return (
+        <div className="w-full flex items-center h-25 justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+            <div className="flex items-center">
+                <div className="relative px-2.5">
+                    <img
+                        src={friend.imageUrl}
+                        alt={friend.userName}
+                        className="w-20 h-20 object-cover rounded-full border-5 border-black"
+                    />
+                    { friend.online ? (
+                        <div className="absolute bottom-[10px] right-[14px] w-3 h-3 bg-[#56BA1C] rounded-full border-2 border-black" />
+                    ) : (
+                        <div className="absolute bottom-[10px] right-[14px] w-3 h-3 bg-[#F63737] rounded-full border-2 border-black" />
+                    )}
+                </div>
+                <ProfileInfo fullName={friend.fullName} userName={friend.userName}/>
+
+            </div>
+            <div className="flex gap-3 mx-6">
+                <button className="bg-[#F63737] rounded-full hover:border-white/80 hover:border-2 transition-all duration-100 ease-in-out cursor-pointer"
+                    onClick = {
+                    async () => {
+                        try {
+                            const response = await fetch(`http://localhost:5000/Friends/Delete/`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    user1: friends.sender_userName,
+                                    user2: friends.receiver_userName,
+                                }),
+                            });
+                            const data = await response.json();
+                            console.log('Response data:', data);
+                            if (!response.ok) {
+                                console.error('❌Error accepting friend request:', data);
+                                // alert('❌ Error accepting friend request');
+                                return;
+                            } else {
+                                console.log('✅ Friend request accepted:', data);
+                                // alert('✅ Friend request accepted');
+                            }
+                            setChangeComponent(!changeComponent);
+                        } catch (error) {
+                            console.error('❌ Network error:', error);
+                            // alert('❌ Network error');
+                        }
+
+                    }}>
+                    <p className="px-5 py-2 font-bold">cancel</p>
+                </button>
+            </div>
+        </div>
+    );
+}
+
 export default function Frineds(): JSX.Element {
     const [choice, setChoice] = useState<FriendsChoice>((Cookies.get('SelectedChoiceFriends') as FriendsChoice) || 'pong');
     const { username } = useUserName();
@@ -288,7 +475,7 @@ export default function Frineds(): JSX.Element {
     function handleChangeChoice(newChoice: FriendsChoice) {
         setChoice(newChoice);
     }
-  
+
     useEffect(() => {
         setFriends([]);
         Cookies.set('SelectedChoiceFriends', choice, { expires: 365 });
@@ -371,8 +558,12 @@ export default function Frineds(): JSX.Element {
                     friends.map((friend, index) =>
                     choice === 'friend request' ? (
                         <DisplayFriendsRequest friends={friend} changeComponent={changeComponent} setChangeComponent={setChangeComponent}  key={index} />
-                    ) : (
+                    ) : choice === 'friends' ? (
                         <DisplayFriends friends={friend} key={index} />
+                    ) : choice === 'blocked' ? (
+                        <DisplayBlocked friends={friend} changeComponent={changeComponent} setChangeComponent={setChangeComponent} key={index} />
+                    ) : (
+                        <DisplaySentFriendsRequest friends={friend} changeComponent={changeComponent} setChangeComponent={setChangeComponent} key={index} />
                     )
                     )
                 ) : (

@@ -10,6 +10,7 @@ type GameType = 'pong' | 'parchesi';
 
 import cors from '@fastify/cors';
 import { callbackify } from 'util';
+import { request } from 'http';
 
 type YearData = {
   totalGames: number;
@@ -131,7 +132,19 @@ async function getFriends(userName: string, status: string) {
       rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE (sender_userName = ? OR receiver_userName = ?) AND status = ?;`, [userName, userName, status]);
     } else if (status === 'pending') {
       rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE receiver_userName = ? AND status = ?;`, [userName, status]);
+    } else if (status === 'blocked') {
+      rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE blockedBy = ? AND status = ?;`, [userName, status]);
     }
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function getSentFriendsRequests(userName: string) {
+  try {
+    let rows = [];
+    rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE sender_userName = ? AND status = ?;`, [userName, 'pending']);
     return rows;
   } catch (err) {
     throw err;
@@ -353,6 +366,24 @@ async function setupServer() {
       }
     });
 
+    app.get('/SentRequestFriends/:userName', async (request, reply) => {
+      const {userName } = request.params as UserParams;
+
+      if (!userName) {
+        return reply.code(400).send({ error: 'Missing userName or status' });
+      }
+
+      try {
+        const rows = await getSentFriendsRequests(userName);
+        return reply.send(rows);
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
+    });
+    
+
+
+
     // app.get('/Games/:userName', async (request, reply) => {
     //   const { userName } = request.params as UserParams;
     //   const query = request.query as { gameType: string };
@@ -491,9 +522,43 @@ async function setupServer() {
     //   }  
     // });
 
+    app.delete('/Friends/Delete', async (request, reply) => {
+      const {user1, user2} = request.body as { user1: string, user2: string };
+      if (!user1 || !user2) {
+        return reply.code(400).send({ error: 'Missing user1 or user2' });
+      }
+      
+      try {
+        await new Promise((resolve, reject) => {
+          db.run(
+            `
+              DELETE FROM Friends
+              WHERE
+                (sender_userName = ? AND receiver_userName = ?)
+                OR
+                (sender_userName = ? AND receiver_userName = ?)
+            `,
+            [user1, user2, user2, user1],
+            function (err) {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(this); // optional: you can access `this.changes` if needed
+              }
+            }
+          );
+
+          return reply.code(200).send({ success: true, message: 'Friendship deleted' });
+        });
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
+
+    })
+
     app.put('/Friends/Accept', async (request, reply) => {
       const { user1, user2 } = request.body as { user1: string, user2: string };
-      console.log(request.body);
+      // console.log(request.body);
       if (!user1 || !user2) {
         return reply.code(400).send({ error: 'Missing user1 or user2' });
       }
@@ -508,6 +573,29 @@ async function setupServer() {
           );
         `, [user1, user2, user2, user1]);
         return reply.send({ message: 'Friend request accepted' });
+      } catch (err) {
+        return reply.code(500).send({ error: '❌ Error running query' });
+      }
+    }
+    );
+
+    app.put('/Friends/Unblock', async (request, reply) => {
+      const { user1, user2 } = request.body as { user1: string, user2: string };
+      // console.log(request.body);
+      if (!user1 || !user2) {
+        return reply.code(400).send({ error: 'Missing user1 or user2' });
+      }
+      try {
+        const rows = await dbGetAsyncAll(`
+          UPDATE Friends
+          SET status = 'accepted'
+          WHERE status = 'blocked'
+            AND (
+              (sender_userName = ? AND receiver_userName = ?)
+          OR (sender_userName = ? AND receiver_userName = ?)
+          );
+        `, [user1, user2, user2, user1]);
+        return reply.send({ message: 'Unblocked successfully' });
       } catch (err) {
         return reply.code(500).send({ error: '❌ Error running query' });
       }
