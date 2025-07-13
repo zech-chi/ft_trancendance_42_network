@@ -501,7 +501,7 @@ export default function Frineds(): JSX.Element {
 
             {/* select choice from friends or friend request */}
             <div className="mt-5 flex justify-center">
-                    <div className="inline-flex bg-white/4 gap-3 rounded-4xl">
+                    <div className="inline-flex bg-white/4 rounded-4xl">
                         {
                             (choice === 'friends') ? (
                                 <div className="flex justify-center  bg-black/50 w-[130px] bg-black/50 rounded-full mx-2 my-1.5" onClick={() => handleChangeChoice('friends')}>

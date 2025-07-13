@@ -481,6 +481,7 @@ async function setupServer() {
                         resolve(this); // optional: you can access `this.changes` if needed
                     }
                 });
+                return reply.code(200).send({ success: true, message: 'Friendship deleted' });
             });
         }
         catch (err) {
