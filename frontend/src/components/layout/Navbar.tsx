@@ -43,7 +43,7 @@ function SearchForm(): JSX.Element {
 
 export default function Navbar() {
   const [mounted, setMounted] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     setMounted(true);
