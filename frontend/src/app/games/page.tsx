@@ -1,5 +1,5 @@
 "use client";
-import { JSX, use } from "react";
+import { JSX } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import { useEffect } from "react";

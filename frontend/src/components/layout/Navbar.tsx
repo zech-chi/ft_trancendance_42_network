@@ -18,6 +18,7 @@ function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
 				setUserProfile(user.imageUrl);
 			} catch (error) {
 				setErr("Failed to fetch profile image.");
+        console.log(error);
 			}
 		};
 
@@ -104,7 +105,7 @@ function SearchForm(): JSX.Element {
 
 
 export default function Navbar() {
-  const { loggedUserName, setLoggedUserName } = useLoggedUserName();
+  const { loggedUserName } = useLoggedUserName();
   const [mounted, setMounted] = useState(false);
   // const [searchQuery, setSearchQuery] = useState('');
 
