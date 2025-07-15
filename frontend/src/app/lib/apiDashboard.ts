@@ -16,3 +16,12 @@ export const fetchUsers = async () => {
     console.log(data);
     return data;
 }
+
+export const fetchGames = async (userName: string, gameType: string) => {
+    const response = await fetch(`http://localhost:5000/Games/${userName}?gameType=${gameType}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch games');
+    }
+    const data = await response.json();
+    return data;
+}
