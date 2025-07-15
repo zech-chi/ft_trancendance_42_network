@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image'; 
 import { JSX } from 'react';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -44,8 +43,8 @@ export default function Sidebar(): JSX.Element {
         <aside 
             className={`
                 fixed z-10
-                bg-black/20 backdrop-blur p-2.5
-                w-full md:w-[75px]
+                bg-black/30 backdrop-blur p-2.5 md:p1.5
+                w-full md:w-[65px] lg:w-[80px]
                 md:rounded-full
                 flex flex-col
                 md:left-2 md:top-1/2 md:-translate-y-1/2 md:space-y-4
@@ -54,19 +53,9 @@ export default function Sidebar(): JSX.Element {
                 origin-bottom-left lg:origin-center
             `}
         >
-        {/* <aside 
-            className={`
-                fixed z-10
-                bg-black/40 backdrop-blur p-2.5
-                rounded-full
-                flex sm:flex-col
-            `}
-        > */}
             <nav
                 className="
                     flex items-center justify-around w-full h-full
-                    
-                    // --- Large screen layout ---
                     md:flex-col lg:justify-center md:space-y-8
                 "
             >
@@ -75,7 +64,7 @@ export default function Sidebar(): JSX.Element {
                         key={link.href}
                         href={link.href}
                         className={`flex items-center justify-center w-10 h-10 md:w-13 md:h-13 lg:w-15 lg:h-15 rounded-full transition 
-                            ${selected === link.href ? 'bg-black/70' : 'bg-black/50 hover:bg-black/70'}`}
+                            ${selected === link.href ? 'bg-black/50' : 'bg-black/30 hover:bg-black/70'}`}
                         onClick={() => handleClick(link.href)}
                     >
                         <img src={selected === link.href ? link.activeIcon : link.icon} alt={link.label} className='w-[15px] h-[15px] md:w-[20px] md:h-[20px] lg:w-[25px] lg:h-[25px] ' />

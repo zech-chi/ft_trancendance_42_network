@@ -1,10 +1,7 @@
-'use client';
 // src/app/layout.tsx
 // import type { Metadata } from 'next';
 import './globals.css';
-import Navbar from '@/components/layout/Navbar'; // <-- Import your Navbar
-import Sidebar from '@/components/layout/Sidebar';
-import { UserNameProvider } from "@/context/UserNameContext";
+import { LoggedUserNameProvider } from '@/context/LoggedUserNameContext';
 
 const BG_URL = 'https://images6.alphacoders.com/134/1344450.jpeg';
 
@@ -24,16 +21,13 @@ export default function RootLayout({
         className={`relative bg-cover bg-center bg-no-repeat`}
         style={{ backgroundImage: `url('${BG_URL}')` }}
       >
-        {/* <div className="absolute inset-0 bg-black/40" /> */}
-        <Sidebar />
-        <Navbar /> {/* <-- Add your Navbar component here */}
-        <UserNameProvider>
+        <LoggedUserNameProvider>
           <main className="relative bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url('${BG_URL}')` }}
           >
             {children} {/* This renders the content of your page.tsx files */}
           </main>
-        </UserNameProvider>
+        </LoggedUserNameProvider>
       </body>
     </html>
   );

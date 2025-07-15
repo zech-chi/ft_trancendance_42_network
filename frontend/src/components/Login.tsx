@@ -1,23 +1,11 @@
 'use client'
 
 import React, {useState} from 'react';
+import { fetchUsers } from '@/app/lib/apiDashboard';
 
 interface LoginProps {
     onLogin: (username: string) => void;
-  }
-
-
-
-const fetchUsers = async () => {
-    const response = await fetch(`http://localhost:5000/users/`);
-    if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-    }
-    const data = await response.json();
-    console.log(data);
-    return data;
 }
-
 
 export default function Login({ onLogin } : LoginProps) {
     const [username, setUsername] = useState('');
@@ -53,25 +41,28 @@ export default function Login({ onLogin } : LoginProps) {
     }
 
     return (
-        <form onSubmit={handleSumbit} className='flex flex-col gap-2 w-64'>
-            <label htmlFor='username' className='text-white font-bold'>
-                Enter your username: 
+        <div className="min-h-screen flex items-center justify-center">
+          <form onSubmit={handleSumbit} className="flex flex-col gap-4 w-64 bg-black/50 p-6 rounded-lg shadow-lg">
+            <label htmlFor="username" className="text-white font-bold">
+              Enter your username:
             </label>
-
+      
             <input
-                id="username"
-                type='text'
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                className='px-3 py-2 rounded border border-gray-600'
-                autoFocus
+              id="username"
+              type="text"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              className="px-3 py-2 rounded border text-white font-bold border-gray-600"
+              autoFocus
             />
+      
             <button
-                type='submit'
-                className='bg-yellow-400 text-black py-2 rounded hover:bg-yellow-800'
+              type="submit"
+              className="bg-yellow-400  font-bold py-2 rounded hover:bg-yellow-600"
             >
-                Login
+              Login
             </button>
-        </form>
-    );
+          </form>
+        </div>
+      );
 }
