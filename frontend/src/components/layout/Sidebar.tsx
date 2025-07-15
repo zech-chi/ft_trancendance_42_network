@@ -43,7 +43,7 @@ export default function Sidebar(): JSX.Element {
         <aside 
             className={`
                 fixed z-10
-                bg-black/30 backdrop-blur p-2.5 md:p1.5
+                bg-black/40 backdrop-blur p-2.5 md:p1.5
                 w-full md:w-[65px] lg:w-[80px]
                 md:rounded-full
                 flex flex-col

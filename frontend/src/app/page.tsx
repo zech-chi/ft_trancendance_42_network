@@ -10,40 +10,18 @@ import { pre } from "framer-motion/client";
 
 function LeftComponent({ loggedUserName } : { loggedUserName : string }): JSX.Element {
 	return (
-		<div className="flex items-center space-x-4 bg-black h-full w-full lg:w-[75%]
-		    m-2.5
+		<div className="flex items-center space-x-4 h-full lg:w-[65%]
+			w-[calc(100%-20px)] md:w-full
+			ml-2.5 md:ml-0
+			mr-2.5
+			bg-black/40 backdrop-blur
+			rounded-[25px]
 			text-white
 		">
 			LeftComponent
 		</div>
 	);
 }
-  
-// function RightComponent({ loggedUserName, show }: { loggedUserName: string; show: boolean }): JSX.Element {
-// 	return (
-// 	  <div
-// 		className={`
-// 		  flex items-center space-x-4 h-full
-// 		  transition-all duration-300 ease-in-out
-// 		  mr-2.5
-// 		  transform bg-white/10 right-2.5
-// 		  ${show
-// 			? `
-// 			  translate-x-0 opacity-100 pointer-events-auto
-// 			  w-[calc(100%-20px)] md:w-[75%] lg:w-[25%]
-// 			  absolute
-// 			`
-// 			: `
-// 			  translate-x-full opacity-0 pointer-events-none
-// 			  w-[calc(100%-20px)] md:w-[75%] lg:w-[25%]
-// 			`}
-// 		  lg:translate-x-0 lg:opacity-100 lg:pointer-events-auto
-// 		`}
-// 	  >
-// 		rightComponent
-// 	  </div>
-// 	);
-//   }
 
 function RightComponent({ loggedUserName, show }: { loggedUserName: string; show: boolean }): JSX.Element {
 	return (
@@ -51,13 +29,15 @@ function RightComponent({ loggedUserName, show }: { loggedUserName: string; show
 		className={`
 		  flex items-center space-x-4 h-full
 		  transition-all duration-300 ease-in-out
-		  bg-white/30
+		  bg-black/40
+		  rounded-[25px]
+		  backdrop-blur
 		  mr-2.5
 		  transform
 		  ${show
 			? "translate-x-0 opacity-100 pointer-events-auto"
 			: "translate-x-full opacity-0 pointer-events-none"}
-		  w-[calc(100%-20px)] md:w-[75%] lg:w-[25%]
+		  w-[calc(100%-20px)] md:w-[65%] lg:w-[35%]
 		  absolute right-0 top-0
 		  lg:static lg:translate-x-0 lg:opacity-100 lg:pointer-events-auto
 		`}
