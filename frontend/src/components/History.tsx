@@ -36,14 +36,14 @@ export function SelectGame({ game, setGame }: HistoryProps): JSX.Element {
                     <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => setGame('pong')}>
                         <img src={game === 'pong' ? '/pong_pink.png' : '/pong_white.png'} alt="pong"
                             className="p-2 cursor-pointer
-                                w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11
+                                w-8 h-8 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11
                             "
                         />
                     </div>
                     <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => setGame('parchesi')}>
                         <img src={game === 'parchesi' ? '/parchesi_pink.png' : '/parchesi_white.png'} alt="parchesi" width={40} height={40}
                             className="p-2 cursor-pointer
-                                w-8 h-8 md:w-10 md:h-10 lg:w-11 lg:h-11
+                                w-8 h-8 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11
                             "
                         />
                     </div>
@@ -85,13 +85,13 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
     }
   
     return (
-      <div className="w-full flex items-center h-25 justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
+      <div className="w-full flex items-center  justify-between rounded-full bg-[#612132]/30 text-white border-[1px] border-white/8">
         
         {/* Left Profile (Opponent) */}
         <div className="relative 
-        w-[80px] h-[80px] md:w-[90px] md:h-[90px] lg:w-[100px] lg:h-[100px]
+        w-[70px] h-[70px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
         ">
-          <div className={`w-full h-full rounded-full border-[15px] 
+          <div className={`w-full h-full rounded-full border-[7px] xl:border-10
             ${opponentWon ? 'border-[#56BA1C]' : 'border-[#F63737]'} 
             border-l-transparent border-b-transparent 
             border-t-${opponentWon ? '[#56BA1C]' : '[#F63737]'} 
@@ -101,22 +101,22 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
               src={userOther.imageUrl}
               alt={userOther.userName}
               className="w-full h-full object-cover rounded-full -rotate-225 
-              border-3 md:border-4 lg:border-5
+              border-3 xl:border-4 2xl:border-5
             border-black"
             />
           </div>
           {
-            userOther.online && <div className="absolute bottom-[18px] right-[23px] w-3 h-3 bg-[#00FF04] rounded-full border-2 border-black" />
+            userOther.online && <div className="absolute bottom-[14px] right-[8px] w-2 h-2  bg-[#00FF04] rounded-full border-1 border-black" />
           }
           {
-            !userOther.online && <div className="absolute bottom-[18px] right-[23px] w-3 h-3 bg-[#FF0000] rounded-full border-2 border-black" />
+            !userOther.online && <div className="absolute bottom-[14px] right-[8px] w-2 h-2 bg-[#FF0000] rounded-full border-1 border-black" />
           }
         </div>
   
         {/* Center Score & Date */}
         <div className="flex flex-col items-center justify-center">
           <div className="
-          text-l md:text-xl lg:text-2xl  
+          text-l xl:text-3xl 2xl:text-4xl  
           font-bold">
             {isCurrentUserUser1 ? (
               <>
@@ -129,16 +129,16 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
             )}
           </div>
           <div className="text-[#FEDF7F]/70 
-          text-sm mt-2">
+          text-sm xl:text-l 2xl:text-l mt-2">
             {game.date_played.slice(0, 16)}
           </div>
         </div>
   
         {/* Right Profile (Current User) */}
         <div className="relative 
-        w-[80px] h-[80px] md:w-[90px] md:h-[90px] lg:w-[100px] lg:h-[100px]
+        w-[70px] h-[70px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px] 
         ">
-          <div className={`w-full h-full rounded-full border-[15px] 
+          <div className={`w-full h-full rounded-full border-[7px] xl:border-10 
             ${currentUserWon ? 'border-[#56BA1C]' : 'border-[#F63737]'} 
             border-r-transparent border-b-transparent 
             border-t-${currentUserWon ? '[#56BA1C]' : '[#F63737]'} 
@@ -148,7 +148,7 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
               src={userCur.imageUrl}
               alt={userCur.userName}
               className="w-full h-full object-cover rounded-full
-              border-3 md:border-4 lg:border-5
+              border-3 xl:border-4 2xl:border-5
               border-black rotate-225"
             />
           </div>

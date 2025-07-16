@@ -24,10 +24,10 @@ export function SearchForm(): JSX.Element {
             type="text"
             placeholder="Search ..."
             className="w-full py-2 rounded-full text-[#B2B2B2] outline-none
-			px-5 md:px-9 lg:px-11
-			text-sm md:text-base lg:text-lg
+			px-5 xl:px-9 2xl:px-11
+			text-sm xl:text-base 2xl:text-lg
 			border-2 border-white/10
-			md:border-3 lg:border-4
+			xl:border-3 2xl:border-4
 			"
             style={{
               background:
@@ -35,8 +35,8 @@ export function SearchForm(): JSX.Element {
             }}
           />
           <MagnifyingGlassIcon className="absolute left-3 top-1/2
-		  	hidden md:block
-		  	h-3 w-3 md:h-4 md:w-4 lg:h-5 lg:w-5
+		  	hidden xl:block
+		  	h-3 w-3 xl:h-4 xl:w-4 2xl:h-5 2xl:w-5
 		   transform -translate-y-1/2 text-[#B2B2B2]" />
         </div>
       </form>
@@ -46,9 +46,9 @@ export function SearchForm(): JSX.Element {
 
 function LeftComponent(): JSX.Element {
 	return (
-		<div className="flex flex-col items-center space-x-4 h-full lg:w-[70%]
-			w-[calc(100%-20px)] md:w-full
-			ml-2.5 md:ml-0
+		<div className="flex flex-col items-center space-x-4 h-full 2xl:w-[70%]
+			w-[calc(100%-20px)] xl:w-full
+			ml-2.5 xl:ml-0
 			mr-2.5
 			bg-black/10 backdrop-blur
 			rounded-[25px]
@@ -67,7 +67,7 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 	return (
 	  <div
 		className={`
-		  flex items-center space-x-4 h-full
+		  flex flex-col items-center space-x-4 h-full
 		  transition-all duration-300 ease-in-out
 		  bg-black/40
 		  rounded-[25px]
@@ -77,21 +77,21 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 		  ${show
 			? "translate-x-0 opacity-100 pointer-events-auto"
 			: "translate-x-full opacity-0 pointer-events-none"}
-		  w-[calc(100%-20px)] md:w-[70%] lg:w-[30%]
+		  w-[calc(100%-20px)] xl:w-[70%] 2xl:w-[30%]
 		  absolute right-0 top-0
-		  lg:static lg:translate-x-0 lg:opacity-100 lg:pointer-events-auto
+		  2xl:static 2xl:translate-x-0 2xl:opacity-100 2xl:pointer-events-auto
 		  py-2.5
 		`}
 	  >
 		<div className="flex flex-col h-full w-full px-2.5">
-		<SearchForm />
-		{/* select game if buttonChoice is History */}
-		{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
-		<div className="rounded-[25px] w-full  bg-black/60 overflow-y-auto custom-scrollbar mt-2">
-			{buttonChoice === 'friends' && <Friends />}
-			{buttonChoice === 'history' && <History game={game} setGame={setGame}/>}
-			{buttonChoice === 'rank' && <Rank />}
-		</div>
+			<SearchForm />
+			{/* select game if buttonChoice is History */}
+			{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
+			<div className="rounded-[25px] w-full  bg-black/60 overflow-y-auto custom-scrollbar mt-2">
+				{buttonChoice === 'friends' && <Friends />}
+				{buttonChoice === 'history' && <History game={game} setGame={setGame}/>}
+				{buttonChoice === 'rank' && <Rank />}
+			</div>
 		</div>
 
 	  </div>
@@ -119,13 +119,13 @@ export default function Home() : JSX.Element {
 				<Sidebar />
 				<Navbar />
 				<main className="flex flex-row items-center justify-center relative overflow-x-hidden
-					md:pl-20 lg:pl-24 w-full
+					xl:pl-20 2xl:pl-24 w-full
 					h-[calc(100%-130px)]
-					md:h-[calc(100%-75px)]
-					lg:h-[calc(100%-85px)]
-					lg:mt-[67px] md:mt-[60px]
+					xl:h-[calc(100%-75px)]
+					2xl:h-[calc(100%-85px)]
+					2xl:mt-[67px] xl:mt-[60px]
 				">
-					<button className="text-white absolute top-1 right-3 border border-amber-500 lg:hidden bg-red-500 z-13"
+					<button className="text-white absolute top-1 right-3 border border-amber-500 2xl:hidden bg-red-500 z-13"
 					onClick={() => setShowRightComp(prev => !prev)}
 					>show</button>
 					<LeftComponent />

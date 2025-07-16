@@ -32,9 +32,9 @@ function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
 	}
 	return <img src={userProfile}
               alt="User Profile"
-              className="rounded-full w-9 h-9 md:w-12 md:h-12 lg:w-15 lg:h-15
+              className="rounded-full w-9 h-9 xl:w-12 xl:h-12 2xl:w-15 2xl:h-15
               border-2 border-black/50
-              md:border-3 lg:border-4
+              xl:border-3 2xl:border-4
               object-cover ml-5"
           />;
 }
@@ -55,7 +55,7 @@ function Logo(): JSX.Element {
           alt="Logo"
           width={150}
           height={150}
-          className="w-[75px] h-auto md:w-[125px] lg:w-[150px]"
+          className="w-[75px] h-auto xl:w-[125px] 2xl:w-[150px]"
           priority
       />
 
@@ -73,10 +73,10 @@ function SearchForm(): JSX.Element {
           className="
             backdrop-blur w-full
             px-4 py-1 text-sm       /* small for sm */
-            md:px-6 md:py-2 md:text-base  /* medium for md */
-            lg:px-8 lg:py-3 lg:text-lg     /* large for lg */
+            xl:px-6 xl:py-2 xl:text-base  /* medium for md */
+            2xl:px-8 2xl:py-3 2xl:text-lg     /* large for lg */
             pl-7
-            md:pl-10 lg:pl-12
+            xl:pl-10 2xl:pl-12
             rounded-full
             text-[#B2B2B2]
             outline-none
@@ -92,8 +92,8 @@ function SearchForm(): JSX.Element {
             transform -translate-y-1/2
             text-[#d7d7d7]
             h-3 w-3             /* small for sm */
-            md:h-4 md:w-4       /* medium for md */
-            lg:h-5 lg:w-5       /* large for lg */
+            xl:h-4 xl:w-4       /* medium for md */
+            2xl:h-5 2xl:w-5       /* large for lg */
           "
         />
       </div>
@@ -116,7 +116,7 @@ export default function Navbar() {
   if (!mounted) return null;
 
   return (
-    <nav className="fixed top-0 left-0 w-full h-13 md:h-15 lg:h-17 bg-black/20 text-white flex items-center px-4 z-50
+    <nav className="fixed top-0 left-0 w-full h-13 xl:h-15 2xl:h-17 bg-black/20 text-white flex items-center px-4 z-50
       backdrop-blur
       ">
       {/* Logo */}

@@ -43,31 +43,31 @@ export default function Sidebar(): JSX.Element {
         <aside 
             className={`
                 fixed z-10
-                bg-black/40 backdrop-blur p-2.5 md:p1.5
-                w-full md:w-[65px] lg:w-[80px]
-                md:rounded-full
+                bg-black/40 backdrop-blur p-2.5 xl:p1.5
+                w-full xl:w-[65px] 2xl:w-[80px]
+                xl:rounded-full
                 flex flex-col
-                md:left-2 md:top-1/2 md:-translate-y-1/2 md:space-y-4
-                bottom-0 left-1/2 -translate-x-1/2 md:translate-x-0 md:bottom-auto
-                space-x-4 md:space-x-0
-                origin-bottom-left lg:origin-center
+                xl:left-2 xl:top-1/2 xl:-translate-y-1/2 xl:space-y-4
+                bottom-0 left-1/2 -translate-x-1/2 xl:translate-x-0 xl:bottom-auto
+                space-x-4 xl:space-x-0
+                origin-bottom-left 2xl:origin-center
             `}
         >
             <nav
                 className="
                     flex items-center justify-around w-full h-full
-                    md:flex-col lg:justify-center md:space-y-8
+                    xl:flex-col 2xl:justify-center xl:space-y-8
                 "
             >
                 {navLinks.map((link) => (
                     <Link 
                         key={link.href}
                         href={link.href}
-                        className={`flex items-center justify-center w-10 h-10 md:w-13 md:h-13 lg:w-15 lg:h-15 rounded-full transition 
+                        className={`flex items-center justify-center w-10 h-10 xl:w-13 xl:h-13 2xl:w-15 2xl:h-15 rounded-full transition 
                             ${selected === link.href ? 'bg-black/50' : 'bg-black/30 hover:bg-black/70'}`}
                         onClick={() => handleClick(link.href)}
                     >
-                        <img src={selected === link.href ? link.activeIcon : link.icon} alt={link.label} className='w-[15px] h-[15px] md:w-[20px] md:h-[20px] lg:w-[25px] lg:h-[25px] ' />
+                        <img src={selected === link.href ? link.activeIcon : link.icon} alt={link.label} className='w-[15px] h-[15px] xl:w-[20px] xl:h-[20px] 2xl:w-[25px] 2xl:h-[25px] ' />
                     </Link>
                 ))}
             </nav>
