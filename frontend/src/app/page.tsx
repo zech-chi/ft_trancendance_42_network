@@ -84,16 +84,15 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 		`}
 	  >
 		<SearchForm />
-		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5">
+		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto">
 			{/* select game if buttonChoice is History */}
 			{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
-			<div className="rounded-[25px] w-full  bg-black/60 overflow-y-auto custom-scrollbar mt-2.5">
+			<div className="rounded-[25px] w-full  bg-black/60 overflow-y-auto overflow-x-auto min-w-[270px] custom-scrollbar mt-2.5 ">
 				{buttonChoice === 'friends' && <Friends />}
 				{buttonChoice === 'history' && <History game={game} setGame={setGame}/>}
 				{buttonChoice === 'rank' && <Rank />}
 			</div>
 		</div>
-
 	  </div>
 	);
 }
