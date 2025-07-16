@@ -83,11 +83,11 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 		  py-2.5
 		`}
 	  >
-			<SearchForm />
-		<div className="flex flex-col h-full w-full px-2.5">
+		<SearchForm />
+		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5">
 			{/* select game if buttonChoice is History */}
 			{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
-			<div className="rounded-[25px] w-full  bg-black/60 overflow-y-auto custom-scrollbar mt-2">
+			<div className="rounded-[25px] w-full  bg-black/60 overflow-y-auto custom-scrollbar mt-2.5">
 				{buttonChoice === 'friends' && <Friends />}
 				{buttonChoice === 'history' && <History game={game} setGame={setGame}/>}
 				{buttonChoice === 'rank' && <Rank />}

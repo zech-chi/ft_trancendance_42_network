@@ -31,7 +31,7 @@ export function SelectGame({ game, setGame }: HistoryProps): JSX.Element {
 
     return (
         <>
-            <div className="mt-2.5 flex justify-center">
+            <div className="lg:mt-2.5 flex justify-center">
                 <div className="inline-flex bg-black/30 gap-3 rounded-4xl">
                     <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => setGame('pong')}>
                         <img src={game === 'pong' ? '/pong_pink.png' : '/pong_white.png'} alt="pong"
