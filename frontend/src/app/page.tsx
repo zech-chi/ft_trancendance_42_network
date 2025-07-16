@@ -25,9 +25,9 @@ export function SearchForm(): JSX.Element {
             placeholder="Search ..."
             className="w-full py-2 rounded-full text-[#B2B2B2] outline-none
 			px-5 xl:px-9 2xl:px-11
-			text-sm xl:text-base 2xl:text-lg
-			border-2 border-white/10
-			xl:border-3 2xl:border-4
+			text-[10px] md:text-sm xl:text-base 2xl:text-lg
+			border-1 border-black/20
+			xl:border-2 2xl:border-3
 			"
             style={{
               background:
@@ -77,14 +77,14 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 		  ${show
 			? "translate-x-0 opacity-100 pointer-events-auto"
 			: "translate-x-full opacity-0 pointer-events-none"}
-		  w-[calc(100%-20px)] xl:w-[70%] 2xl:w-[30%]
+		  w-[calc(100%-20px)] md:w-[50%] xl:w-[50%] 2xl:w-[30%]
 		  absolute right-0 top-0
 		  2xl:static 2xl:translate-x-0 2xl:opacity-100 2xl:pointer-events-auto
 		  py-2.5
 		`}
 	  >
-		<div className="flex flex-col h-full w-full px-2.5">
 			<SearchForm />
+		<div className="flex flex-col h-full w-full px-2.5">
 			{/* select game if buttonChoice is History */}
 			{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
 			<div className="rounded-[25px] w-full  bg-black/60 overflow-y-auto custom-scrollbar mt-2">
