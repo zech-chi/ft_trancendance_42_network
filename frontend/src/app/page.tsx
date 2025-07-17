@@ -16,7 +16,7 @@ import Cookies from 'js-cookie';
 
 type GameName = 'pong' | 'parchesi';
 
-export function SearchForm(): JSX.Element {
+function SearchForm(): JSX.Element {
     return (
       <form className="max-w-xl mx-auto flex-1">
         <div className="relative w-full">
@@ -61,7 +61,7 @@ function LeftComponent(): JSX.Element {
 }
 
 function RightComponent({ show }: { show: boolean }): JSX.Element {
-	const [buttonChoice, setButtonChoice] = useState<string>('history');
+	const [buttonChoice, setButtonChoice] = useState<string>('rank');
 	const [game, setGame] = useState<GameName>((Cookies.get('SelectedGameHistory') as GameName) || 'pong');
 
 	return (
@@ -87,7 +87,7 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto">
 			{/* select game if buttonChoice is History */}
 			{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
-			<div className="rounded-[25px] w-full  bg-black/60 overflow-y-auto overflow-x-auto min-w-[270px] custom-scrollbar mt-2.5 ">
+			<div className="rounded-[25px] w-full  bg-black/45 overflow-y-auto overflow-x-auto min-w-[270px] custom-scrollbar mt-2.5 ">
 				{buttonChoice === 'friends' && <Friends />}
 				{buttonChoice === 'history' && <History game={game} setGame={setGame}/>}
 				{buttonChoice === 'rank' && <Rank />}

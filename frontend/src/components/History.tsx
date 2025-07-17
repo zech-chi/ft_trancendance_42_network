@@ -86,7 +86,7 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
     }
   
     return (
-      <div className="w-full flex items-center justify-between rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
+      <div className="w-full flex items-center justify-between rounded-full bg-[#612132]/55 text-white border-[1px] border-white/8">
         
         {/* Left Profile (Opponent) */}
         <div className="relative 

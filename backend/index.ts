@@ -238,7 +238,7 @@ async function getUsers() {
   try {
     const rows = await dbGetAllUsers();
     if (!rows)
-      return null;
+      return [];
     return rows;
   } catch (err) {
     throw err;
@@ -312,7 +312,7 @@ async function setupServer() {
     // });
 
     await app.register(cors, {
-      origin: 'http://localhost:3000', // allow your frontend's origin
+      origin: ['http://localhost:3000', 'http://localhost:3001'], // allow your frontend's origin
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ✅ important
     });
 
