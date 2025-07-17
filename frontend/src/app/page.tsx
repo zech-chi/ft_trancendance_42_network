@@ -52,12 +52,14 @@ function LeftComponent(): JSX.Element {
 			w-[calc(100%-20px)] xl:w-full
 			ml-2.5 xl:ml-0
 			mr-2.5
-			bg-black/10 backdrop-blur
+			bg-black/50 backdrop-blur
 			rounded-[25px]
 			text-white
-			overflow-y-auto custom-scrollbar
+			overflow-y-auto custom-scrollbar 
 		">
-			<TopDashboard />
+			<div className="flex flex-col w-full ">
+				<TopDashboard />
+			</div>
 		</div>
 	);
 }
@@ -87,7 +89,7 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 		`}
 	  >
 		<SearchForm />
-		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto">
+		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto ">
 			{/* select game if buttonChoice is History */}
 			{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
 			{buttonChoice === 'friends' && <SelectedChoiceFriends choice={choice} setChoice={setChoice} />}
@@ -100,10 +102,11 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 	  </div>
 	);
 }
+
     
 export default function Home() : JSX.Element {
 	const { loggedUserName, setLoggedUserName } = useLoggedUserName();
-	const [showRightComp, setShowRightComp] = useState<boolean>(true);
+	const [showRightComp, setShowRightComp] = useState<boolean>(false);
 
 	useEffect(() => {
 	  if (loggedUserName) {
@@ -118,7 +121,7 @@ export default function Home() : JSX.Element {
 
 	return (
     	<>
-			<div className="h-screen flex items-center">
+			<div className="h-screen flex items-center min-w-[200px] overflow-x-auto">
 				<Sidebar />
 				<Navbar />
 				<main className="flex flex-row items-center justify-center relative overflow-x-hidden
@@ -131,8 +134,8 @@ export default function Home() : JSX.Element {
 					<button className="text-white absolute top-1 right-3 2xl:hidde z-13"
 					onClick={() => setShowRightComp(prev => !prev)}
 					>
-						{!showRightComp ? <img src="/show.png" alt="show" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-70 hover:opacity-100"/> : 
-						<img src="/hide.png" alt="hide" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-60 hover:opacity-100"/>} 
+						{!showRightComp ? <img src="/show.png" alt="show" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-70 hover:opacity-100 2xl:hidden"/> : 
+						<img src="/hide.png" alt="hide" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-60 hover:opacity-100 2xl:hidden"/>} 
 					</button>
 					<LeftComponent />
 					<RightComponent show={showRightComp} />
