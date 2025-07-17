@@ -34,3 +34,27 @@ export const fetchRankData = async () => {
   const data = await response.json();
   return data;
 }
+
+/** friends component */
+export const fetchFriends = async (userName: string, choice: string) => {
+  let status: string = '';
+  if (choice === 'friends') {
+      status = 'accepted';
+  } else if (choice === 'friend request') {
+      status = 'pending';
+  } else if (choice === 'blocked') {
+      status = 'blocked';
+  }
+  let response ;
+  if (status !== '')
+      response = await fetch(`http://localhost:5000/Friends/${userName}?status=${status}`);
+  else 
+      response = await fetch(`http://localhost:5000/SentRequestFriends/${userName}`);
+  if (!response.ok) {
+  //   throw new Error('Failed to fetch games');
+    console.log("Error");
+    return [];
+  }
+  const data = await response.json();
+  return data;
+}

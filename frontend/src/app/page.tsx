@@ -13,8 +13,10 @@ import { Rank } from "@/components/Rank";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { SelectGame } from "@/components/History";
 import Cookies from 'js-cookie';
+import { SelectedChoiceFriends } from "@/components/Friends";
 
 type GameName = 'pong' | 'parchesi';
+type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
 function SearchForm(): JSX.Element {
     return (
@@ -61,15 +63,16 @@ function LeftComponent(): JSX.Element {
 }
 
 function RightComponent({ show }: { show: boolean }): JSX.Element {
-	const [buttonChoice, setButtonChoice] = useState<string>('rank');
+	const [buttonChoice, setButtonChoice] = useState<string>('friends');
 	const [game, setGame] = useState<GameName>((Cookies.get('SelectedGameHistory') as GameName) || 'pong');
+	const [choice, setChoice] = useState<FriendsChoice>((Cookies.get('SelectedChoiceFriends') as FriendsChoice) || 'friends');
 
 	return (
 	  <div
 		className={`
 		  flex flex-col items-center space-x-4 h-full
 		  transition-all duration-300 ease-in-out
-		  bg-black/40
+		  bg-black/60
 		  rounded-[25px]
 		  backdrop-blur
 		  mr-2.5
@@ -77,7 +80,7 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 		  ${show
 			? "translate-x-0 opacity-100 pointer-events-auto"
 			: "translate-x-full opacity-0 pointer-events-none"}
-		  w-[calc(100%-20px)] md:w-[50%] xl:w-[50%] 2xl:w-[30%]
+		  w-[calc(100%-20px)] md:w-[60%] xl:w-[50%] 2xl:w-[35%]
 		  absolute right-0 top-0
 		  2xl:static 2xl:translate-x-0 2xl:opacity-100 2xl:pointer-events-auto
 		  py-2.5
@@ -87,8 +90,9 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto">
 			{/* select game if buttonChoice is History */}
 			{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
+			{buttonChoice === 'friends' && <SelectedChoiceFriends choice={choice} setChoice={setChoice} />}
 			<div className="rounded-[25px] w-full  bg-black/45 overflow-y-auto overflow-x-auto min-w-[270px] custom-scrollbar mt-2.5 ">
-				{buttonChoice === 'friends' && <Friends />}
+				{buttonChoice === 'friends' && <Friends choice={choice} />}
 				{buttonChoice === 'history' && <History game={game} setGame={setGame}/>}
 				{buttonChoice === 'rank' && <Rank />}
 			</div>
@@ -124,9 +128,12 @@ export default function Home() : JSX.Element {
 					2xl:h-[calc(100%-85px)]
 					2xl:mt-[67px] xl:mt-[60px]
 				">
-					<button className="text-white absolute top-1 right-3 border border-amber-500 2xl:hidden bg-red-500 z-13"
+					<button className="text-white absolute top-1 right-3 2xl:hidde z-13"
 					onClick={() => setShowRightComp(prev => !prev)}
-					>show</button>
+					>
+						{!showRightComp ? <img src="/show.png" alt="show" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-70 hover:opacity-100"/> : 
+						<img src="/hide.png" alt="hide" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-60 hover:opacity-100"/>} 
+					</button>
 					<LeftComponent />
 					<RightComponent show={showRightComp} />
 				</main>
