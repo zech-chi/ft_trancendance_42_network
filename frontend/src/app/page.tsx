@@ -57,7 +57,7 @@ function LeftComponent(): JSX.Element {
 			text-white
 			overflow-y-auto custom-scrollbar 
 		">
-			<div className="flex flex-col w-full ">
+			<div className="flex flex-col w-full gap-1">
 				<TopDashboard />
 			</div>
 		</div>

@@ -91,7 +91,7 @@ function ProfileInfo({ fullName, userName, bio }: ProfileInfoProps): JSX.Element
             {fullName}
         </h2>
         <h3 className="text-white/70 text-[8px] md:text-[12px] xl:text-[16px]">@{userName}</h3>
-        <p className="text-white/60 bg-black/30 text-[6px] md:text-[10px] xl:text-[14px] p-1 md:px-1.5 xl:px-2 rounded-4xl w-max">
+        <p className="text-white/60 bg-black/30 text-[6px] md:text-[10px] xl:text-[14px] p-1 md:px-1.5 xl:px-2 rounded-4xl max-w-[150px] md:max-w-[700px]">
           {bio}
         </p>
       </div>
