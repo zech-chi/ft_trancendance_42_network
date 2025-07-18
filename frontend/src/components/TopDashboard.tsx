@@ -47,9 +47,11 @@ type RankInfoProps = {
 
 function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
     return (
-      <div className="relative rounded-full w-[80px] h-[80px] overflow-hidden m-2">
+      <div className="relative rounded-full  overflow-hidden
+        m-0.5
+      ">
             <div className="relative 
-            w-[80px] h-[80px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
+            w-[80px] h-[80px] md:w-[100px] md:h-[100px]  xl:w-[140px] xl:h-[140px]
             ">
             <div className={`w-full h-full rounded-full border-[7px] xl:border-10
                 border-[#FEDF7F]/0
@@ -65,15 +67,17 @@ function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
             </div>
             {
                 online && <div className="absolute 
-                bottom-[14px] right-[8px] w-2 h-2 
-                xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
-                bg-[#00FF04] rounded-full border-1 xl:border-2 border-black" />
+                bottom-[14px] right-[8px] w-2 h-2
+                md:bottom-[16px] md:right-[12px]  md:w-2.5 md:h-2.5  
+                xl:bottom-[24px] xl:right-[18px]  xl:w-3 xl:h-3
+                bg-[#00FF04] rounded-full border-1 md:border-1.5 xl:border-2 border-black" />
             }
             {
                 !online && <div className="absolute
                 bottom-[14px] right-[8px] w-2 h-2
-                xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
-                bg-[#FF0000] rounded-full border-1  xl:border-2 border-black" />
+                md:bottom-[16px] md:right-[12px]  md:w-2.5 md:h-2.5 
+                xl:bottom-[24px] xl:right-[18px]  xl:w-3 xl:h-3
+                bg-[#FF0000] rounded-full border-1  md:border-1.5 xl:border-2 border-black" />
             }
             </div>
       </div>
@@ -83,17 +87,12 @@ function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
 function ProfileInfo({ fullName, userName, bio }: ProfileInfoProps): JSX.Element {
     return (
       <div className="flex flex-col justify-center h-full gap-1 mt-2">
-        <h2 className="text-[10px] font-bold text-white">
+        <h2 className="text-[10px] md:text-[14px] xl:text-[18px] font-bold text-white/90">
             {fullName}
         </h2>
-        <h3 className="text-white text-[8px]">@{userName}</h3>
-        <p className="text-white/75 bg-black/30 text-[5px] p-0.5 rounded-4xl w-max">
-            <span className="block sm:hidden">
-            {bio.length > 20 ? bio.slice(0, 20) + '...' : bio}
-        </span>
-        <span className="hidden sm:block">
-            {bio}
-        </span>
+        <h3 className="text-white/70 text-[8px] md:text-[12px] xl:text-[16px]">@{userName}</h3>
+        <p className="text-white/60 bg-black/30 text-[6px] md:text-[10px] xl:text-[14px] p-1 md:px-1.5 xl:px-2 rounded-4xl w-max">
+          {bio}
         </p>
       </div>
     );
@@ -101,27 +100,29 @@ function ProfileInfo({ fullName, userName, bio }: ProfileInfoProps): JSX.Element
 
 function DisplayRank({ level, progress, rank, totalUsers }: RankInfoProps): JSX.Element {
     return (
-      <div className="flex flex-col justify-center items-center h-full gap-1 mt-2 mr-10">
-        <h2 className="text-[10px] font-bold text-white">Global Rank</h2>
+      <div className="flex flex-col justify-center items-center h-full gap-1 mt-2
+       mr-10
+      ">
+        <h2 className="text-[10px] md:text-[14px] xl:text-[18px] font-bold text-white/90">Global Rank</h2>
         <h2
-          className="text-[10px] font-bold bg-clip-text text-transparent "
+          className="text-[10px] md:text-[14px] xl:text-[18px] font-bold bg-clip-text text-transparent "
           style={{
             backgroundImage: "linear-gradient(to right, #FE9634 0%, #FC709B 40%, #FC709B 100%)",
           }}
         >
         {rank}
-        <span className="text-[10px] text-base text-white/60 ml-1 mr-1">/ {totalUsers}</span>
+        <span className="text-[8px] md:text-[10px] xl:text-[12px] text-base text-white/60 ml-1 mr-1">/ {totalUsers}</span>
         </h2>
-        <h2 className="text-[8px] font-bold text-[#FEDF7F]">Level {level} - {progress * 100} %</h2>
+        <h2 className="text-[8px] md:text-[12px] xl:text-[16px] font-bold text-[#FEDF7F]">Level {level} - {progress * 100} %</h2>
       </div>
     );
   }
 
 function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
     return (
-      <div className="relative bg-white/10 w-full h-2 mr-10 rounded-4xl border-1  border-[#F9545B]/30">
+      <div className="relative bg-white/10 w-full h-2 md:h-2.5 xl:h-3 mr-10 rounded-4xl border-1 md:border-1.5 xl:border-2  border-[#F9545B]/30 mt-0 md:mt-0.5 xl:mt-2 mb-2.5">
         <motion.div
-          className="absolute top-0 left-0 h-full rounded-4xl bg-[#FEDF7F] border-1  border-white/40" 
+          className="absolute top-0 left-0 h-full rounded-4xl bg-[#FEDF7F] border-1 md:border-1.5 xl:border-2  border-white/40" 
           animate={{ width: `${progress * 100}%` }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         />
