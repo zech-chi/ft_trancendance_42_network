@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { RadarChart } from './RadarChart';
 import { FriendsStats } from './FriendsStats';
+import { AIStats } from './AIStats';
 type GameName = 'pong' | 'parchesi';
 
 type ChooseGameProps = {
@@ -50,6 +51,7 @@ export default function Statistics() {
       <ChooseGame game={game} setGame={setGame}/>
       <RadarChart/>
       <FriendsStats/>
+      <AIStats />
     </div>
   );
 }
