@@ -14,6 +14,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { SelectGame } from "@/components/History";
 import Cookies from 'js-cookie';
 import { SelectedChoiceFriends } from "@/components/Friends";
+import Statistics from "@/components/Statistics";
 
 type GameName = 'pong' | 'parchesi';
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
@@ -59,6 +60,7 @@ function LeftComponent(): JSX.Element {
 		">
 			<div className="flex flex-col w-full gap-1">
 				<TopDashboard />
+				<Statistics />
 			</div>
 		</div>
 	);

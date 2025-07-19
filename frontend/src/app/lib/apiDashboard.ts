@@ -58,3 +58,13 @@ export const fetchFriends = async (userName: string, choice: string) => {
   const data = await response.json();
   return data;
 }
+
+/* radar chart component api */
+export const fetchRadarData = async (userName: string) => {
+  const response = await fetch(`http://localhost:5000/radarData/${userName}`);
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
