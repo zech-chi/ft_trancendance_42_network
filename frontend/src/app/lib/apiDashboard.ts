@@ -68,3 +68,13 @@ export const fetchRadarData = async (userName: string) => {
   const data = await response.json();
   return data;
 }
+
+// Fetch charts data for the dashboard friends and ai
+const fetchChartsData = async (userName: string) => {
+  const response = await fetch(`http://localhost:5000/chartsData/${userName}`);
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}

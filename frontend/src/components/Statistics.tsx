@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { RadarChart } from './RadarChart';
+import { FriendsStats } from './FriendsStats';
 type GameName = 'pong' | 'parchesi';
 
 type ChooseGameProps = {
@@ -48,6 +49,7 @@ export default function Statistics() {
     <div className="flex flex-col items-center justify-center h-full">
       <ChooseGame game={game} setGame={setGame}/>
       <RadarChart/>
+      <FriendsStats/>
     </div>
   );
 }
