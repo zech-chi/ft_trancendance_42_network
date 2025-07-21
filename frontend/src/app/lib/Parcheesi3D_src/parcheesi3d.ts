@@ -2,11 +2,11 @@ import * as BABYLON from "babylonjs";
 
 export class Parcheesi3D {
     /* the canvas element where the 3D scene will be rendered */
-    protected canvas: HTMLCanvasElement;
+    public canvas: HTMLCanvasElement;
     /* the Babylon.js engine that handles rendering */
-    protected engine: BABYLON.Engine;
+    public engine: BABYLON.Engine;
     /* the Babylon.js scene where all 3D objects are placed */
-    protected scene: BABYLON.Scene;
+    public scene: BABYLON.Scene;
     /* trust me, I’ll assign it later */
     private camera!: BABYLON.ArcRotateCamera | BABYLON.FreeCamera | BABYLON.UniversalCamera;
     private light!: BABYLON.HemisphericLight;
@@ -17,6 +17,8 @@ export class Parcheesi3D {
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.scene = new BABYLON.Scene(this.engine);
 
+        // background color of the scene black
+        // this.scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
         this.setupCamera();
         this.setupLights();
         this.addAxes(); // for debugging

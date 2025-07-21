@@ -1,6 +1,7 @@
 'use client';
 import { useRef, useEffect, use } from "react";
 import { Parcheesi3D } from "@/app/lib/Parcheesi3D_src/parcheesi3d";
+import { Board } from "@/app/lib/Parcheesi3D_src/Board";
 
 export function Parcheesi3DComponent() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -11,6 +12,14 @@ export function Parcheesi3DComponent() {
             gameRef.current = new Parcheesi3D(canvasRef.current);
             // Start the render loop
             gameRef.current.runRenderLoop();
+
+            const board = new Board(gameRef.current.scene);
+            board.initialize();
+
+            const onResize = () => {
+                gameRef.current?.resize();
+            };
+            window.addEventListener("resize", onResize);
         }
     }, []);
 
