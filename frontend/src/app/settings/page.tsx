@@ -26,7 +26,7 @@ export default function Settings() : JSX.Element {
 			<Navbar />
 			<main className="flex min-h-screen flex-col items-center justify-center p-24 relative">
 				<h1 className="text-4xl font-bold text-[#FEDF7F]">
-				Chat
+				Settings
 				</h1>
 			</main>
 		</>

@@ -216,7 +216,7 @@ export function RadarChart() {
     };
     
     return (
-        <div className="w-[90%] md:w-[100%] aspect-square rounded-[25px] flex flex-col items-center justify-center my-"
+        <div className="w-[90%] md:w-[50%] aspect-square rounded-[25px] flex flex-col items-center justify-center my-"
         style={{
             background:
               'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)), linear-gradient(to right, rgba(42, 21, 34, 1), rgba(96, 31, 48, 1 ) 100%)',

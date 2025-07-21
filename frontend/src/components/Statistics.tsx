@@ -49,7 +49,7 @@ export default function Statistics() {
     return (
     <div className="flex flex-col items-center justify-center h-full">
       <ChooseGame game={game} setGame={setGame}/>
-      <div className="flex">
+      <div className="flex w-full">
         <RadarChart/>
         <div className='flex flex-col'>
             <FriendsStats/>
