@@ -49,9 +49,13 @@ export default function Statistics() {
     return (
     <div className="flex flex-col items-center justify-center h-full">
       <ChooseGame game={game} setGame={setGame}/>
-      <RadarChart/>
-      <FriendsStats/>
-      <AIStats />
+      <div className="flex">
+        <RadarChart/>
+        <div className='flex flex-col'>
+            <FriendsStats/>
+            <AIStats />
+        </div>
+      </div>
     </div>
   );
 }

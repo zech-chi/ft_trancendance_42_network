@@ -30,7 +30,7 @@ export function AIStats() {
                 backgroundBlendMode: 'overlay',
             }}
         >
-            <div className="flex justify-between items-center mx-20 my-2 gap-5">
+            <div className="flex justify-between items-center my-2 gap-5">
                 <div className="flex flex-col items-center justify-center m-3">
                     <div>
                         <div>

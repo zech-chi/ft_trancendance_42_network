@@ -12,7 +12,7 @@ export function FriendsStats() {
     const circumference = 2 * Math.PI * radius;
 
     return (
-        <div className="m-1 text-white rounded-2xl w-[90%] md:w-[40%]"
+        <div className="m-1 text-white rounded-2xl w-[100%] md:w-[100%]"
         style={{
             background:
               'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)), linear-gradient(to left, rgba(42, 21, 34, 1), rgba(96, 31, 48, 1 ) 100%)',
