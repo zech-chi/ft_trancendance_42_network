@@ -37,10 +37,10 @@ export class Parcheesi3D {
         this.camera.attachControl(this.canvas, true); // make camera moveAble
         // beta controls the vertical rotation angle (how far the camera is from the horizontal plane).
         // restricts how high the camera can tilt upward.
-        this.camera.upperBetaLimit = Math.PI / 2 - Math.PI / 13;
+        // this.camera.upperBetaLimit = Math.PI / 2 - Math.PI / 13;
         // control the minimum and maximum distance from the target.
-        this.camera.lowerRadiusLimit = 5;
-        this.camera.upperRadiusLimit = 130;
+        // this.camera.lowerRadiusLimit = 5;
+        // this.camera.upperRadiusLimit = 130;
     }
 
     private setupLights() {

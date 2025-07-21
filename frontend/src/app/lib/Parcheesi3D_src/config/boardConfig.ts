@@ -1,5 +1,5 @@
 import { Position } from "../types"
-import { BOARD_HEIGHT, BOARD_TILE_SIZE, PADDING } from "../consts"
+import { BOARD_HEIGHT, BOARD_TILE_SIZE } from "../consts"
 import { PlayerColor } from "../types"
 
 export const PLAYERS_BOARD_POSITIONS: { [key: string]: Position } = {

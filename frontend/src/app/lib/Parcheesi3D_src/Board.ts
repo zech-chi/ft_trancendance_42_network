@@ -1,9 +1,10 @@
 import { Parcheesi3D } from "./parcheesi3d";
 import * as BABYLON from "babylonjs";
 import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
-import { COLORS1, COLORS2 } from "./consts";
+import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
 import { PlayerColor, Position } from "./types";
 import { PLAYERS_BOARD_POSITIONS } from "./config/boardConfig";
+import { CYLINDERS } from "./config/CylindersConfig";
 
 export class Board {
     private scene: BABYLON.Scene;
@@ -45,7 +46,7 @@ export class Board {
         );
 
         const playerBoardMaterial = new BABYLON.StandardMaterial(`${type}BoardMaterial_big`, this.scene);
-        playerBoardMaterial.diffuseColor = BABYLON.Color3.FromHexString(COLORS1[type]);
+        playerBoardMaterial.diffuseColor = BABYLON.Color3.FromHexString(COLORS_LOW_DARK[type]);
         playerBoard.material = playerBoardMaterial;
         playerBoard.position = new BABYLON.Vector3(position.x, position.y, position.z);
     }
@@ -60,10 +61,23 @@ export class Board {
         );
 
         const playerBoardMaterial = new BABYLON.StandardMaterial(`${type}BoardMaterial_small`, this.scene);
-        playerBoardMaterial.diffuseColor = BABYLON.Color3.FromHexString(COLORS2[type]);
+        playerBoardMaterial.diffuseColor = BABYLON.Color3.FromHexString(COLORS_MEDIUM_DARK[type]);
         playerBoard.material = playerBoardMaterial;
         playerBoard.position = new BABYLON.Vector3(position.x, position.y + 0.2, position.z);
     }
+
+    private createCylinder(type: PlayerColor, position: Position, id: number) {
+        const cylider = BABYLON.MeshBuilder.CreateCylinder(`${type}Cylinder_${id}`, {
+            height: 1.5,
+            diameter: 4
+        });
+
+        const cylinderMaterial = new BABYLON.StandardMaterial(`${type}CylinderMaterial_${id}`, this.scene);
+        cylinderMaterial.diffuseColor = BABYLON.Color3.FromHexString(COLORS_VERY_DARK[type]);
+        cylider.material = cylinderMaterial;
+        cylider.position = new BABYLON.Vector3(position.x, position.y + 0.25, position.z);
+    }
+
 
     public initialize() {
         // Create the main board
@@ -73,5 +87,14 @@ export class Board {
             this.createPlayersBoardBig(type as PlayerColor, position);
             this.createPlayersBoardSmall(type as PlayerColor, position);
         });
+
+        // Create the cylinders for each player
+        for (const playerColor of Object.keys(CYLINDERS)) {
+            const cylinders = CYLINDERS[playerColor as PlayerColor];
+            for (const [id, position] of Object.entries(cylinders)) {
+                this.createCylinder(playerColor as PlayerColor, position as Position, parseInt(id));
+            }
+        }
+
     }   
 }

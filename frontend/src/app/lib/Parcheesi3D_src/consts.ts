@@ -7,16 +7,23 @@ export const CYLINDER_DIAMETER : number = 3;
 export const SPHERE_HIGHT : number = 1.90;
 
 
-export const COLORS1: { [key: string]: string } = {
+export const COLORS_LOW_DARK: { [key: string]: string } = {
     RED: "#ff1d25",
     GREEN: "#7ac943",
     YELLOW: "#fcee21",
     BLUE: "#3fa9f5",
 };
 
-export const COLORS2: { [key: string]: string } = {
+export const COLORS_MEDIUM_DARK: { [key: string]: string } = {
     RED: "#930005",
     GREEN: "#447522",
     YELLOW: "#928902",
     BLUE: "#075790",
+};
+
+export const COLORS_VERY_DARK: { [key: string]: string } = {
+    RED: "#580003",
+    GREEN: "#294714",
+    YELLOW: "#585201",
+    BLUE: "#053558",
 };
