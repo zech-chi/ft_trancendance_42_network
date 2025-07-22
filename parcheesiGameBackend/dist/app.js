@@ -22,7 +22,7 @@ class FastifyServer {
     ;
     async start(port = 5555) {
         try {
-            this.app.listen({ port });
+            await this.app.listen({ port });
             console.log(chalk_1.default.green(`Server is running on http://localhost:${port}`));
         }
         catch (error) {

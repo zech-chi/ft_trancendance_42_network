@@ -19,7 +19,18 @@ export class Player {
         this._color = '';
     }
 
+
+
     // game management methods
+    public connect(socket: Socket): void {}
+
+    public disconnect() : void {}
+
+    public reconnect(): void {}
+
+    joinRoom(roomId: string): void {}
+
+    sendMessageToServer(message: string): void {}
 
     // getters and setters for the properties
     public get id(): string {

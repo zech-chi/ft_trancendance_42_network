@@ -3,7 +3,7 @@ import chalk from 'chalk';
 
 export class SocketManager {
     private io: Server;
-    private connectedSockets : Set<Socket> = new Set();
+    public connectedSockets : Set<Socket> = new Set();
 
     constructor(io: Server) {
         this.io = io;

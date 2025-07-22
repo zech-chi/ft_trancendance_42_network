@@ -10,3 +10,7 @@ socket.on("connect", () => {
 socket.on("welcome", (data) => {
   console.log("💬 Server says:", data.message);
 });
+
+socket.on("command", (data) => {
+    console.log("📥 Command received:", data.message, "at", data.time);
+});
