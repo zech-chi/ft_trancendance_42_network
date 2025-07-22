@@ -6,6 +6,8 @@ import { PLAYERS_BOARD_POSITIONS } from "./config/boardConfig";
 import { CYLINDERS } from "./config/CylindersConfig";
 import { PathType } from "./config/pathConfig";
 import { PATH_OF_PLAYERS } from "./config/pathConfig";
+import { TheEndPlace } from "./config/TheEndPlacesConfig";
+import { THE_END_PLACES } from "./config/TheEndPlacesConfig";
 
 export class Board {
     private scene: BABYLON.Scene;
@@ -79,6 +81,32 @@ export class Board {
         cylider.position = new BABYLON.Vector3(position.x, position.y + 0.25, position.z);
     }
 
+    private createDestination() {
+        const padding = BABYLON.MeshBuilder.CreateBox("padding", 
+            {
+                width: 15 + PADDING,
+                depth: 15 + PADDING,
+                height: 0.1
+            }, this.scene
+        );
+        const paddingMaterial = new BABYLON.StandardMaterial("paddingMaterial", this.scene);
+        paddingMaterial.diffuseColor = BABYLON.Color3.FromHexString("#000000");
+        padding.material = paddingMaterial;
+        padding.position = new BABYLON.Vector3(0, BOARD_HEIGHT - 0.02, 0);
+        const goldBoard = BABYLON.MeshBuilder.CreateBox("goldBoard", 
+            {
+                width: 15 - PADDING,
+                depth: 15 - PADDING,
+                height: 0.1
+            }, this.scene
+        );
+        // goldBoard is the destination for each player
+        const goldBoardMaterial = new BABYLON.StandardMaterial("goldBoardMaterial", this.scene);
+        goldBoardMaterial.diffuseColor = BABYLON.Color3.FromHexString("#000000");
+        goldBoard.material = goldBoardMaterial;
+        goldBoard.position = new BABYLON.Vector3(0, BOARD_HEIGHT, 0);
+    }
+
     private createPath(pathObj : PathType) {
         // create black padding like html you know!
         const padding = BABYLON.MeshBuilder.CreateBox("padding", 
@@ -111,9 +139,45 @@ export class Board {
         path.position = new BABYLON.Vector3(pathObj.position.x, pathObj.position.y - 0.25, pathObj.position.z);
     }
 
+    private createTriangle(triangleObj: TheEndPlace) {
+        // 1. Create the 3 points of the triangle
+        const p1 = new BABYLON.Vector3(triangleObj.x1, triangleObj.y1, triangleObj.z1);
+        const p2 = new BABYLON.Vector3(triangleObj.x2, triangleObj.y2, triangleObj.z2);
+        const p3 = new BABYLON.Vector3(triangleObj.x3, triangleObj.y3, triangleObj.z3);
+        
+        // 2. Create custom mesh
+        const triangle = new BABYLON.Mesh("triangle", this.scene);
+
+        // 3. Define vertex data
+        const vertexData = new BABYLON.VertexData();
+
+        // Positions (3 points → 9 numbers)
+        vertexData.positions = [
+            p1.x, p1.y, p1.z,
+            p2.x, p2.y, p2.z,
+            p3.x, p3.y, p3.z,
+        ];
+
+        // Indices (just one face with 3 vertices)
+        vertexData.indices = [triangleObj.i0, triangleObj.i1, triangleObj.i2];
+
+        // Normals (needed for lighting/shading)
+        vertexData.normals = [];
+        BABYLON.VertexData.ComputeNormals(vertexData.positions, vertexData.indices, vertexData.normals);
+
+        // 4. Apply vertex data to mesh
+        vertexData.applyToMesh(triangle);
+        const mat = new BABYLON.StandardMaterial("mat", this.scene);
+        mat.diffuseColor = BABYLON.Color3.FromHexString(triangleObj.color);
+        triangle.material = mat;
+        mat.backFaceCulling = false;
+    }
+
     public initialize() {
         // Create the main board
         this.createBoard();
+        // Create the destination area 
+        this.createDestination();
         // Create the players boards
         Object.entries(PLAYERS_BOARD_POSITIONS).forEach(([type, position]) => {
             this.createPlayersBoardBig(type as PlayerColor, position);
@@ -131,6 +195,11 @@ export class Board {
         // Create paths
         for (const path of PATH_OF_PLAYERS) {
             this.createPath(path);
+        }
+
+        // create the triangles for the end places
+        for (const triangle of THE_END_PLACES) {
+            this.createTriangle(triangle);
         }
     }
 }
