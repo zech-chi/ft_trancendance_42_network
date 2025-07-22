@@ -913,4 +913,790 @@ export const PATH_OF_PLAYERS : PathType[] = [
         diff_y: 0.1,
         diff_z: +0.7
     },
+
+    // 28 | (1)yellow(1) | 32
+    {
+        id: "28",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 1,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+    {
+        id: "yellow1",
+        color: "#fcee21",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 1,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "32",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 1,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+
+    // 27 | (2)yellow(2) | 33
+    {
+        id: "27",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 2,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+    {
+        id: "yellow2",
+        color: "#fcee21",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 2,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "33",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 2,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+
+    // 26 | (3)yellow(3) | 34
+    {
+        id: "26",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 3,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+    {
+        id: "yellow3",
+        color: "#fcee21",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 3,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "34",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 3,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+
+    // (*)25(*) | (4)yellow(4) | (yellow)35(yellow)
+    {
+        id: "25 {*}",
+        color: "#808080",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 4,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "yellow4",
+        color: "#fcee21",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 4,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "35 {yellow}",
+        color: "#fcee21",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 4,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+
+    // 24 | (5)yellow(5) | 36
+    {
+        id: "24",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 5,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+    {
+        id: "yellow5",
+        color: "#fcee21",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 5,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "36",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 5,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+
+    // 24 | (6)yellow(6) | 37
+    {
+        id: "23",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 6,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+    {
+        id: "yellow6",
+        color: "#fcee21",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 6,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "37",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 6,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+
+    // 22 | (7)yellow(7) | 38
+    {
+        id: "22",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 7,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+    {
+        id: "yellow7",
+        color: "#fcee21",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 7,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "38",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 7,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: +0.7
+    },
+
+    // 4 | (7)red(7) | 56
+    {
+        id: "4",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 13,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+    {
+        id: "red7",
+        color: "#ff1d25",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 13,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "56",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 13,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+
+    // 3 | (6)red(6) | 57
+    {
+        id: "3",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 14,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+    {
+        id: "red6",
+        color: "#ff1d25",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 14,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "57",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 14,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+
+
+    // 2 | (5)red(5) | 58
+    {
+        id: "2",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 15,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+    {
+        id: "red5",
+        color: "#ff1d25",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 15,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "58",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 15,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+
+    // (red)1(red) | (4)red(4) | (*)59(*)
+    {
+        id: "1 {red}",
+        color: "#ff1d25",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 16,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "red4",
+        color: "#ff1d25",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 16,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "59 {*}",
+        color: "#808080",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 16,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+
+    // 68 | (3)red(3) | 60
+    {
+        id: "68",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 17,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+    {
+        id: "red3",
+        color: "#ff1d25",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 17,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "60",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 17,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+
+
+    // 67 | (2)red(2) | 61
+    {
+        id: "67",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 18,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+    {
+        id: "red2",
+        color: "#ff1d25",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 18,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "61",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 18,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+
+    // 66 | (1)red(1) | 62
+    {
+        id: "66",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 19,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+    {
+        id: "red1",
+        color: "#ff1d25",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 19,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "62",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 19,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+
+
+    // 65 | (*)64(*) | 63
+    {
+        id: "65",
+        color: "#ffffff",
+        position: {
+            x: -7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 20,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: 2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
+    {
+        id: "64 {*}",
+        color: "#808080",
+        position: {
+            x: 0,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 20,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: false
+    },
+    {
+        id: "63",
+        color: "#ffffff",
+        position: {
+            x: +7,
+            y: BOARD_HEIGHT + 0.1,
+            z: -30 + 3 * 20,
+        },
+        dimension: {
+            width: 7,
+            depth: 3,
+            height: BOARD_HEIGHT,
+        },
+        drawText: true,
+        diff_x: -2.7,
+        diff_y: 0.1,
+        diff_z: -0.7
+    },
 ]
