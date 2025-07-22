@@ -10,3 +10,9 @@ export type Position = {
     y: number;
     z: number;
 };
+
+export type Demension = {
+    width: number;
+    depth: number;
+    height: number;
+};

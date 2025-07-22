@@ -1,10 +1,11 @@
-import { Parcheesi3D } from "./parcheesi3d";
 import * as BABYLON from "babylonjs";
 import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
 import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
 import { PlayerColor, Position } from "./types";
 import { PLAYERS_BOARD_POSITIONS } from "./config/boardConfig";
 import { CYLINDERS } from "./config/CylindersConfig";
+import { PathType } from "./config/pathConfig";
+import { PATH_OF_PLAYERS } from "./config/pathConfig";
 
 export class Board {
     private scene: BABYLON.Scene;
@@ -78,6 +79,37 @@ export class Board {
         cylider.position = new BABYLON.Vector3(position.x, position.y + 0.25, position.z);
     }
 
+    private createPath(pathObj : PathType) {
+        // create black padding like html you know!
+        const padding = BABYLON.MeshBuilder.CreateBox("padding", 
+            {
+                width: pathObj.dimension.width + PADDING,
+                depth: pathObj.dimension.depth + PADDING,
+                height: 0.1
+            }, this.scene
+        );
+
+        const paddingMaterial = new BABYLON.StandardMaterial("paddingMaterial", this.scene);
+        paddingMaterial.diffuseColor = BABYLON.Color3.FromHexString("#000000");
+        padding.material = paddingMaterial;
+        padding.position = new BABYLON.Vector3(
+            pathObj.position.x,
+            pathObj.position.y - 0.02 - 0.25,
+            pathObj.position.z
+        );
+
+        // create the path
+        const path = BABYLON.MeshBuilder.CreateBox(pathObj.id, {
+            width: pathObj.dimension.width - PADDING,
+            depth: pathObj.dimension.depth - PADDING,
+            height: 0.1
+        }, this.scene);
+
+        const pathMaterial = new BABYLON.StandardMaterial(pathObj.id + "Material", this.scene);
+        pathMaterial.diffuseColor = BABYLON.Color3.FromHexString(pathObj.color);
+        path.material = pathMaterial;
+        path.position = new BABYLON.Vector3(pathObj.position.x, pathObj.position.y - 0.25, pathObj.position.z);
+    }
 
     public initialize() {
         // Create the main board
@@ -96,5 +128,9 @@ export class Board {
             }
         }
 
-    }   
+        // Create paths
+        for (const path of PATH_OF_PLAYERS) {
+            this.createPath(path);
+        }
+    }
 }
