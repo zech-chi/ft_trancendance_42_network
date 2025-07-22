@@ -139,6 +139,40 @@ export class Board {
         path.position = new BABYLON.Vector3(pathObj.position.x, pathObj.position.y - 0.25, pathObj.position.z);
     }
 
+    private createPathText(pathObj: PathType) {
+        // create text:
+        // Create a plane to hold the text
+        const plane = BABYLON.MeshBuilder.CreatePlane("textPlane", { width: 3, height: 1 }, this.scene);
+
+        // Create dynamic texture
+        const dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width:512, height:256 }, this.scene, false);
+        dynamicTexture.hasAlpha = true;
+
+
+        let name = pathObj.id;
+        if (!pathObj.drawText) name = "";
+        // Draw text
+        dynamicTexture.drawText(name, null, 150, "bold 150px Arial", "gray", "transparent");
+
+        // Create material
+        const mat = new BABYLON.StandardMaterial("textMat", this.scene);
+        mat.diffuseTexture = dynamicTexture;
+        mat.backFaceCulling = false;
+
+        plane.material = mat;
+
+        // Rotate to make it parallel to Y-axis
+        plane.rotation = new BABYLON.Vector3(Math.PI / 2, Math.PI / 2, 0);
+        if (
+            pathObj.diff_x !== undefined &&
+            pathObj.diff_y !== undefined &&
+            pathObj.diff_z !== undefined
+        )
+            plane.position = new BABYLON.Vector3(pathObj.position.x + pathObj.diff_x, pathObj.position.y + pathObj.diff_y - 0.24, pathObj.position.z + pathObj.diff_z);
+        else
+            plane.position = new BABYLON.Vector3(pathObj.position.x, pathObj.position.y + 0.1, pathObj.position.z);
+    }
+
     private createTriangle(triangleObj: TheEndPlace) {
         // 1. Create the 3 points of the triangle
         const p1 = new BABYLON.Vector3(triangleObj.x1, triangleObj.y1, triangleObj.z1);
@@ -195,6 +229,7 @@ export class Board {
         // Create paths
         for (const path of PATH_OF_PLAYERS) {
             this.createPath(path);
+            this.createPathText(path);
         }
 
         // create the triangles for the end places
