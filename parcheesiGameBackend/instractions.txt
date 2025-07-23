@@ -1,0 +1,12 @@
+export enum PlayerColor {
+    RED = "RED",
+    GREEN = "GREEN",
+    YELLOW = "YELLOW",
+    BLUE = "BLUE"
+}
+
+// send this to each player at first time:
+addPlayer> {"color":"RED", "userName": "zech-chi"}
+addPlayer> {"color":"GREEN", "userName": "saw"}
+addPlayer> {"color":"YELLOW", "userName": "hunterGon"}
+addPlayer> {"color":"BLUE", "userName": "killzold"}

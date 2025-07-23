@@ -28,11 +28,25 @@ server.start().then(() => {
 
     // prompt for user input
     rl.on('line', (input: string) => {
-        console.log(`📤 Broadcasting message: ${input}`);
-        io.emit('command', {
-            message: input,
-            time: new Date().toISOString(),
-        });
+        const [rawCommand, ...rest] = input.split('>');
+        const command = rawCommand.trim();
+        const instructions = rest.join('>').trim();
+        
+        console.log(command);
+        console.log(instructions);
+        
+        if (!command) {
+            console.log(chalk.red('❗ Command cannot be empty'));
+            return;
+        }
+        
+        try {
+            const parsedMessage = JSON.parse(instructions); // Parse the JSON string
+            console.log(`📤 Broadcasting command: ${command}`, parsedMessage);
+            io.emit(command, parsedMessage);
+        } catch (e) {
+            console.log(chalk.red('❌ Invalid JSON:', instructions));
+        }
     });
 
     console.log(chalk.green('Server started successfully'));
