@@ -16,3 +16,8 @@ export type Demension = {
     depth: number;
     height: number;
 };
+
+export type SphereDataType = {
+    color: PlayerColor;
+    userName: string;
+}

@@ -4,22 +4,31 @@ import { Parcheesi3D } from "@/app/lib/Parcheesi3D_src/parcheesi3d";
 import { Board } from "@/app/lib/Parcheesi3D_src/Board";
 import { Player } from "@/app/lib/Parcheesi3D_src/Player";
 import { io, Socket } from "socket.io-client";
+import { PlayerColor, SphereDataType } from "@/app/lib/Parcheesi3D_src/types";
 import chalk from 'chalk';
+
 
 export function Parcheesi3DComponent() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const gameRef = useRef<Parcheesi3D | null>(null);
     const socketRef = useRef<Socket| null>(null);
+    const boardRef = useRef<Board | null>(null);
+    // const PlayerRef = useRef<Player | null>(null);
 
     useEffect(() => {
-        if (canvasRef && canvasRef.current) {
+        if (canvasRef.current) {
+            console.log(chalk.green("Initializing Parcheesi3D..."));
             // Initialize the Parcheesi3D game with the canvas
             gameRef.current = new Parcheesi3D(canvasRef.current);
             // Start the render loop
             gameRef.current.runRenderLoop();
             
-            const board = new Board(gameRef.current.scene);
-            board.initialize();
+            boardRef.current = new Board(gameRef.current.scene);
+            boardRef.current.initialize();
+            // board.createSpheres(PlayerColor.RED);
+            // board.createSpheres(PlayerColor.GREEN);
+            // board.createSpheres(PlayerColor.YELLOW);
+            // board.createSpheres(PlayerColor.BLUE);
             
             if (!socketRef.current) { 
                 // Initialize the socket connection
@@ -36,7 +45,16 @@ export function Parcheesi3DComponent() {
                 // Handle welcome message from the server
                 socketRef.current.on("welcome", (data) => {
                     console.log(chalk.blue("💬 Server says:", data.message));
+
                 });
+                
+                socketRef.current.on("addPlayer", (data: SphereDataType) => {
+                    console.log("📥 Sphere data received:", data);
+                    boardRef.current?.createSpheres(data.color);
+                    // if (!PlayerRef.current) {
+                    // PlayerRef.current = new Player(gameRef.current.scene);
+                });
+                // add spheres
 
                 // Handle incoming commands from the server
                 socketRef.current.on("command", (data) => {

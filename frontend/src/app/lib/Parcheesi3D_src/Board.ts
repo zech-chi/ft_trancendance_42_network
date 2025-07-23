@@ -1,13 +1,15 @@
 import * as BABYLON from "babylonjs";
+import * as GUI from "@babylonjs/gui"
 import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
 import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
-import { PlayerColor, Position } from "./types";
+import { PlayerColor, Position, SphereDataType } from "./types";
 import { PLAYERS_BOARD_POSITIONS } from "./config/boardConfig";
 import { CYLINDERS } from "./config/CylindersConfig";
 import { PathType } from "./config/pathConfig";
 import { PATH_OF_PLAYERS } from "./config/pathConfig";
 import { TheEndPlace } from "./config/TheEndPlacesConfig";
 import { THE_END_PLACES } from "./config/TheEndPlacesConfig";
+import { SphereType, RED_SPHERES, GREEN_SPHERES, BLUE_SPHERES, YELLOW_SPHERES } from "./config/spheresConfig";
 
 export class Board {
     private scene: BABYLON.Scene;
@@ -205,6 +207,48 @@ export class Board {
         mat.diffuseColor = BABYLON.Color3.FromHexString(triangleObj.color);
         triangle.material = mat;
         mat.backFaceCulling = false;
+    }
+
+    private createSphere(sphere: SphereType) {
+        const sphereMesh = BABYLON.MeshBuilder.CreateSphere("sphere" + sphere.type + String(sphere.id), {
+            diameter: sphere.diameter,
+            segments: 32,
+          },  this.scene);
+        const sphereMaterial = new BABYLON.StandardMaterial("sphere", this.scene);
+        sphereMaterial.bumpTexture = new BABYLON.Texture("Parcheesi3D_Media/texture.png", this.scene);
+        // sphereMaterial.diffuseTexture = new BABYLON.Texture("Parcheesi3D_Media/background.png", this.scene);
+        sphereMaterial.diffuseColor =  BABYLON.Color3.FromHexString(sphere.color);
+        sphereMesh.material = sphereMaterial;
+        sphereMesh.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
+    }
+
+    public createSpheres(type: PlayerColor) {
+        switch (type) {
+            case PlayerColor.RED:
+                RED_SPHERES.forEach(sphere => {
+                    this.createSphere(sphere);
+                });
+                break;
+            case PlayerColor.GREEN:
+                GREEN_SPHERES.forEach(sphere => {
+                    this.createSphere(sphere);
+                });
+                break;
+            case PlayerColor.YELLOW:
+                YELLOW_SPHERES.forEach(sphere => {
+                    this.createSphere(sphere);
+                });
+                break;
+            case PlayerColor.BLUE:
+                BLUE_SPHERES.forEach(sphere => {
+                    this.createSphere(sphere);
+                });
+                break;
+        }
+    }
+
+    public createAvatar(obj: SphereDataType) {
+        const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", undefined, this.scene);
     }
 
     public initialize() {

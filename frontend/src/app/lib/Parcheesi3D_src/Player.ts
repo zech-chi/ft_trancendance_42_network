@@ -1,6 +1,7 @@
 import { Socket } from 'socket.io-client';
 
 export class Player {
+    private scene: BABYLON.Scene; // The Babylon.js scene where the player will interact with the game.
     private _id!: string; // Unique identifier for the player
     private _socket!: Socket; // The client-side socket instance (manages connection to the server).
     private _name!: string; // The player's name.
@@ -9,7 +10,7 @@ export class Player {
     private _roomId!: string; // The ID of the room the player is currently in.
     private _color!: string; // The color assigned to the player in the game for parcheesi.
 
-    constructor() {
+    constructor(scene: BABYLON.Scene) {
         this._id = '';
         this._socket = {} as Socket; // Initialize with an empty socket instance
         this._name = '';
@@ -17,6 +18,7 @@ export class Player {
         this._isReady = false;
         this._roomId = '';
         this._color = '';
+        this.scene = scene;
     }
 
 

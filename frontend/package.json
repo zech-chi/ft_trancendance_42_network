@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babylonjs/gui": "^8.17.2",
     "@heroicons/react": "^2.2.0",
     "babylonjs": "^8.17.0",
     "fastify": "^4.29.1",

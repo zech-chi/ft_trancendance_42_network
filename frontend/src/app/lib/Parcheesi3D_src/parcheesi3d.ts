@@ -51,7 +51,7 @@ export class Parcheesi3D {
         // The third parameter is the scene to which the light belongs
         this.light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, 0), this.scene);
         // Set the intensity of the light
-        this.light.intensity = 0.7;
+        this.light.intensity = 1;
         // Set the diffuse color of the light (the color of the light that illuminates the scene)
         this.light.diffuse = new BABYLON.Color3(1, 1, 1);
     }
