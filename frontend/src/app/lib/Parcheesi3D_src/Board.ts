@@ -1,5 +1,5 @@
-import * as BABYLON from "babylonjs";
-import * as GUI from "@babylonjs/gui"
+import * as BABYLON from "@babylonjs/core";
+import * as GUI from "@babylonjs/gui";
 import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
 import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
 import { PlayerColor, Position, SphereDataType } from "./types";
@@ -10,6 +10,19 @@ import { PATH_OF_PLAYERS } from "./config/pathConfig";
 import { TheEndPlace } from "./config/TheEndPlacesConfig";
 import { THE_END_PLACES } from "./config/TheEndPlacesConfig";
 import { SphereType, RED_SPHERES, GREEN_SPHERES, BLUE_SPHERES, YELLOW_SPHERES } from "./config/spheresConfig";
+import { PLAYERS_AVATAR_POSITIONS } from "./config/PlayersConfig";
+import { fetchUser } from "@/app/lib/apiDashboard";
+
+interface User {
+    fullName: string;
+    userName: string;
+    bio: string;
+    imageUrl: string;
+    rank: number;
+    level: number;
+    progress: number;
+    online: boolean;
+  }
 
 export class Board {
     private scene: BABYLON.Scene;
@@ -247,8 +260,26 @@ export class Board {
         }
     }
 
-    public createAvatar(obj: SphereDataType) {
-        const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", undefined, this.scene);
+    public async addPlayerAvatar(obj: SphereDataType) {
+        // fetch the avatar image from the server
+        // and create a cylinder with the avatar image as texture
+        const user : User =  await fetchUser(obj.userName);
+
+        var cylinder = BABYLON.MeshBuilder.CreateCylinder(`${obj.color}Cylinder_${obj.userName}`, {
+            height: 0.5,
+            diameter: 10
+        }, this.scene);
+    
+        const cylinderMaterial = new BABYLON.StandardMaterial(`${obj.color}CylinderMaterial_${obj.userName}`, this.scene);
+        cylinderMaterial.diffuseTexture = new BABYLON.Texture(user.imageUrl, this.scene);;
+        cylinder.material = cylinderMaterial;
+        cylinder.position = new BABYLON.Vector3(-BOARD_TILE_SIZE / 2 - 5 , BOARD_HEIGHT, +BOARD_TILE_SIZE / 2 + 5);
+        cylinder.position = new BABYLON.Vector3(
+            PLAYERS_AVATAR_POSITIONS[obj.color].position.x,
+            PLAYERS_AVATAR_POSITIONS[obj.color].position.y,
+            PLAYERS_AVATAR_POSITIONS[obj.color].position.z
+        );
+        cylinder.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
     }
 
     public initialize() {

@@ -1,4 +1,5 @@
-import * as BABYLON from "babylonjs";
+import * as BABYLON from "@babylonjs/core";
+import { AxesViewer } from "@babylonjs/core/Debug/axesViewer";
 
 export class Parcheesi3D {
     /* the canvas element where the 3D scene will be rendered */
@@ -21,6 +22,7 @@ export class Parcheesi3D {
         // this.scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
         this.setupCamera();
         this.setupLights();
+        this.setupSky();
         this.addAxes(); // for debugging
     }
 
@@ -57,12 +59,25 @@ export class Parcheesi3D {
     }
 
     private addAxes() {
-        new BABYLON.Debug.AxesViewer(this.scene, 2);
+        // new BABYLON.Debug.AxesViewer(this.scene, 2);
+        new AxesViewer(this.scene, 2);
     }
 
-    // private setupSky() {
-
-    // }
+    private setupSky() {
+        const skybox = BABYLON.MeshBuilder.CreateBox("BackgroundSkybox", {
+            size: 500,
+            sideOrientation: BABYLON.Mesh.BACKSIDE
+        }, this.scene);
+    
+        const backgroundMaterial = new BABYLON.BackgroundMaterial("backgroundMaterial", this.scene);
+        backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/TropicalSunnyDay", this.scene);
+        // backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/skybox2", this.scene);
+        // backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/environment.env", this.scene);
+        backgroundMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    
+        skybox.material = backgroundMaterial;
+    }
+    
 
     public runRenderLoop() {
         this.engine.runRenderLoop(() => {

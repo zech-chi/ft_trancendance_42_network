@@ -6,6 +6,7 @@ import { Player } from "@/app/lib/Parcheesi3D_src/Player";
 import { io, Socket } from "socket.io-client";
 import { PlayerColor, SphereDataType } from "@/app/lib/Parcheesi3D_src/types";
 import chalk from 'chalk';
+import * as BABYLON from "@babylonjs/core";
 
 
 export function Parcheesi3DComponent() {
@@ -48,13 +49,11 @@ export function Parcheesi3DComponent() {
 
                 });
                 
-                socketRef.current.on("addPlayer", (data: SphereDataType) => {
+                socketRef.current.on("addPlayer", async (data: SphereDataType) => {
                     console.log("📥 Sphere data received:", data);
                     boardRef.current?.createSpheres(data.color);
-                    // if (!PlayerRef.current) {
-                    // PlayerRef.current = new Player(gameRef.current.scene);
+                    await boardRef.current?.addPlayerAvatar(data);
                 });
-                // add spheres
 
                 // Handle incoming commands from the server
                 socketRef.current.on("command", (data) => {
