@@ -1,5 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 import { AxesViewer } from "@babylonjs/core/Debug/axesViewer";
+import * as GUI from "@babylonjs/gui";
 
 export class Parcheesi3D {
     /* the canvas element where the 3D scene will be rendered */
@@ -11,6 +12,7 @@ export class Parcheesi3D {
     /* trust me, I’ll assign it later */
     private camera!: BABYLON.ArcRotateCamera | BABYLON.FreeCamera | BABYLON.UniversalCamera;
     private light!: BABYLON.HemisphericLight;
+    public gui: GUI.AdvancedDynamicTexture;
 
 
     constructor(canvas: HTMLCanvasElement) {
@@ -24,6 +26,7 @@ export class Parcheesi3D {
         this.setupLights();
         this.setupSky();
         this.addAxes(); // for debugging
+        this.gui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this.scene);
     }
 
     private setupCamera() {

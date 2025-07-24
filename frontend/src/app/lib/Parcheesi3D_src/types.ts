@@ -21,3 +21,9 @@ export type SphereDataType = {
     color: PlayerColor;
     userName: string;
 }
+
+export type DiceDataType = {
+    color: PlayerColor;
+    dice1: number;
+    dice2: number;
+}

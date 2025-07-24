@@ -2,7 +2,7 @@ import * as BABYLON from "@babylonjs/core";
 import * as GUI from "@babylonjs/gui";
 import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
 import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
-import { PlayerColor, Position, SphereDataType } from "./types";
+import { PlayerColor, Position, SphereDataType, DiceDataType } from "./types";
 import { PLAYERS_BOARD_POSITIONS } from "./config/boardConfig";
 import { CYLINDERS } from "./config/CylindersConfig";
 import { PathType } from "./config/pathConfig";
@@ -12,6 +12,7 @@ import { THE_END_PLACES } from "./config/TheEndPlacesConfig";
 import { SphereType, RED_SPHERES, GREEN_SPHERES, BLUE_SPHERES, YELLOW_SPHERES } from "./config/spheresConfig";
 import { PLAYERS_AVATAR_POSITIONS } from "./config/PlayersConfig";
 import { fetchUser } from "@/app/lib/apiDashboard";
+import { th } from "framer-motion/client";
 
 interface User {
     fullName: string;
@@ -26,9 +27,16 @@ interface User {
 
 export class Board {
     private scene: BABYLON.Scene;
+    private redLabel?: GUI.TextBlock;
+    private greenLabel?: GUI.TextBlock;
+    private blueLabel?: GUI.TextBlock;
+    private yellowLabel?: GUI.TextBlock;
+    private gui: GUI.AdvancedDynamicTexture;
+    
 
-    constructor(scene: BABYLON.Scene) {
+    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture) {
         this.scene = scene;
+        this.gui = gui;
     }
 
     private createBoard() {
@@ -235,6 +243,7 @@ export class Board {
         sphereMesh.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
     }
 
+
     public createSpheres(type: PlayerColor) {
         switch (type) {
             case PlayerColor.RED:
@@ -260,11 +269,130 @@ export class Board {
         }
     }
 
+    private createButton(type: PlayerColor) {
+        // Create a button
+        const button = GUI.Button.CreateSimpleButton(`${type}Button`, `Roll Dice`);
+        button.width = "150px";
+        button.height = "40px";
+        button.color = "white";
+        button.cornerRadius = 20;
+        button.background = COLORS_LOW_DARK[type];
+        button.zIndex = 10;
+
+        // Set the position of the button
+        if (type === PlayerColor.RED) {
+            button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        } else if (type === PlayerColor.GREEN) {
+            button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        } else if (type === PlayerColor.YELLOW) {
+            button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        } else if (type === PlayerColor.BLUE) {
+            button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        }
+            
+        // Proper hover effects
+        button.onPointerEnterObservable.add(() => {
+            button.background = COLORS_MEDIUM_DARK[type];
+            this.scene.render();
+        });
+        
+        button.onPointerOutObservable.add(() => {
+            button.background = COLORS_LOW_DARK[type];
+            this.scene.render();
+        });
+        
+        button.onPointerDownObservable.add(() => {
+            console.log(`${type} button clicked`);
+        });
+
+        this.gui.addControl(button);
+    }
+    
+    private createLabel(type: PlayerColor) {
+        // Create the TextBlock control
+        const label = new GUI.TextBlock(`${type}Label`, `dice1: 0, dice2: 0`);
+        label.color = COLORS_LOW_DARK[type];
+        label.fontSize = 24;
+        label.fontFamily = "Arial";
+        label.fontWeight = "bold";
+    
+        label.paddingLeft = "10px";
+        label.paddingRight = "10px";
+        label.paddingTop = "10px";
+        label.paddingBottom = "10px";
+
+        this.createButton(type);
+
+        switch (type) {
+            case PlayerColor.RED:
+                label.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                label.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                label.top = "-40px"; // position above the button
+                this.redLabel = label;
+                break;
+    
+            case PlayerColor.GREEN:
+                label.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                label.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                label.top = "-40px"; // position above the button
+                this.greenLabel = label;
+                break;
+    
+            case PlayerColor.YELLOW:
+                label.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                label.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                label.top = "40px"; // position under the button
+                this.yellowLabel = label;
+                break;
+                
+                case PlayerColor.BLUE:
+                    label.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    label.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                    label.top = "40px"; // position under the button
+                    this.blueLabel = label;
+                break;
+        }
+        this.gui.addControl(label);
+        this.scene.render();
+    } 
+
+    public updateLabel(data: DiceDataType) {
+        const labelText = `dice1: ${data.dice1}, dice2: ${data.dice2}`;
+        switch (data.color) {
+            case PlayerColor.RED:
+                if (this.redLabel) {
+                    this.redLabel.text = labelText;          
+                }
+                break;
+            case PlayerColor.GREEN:
+                if (this.greenLabel) {
+                    this.greenLabel.text = labelText;
+                    }
+                    break;
+                case PlayerColor.YELLOW:
+                    if (this.yellowLabel) {
+                        this.yellowLabel.text = labelText;
+                    }
+                    break;
+                case PlayerColor.BLUE:
+                    if (this.blueLabel) {
+                        this.blueLabel.text = labelText;
+                    }
+                    break;
+        }
+
+        this.scene.render();
+    }
+
     public async addPlayerAvatar(obj: SphereDataType) {
         // fetch the avatar image from the server
         // and create a cylinder with the avatar image as texture
         const user : User =  await fetchUser(obj.userName);
-
+        
         var cylinder = BABYLON.MeshBuilder.CreateCylinder(`${obj.color}Cylinder_${obj.userName}`, {
             height: 0.5,
             diameter: 10
@@ -280,6 +408,10 @@ export class Board {
             PLAYERS_AVATAR_POSITIONS[obj.color].position.z
         );
         cylinder.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+
+        // for debugging add a label with the user name
+        // this contain the dice values
+        this.createLabel(obj.color);
     }
 
     public initialize() {

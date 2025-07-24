@@ -6,7 +6,9 @@ export enum PlayerColor {
 }
 
 // send this to each player at first time:
-addPlayer> {"color":"RED", "userName": "zech-chi"}
+addPlayer> {"color":"RED", "userName": "hunterGon"}
 addPlayer> {"color":"GREEN", "userName": "saw"}
-addPlayer> {"color":"YELLOW", "userName": "hunterGon"}
+addPlayer> {"color":"YELLOW", "userName": "zech-chi"}
 addPlayer> {"color":"BLUE", "userName": "killzold"}
+
+updateDices> {"color":"RED", "dice1": 1, "dice2": 5}

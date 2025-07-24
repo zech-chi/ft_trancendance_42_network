@@ -1,12 +1,13 @@
 'use client';
-import { useRef, useEffect, use } from "react";
+import { useRef, useEffect, use, useState } from "react";
 import { Parcheesi3D } from "@/app/lib/Parcheesi3D_src/parcheesi3d";
 import { Board } from "@/app/lib/Parcheesi3D_src/Board";
 import { Player } from "@/app/lib/Parcheesi3D_src/Player";
 import { io, Socket } from "socket.io-client";
-import { PlayerColor, SphereDataType } from "@/app/lib/Parcheesi3D_src/types";
+import { PlayerColor, SphereDataType, DiceDataType } from "@/app/lib/Parcheesi3D_src/types";
 import chalk from 'chalk';
 import * as BABYLON from "@babylonjs/core";
+
 
 
 export function Parcheesi3DComponent() {
@@ -14,8 +15,11 @@ export function Parcheesi3DComponent() {
     const gameRef = useRef<Parcheesi3D | null>(null);
     const socketRef = useRef<Socket| null>(null);
     const boardRef = useRef<Board | null>(null);
+    // just for debugging purposes
     // const PlayerRef = useRef<Player | null>(null);
-
+    const onResize = () => {
+        gameRef.current?.resize();
+    };
     useEffect(() => {
         if (canvasRef.current) {
             console.log(chalk.green("Initializing Parcheesi3D..."));
@@ -24,7 +28,7 @@ export function Parcheesi3DComponent() {
             // Start the render loop
             gameRef.current.runRenderLoop();
             
-            boardRef.current = new Board(gameRef.current.scene);
+            boardRef.current = new Board(gameRef.current.scene, gameRef.current.gui);
             boardRef.current.initialize();
             // board.createSpheres(PlayerColor.RED);
             // board.createSpheres(PlayerColor.GREEN);
@@ -46,13 +50,17 @@ export function Parcheesi3DComponent() {
                 // Handle welcome message from the server
                 socketRef.current.on("welcome", (data) => {
                     console.log(chalk.blue("💬 Server says:", data.message));
-
                 });
                 
                 socketRef.current.on("addPlayer", async (data: SphereDataType) => {
                     console.log("📥 Sphere data received:", data);
                     boardRef.current?.createSpheres(data.color);
                     await boardRef.current?.addPlayerAvatar(data);
+                });
+
+                socketRef.current.on("updateDices", (data: DiceDataType) => {
+                    console.log(chalk.green("📥 Dice update received:", data), data);
+                    boardRef.current?.updateLabel(data);
                 });
 
                 // Handle incoming commands from the server
@@ -66,9 +74,7 @@ export function Parcheesi3DComponent() {
                 });
             }
 
-            const onResize = () => {
-                gameRef.current?.resize();
-            };
+
             window.addEventListener("resize", onResize);
         }
     }, []);
