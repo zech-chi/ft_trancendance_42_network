@@ -3,7 +3,7 @@ import * as GUI from "@babylonjs/gui";
 import { io, Socket } from "socket.io-client";
 import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
 import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
-import { PlayerColor, Position, SphereDataType, DiceDataType } from "./types";
+import { PlayerColor, Position, SphereDataType, DiceDataType, JumpDataType } from "./types";
 import { PLAYERS_BOARD_POSITIONS } from "./config/boardConfig";
 import { CYLINDERS } from "./config/CylindersConfig";
 import { PathType } from "./config/pathConfig";
@@ -60,12 +60,14 @@ export class Board {
     // player userName
     private playerUserName: string = "";
     private playerColor!: PlayerColor;
+    private memeGUI3d!: GUI.GUI3DManager;
 
     constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string, socket: Socket) {
         this.scene = scene;
         this.gui = gui;
         this.socket = socket;
         this.playerUserName = loggedUserName;
+        this.memeGUI3d = new GUI.GUI3DManager(this.scene);
         console.log("You are playing as :", this.playerUserName);
         console.log("Socket initialized:", this.socket.id);
     }
@@ -621,113 +623,48 @@ export class Board {
         });
     }
 
-    public async jump() {
-        await this.jumpAnimation("sphereRED1", LOCATIONS[1]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereRED2", LOCATIONS[2]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereRED3", LOCATIONS[3]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereRED4", LOCATIONS[4]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        });
-
-        await this.jumpAnimation("sphereRED1", startRed[1], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereRED2", startRed[2], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereRED3", startRed[3], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereRED4", startRed[4], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        });
-
-        await this.jumpAnimation("sphereGREEN1", LOCATIONS[1]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereGREEN2", LOCATIONS[2]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereGREEN3", LOCATIONS[3]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereGREEN4", LOCATIONS[4]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        });
-
-        await this.jumpAnimation("sphereGREEN1", startGreen[1], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereGREEN2", startGreen[2], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereGREEN3", startGreen[3], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereGREEN4", startGreen[4], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        });
-
-        await this.jumpAnimation("sphereYELLOW1", LOCATIONS[1]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereYELLOW2", LOCATIONS[2]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereYELLOW3", LOCATIONS[3]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereYELLOW4", LOCATIONS[4]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        });
-
-        await this.jumpAnimation("sphereYELLOW1", startYellow[1], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereYELLOW2", startYellow[2], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereYELLOW3", startYellow[3], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereYELLOW4", startYellow[4], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        });
-
-        await this.jumpAnimation("sphereBLUE1", LOCATIONS[1]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereBLUE2", LOCATIONS[2]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereBLUE3", LOCATIONS[3]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereBLUE4", LOCATIONS[4]["center"], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        });
-
-        await this.jumpAnimation("sphereBLUE1", startBlue[1], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereBLUE2", startBlue[2], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereBLUE3", startBlue[3], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        }); 
-        await this.jumpAnimation("sphereBLUE4", startBlue[4], 1.0, 2).then(() => {
-            console.log("Jump animation completed");
-        });
-
+    public async jump(instruction: JumpDataType) {
+        if (instruction.toStartPosition) {
+            let placeTojump;
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeTojump = startRed[instruction.sphere_id];
+                    break;
+                case PlayerColor.GREEN:
+                    placeTojump = startGreen[instruction.sphere_id];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeTojump = startYellow[instruction.sphere_id];
+                    break;
+                case PlayerColor.BLUE:
+                    placeTojump = startBlue[instruction.sphere_id];
+                    break;
+            }
+            await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
+                console.log("Jump animation completed");
+            });
+            this.addMeme();
+        } else {
+            if (!instruction.place || !instruction.where) {
+                console.error("Invalid jump instruction:", instruction);
+                return;
+            }
+            await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, LOCATIONS[instruction.place][instruction.where], instruction.speed, instruction.maxHeight).then(() => {
+                console.log("Jump animation completed");
+            });
+        }
     }
-    
+
+    public addMeme() {
+        const meme = new GUI.HolographicSlate("meme");
+        meme.minDimensions = new BABYLON.Vector2(35, 35);
+        meme.dimensions = new BABYLON.Vector2(35, 35);
+        meme.titleBarHeight = 4; // height of the title bar
+        meme.title = "ntal3oha 3lk chwiya 😂😂";
+        this.memeGUI3d.addControl(meme);
+        meme.position = new BABYLON.Vector3(20, 10, -8);
+        meme.content = new GUI.Image("cat","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSn77rBF7rM9V4Ej8MsVzL5piUjFzQicxMPUw&s");
+    }
 
     public initialize() {
         // Create the main board

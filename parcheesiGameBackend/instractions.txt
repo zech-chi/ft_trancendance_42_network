@@ -15,4 +15,4 @@ setPlayerTurn> {"color": "RED"}
 
 rollDices> {"color":"RED", "dice1": 1, "dice2": 5}
 
-jump> {"sphere_id":1,"sphere_type":"red","place":1,"where":"center","speed":4}
+jump> {"sphere_id":1,"sphere_type":"RED","place":1,"where":"center","speed":1, "maxHeight": 5, "toStartPosition": false}

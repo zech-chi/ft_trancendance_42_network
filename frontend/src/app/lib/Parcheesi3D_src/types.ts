@@ -27,3 +27,13 @@ export type DiceDataType = {
     dice1: number;
     dice2: number;
 }
+
+export type JumpDataType = {
+    sphere_id: number;
+    sphere_type: PlayerColor;
+    place?: number;
+    where?: "center" | "left" | "right";
+    speed?: number;
+    maxHeight?: number;
+    toStartPosition: boolean;
+}

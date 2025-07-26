@@ -4,7 +4,7 @@ import { Parcheesi3D } from "@/app/lib/Parcheesi3D_src/parcheesi3d";
 import { Board } from "@/app/lib/Parcheesi3D_src/Board";
 import { Player } from "@/app/lib/Parcheesi3D_src/Player";
 import { io, Socket } from "socket.io-client";
-import { PlayerColor, SphereDataType, DiceDataType } from "@/app/lib/Parcheesi3D_src/types";
+import { PlayerColor, SphereDataType, DiceDataType, JumpDataType } from "@/app/lib/Parcheesi3D_src/types";
 import chalk from 'chalk';
 import * as BABYLON from "@babylonjs/core";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
@@ -65,9 +65,13 @@ export function Parcheesi3DComponent() {
                 socketRef.current.on("rollDices", (data: DiceDataType) => {
                     console.log(chalk.green("📥 Dice update received:", data), data);
                     boardRef.current?.updateLabel(data);
-                    boardRef.current?.jump();
                 });
 
+                socketRef.current.on("jump", (data: JumpDataType) => {
+                    console.log(chalk.green("📥 Jump data received:", data));
+                    boardRef.current?.jump(data);
+                });
+                
                 // Handle incoming commands from the server
                 socketRef.current.on("command", (data) => {
                     console.log(chalk.yellow("📥 Command received:", data.message, "at", data.time));
