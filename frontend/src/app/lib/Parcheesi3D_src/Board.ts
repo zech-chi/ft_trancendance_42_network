@@ -14,6 +14,9 @@ import { SphereType, RED_SPHERES, GREEN_SPHERES, BLUE_SPHERES, YELLOW_SPHERES } 
 import { PLAYERS_AVATAR_POSITIONS } from "./config/PlayersConfig";
 import { fetchUser } from "@/app/lib/apiDashboard";
 import { th } from "framer-motion/client";
+import { LOCATIONS, Location } from "./config/locationsConfig";
+import { se7enRed, se7enGreen, se7enYellow, se7enBlue } from "./config/locationsConfig";
+import { finalRed, finalGreen, finalYellow, finalBlue } from "./config/locationsConfig";
 
 interface User {
     fullName: string;
@@ -285,6 +288,7 @@ export class Board {
     }
 
     private createSphere(sphere: SphereType) {
+        console.log("->sphere" + sphere.type + String(sphere.id));
         const sphereMesh = BABYLON.MeshBuilder.CreateSphere("sphere" + sphere.type + String(sphere.id), {
             diameter: sphere.diameter,
             segments: 32,
@@ -527,6 +531,123 @@ export class Board {
         // this contain the dice values
         this.createLabel(obj.color);
     }
+
+
+    // playing
+    private jumpAnimation(meshName: string, positions: Position, speed = 1.0, maxY = 5) {
+        return new Promise<void>((resolve) => {
+            const mesh = this.scene.getMeshByName(meshName);
+            if (!mesh) {
+                console.error(`Error in jumpAnimation: Mesh with name ${meshName} not found.`);
+                resolve();
+                return;
+            }
+    
+            const start = mesh.position.clone();
+            const end = new BABYLON.Vector3(positions.x, positions.y, positions.z);
+            const frameRate = 60;
+            const jumpDuration = 1.0 / speed; // Duration of the jump in seconds
+    
+            // Create a more realistic parabolic jump animation
+            const jumpKeys = [];
+            const numKeys = 30; // More keys for a smoother arc
+    
+            for (let i = 0; i <= numKeys; i++) {
+                const frame = (frameRate * jumpDuration * i) / numKeys;
+                const progress = i / numKeys;
+    
+                // Linear interpolation for X and Z
+                const currentPos = BABYLON.Vector3.Lerp(start, end, progress);
+    
+                // Parabolic curve for Y
+                // Formula: y = -4 * maxY * x^2 + 4 * maxY * x
+                currentPos.y += (-4 * maxY * progress * progress + 4 * maxY * progress);
+    
+                jumpKeys.push({
+                    frame: frame,
+                    value: currentPos
+                });
+            }
+    
+            const positionAnim = new BABYLON.Animation(
+                "jumpPositionAnimation",
+                "position",
+                frameRate,
+                BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+                BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+            );
+            positionAnim.setKeys(jumpKeys);
+    
+            // --- Rotation Animation ---
+            // Make the mesh face the direction of the jump
+            const direction = end.subtract(start);
+            if (direction.length() > 0.01) { // Only rotate if there is movement
+                const targetRotation = BABYLON.Quaternion.FromLookDirectionLH(direction.normalize(), new BABYLON.Vector3(0, 1, 0));
+    
+                const rotationAnim = new BABYLON.Animation(
+                    "jumpRotationAnimation",
+                    "rotationQuaternion",
+                    frameRate,
+                    BABYLON.Animation.ANIMATIONTYPE_QUATERNION,
+                    BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+                );
+    
+                // Use current rotation if it exists, otherwise create a new one
+                const startQuat = mesh.rotationQuaternion ? mesh.rotationQuaternion.clone() : BABYLON.Quaternion.Identity();
+    
+                rotationAnim.setKeys([
+                    { frame: 0, value: startQuat },
+                    { frame: (frameRate * jumpDuration) / 4, value: BABYLON.Quaternion.Slerp(startQuat, targetRotation, 0.5) }, // Start turning early
+                    { frame: frameRate * jumpDuration, value: targetRotation }
+                ]);
+                mesh.animations.push(rotationAnim);
+            }
+            
+            mesh.animations = [positionAnim];
+    
+            const animation = this.scene.beginAnimation(mesh, 0, frameRate * jumpDuration, false, 1.0, () => {
+                // Ensure final state is set correctly
+                mesh.position = end;
+                if (mesh.rotationQuaternion) {
+                    const direction = end.subtract(start);
+                    if (direction.length() > 0.01) {
+                        mesh.rotationQuaternion = BABYLON.Quaternion.FromLookDirectionLH(direction.normalize(), new BABYLON.Vector3(0, 1, 0));
+                    }
+                }
+                console.log(`Jump animation finished for ${meshName} at position:`, positions);
+                resolve();
+            });
+        });
+    }
+
+    public async jump() {
+        await this.jumpAnimation("sphereRED1", LOCATIONS[1]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereRED2", LOCATIONS[2]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereRED3", LOCATIONS[3]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereRED4", LOCATIONS[4]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        });
+
+        await this.jumpAnimation("sphereRED1", finalRed[1], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereRED2", finalRed[2], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereRED3", finalRed[3], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereRED4", finalRed[4], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+    }
+    
 
     public initialize() {
         // Create the main board

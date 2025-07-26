@@ -65,6 +65,7 @@ export function Parcheesi3DComponent() {
                 socketRef.current.on("rollDices", (data: DiceDataType) => {
                     console.log(chalk.green("📥 Dice update received:", data), data);
                     boardRef.current?.updateLabel(data);
+                    boardRef.current?.jump();
                 });
 
                 // Handle incoming commands from the server

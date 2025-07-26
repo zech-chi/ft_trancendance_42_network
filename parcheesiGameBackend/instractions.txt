@@ -14,3 +14,5 @@ addPlayer> {"color":"BLUE", "userName": "killzold"}
 setPlayerTurn> {"color": "RED"}
 
 rollDices> {"color":"RED", "dice1": 1, "dice2": 5}
+
+jump> {"sphere_id":1,"sphere_type":"red","place":1,"where":"center","speed":4}
