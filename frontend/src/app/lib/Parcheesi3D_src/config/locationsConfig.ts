@@ -1,4 +1,6 @@
 import { Position } from "../types";
+import { BOARD_TILE_SIZE, SPHERE_HIGHT } from "../consts"
+import { PlayerColor } from "../types"
 
 export type Location = {
     center: { x: number; y: number; z: number };
@@ -1747,5 +1749,97 @@ export const finalBlue : { [key: number]: Position } = {
         x: -30 + 3 * 11.8,
         y: 1.6,
         z: 0,
+    },
+}
+
+export const startRed : { [key: number]: Position } = {
+    1: {
+        x : -BOARD_TILE_SIZE / 3 + 3,
+        y : SPHERE_HIGHT + 0.6, 
+        z : +BOARD_TILE_SIZE / 3 + 3,
+    },
+    2: {
+        x : -BOARD_TILE_SIZE / 3 - 3,
+        y : SPHERE_HIGHT + 0.6, 
+        z : +BOARD_TILE_SIZE / 3 + 3,
+    },
+    3: {
+        x : -BOARD_TILE_SIZE / 3 + 3,
+        y : SPHERE_HIGHT + 0.6, 
+        z : +BOARD_TILE_SIZE / 3 - 3,
+    },
+    4: {
+        x : -BOARD_TILE_SIZE / 3 - 3,
+        y : SPHERE_HIGHT + 0.6, 
+        z : +BOARD_TILE_SIZE / 3 - 3,
+    },
+}
+
+export const startGreen : { [key: number]: Position } = {
+    1: {
+        x : -BOARD_TILE_SIZE / 3 + 3,
+        y : SPHERE_HIGHT + 0.6,
+        z : -BOARD_TILE_SIZE / 3 + 3,
+    },
+    2: {
+        x : -BOARD_TILE_SIZE / 3 - 3,
+        y : SPHERE_HIGHT + 0.6,
+        z : -BOARD_TILE_SIZE / 3 + 3,
+    },
+    3: {
+        x : -BOARD_TILE_SIZE / 3 + 3,
+        y : SPHERE_HIGHT + 0.6,
+        z : -BOARD_TILE_SIZE / 3 - 3,
+    },
+    4: {
+        x : -BOARD_TILE_SIZE / 3 - 3,
+        y : SPHERE_HIGHT + 0.6,
+        z : -BOARD_TILE_SIZE / 3 - 3,
+    }
+}
+
+export const startYellow : { [key: number]: Position } = {
+    1: {
+        x : +BOARD_TILE_SIZE / 3 + 3,
+        y : SPHERE_HIGHT + 0.6, 
+        z : -BOARD_TILE_SIZE / 3 + 3,
+    },
+    2: {
+        x : +BOARD_TILE_SIZE / 3 - 3,
+        y : SPHERE_HIGHT + 0.6, 
+        z : -BOARD_TILE_SIZE / 3 + 3,
+    },
+    3: {
+        x : +BOARD_TILE_SIZE / 3 + 3,
+        y : SPHERE_HIGHT + 0.6, 
+        z : -BOARD_TILE_SIZE / 3 - 3,
+    },
+    4: {
+        x : +BOARD_TILE_SIZE / 3 - 3,
+        y : SPHERE_HIGHT + 0.6, 
+        z : -BOARD_TILE_SIZE / 3 - 3,
+    },
+}
+
+export const startBlue : { [key: number]: Position } = {
+    1: {
+        x : +BOARD_TILE_SIZE / 3 + 3,
+        y : SPHERE_HIGHT + 0.6,
+        z : +BOARD_TILE_SIZE / 3 + 3,
+    },
+    2: {
+        x : +BOARD_TILE_SIZE / 3 - 3,
+        y : SPHERE_HIGHT + 0.6,
+        z : +BOARD_TILE_SIZE / 3 + 3,
+    },
+    3: {
+        x : +BOARD_TILE_SIZE / 3 + 3,
+        y : SPHERE_HIGHT + 0.6,
+        z : +BOARD_TILE_SIZE / 3 - 3,
+    },
+    4: {
+        x : +BOARD_TILE_SIZE / 3 - 3,
+        y : SPHERE_HIGHT + 0.6,
+        z : +BOARD_TILE_SIZE / 3 - 3,
     },
 }

@@ -16,6 +16,7 @@ import { fetchUser } from "@/app/lib/apiDashboard";
 import { th } from "framer-motion/client";
 import { LOCATIONS, Location } from "./config/locationsConfig";
 import { se7enRed, se7enGreen, se7enYellow, se7enBlue } from "./config/locationsConfig";
+import { startRed, startGreen, startYellow, startBlue } from "./config/locationsConfig";
 import { finalRed, finalGreen, finalYellow, finalBlue } from "./config/locationsConfig";
 
 interface User {
@@ -634,18 +635,97 @@ export class Board {
             console.log("Jump animation completed");
         });
 
-        await this.jumpAnimation("sphereRED1", finalRed[1], 1.0, 2).then(() => {
+        await this.jumpAnimation("sphereRED1", startRed[1], 1.0, 2).then(() => {
             console.log("Jump animation completed");
         }); 
-        await this.jumpAnimation("sphereRED2", finalRed[2], 1.0, 2).then(() => {
+        await this.jumpAnimation("sphereRED2", startRed[2], 1.0, 2).then(() => {
             console.log("Jump animation completed");
         }); 
-        await this.jumpAnimation("sphereRED3", finalRed[3], 1.0, 2).then(() => {
+        await this.jumpAnimation("sphereRED3", startRed[3], 1.0, 2).then(() => {
             console.log("Jump animation completed");
         }); 
-        await this.jumpAnimation("sphereRED4", finalRed[4], 1.0, 2).then(() => {
+        await this.jumpAnimation("sphereRED4", startRed[4], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        });
+
+        await this.jumpAnimation("sphereGREEN1", LOCATIONS[1]["center"], 1.0, 2).then(() => {
             console.log("Jump animation completed");
         }); 
+        await this.jumpAnimation("sphereGREEN2", LOCATIONS[2]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereGREEN3", LOCATIONS[3]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereGREEN4", LOCATIONS[4]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        });
+
+        await this.jumpAnimation("sphereGREEN1", startGreen[1], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereGREEN2", startGreen[2], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereGREEN3", startGreen[3], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereGREEN4", startGreen[4], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        });
+
+        await this.jumpAnimation("sphereYELLOW1", LOCATIONS[1]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereYELLOW2", LOCATIONS[2]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereYELLOW3", LOCATIONS[3]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereYELLOW4", LOCATIONS[4]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        });
+
+        await this.jumpAnimation("sphereYELLOW1", startYellow[1], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereYELLOW2", startYellow[2], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereYELLOW3", startYellow[3], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereYELLOW4", startYellow[4], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        });
+
+        await this.jumpAnimation("sphereBLUE1", LOCATIONS[1]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereBLUE2", LOCATIONS[2]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereBLUE3", LOCATIONS[3]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereBLUE4", LOCATIONS[4]["center"], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        });
+
+        await this.jumpAnimation("sphereBLUE1", startBlue[1], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereBLUE2", startBlue[2], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereBLUE3", startBlue[3], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        }); 
+        await this.jumpAnimation("sphereBLUE4", startBlue[4], 1.0, 2).then(() => {
+            console.log("Jump animation completed");
+        });
+
     }
     
 
