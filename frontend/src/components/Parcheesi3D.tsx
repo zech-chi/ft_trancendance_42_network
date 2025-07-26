@@ -16,32 +16,26 @@ export function Parcheesi3DComponent() {
     const gameRef = useRef<Parcheesi3D | null>(null);
     const socketRef = useRef<Socket| null>(null);
     const boardRef = useRef<Board | null>(null);
-    // just for debugging purposes
-    // const PlayerRef = useRef<Player | null>(null);
     const onResize = () => {
         gameRef.current?.resize();
     };
+
     useEffect(() => {
         if (canvasRef.current) {
-            console.log(chalk.green("Initializing Parcheesi3D..."));
-            // Initialize the Parcheesi3D game with the canvas
-            gameRef.current = new Parcheesi3D(canvasRef.current);
-            // Start the render loop
-            gameRef.current.runRenderLoop();
-            
-            boardRef.current = new Board(gameRef.current.scene, gameRef.current.gui, loggedUserName);
-            boardRef.current.initialize();
-            // board.createSpheres(PlayerColor.RED);
-            // board.createSpheres(PlayerColor.GREEN);
-            // board.createSpheres(PlayerColor.YELLOW);
-            // board.createSpheres(PlayerColor.BLUE);
-            
             if (!socketRef.current) { 
                 // Initialize the socket connection
                 socketRef.current = io("http://localhost:5555", {
                     transports: ["websocket"],
                     autoConnect: true,
                 });
+                
+                console.log(chalk.green("Initializing Parcheesi3D..."));
+                // Initialize the Parcheesi3D game with the canvas
+                gameRef.current = new Parcheesi3D(canvasRef.current);
+                // Start the render loop
+                gameRef.current.runRenderLoop();
+                boardRef.current = new Board(gameRef.current.scene, gameRef.current.gui, loggedUserName as string, socketRef.current as Socket);
+                boardRef.current.initialize();
 
                 // Handle socket connection events
                 socketRef.current.on("connect", () => {
@@ -64,7 +58,7 @@ export function Parcheesi3DComponent() {
                     boardRef.current?.setPlayerTurn(data.color);
                 });
 
-                socketRef.current.on("updateDices", (data: DiceDataType) => {
+                socketRef.current.on("rollDices", (data: DiceDataType) => {
                     console.log(chalk.green("📥 Dice update received:", data), data);
                     boardRef.current?.updateLabel(data);
                 });
@@ -79,8 +73,6 @@ export function Parcheesi3DComponent() {
                     console.log(chalk.red("Disconnected from server"));
                 });
             }
-
-
             window.addEventListener("resize", onResize);
         }
     }, []);

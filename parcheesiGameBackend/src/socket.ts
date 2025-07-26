@@ -28,6 +28,14 @@ export class SocketManager {
                 console.log(chalk.red(`Client disconnected socket: ${socket.id}`));
                 this.connectedSockets.delete(socket);
             });
+
+            socket.on('requestRollDices', (data: { color: string }) => {
+                console.log(chalk.blue(`Request to roll dice from ${data.color} player`));
+                // Emit an event to all clients to roll the dice
+                const dice1 = Math.floor(Math.random() * 6) + 1;
+                const dice2 = Math.floor(Math.random() * 6) + 1;
+                this.io.emit('rollDices', { color: data.color, dice1, dice2 });
+            });
         });
     }
 

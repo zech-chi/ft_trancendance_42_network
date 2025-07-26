@@ -1,5 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 import * as GUI from "@babylonjs/gui";
+import { io, Socket } from "socket.io-client";
 import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
 import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
 import { PlayerColor, Position, SphereDataType, DiceDataType } from "./types";
@@ -26,6 +27,9 @@ interface User {
   }
 
 export class Board {
+    // socket
+    private socket!: Socket;
+
     private scene: BABYLON.Scene;
     private redLabel?: GUI.TextBlock;
     private greenLabel?: GUI.TextBlock;
@@ -53,10 +57,11 @@ export class Board {
     private playerUserName: string = "";
     private playerColor!: PlayerColor;
 
-    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string | null) {
+    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string, socket: Socket) {
         this.scene = scene;
         this.gui = gui;
-        this.playerUserName = loggedUserName || "";
+        this.socket = socket;
+        this.playerUserName = loggedUserName;
         console.log("You are playing as :", this.playerUserName);
     }
 
@@ -356,6 +361,9 @@ export class Board {
         
         button.onPointerDownObservable.add(() => {
             console.log(`${type} button clicked`);
+            // Emit the roll dice event to the server
+            this.socket.emit("requestRollDices", { color: type });
+            // button.isVisible = false; // hide the button after clicking
         });
 
         // store the buttons

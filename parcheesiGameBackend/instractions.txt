@@ -13,4 +13,4 @@ addPlayer> {"color":"BLUE", "userName": "killzold"}
 
 setPlayerTurn> {"color": "RED"}
 
-updateDices> {"color":"RED", "dice1": 1, "dice2": 5}
+rollDices> {"color":"RED", "dice1": 1, "dice2": 5}
