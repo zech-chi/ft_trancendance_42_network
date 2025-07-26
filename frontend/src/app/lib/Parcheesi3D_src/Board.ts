@@ -31,12 +31,60 @@ export class Board {
     private greenLabel?: GUI.TextBlock;
     private blueLabel?: GUI.TextBlock;
     private yellowLabel?: GUI.TextBlock;
-    private gui: GUI.AdvancedDynamicTexture;
-    
+    /// button for each player
+    private redButton?: GUI.Button;
+    private greenButton?: GUI.Button;
+    private blueButton?: GUI.Button;
+    private yellowButton?: GUI.Button;
 
-    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture) {
+    private gui: GUI.AdvancedDynamicTexture;
+    // Dice values for each player 
+    private redDice1: number = 0;
+    private redDice2: number = 0;
+    private greenDice1: number = 0;
+    private greenDice2: number = 0;
+    private yellowDice1: number = 0;
+    private yellowDice2: number = 0;
+    private blueDice1: number = 0;
+    private blueDice2: number = 0;
+    // player turn
+    private playerTurn: PlayerColor = PlayerColor.RED; // default to RED
+    // player userName
+    private playerUserName: string = "";
+    private playerColor!: PlayerColor;
+
+    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string | null) {
         this.scene = scene;
         this.gui = gui;
+        this.playerUserName = loggedUserName || "";
+        console.log("You are playing as :", this.playerUserName);
+    }
+
+    public setPlayerTurn(color: PlayerColor) {
+        this.playerTurn = color;
+        // hide all buttons expect the current player's button
+        if (this.redButton) this.redButton.isVisible = false;
+        if (this.greenButton) this.greenButton.isVisible = false;
+        if (this.yellowButton) this.yellowButton.isVisible = false;
+        if (this.blueButton) this.blueButton.isVisible = false;
+
+        if (this.playerColor === color) {
+            switch (color) {
+                case PlayerColor.RED:
+                    if (this.redButton) this.redButton.isVisible = true;
+                    break;
+                case PlayerColor.GREEN:
+                    if (this.greenButton) this.greenButton.isVisible = true;
+                    break;
+                case PlayerColor.YELLOW:
+                    if (this.yellowButton) this.yellowButton.isVisible = true;
+                    break;
+                case PlayerColor.BLUE:
+                    if (this.blueButton) this.blueButton.isVisible = true;
+                    break;
+            }
+        }
+        this.scene.render();
     }
 
     private createBoard() {
@@ -274,10 +322,11 @@ export class Board {
         const button = GUI.Button.CreateSimpleButton(`${type}Button`, `Roll Dice`);
         button.width = "150px";
         button.height = "40px";
-        button.color = "white";
+        button.color = COLORS_VERY_DARK[type];
         button.cornerRadius = 20;
         button.background = COLORS_LOW_DARK[type];
         button.zIndex = 10;
+        button.isVisible = false; // initially hidden, will be shown when it's the player's turn
 
         // Set the position of the button
         if (type === PlayerColor.RED) {
@@ -309,12 +358,43 @@ export class Board {
             console.log(`${type} button clicked`);
         });
 
+        // store the buttons
+        switch (type) {
+            case PlayerColor.RED:
+                this.redButton = button;
+                break;
+            case PlayerColor.GREEN:
+                this.greenButton = button;
+                break;
+            case PlayerColor.YELLOW:
+                this.yellowButton = button;
+                break;
+            case PlayerColor.BLUE:
+                this.blueButton = button;
+                break;
+        }
         this.gui.addControl(button);
     }
     
     private createLabel(type: PlayerColor) {
         // Create the TextBlock control
-        const label = new GUI.TextBlock(`${type}Label`, `dice1: 0, dice2: 0`);
+        let label: GUI.TextBlock;
+
+        switch (type) {
+            case PlayerColor.RED:
+                label = new GUI.TextBlock(`${type}Label`, `dice1: ${this.redDice1}, dice2: ${this.redDice2}`);
+                break;
+            case PlayerColor.GREEN:
+                label = new GUI.TextBlock(`${type}Label`, `dice1: ${this.greenDice1}, dice2: ${this.greenDice2}`);
+                break;
+            case PlayerColor.YELLOW:
+                label = new GUI.TextBlock(`${type}Label`, `dice1: ${this.yellowDice1}, dice2: ${this.yellowDice2}`);
+                break;
+            case PlayerColor.BLUE:
+                label = new GUI.TextBlock(`${type}Label`, `dice1: ${this.blueDice1}, dice2: ${this.blueDice2}`);
+                break;
+        }
+
         label.color = COLORS_LOW_DARK[type];
         label.fontSize = 24;
         label.fontFamily = "Arial";
@@ -364,25 +444,33 @@ export class Board {
         const labelText = `dice1: ${data.dice1}, dice2: ${data.dice2}`;
         switch (data.color) {
             case PlayerColor.RED:
+                this.redDice1 = data.dice1;
+                this.redDice2 = data.dice2;
                 if (this.redLabel) {
                     this.redLabel.text = labelText;          
                 }
                 break;
             case PlayerColor.GREEN:
+                this.greenDice1 = data.dice1;
+                this.greenDice2 = data.dice2;
                 if (this.greenLabel) {
                     this.greenLabel.text = labelText;
-                    }
-                    break;
-                case PlayerColor.YELLOW:
-                    if (this.yellowLabel) {
-                        this.yellowLabel.text = labelText;
-                    }
-                    break;
-                case PlayerColor.BLUE:
-                    if (this.blueLabel) {
-                        this.blueLabel.text = labelText;
-                    }
-                    break;
+                }
+                break;
+            case PlayerColor.YELLOW:
+                this.yellowDice1 = data.dice1;
+                this.yellowDice2 = data.dice2;
+                if (this.yellowLabel) {
+                    this.yellowLabel.text = labelText;
+                }
+                break;
+            case PlayerColor.BLUE:
+                this.blueDice1 = data.dice1;
+                this.blueDice2 = data.dice2;
+                if (this.blueLabel) {
+                    this.blueLabel.text = labelText;
+                }
+                break;
         }
 
         this.scene.render();
@@ -391,6 +479,16 @@ export class Board {
     public async addPlayerAvatar(obj: SphereDataType) {
         // fetch the avatar image from the server
         // and create a cylinder with the avatar image as texture
+        if (!obj.userName || !obj.color) {
+            console.error("Invalid player data:", obj);
+            return;
+        }
+
+        if (this.playerUserName === obj.userName) {
+            this.playerColor = obj.color;
+        }
+
+        console.log(this.playerColor, "   ", this.playerUserName);
         const user : User =  await fetchUser(obj.userName);
         
         var cylinder = BABYLON.MeshBuilder.CreateCylinder(`${obj.color}Cylinder_${obj.userName}`, {

@@ -11,4 +11,6 @@ addPlayer> {"color":"GREEN", "userName": "saw"}
 addPlayer> {"color":"YELLOW", "userName": "zech-chi"}
 addPlayer> {"color":"BLUE", "userName": "killzold"}
 
+setPlayerTurn> {"color": "RED"}
+
 updateDices> {"color":"RED", "dice1": 1, "dice2": 5}

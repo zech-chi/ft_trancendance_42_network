@@ -7,10 +7,11 @@ import { io, Socket } from "socket.io-client";
 import { PlayerColor, SphereDataType, DiceDataType } from "@/app/lib/Parcheesi3D_src/types";
 import chalk from 'chalk';
 import * as BABYLON from "@babylonjs/core";
-
+import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 
 
 export function Parcheesi3DComponent() {
+    const { loggedUserName } = useLoggedUserName();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const gameRef = useRef<Parcheesi3D | null>(null);
     const socketRef = useRef<Socket| null>(null);
@@ -28,7 +29,7 @@ export function Parcheesi3DComponent() {
             // Start the render loop
             gameRef.current.runRenderLoop();
             
-            boardRef.current = new Board(gameRef.current.scene, gameRef.current.gui);
+            boardRef.current = new Board(gameRef.current.scene, gameRef.current.gui, loggedUserName);
             boardRef.current.initialize();
             // board.createSpheres(PlayerColor.RED);
             // board.createSpheres(PlayerColor.GREEN);
@@ -56,6 +57,11 @@ export function Parcheesi3DComponent() {
                     console.log("📥 Sphere data received:", data);
                     boardRef.current?.createSpheres(data.color);
                     await boardRef.current?.addPlayerAvatar(data);
+                });
+                
+                socketRef.current.on("setPlayerTurn", (data: { color: PlayerColor }) => {
+                    console.log(chalk.green("📥 Player turn set:", data.color));
+                    boardRef.current?.setPlayerTurn(data.color);
                 });
 
                 socketRef.current.on("updateDices", (data: DiceDataType) => {
