@@ -63,6 +63,7 @@ export class Board {
         this.socket = socket;
         this.playerUserName = loggedUserName;
         console.log("You are playing as :", this.playerUserName);
+        console.log("Socket initialized:", this.socket.id);
     }
 
     public setPlayerTurn(color: PlayerColor) {
@@ -362,8 +363,15 @@ export class Board {
         button.onPointerDownObservable.add(() => {
             console.log(`${type} button clicked`);
             // Emit the roll dice event to the server
-            this.socket.emit("requestRollDices", { color: type });
-            // button.isVisible = false; // hide the button after clicking
+            // this.socket.emit("requestRollDices", { color: type });
+            if (this.socket.connected) {
+                this.socket.emit("requestRollDices", { color: type });
+                console.log("Dice rolled for color:", type);
+            } else {
+                console.error("Socket not connected!");
+            }
+            // console.log("Dice rolled for color:", type);
+            button.isVisible = false; // hide the button after clicking
         });
 
         // store the buttons

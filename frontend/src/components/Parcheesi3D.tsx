@@ -20,6 +20,7 @@ export function Parcheesi3DComponent() {
         gameRef.current?.resize();
     };
 
+    // connect to server
     useEffect(() => {
         if (canvasRef.current) {
             if (!socketRef.current) { 
@@ -28,18 +29,21 @@ export function Parcheesi3DComponent() {
                     transports: ["websocket"],
                     autoConnect: true,
                 });
-                
-                console.log(chalk.green("Initializing Parcheesi3D..."));
-                // Initialize the Parcheesi3D game with the canvas
-                gameRef.current = new Parcheesi3D(canvasRef.current);
-                // Start the render loop
-                gameRef.current.runRenderLoop();
-                boardRef.current = new Board(gameRef.current.scene, gameRef.current.gui, loggedUserName as string, socketRef.current as Socket);
-                boardRef.current.initialize();
 
                 // Handle socket connection events
                 socketRef.current.on("connect", () => {
                     console.log(chalk.green("Connected to server:", socketRef.current?.id));
+                    console.log(chalk.green("Socket connection initialized:", socketRef.current?.id));
+                    
+                    console.log(chalk.green("Initializing Parcheesi3D..."));
+                    // Initialize the Parcheesi3D game with the canvas
+                    if (canvasRef.current) gameRef.current = new Parcheesi3D(canvasRef.current);
+                    // Start the render loop
+                    gameRef.current?.runRenderLoop();
+                    if (gameRef.current) {
+                        boardRef.current = new Board(gameRef.current?.scene, gameRef.current.gui, loggedUserName as string, socketRef.current as Socket);
+                        boardRef.current.initialize();
+                    }
                 });
 
                 // Handle welcome message from the server
