@@ -24,3 +24,5 @@ moveAble> {"sphere_id":3, "sphere_type":"RED", "choice1": 1}
 
 
 requestMove> {"sphere_id":3, "sphere_type":"RED", "choice": 1}
+
+move> {"sphere_id":1,"sphere_type":"RED","place":1,"where":"center","speed":1}

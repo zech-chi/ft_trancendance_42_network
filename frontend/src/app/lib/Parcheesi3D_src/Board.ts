@@ -3,7 +3,7 @@ import * as GUI from "@babylonjs/gui";
 import { io, Socket } from "socket.io-client";
 import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
 import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
-import { PlayerColor, Position, SphereDataType, DiceDataType, JumpDataType, MoveAbleType } from "./types";
+import { PlayerColor, Position, SphereDataType, DiceDataType, JumpDataType, MoveAbleType, MoveDataType } from "./types";
 import { PLAYERS_BOARD_POSITIONS } from "./config/boardConfig";
 import { CYLINDERS } from "./config/CylindersConfig";
 import { PathType } from "./config/pathConfig";
@@ -679,6 +679,142 @@ export class Board {
         this.createLabel(obj.color);
     }
 
+    private moveAnimation(meshName: string, position: Position, speed = 1.0) {
+        return new Promise<void>((resolve) => {
+            const mesh = this.scene.getMeshByName(meshName);
+            if (!mesh) {
+                console.log(`Error in moveMeshWithQueue ${meshName} mesh not found `);
+                resolve();
+                return ;
+            }
+    
+            const startPosition = mesh.position.clone();
+            const endPosition = new BABYLON.Vector3(position.x, position.y, position.z);
+            
+            if (startPosition.equals(endPosition)) {
+                console.log(`Mesh ${meshName} is already at the target position.`);
+                resolve();
+                return;
+            }
+
+            // move animation
+            const animation = new BABYLON.Animation(
+                "moveMesh1Animation", // name of the animation
+                "position", // property to animate
+                60, // frame rate
+                BABYLON.Animation.ANIMATIONTYPE_VECTOR3, // type of animation
+                BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT // loop mode
+            )
+            
+            const keys = [
+                {frame: 0, value: startPosition}, // start position
+                {frame: 60, value: endPosition} // end position
+            ];
+            
+            // rotation staff
+            // calculate movement vector
+            const delta = endPosition.subtract(startPosition);
+            // rotation values
+            const radius = 1;
+            const distance = delta.length();
+            const angle = distance / radius;
+            
+            // Rotation setup
+            const up = new BABYLON.Vector3(0, 1, 0); // up vector for rotation
+            const rotationAxis = BABYLON.Vector3.Cross(up, delta).normalize(); // axis of rotation
+
+            // create quaternion from axis + angle
+            const startQuat = mesh.rotationQuaternion || BABYLON.Quaternion.RotationYawPitchRoll(
+                mesh.rotation.y, mesh.rotation.x, mesh.rotation.z
+            );
+            const deltaQuat = BABYLON.Quaternion.RotationAxis(rotationAxis, angle);
+            const endQuat = deltaQuat.multiply(startQuat);
+
+
+            // rotation animation
+            const rotationQuaternion = new BABYLON.Animation(
+                "rotationMesh1Animation", // name of the animation
+                "rotationQuaternion", // property to animate
+                60, // frame rate
+                BABYLON.Animation.ANIMATIONTYPE_QUATERNION, // type of animation
+                BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT // loop mode
+            );
+
+            const rotationKeys = [
+                {frame: 0, value: startQuat}, // start rotation
+                {frame: 60, value: endQuat} // end rotation
+            ];
+
+            animation.setKeys(keys);
+            rotationQuaternion.setKeys(rotationKeys);
+
+            mesh.animations = [animation, rotationQuaternion];
+            this.scene.beginAnimation(
+                mesh,     // The target mesh to animate
+                0,        // startFrame: the frame where the animation begins
+                60 ,       // endFrame: the frame where the animation ends
+                false,    // loop: whether the animation should loop (true/false)
+                speed,     // speedRatio: 1.0 means normal speed (2.0 = twice as fast)
+                () => {
+                    console.log(`Animation finished for ${meshName} at position:`, position);
+                    resolve();
+                }
+            );
+        });
+    }
+
+    public async move(instruction: MoveDataType) {
+        let placeToMove;
+        if (instruction.se7en) {
+            if (!instruction.where)
+                return; 
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeToMove = se7enRed[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.GREEN:
+                    placeToMove = se7enGreen[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeToMove = se7enYellow[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.BLUE:
+                    placeToMove = se7enBlue[instruction.place][instruction.where];
+                    break;
+            }
+        } else if (instruction.final) {
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeToMove = finalRed[instruction.place];
+                    break;
+                case PlayerColor.GREEN:
+                    placeToMove = finalGreen[instruction.place];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeToMove = finalYellow[instruction.place];
+                    break;
+                case PlayerColor.BLUE:
+                    placeToMove = finalBlue[instruction.place];
+                    break;
+            }
+        } else {
+            if (!instruction.place || !instruction.where) {
+                console.error("Invalid move instruction:", instruction);
+                return;
+            }
+            placeToMove = LOCATIONS[instruction.place][instruction.where];
+        }
+
+        // check if placeToMove is valid
+        if (!placeToMove) {
+            console.error("Invalid place to move:", placeToMove);
+            return;
+        }
+
+        await this.moveAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeToMove, instruction.speed).then(() => {
+            console.log("move animation completed");
+        });
+    }
 
     // playing
     private jumpAnimation(meshName: string, positions: Position, speed = 1.0, maxY = 5) {
@@ -805,7 +941,7 @@ export class Board {
         meme.dimensions = new BABYLON.Vector2(35, 35);
         meme.titleBarHeight = 4; // height of the title bar
         meme.title = "ntal3oha 3lk chwiya 😂😂";
-        this.memeGUI3d.addControl(meme);
+        this.memeGUI3d?.addControl(meme);
         meme.position = new BABYLON.Vector3(20, 10, -8);
         meme.content = new GUI.Image("cat","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSn77rBF7rM9V4Ej8MsVzL5piUjFzQicxMPUw&s");
     }

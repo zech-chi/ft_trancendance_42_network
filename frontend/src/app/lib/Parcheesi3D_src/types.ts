@@ -38,6 +38,16 @@ export type JumpDataType = {
     toStartPosition: boolean;
 }
 
+export type MoveDataType = {
+    sphere_id: number;
+    sphere_type: PlayerColor;
+    place: number;
+    where?: "center" | "left" | "right";
+    speed?: number;
+    se7en?: boolean;
+    final?: boolean;
+}
+
 export type MoveAbleType = {
     sphere_id: number;
     sphere_type: PlayerColor;

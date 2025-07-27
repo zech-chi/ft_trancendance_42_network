@@ -8,7 +8,7 @@ import { PlayerColor, SphereDataType, DiceDataType, JumpDataType, MoveAbleType }
 import chalk from 'chalk';
 import * as BABYLON from "@babylonjs/core";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
-
+import {MoveDataType} from "@/app/lib/Parcheesi3D_src/types";
 
 export function Parcheesi3DComponent() {
     const { loggedUserName } = useLoggedUserName();
@@ -69,6 +69,11 @@ export function Parcheesi3DComponent() {
 
                 socketRef.current.on("moveAble", (data: MoveAbleType) => {
                     boardRef.current?.setMoveAble(data);
+                });
+
+                socketRef.current.on("move", (data: MoveDataType) => {
+                    console.log(chalk.green("📥 Move data received:", data), data);
+                    boardRef.current?.move(data);
                 });
 
                 socketRef.current.on("jump", (data: JumpDataType) => {
