@@ -3,7 +3,7 @@ import * as GUI from "@babylonjs/gui";
 import { io, Socket } from "socket.io-client";
 import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
 import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
-import { PlayerColor, Position, SphereDataType, DiceDataType, JumpDataType } from "./types";
+import { PlayerColor, Position, SphereDataType, DiceDataType, JumpDataType, MoveAbleType } from "./types";
 import { PLAYERS_BOARD_POSITIONS } from "./config/boardConfig";
 import { CYLINDERS } from "./config/CylindersConfig";
 import { PathType } from "./config/pathConfig";
@@ -13,11 +13,13 @@ import { THE_END_PLACES } from "./config/TheEndPlacesConfig";
 import { SphereType, RED_SPHERES, GREEN_SPHERES, BLUE_SPHERES, YELLOW_SPHERES } from "./config/spheresConfig";
 import { PLAYERS_AVATAR_POSITIONS } from "./config/PlayersConfig";
 import { fetchUser } from "@/app/lib/apiDashboard";
-import { th } from "framer-motion/client";
+import { b, th } from "framer-motion/client";
 import { LOCATIONS, Location } from "./config/locationsConfig";
 import { se7enRed, se7enGreen, se7enYellow, se7enBlue } from "./config/locationsConfig";
 import { startRed, startGreen, startYellow, startBlue } from "./config/locationsConfig";
 import { finalRed, finalGreen, finalYellow, finalBlue } from "./config/locationsConfig";
+import { int } from "babylonjs";
+import { throws } from "assert";
 
 interface User {
     fullName: string;
@@ -28,7 +30,9 @@ interface User {
     level: number;
     progress: number;
     online: boolean;
-  }
+}
+
+
 
 export class Board {
     // socket
@@ -61,6 +65,9 @@ export class Board {
     private playerUserName: string = "";
     private playerColor!: PlayerColor;
     private memeGUI3d!: GUI.GUI3DManager;
+    private moveAbleMap = new Map<number, BABYLON.Vector2>();
+    private box1: BABYLON.Mesh | null = null;
+    private box2: BABYLON.Mesh | null = null;
 
     constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string, socket: Socket) {
         this.scene = scene;
@@ -68,8 +75,26 @@ export class Board {
         this.socket = socket;
         this.playerUserName = loggedUserName;
         this.memeGUI3d = new GUI.GUI3DManager(this.scene);
+        // initialize the moveAbleMap with 0, 0 for each ball
+        this.moveAbleMap.set(1, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(2, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(3, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(4, new BABYLON.Vector2(0, 0));
         console.log("You are playing as :", this.playerUserName);
         console.log("Socket initialized:", this.socket.id);
+    }
+
+    public setMoveAble(data: MoveAbleType) {
+        if (!data) {
+            console.error("Invalid moveAble data:", data);
+            return;
+        }
+        if (data.sphere_type !== this.playerColor) {
+            return;
+        }
+        console.log("Moveable data received:", data);
+        this.moveAbleMap.set(data.sphere_id, new BABYLON.Vector2(data.choice1, data.choice2 || 0));
+        console.log("Moveable map updated:", this.moveAbleMap);
     }
 
     public setPlayerTurn(color: PlayerColor) {
@@ -290,9 +315,57 @@ export class Board {
         mat.backFaceCulling = false;
     }
 
+    private createTextureForBoxWithChice(choice: number) : BABYLON.StandardMaterial {
+        const dynamicTexture = new BABYLON.DynamicTexture("dynamicTexture", 256, this.scene, true);
+        dynamicTexture.drawText(String(choice), null, 150, "bold 120px Arial", COLORS_LOW_DARK[this.playerColor], COLORS_VERY_DARK[this.playerColor], true);
+
+        const material = new BABYLON.StandardMaterial("boxMat", this.scene);
+        material.diffuseTexture = dynamicTexture;
+        return material;
+    }
+
+    private createBoxWithChoice(choice: number, position: BABYLON.Vector3) {
+        const box = BABYLON.MeshBuilder.CreateBox("box", { size: 2 }, this.scene);
+        box.position = new BABYLON.Vector3(position.x, position.y + 3, position.z);
+
+        // create a material with the choice number
+        const faceMaterials: BABYLON.Material[] = [];
+        for (let i = 1; i <= 6; i++) {
+            faceMaterials.push(this.createTextureForBoxWithChice(choice));
+        }
+
+        // create a MultiMaterial to apply to the box
+        const multiMat = new BABYLON.MultiMaterial("multiMat", this.scene);
+        multiMat.subMaterials = faceMaterials;
+
+        // apply the MultiMaterial to the box
+        box.material = multiMat;
+
+        return box;
+    }
+
+    private resetMoveAbleMap() {
+        this.moveAbleMap.clear();
+        this.moveAbleMap.set(1, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(2, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(3, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(4, new BABYLON.Vector2(0, 0));
+    }
+
+    private resetBoxes() {
+        if (this.box1) {
+            this.box1.dispose();
+            this.box1 = null;
+        }
+        if (this.box2) {
+            this.box2.dispose();
+            this.box2 = null;
+        }
+    }
     private createSphere(sphere: SphereType) {
         console.log("->sphere" + sphere.type + String(sphere.id));
-        const sphereMesh = BABYLON.MeshBuilder.CreateSphere("sphere" + sphere.type + String(sphere.id), {
+        const sphereName = "sphere" + sphere.type + String(sphere.id);
+        const sphereMesh = BABYLON.MeshBuilder.CreateSphere(sphereName, {
             diameter: sphere.diameter,
             segments: 32,
           },  this.scene);
@@ -302,6 +375,77 @@ export class Board {
         sphereMaterial.diffuseColor =  BABYLON.Color3.FromHexString(sphere.color);
         sphereMesh.material = sphereMaterial;
         sphereMesh.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
+
+        // add click event to the sphere if the sphere is the player's color
+        if (this.playerColor === sphere.type && this.playerUserName) {
+            sphereMesh.actionManager = new BABYLON.ActionManager(this.scene);
+            sphereMesh.actionManager.registerAction(
+                new BABYLON.ExecuteCodeAction(
+                    BABYLON.ActionManager.OnPickTrigger,
+                    (evt) => {
+                        this.resetBoxes();
+                        console.log("Sphere clicked:", sphereMesh.name);
+                        console.log("moveAble : ", this.moveAbleMap.get(Number(sphere.id)));
+                        if (this.moveAbleMap.get(Number(sphere.id))?.x !== 0) {
+                            this.box1 = this.createBoxWithChoice(this.moveAbleMap.get(Number(sphere.id))?.x as number, sphereMesh.position);
+
+                            if (this.moveAbleMap.get(Number(sphere.id))?.y !== 0) {
+                                this.box1.position.x -= 1.5; // offset the second box to the right
+                                this.box2 = this.createBoxWithChoice(this.moveAbleMap.get(Number(sphere.id))?.y as number, sphereMesh.position);
+                                this.box2.position.x += 1.5; // offset the second box to the right
+                            }
+                        }
+
+                        // add click event to the boxes
+                        if (this.box1) {
+                            this.box1.actionManager = new BABYLON.ActionManager(this.scene);
+                            this.box1.actionManager.registerAction(
+                                new BABYLON.ExecuteCodeAction(
+                                    BABYLON.ActionManager.OnPickTrigger,
+                                    (evt) => {
+                                        console.log("Box 1 clicked, you choose:", this.moveAbleMap.get(Number(sphere.id))?.x);
+                                        // emit the move request to the server
+                                        if (this.socket.connected) {
+                                            this.socket.emit("moveRequest", {
+                                                sphere_id: Number(sphere.id),
+                                                sphere_type: sphere.type,
+                                                choice: this.moveAbleMap.get(Number(sphere.id))?.x
+                                            });
+                                        } else {
+                                            console.error("Socket not connected!");
+                                        }
+                                        this.resetBoxes();
+                                        this.resetMoveAbleMap();
+                                    }
+                                )
+                            );
+                        }
+                        if (this.box2) {
+                            this.box2.actionManager = new BABYLON.ActionManager(this.scene);
+                            this.box2.actionManager.registerAction(
+                                new BABYLON.ExecuteCodeAction(
+                                    BABYLON.ActionManager.OnPickTrigger,
+                                    (evt) => {
+                                        console.log("Box 2 clicked, you choose:", this.moveAbleMap.get(Number(sphere.id))?.y);
+                                        if (this.socket.connected) {
+                                            this.socket.emit("moveRequest", {
+                                                sphere_id: Number(sphere.id),
+                                                sphere_type: sphere.type,
+                                                choice: this.moveAbleMap.get(Number(sphere.id))?.y
+                                            });
+                                        } else {
+                                            console.error("Socket not connected!");
+                                        }
+                                        this.resetBoxes();
+                                        this.resetMoveAbleMap();
+                                    }
+                                )
+                            );
+                        }
+                    }
+                )
+            );
+        }
     }
 
 

@@ -1,6 +1,19 @@
 import {Server, Socket} from 'socket.io';
 import chalk from 'chalk';
 
+export enum PlayerColor {
+    RED = "RED",
+    GREEN = "GREEN",
+    YELLOW = "YELLOW",
+    BLUE = "BLUE"
+}
+
+export type MoveRequestType = {
+    sphere_id: number;
+    sphere_type: PlayerColor;
+    choice: number;
+}
+
 export class SocketManager {
     private io: Server;
     public connectedSockets : Set<Socket> = new Set();
@@ -36,6 +49,13 @@ export class SocketManager {
                 const dice2 = Math.floor(Math.random() * 6) + 1;
                 this.io.emit('rollDices', { color: data.color, dice1, dice2 });
             });
+
+            socket.on('moveRequest', (data: MoveRequestType) => {
+                console.log(chalk.blue(`Move request from ${data.sphere_type} ${data.sphere_id} player with choice ${data.choice}`));
+                // Emit an event to all clients to handle the move request
+            });
+
+
         });
     }
 

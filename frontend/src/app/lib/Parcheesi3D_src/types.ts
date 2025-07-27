@@ -37,3 +37,16 @@ export type JumpDataType = {
     maxHeight?: number;
     toStartPosition: boolean;
 }
+
+export type MoveAbleType = {
+    sphere_id: number;
+    sphere_type: PlayerColor;
+    choice1: number;
+    choice2?: number;
+}
+
+export type MoveRequestType = {
+    sphere_id: number;
+    sphere_type: PlayerColor;
+    choice: number;
+}

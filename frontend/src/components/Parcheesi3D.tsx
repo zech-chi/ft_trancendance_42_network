@@ -4,7 +4,7 @@ import { Parcheesi3D } from "@/app/lib/Parcheesi3D_src/parcheesi3d";
 import { Board } from "@/app/lib/Parcheesi3D_src/Board";
 import { Player } from "@/app/lib/Parcheesi3D_src/Player";
 import { io, Socket } from "socket.io-client";
-import { PlayerColor, SphereDataType, DiceDataType, JumpDataType } from "@/app/lib/Parcheesi3D_src/types";
+import { PlayerColor, SphereDataType, DiceDataType, JumpDataType, MoveAbleType } from "@/app/lib/Parcheesi3D_src/types";
 import chalk from 'chalk';
 import * as BABYLON from "@babylonjs/core";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
@@ -53,8 +53,8 @@ export function Parcheesi3DComponent() {
                 
                 socketRef.current.on("addPlayer", async (data: SphereDataType) => {
                     console.log("📥 Sphere data received:", data);
-                    boardRef.current?.createSpheres(data.color);
                     await boardRef.current?.addPlayerAvatar(data);
+                    boardRef.current?.createSpheres(data.color);
                 });
                 
                 socketRef.current.on("setPlayerTurn", (data: { color: PlayerColor }) => {
@@ -65,6 +65,10 @@ export function Parcheesi3DComponent() {
                 socketRef.current.on("rollDices", (data: DiceDataType) => {
                     console.log(chalk.green("📥 Dice update received:", data), data);
                     boardRef.current?.updateLabel(data);
+                });
+
+                socketRef.current.on("moveAble", (data: MoveAbleType) => {
+                    boardRef.current?.setMoveAble(data);
                 });
 
                 socketRef.current.on("jump", (data: JumpDataType) => {

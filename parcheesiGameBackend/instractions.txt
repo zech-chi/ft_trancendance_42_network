@@ -16,3 +16,11 @@ setPlayerTurn> {"color": "RED"}
 rollDices> {"color":"RED", "dice1": 1, "dice2": 5}
 
 jump> {"sphere_id":1,"sphere_type":"RED","place":1,"where":"center","speed":1, "maxHeight": 5, "toStartPosition": false}
+
+moveAble> {"sphere_id":1, "sphere_type":"RED", "choice1": 1, "choice2": 5}
+moveAble> {"sphere_id":2, "sphere_type":"RED", "choice1": 1, "choice2": 5}
+moveAble> {"sphere_id":3, "sphere_type":"RED", "choice1": 1}
+// moveAble> {"sphere_id":4, "sphere_type":"RED", "choice1": 0, "choice2": 0}
+
+
+requestMove> {"sphere_id":3, "sphere_type":"RED", "choice": 1}
