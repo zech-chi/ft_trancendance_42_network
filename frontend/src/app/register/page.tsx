@@ -26,12 +26,12 @@ export default function SignupPage() {
           <div className="flex gap-3">
             <input
               type="text"
-              placeholder="First name"
+              placeholder="Full name"
               className="w-1/2 px-3 py-2 rounded-md border border-gray-600 bg-transparent text-white focus:outline-none focus:border-white"
             />
             <input
               type="text"
-              placeholder="Last name"
+              placeholder="User name"
               className="w-1/2 px-3 py-2 rounded-md border border-gray-600 bg-transparent text-white focus:outline-none focus:border-white"
             />
           </div>

@@ -87,6 +87,11 @@ const getUserOpt = {
   }
 };
 
+// create User
+export async function dbCreateUser() {
+  
+}
+
 // Define the shape of params for this route
 interface UserParams {
   userName: string; // Comes as string from URL params

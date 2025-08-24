@@ -1,5 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 
+
+
 export async function authRoutes(app: FastifyInstance) {
     // for testing
     app.get('/', (req: FastifyRequest, res: FastifyReply) => {
