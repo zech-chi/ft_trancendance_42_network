@@ -1,6 +1,7 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import { Users } from './Database/users';
 import sqlite3 from "sqlite3";
+import { authRoutes } from "./user.route"
 
 
 // games 
@@ -623,6 +624,9 @@ async function setupServer() {
     }
     );
 
+
+    // authentication
+    app.register(authRoutes, { prefix: 'api/auth' })
     
     app.listen({ port: 5000 }, (err, address) => {
       if (err) {
