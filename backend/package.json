@@ -13,8 +13,12 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/cors": "^11.0.1",
+    "bcryptjs": "^3.0.2",
     "fastify": "^5.4.0",
-    "sqlite3": "^5.1.7"
+    "fastify-zod": "^1.4.0",
+    "sqlite3": "^5.1.7",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.6"
   },
   "devDependencies": {
     "@types/node": "^24.0.1",

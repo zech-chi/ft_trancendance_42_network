@@ -1,13 +1,12 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import { Users } from './Database/users';
 import sqlite3 from "sqlite3";
-import { authRoutes } from "./user.route"
+import { authRoutes } from "./auth/user.route"
+import { userSchemas } from './auth/user.schema';
 
 
 // games 
 type GameType = 'pong' | 'parchesi';
-
-
 
 import cors from '@fastify/cors';
 import { callbackify } from 'util';
@@ -20,7 +19,7 @@ type YearData = {
   DaysData: { [key: string]: number };
 }
 
-const db = new sqlite3.Database('Database/DataBase.db', (err) => {
+export const db = new sqlite3.Database('Database/DataBase.db', (err) => {
     if (err) {
         console.log("❌ Error opening database: ", err);
     } else {
@@ -630,8 +629,14 @@ async function setupServer() {
     );
 
 
-    // authentication
-    app.register(authRoutes, { prefix: 'api/auth' })
+    // add authentication schemas to Fastify
+    for (const schema of userSchemas.schemas) {
+      app.addSchema(schema);
+    }
+    // Registering authentication route
+    app.register(authRoutes, { prefix: 'api/auth' });
+
+    
     
     app.listen({ port: 5000 }, (err, address) => {
       if (err) {
