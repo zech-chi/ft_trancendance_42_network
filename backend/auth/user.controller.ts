@@ -78,6 +78,8 @@ export async function RegisterUser(
 
         if (!radarDataId || !chartsDataId) {
             // should I delete the user if this fails?
+            await new Promise((res, rej) => db.run('DELETE FROM Users WHERE id = ?',
+                [newUser.id], (err) => err ? rej(err) : res(null)));
             return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
         }
 
