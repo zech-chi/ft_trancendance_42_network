@@ -26,6 +26,28 @@ export function createUser(fullName: string, userName: string, email: string, ha
     });
 }
 
+export function addNewRadarDataRow(userId: number): Promise<number> {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO RadarData (userId) VALUES (?)`;
+        db.run(query, [userId], function(err) {
+            if (err) reject(err);
+            else resolve(this.lastID);
+        });
+    });
+}
+
+export function addNewChartsDataRows(userId: number): Promise<number> {
+    return new Promise((resolve, reject) => {
+        const query = `
+            INSERT INTO ChartsData (userId, game)
+            VALUES (?, 'parcheesi'), (?, 'pong')
+        `;
+        db.run(query, [userId, userId], function (err) {
+            if (err) reject(err);
+            else resolve(this.lastID);
+        });
+    });
+}
 
 export async function RegisterUser(
     req: FastifyRequest<{
@@ -47,6 +69,20 @@ export async function RegisterUser(
         // create new user
         const newUser = await createUser(fullName, userName, email, hashedPassword);
         console.log('New user created:', newUser);
+        
+        // add new row in RadarData for the new user
+        const radarDataId = await addNewRadarDataRow(newUser.id);
+        // add new rows in ChartsData for the new user
+        // one for parcheesi and one for pong
+        const chartsDataId = await addNewChartsDataRows(newUser.id);
+
+        if (!radarDataId || !chartsDataId) {
+            // should I delete the user if this fails?
+            return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
+        }
+
+        console.log('RadarData row created with ID:', radarDataId);
+        console.log('ChartsData row created with ID:', chartsDataId);
         // respond with the new user's details
         return reply.code(201).send({
             id: newUser.id,
@@ -56,6 +92,6 @@ export async function RegisterUser(
 
     } catch (err) {
         console.error('Error registering user:', err);
-        return reply.code(500).send({ message: 'Internal Server Error' });
+        return reply.code(400).send({ message: 'Could not register user. Please try again.' });
     }
 }
