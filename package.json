@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "fastify-zod": "^1.4.0"
+  }
+}

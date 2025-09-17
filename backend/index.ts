@@ -1,9 +1,11 @@
 import Fastify, { FastifyInstance } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { Users } from './Database/users';
 import sqlite3 from "sqlite3";
 import { authRoutes } from "./auth/user.route"
 import { userSchemas } from './auth/user.schema';
-
+import cookie from '@fastify/cookie';
+import jwt from '@fastify/jwt';
 
 // games 
 type GameType = 'pong' | 'parchesi';
@@ -38,9 +40,15 @@ const getUserOpts = {
             userName: { type: 'string' },
           },
         }
-      }
-    }
-  }
+      },
+      400: {
+        type: 'object',
+        properties: {
+          error: { type: 'string' },
+        },
+      },
+    },
+  },
 };
 
 const getUserRankOpts = {
@@ -60,9 +68,15 @@ const getUserRankOpts = {
             online: { type: 'boolean' },
           },
         }
-      }
-    }
-  }
+      },
+      400: {
+        type: 'object',
+        properties: {
+          error: { type: 'string' },
+        },
+      },
+    },
+  },
 };
 
 const getUserOpt = {
@@ -81,9 +95,15 @@ const getUserOpt = {
           progress: { type: 'number' },
           online: { type: 'boolean' },
         },
-      }
-    }
-  }
+      },
+      400: {
+        type: 'object',
+        properties: {
+          error: { type: 'string' },
+        },
+      },
+    },
+  },
 };
 
 // create User
@@ -326,13 +346,25 @@ async function setupServer() {
     //   reply.send(Users);
     // });
 
+    // register jwt and cookie plugins
+    await app.register(cookie, {
+      secret: "zech-chi" // this should be come from env variable
+    });
+    await app.register(jwt, {
+      secret: "zech-chi", // this should be come from env variable
+      cookie: {
+        cookieName: 'token',
+        signed: false
+      }
+    });
+
     app.get('/users', getUserOpts, async (request, reply) => {
       try {
         const users = await getUsers();
         return reply.send(users);
 
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     });
 
@@ -350,7 +382,7 @@ async function setupServer() {
         return reply.send(games);
 
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     });
 
@@ -367,7 +399,7 @@ async function setupServer() {
         const rows = await getFriends(userName, status);
         return reply.send(rows);
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     });
 
@@ -382,7 +414,7 @@ async function setupServer() {
         const rows = await getSentFriendsRequests(userName);
         return reply.send(rows);
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     });
     
@@ -421,7 +453,7 @@ async function setupServer() {
         return reply.send(sortedUsersByRank);
 
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     });
 
@@ -434,7 +466,7 @@ async function setupServer() {
           reply.code(404).send({ error: 'user not found' });
         return reply.send(user);
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     });
 
@@ -447,7 +479,7 @@ async function setupServer() {
           reply.code(404).send({ error: 'radarData not found' });
         return reply.send(radarData);
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     });
 
@@ -465,7 +497,7 @@ async function setupServer() {
         }
         return reply.send(chartsData);
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     });
 
@@ -478,7 +510,7 @@ async function setupServer() {
           reply.code(404).send({ error: 'chartsData not found' });
         return reply.send(DailyActivityData);
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     });
 
@@ -556,7 +588,7 @@ async function setupServer() {
           return reply.code(200).send({ success: true, message: 'Friendship deleted' });
         });
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
 
     })
@@ -579,7 +611,7 @@ async function setupServer() {
         `, [user1, user2, user2, user1]);
         return reply.send({ message: 'Friend request accepted' });
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     }
     );
@@ -602,7 +634,7 @@ async function setupServer() {
         `, [user1, user2, user2, user1]);
         return reply.send({ message: 'Unblocked successfully' });
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     }
     );
@@ -623,7 +655,7 @@ async function setupServer() {
         `, [user1, user2, user2, user1]);
         return reply.send({ message: 'Friend request rejected' });
       } catch (err) {
-        return reply.code(500).send({ error: '❌ Error running query' });
+        return reply.code(400).send({ error: '❌ Error running query' });
       }
     }
     );

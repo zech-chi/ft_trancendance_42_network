@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref, RegisterUserInput, LoginUserInput } from "./user.schema"
-import { RegisterUser } from './user.controller';
+import { RegisterUser } from './user.controller.register';
+import { LoginUser } from './user.controller.signin';
 
 
 export async function authRoutes(app: FastifyInstance) {
@@ -20,10 +21,7 @@ export async function authRoutes(app: FastifyInstance) {
             },
             },
         },
-        async (req: FastifyRequest<{ Body: RegisterUserInput }>, reply: FastifyReply) =>
-        {
-            return RegisterUser(req, reply);
-        }
+        RegisterUser
     )
 
     // login
@@ -37,10 +35,7 @@ export async function authRoutes(app: FastifyInstance) {
                 },
             },
         },
-        async (req: FastifyRequest<{ Body: LoginUserInput }>, reply: FastifyReply) => 
-        {
-
-        }
+        LoginUser
     );
     
     // logout
