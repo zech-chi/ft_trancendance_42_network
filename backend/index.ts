@@ -7,6 +7,7 @@ import { userSchemas } from './auth/user.schema';
 import cookie from '@fastify/cookie';
 import jwt from '@fastify/jwt';
 
+
 // games 
 type GameType = 'pong' | 'parchesi';
 
@@ -337,7 +338,8 @@ async function setupServer() {
     // });
 
     await app.register(cors, {
-      origin: ['http://localhost:3000', 'http://localhost:3001'], // allow your frontend's origin
+      origin: 'http://localhost:3000', // allow your frontend's origin
+      credentials: true,               // <— important!
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ✅ important
     });
 
@@ -357,6 +359,11 @@ async function setupServer() {
         signed: false
       }
     });
+
+    // add get user from session route
+
+
+
 
     app.get('/users', getUserOpts, async (request, reply) => {
       try {

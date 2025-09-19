@@ -1,19 +1,51 @@
 'use client'
 import { JSX } from "react";
-import Navbar from "@/components/layout/Navbar";
-import Sidebar from "@/components/layout/Sidebar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import { useRouter } from "next/navigation"; 
 import Login from "@/components/Login";
 import Link from "next/link";
 import Image from "next/image";
 
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { setLoggedUserName } = useLoggedUserName();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  
+  const handleLogin = async () => {
+    try {
+      // console.log("Attempting login with", { email, password });
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
+
+      const data = await res.json().catch(() => ({}));
+      console.log("response:", res.status, data);
+
+      if (res.ok) {
+        setLoggedUserName(data.userName);
+        router.push("/");
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error("fetch error:", err);
+      setError("Something went wrong");
+    }
+  };
+
+  // console.log("Rendering LoginPage with", { email, password, error });
+
   return (
     <div
       className="min-h-screen bg-cover bg-center flex items-center justify-center"
-      style={{ backgroundImage: "url('/bg.png')" }}
+      // style={{ backgroundImage: "url('/bg.png')" }}
     >
       {/* Card */}
       <div className="bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md">
@@ -29,15 +61,19 @@ export default function LoginPage() {
             type="email"
             placeholder="mail@abc.com"
             className="w-full px-3 py-2 rounded-md border border-gray-600 bg-transparent text-white focus:outline-none focus:border-white"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
             className="w-full px-3 py-2 rounded-md border border-gray-600 bg-transparent text-white focus:outline-none focus:border-white"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           {/* Remember me + Forgot password */}
-          <div className="flex items-center justify-between text-sm text-gray-400">
+          {/* <div className="flex items-center justify-between text-sm text-gray-400">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="accent-pink-500" />
               Remember Me
@@ -45,11 +81,12 @@ export default function LoginPage() {
             <Link href="/forgot-password" className="hover:underline">
               Forgot Password?
             </Link>
-          </div>
+          </div> */}
 
           <button
-            type="submit"
             className="w-full bg-white text-black font-semibold py-2 rounded-md hover:bg-gray-200 transition"
+            type="button"
+            onClick={handleLogin}
           >
             Log in
           </button>

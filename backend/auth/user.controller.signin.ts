@@ -38,7 +38,9 @@ export async function LoginUser(
         reply.setCookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            sameSite: 'lax', // for development, use 'strict' in production
+            path: '/',
+            maxAge: 54 * 60 * 60 // 1 day
         });
         return reply.code(200).send({ message: "Login successful", token: token });
     } catch (error) {
