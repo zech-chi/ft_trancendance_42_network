@@ -6,6 +6,7 @@ import { JSX } from 'react';
 import Image from "next/image";
 import { fetchUser } from '@/app/lib/apiDashboard';
 import { useLoggedUserName } from '@/context/LoggedUserNameContext';
+import { useRef } from "react";
 
 function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
 	const [ userProfile, setUserProfile ] = useState<string | null>(null);
@@ -124,37 +125,72 @@ function Logo(): JSX.Element {
 // }
 
 
-function SearchForm(): JSX.Element {
-  const [inputValue, setInputValue] = useState(""); // updated immediately
-  const [searchQueryOld, setSearchQueryOld] = useState(""); // to track changes
-  const [searchQuery, setSearchQuery] = useState(""); // debounced value
 
-  // debounce effect: store inputValue into searchQuery after 100ms
+interface UserSearch {
+  id: number;
+  userName: string;
+  imageUrl: string;
+}
+
+function SearchForm(): JSX.Element {
+  const [inputValue, setInputValue] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState<UserSearch[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
   useEffect(() => {
-    if (inputValue.length === 0) {
-      setSearchQuery(""); // optional: reset search when input cleared
-      setSearchQueryOld(""); // reset old value
+    if (!inputValue) {
+      setFilteredUsers([]);
+      setShowDropdown(false);
       return;
     }
 
-    const handler = setTimeout(() => {
-      setSearchQueryOld(searchQuery); // store old value
-      setSearchQuery(inputValue);
-      console.log("Debounced Query:", inputValue);
-      // here you can trigger your API call or filter function
-    }, 100); // 100ms delay
+    const handler = setTimeout(async () => {
+      setIsLoading(true);
+      setShowDropdown(true);
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/searchUsers?prefix=${encodeURIComponent(
+            inputValue
+          )}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const result: { users: UserSearch[] } = await res.json();
+        setFilteredUsers(result.users);
+        if (result.users.length === 0) {
+          setShowDropdown(true);
+        }
+      } catch (err) {
+        console.error(err);
+        setFilteredUsers([]);
+        setShowDropdown(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300);
 
-    return () => {
-      clearTimeout(handler); // clear timeout if input changes within 100ms
-    };
+    return () => clearTimeout(handler);
   }, [inputValue]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (formRef.current && !formRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") e.preventDefault(); // ignore Enter
+    if (e.key === "Enter") e.preventDefault();
   };
 
   return (
-    <form className="max-w-xl mx-auto flex-1">
+    <form className="max-w-xl mx-auto flex-1 relative" ref={formRef}>
       <div className="relative w-full">
         <input
           type="text"
@@ -162,6 +198,7 @@ function SearchForm(): JSX.Element {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
+          onFocus={() => inputValue && setShowDropdown(true)}
           className="
             backdrop-blur w-full
             px-4 py-1 text-sm
@@ -177,6 +214,7 @@ function SearchForm(): JSX.Element {
               "linear-gradient(to right, rgba(47,25,37,0.7) 0%, rgba(72,28,43,0.7) 50%, rgba(100,33,52,0.7) 100%)",
           }}
         />
+
         <MagnifyingGlassIcon
           className="
             absolute left-3 top-1/2
@@ -187,18 +225,43 @@ function SearchForm(): JSX.Element {
             2xl:h-5 2xl:w-5
           "
         />
+
+        {showDropdown && (
+          <ul className="absolute top-full mt-4 left-0 w-full rounded shadow-lg z-[999] max-h-60 overflow-y-auto"
+            style={{
+              background: "linear-gradient(to right, rgba(47,25,37,0.9) 0%, rgba(72,28,43,0.9) 50%, rgba(100,33,52,0.9) 100%)",
+              borderRadius: "15px",
+              padding: "8px 0"
+            }}>
+            {isLoading ? (
+              <li className="px-4 py-2 text-sm" style={{ color: "#D7D7D7" }}>Loading...</li>
+            ) : filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
+                <li
+                  key={user.id}
+                  className="flex items-center gap-2 px-4 py-2 cursor-pointer"
+                  style={{ color: "#D7D7D7", transition: "background-color 0.2s ease" }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(100,33,52,0.7)"}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                >
+                  <img
+                    src={user.imageUrl}
+                    alt={user.userName}
+                    className="h-8 w-8 rounded-full object-cover"
+                    style={{ border: "1px solid #B2B2B2" }}
+                  />
+                  <span>{user.userName}</span>
+                </li>
+              ))
+            ) : (
+              <li className="px-4 py-2 text-sm" style={{ color: "#D7D7D7" }}>No users found</li>
+            )}
+          </ul>
+        )}
       </div>
-
-      {/* display all users that match searchQuery */}
-      <p className="absolute top-15 left-1/2 transform -translate-x-1/2 z-[9999] text-sm text-gray-400 bg-black bg-opacity-50 px-3 py-1 rounded">
-        Searching for: <strong>{searchQuery}</strong>
-        old value: <strong>{searchQueryOld}</strong>
-      </p>
-
     </form>
   );
 }
-
 
 
 export default function Navbar() {
