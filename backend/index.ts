@@ -6,6 +6,8 @@ import { authRoutes } from "./auth/user.route"
 import { userSchemas } from './auth/user.schema';
 import cookie from '@fastify/cookie';
 import jwt from '@fastify/jwt';
+import { searchUsersSchemas } from './searchUsersAPI/search.schema';
+import { searchUsersRoutes } from './searchUsersAPI/search.route';
 
 
 // games 
@@ -675,8 +677,14 @@ async function setupServer() {
     // Registering authentication route
     app.register(authRoutes, { prefix: 'api/auth' });
 
-    
-    
+    // Add schemas first
+    for (const schema of searchUsersSchemas.schemas) {
+      app.addSchema(schema);
+    }
+
+    // Register route with prefix
+    app.register(searchUsersRoutes, { prefix: '/api/searchUsers' });
+
     app.listen({ port: 5000 }, (err, address) => {
       if (err) {
         app.log.error(err);
