@@ -176,15 +176,15 @@ CREATE TABLE IF NOT EXISTS messages (
 
 INSERT OR IGNORE INTO Users (id, fullName, userName, email, password, bio, imageUrl, rank, last_seen, level, progress, online)
 VALUES
-(1, 'Zakaria Echifaouy', 'zelabbas', 'zakaria@example.com', 'hash123', 'Hello! It is nice to meet you 👋', 'https://cdn.intra.42.fr/users/520fcec86c5c997878e60f48d447f0a1/zelabbas.jpg', 1, strftime('%s','now') - 120, 5, 75.5, 1),
+(1, 'Zakaria Echifaouy', 'zelabbas', 'zakaria@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://cdn.intra.42.fr/users/520fcec86c5c997878e60f48d447f0a1/zelabbas.jpg', 1, strftime('%s','now') - 120, 5, 75.5, 1),
 
-(2, 'Mohamed Karim', 'mkarim', 'mkarim@example.com', 'hash123', 'Excited to join 🚀', 'https://cdn.intra.42.fr/users/db4a3023c112e0d3d3bcf65d84609d6f/mkarim.jpg', 2, strftime('%s','now') - 300, 3, 45.0, 1),
+(2, 'Mohamed Karim', 'mkarim', 'mkarim@example.com', 'hash12345', 'Excited to join 🚀', 'https://cdn.intra.42.fr/users/db4a3023c112e0d3d3bcf65d84609d6f/mkarim.jpg', 2, strftime('%s','now') - 300, 3, 45.0, 1),
 
-(3, 'Zechechafoui', 'zechi', 'zechi@example.com', 'hash123', 'Let’s play!', 'https://cdn.intra.42.fr/users/d450751394f7288bce91b5b7123585d4/zech-chi.jpg', 0, strftime('%s','now') - 600, 2, 20.0, 0),
+(3, 'Zechechafoui', 'zechi', 'zechi@example.com', 'hash12345', 'Let’s play!', 'https://cdn.intra.42.fr/users/d450751394f7288bce91b5b7123585d4/zech-chi.jpg', 0, strftime('%s','now') - 600, 2, 20.0, 0),
 
-(4, 'Taha Kannane', 'tkannane', 'taha@example.com', 'hash123', 'Love challenges ⚡', 'https://cdn.intra.42.fr/users/48278b81919442a7e864dd8fc9810d81/tkannane.jpg', 3, strftime('%s','now') - 900, 4, 60.0, 1),
+(4, 'Taha Kannane', 'tkannane', 'taha@example.com', 'hash12345', 'Love challenges ⚡', 'https://cdn.intra.42.fr/users/48278b81919442a7e864dd8fc9810d81/tkannane.jpg', 3, strftime('%s','now') - 900, 4, 60.0, 1),
 
-(5, 'Mohamed Takrayout', 'mohtakara', 'mohtakara@example.com', 'hash123', 'Chess & Pong addict 🏓', 'https://cdn.intra.42.fr/users/999ab4136febfd6fb81fb7d0aaea002a/mohtakra.jpg', 1, strftime('%s','now') - 1800, 1, 10.0, 0);
+(5, 'Mohamed Takrayout', 'mohtakara', 'mohtakara@example.com', 'hash12345', 'Chess & Pong addict 🏓', 'https://cdn.intra.42.fr/users/999ab4136febfd6fb81fb7d0aaea002a/mohtakra.jpg', 1, strftime('%s','now') - 1800, 1, 10.0, 0);
 
 
 INSERT OR IGNORE INTO Friends (sender_id, receiver_id, status)

@@ -4,6 +4,7 @@ import db from "./db/connectionDb";
 import type { Database } from "better-sqlite3";
 import routesChat from "./routes/routesChat";
 import routesDashboard from "./routes/routesDashboard";
+import routesAuth from "./routes/routesAuth";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -26,13 +27,14 @@ fastify.decorate("db", db);
 // register routes
 // fastify.register(routes);
 fastify.register(routesChat, { prefix: "/api/chat" });
+fastify.register(routesAuth, { prefix: "api/auth" });
 fastify.register(routesDashboard, { prefix: "/api/dashboard" });
 
 // start server
 const start = async () => {
   try {
-    await fastify.listen({ port: 3600, host: "0.0.0.0" });
-    fastify.log.info("DB service running on port 3600");
+    await fastify.listen({ port: 5000, host: "0.0.0.0" });
+    fastify.log.info("DB service running on port 5000");
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
