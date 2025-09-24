@@ -1,10 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { LoginUserInput } from "./user.schema"
 import bcrypt from "bcryptjs";
+import { API_ROUTES } from "./utils/APIrouts";
 
 // function to find user by email
 export async function findUserByEmail(email: string): Promise<any> {
-    const user = await fetch('http://0.0.0.0:5000/api/auth/findUserByEmail', {
+    const user = await fetch(API_ROUTES.FIND_USER_BY_EMAIL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
