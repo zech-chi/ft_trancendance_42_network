@@ -1,52 +1,51 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { RegisterUserInput } from "./user.schema"
 import bcrypt from "bcryptjs";
-import { db } from "../index"
-
 
 // function to check if user exists by email, username, or full name
-export function findUserIfExists(fullName: string, userName: string, email: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-        const query = `SELECT * FROM Users WHERE email = ? OR userName = ? OR fullName = ?`;
-        db.get(query, [email, userName, fullName], (err, row) => {
-            if (err) reject(err);
-            else resolve(row);
-        });
-    });
+export async function findUserIfExists(userName: string, email: string): Promise<any> {
+    const user = await fetch('http://0.0.0.0:5000/api/auth/findUserByEmailOrUserName', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, userName })
+    }).then(res => res.json());
+    return user;
 }
 
 // function to create a new user
-export function createUser(fullName: string, userName: string, email: string, hashedPassword: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-        const query = `INSERT INTO Users (fullName, userName, email, password) VALUES (?, ?, ?, ?)`;
-        db.run(query, [fullName, userName, email, hashedPassword], function(err) {
-            if (err) reject(err);
-            else resolve({ id: this.lastID, fullName, userName, email });
-        });
-    });
+export async function createUser(fullName: string, userName: string, email: string, hashedPassword: string): Promise<any> {
+    const user = await fetch('http://0.0.0.0:5000/api/auth/createUser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ fullName, userName, email, password: hashedPassword })
+    }).then(res => res.json());
+    return user;
 }
 
-export function addNewRadarDataRow(userId: number): Promise<number> {
-    return new Promise((resolve, reject) => {
-        const query = `INSERT INTO RadarData (userId) VALUES (?)`;
-        db.run(query, [userId], function(err) {
-            if (err) reject(err);
-            else resolve(this.lastID);
-        });
-    });
+export async function addNewRadarDataRow(userId: number): Promise<number> {
+    const id = await fetch('http://0.0.0.0:5000/api/auth/addNewRadarDataRow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId })
+    }).then(res => res.json());
+    return id;
 }
 
-export function addNewChartsDataRows(userId: number): Promise<number> {
-    return new Promise((resolve, reject) => {
-        const query = `
-            INSERT INTO ChartsData (userId, game)
-            VALUES (?, 'parcheesi'), (?, 'pong')
-        `;
-        db.run(query, [userId, userId], function (err) {
-            if (err) reject(err);
-            else resolve(this.lastID);
-        });
-    });
+export async function addNewChartsDataRows(userId: number): Promise<number> {
+    const id = await fetch('http://0.0.0.0:5000/api/auth/addNewChartsDataRows', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId })
+    }).then(res => res.json());
+    return id;
 }
 
 export async function RegisterUser(
@@ -58,11 +57,13 @@ export async function RegisterUser(
     const { fullName, userName, email, password } = req.body;
     try {
         // check if user already exists
-        const checkUser = await findUserIfExists(fullName, userName, email);
+        console.log('RegisterUser called with body:', req.body);
+        const checkUser = await findUserIfExists(userName, email);
         if (checkUser) {
-            return reply.code(400).send({ message: 'User with this email, userName, or fullName already exists' });
+            return reply.code(400).send({ message: 'User with this email or userName already exists' });
         }
         
+
         // hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
     
@@ -78,8 +79,15 @@ export async function RegisterUser(
 
         if (!radarDataId || !chartsDataId) {
             // should I delete the user if this fails?
-            await new Promise((res, rej) => db.run('DELETE FROM Users WHERE id = ?',
-                [newUser.id], (err) => err ? rej(err) : res(null)));
+            const res = await fetch('http://0.0.0.0:5000/api/auth/deleteUserById', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId: newUser.id })
+            });
+            if (!res.ok)
+                console.error('Failed to delete user:', await res.text());
             return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
         }
 

@@ -17,18 +17,18 @@ export async function authRoutes(app: FastifyInstance) {
     });
 
     // register
-    // app.post(
-    //     "/register",
-    //     {
-    //         schema: {
-    //         body: $ref("RegisterUserSchema"),
-    //         response: {
-    //             201: $ref("RegisterUserResponseSchema"),
-    //         },
-    //         },
-    //     },
-    //     RegisterUser
-    // )
+    app.post(
+        "/register",
+        {
+            schema: {
+            body: $ref("RegisterUserSchema"),
+            response: {
+                201: $ref("RegisterUserResponseSchema"),
+            },
+            },
+        },
+        RegisterUser
+    )
 
     // login
     app.post(
