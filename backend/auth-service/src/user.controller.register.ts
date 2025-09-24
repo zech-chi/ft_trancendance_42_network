@@ -1,10 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { RegisterUserInput } from "./user.schema"
 import bcrypt from "bcryptjs";
+import { API_ROUTES } from "./utils/APIrouts";
 
 // function to check if user exists by email, username, or full name
 export async function findUserIfExists(userName: string, email: string): Promise<any> {
-    const user = await fetch('http://0.0.0.0:5000/api/auth/findUserByEmailOrUserName', {
+    const user = await fetch(API_ROUTES.FIND_USER_BY_EMAIL_OR_USERNAME, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -16,7 +17,7 @@ export async function findUserIfExists(userName: string, email: string): Promise
 
 // function to create a new user
 export async function createUser(fullName: string, userName: string, email: string, hashedPassword: string): Promise<any> {
-    const user = await fetch('http://0.0.0.0:5000/api/auth/createUser', {
+    const user = await fetch(API_ROUTES.CREATE_USER, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -27,7 +28,7 @@ export async function createUser(fullName: string, userName: string, email: stri
 }
 
 export async function addNewRadarDataRow(userId: number): Promise<number> {
-    const id = await fetch('http://0.0.0.0:5000/api/auth/addNewRadarDataRow', {
+    const id = await fetch(API_ROUTES.ADD_NEW_RADAR_DATA_ROW, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -38,7 +39,7 @@ export async function addNewRadarDataRow(userId: number): Promise<number> {
 }
 
 export async function addNewChartsDataRows(userId: number): Promise<number> {
-    const id = await fetch('http://0.0.0.0:5000/api/auth/addNewChartsDataRows', {
+    const id = await fetch(API_ROUTES.ADD_NEW_CHARTS_DATA_ROWS, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -79,7 +80,7 @@ export async function RegisterUser(
 
         if (!radarDataId || !chartsDataId) {
             // should I delete the user if this fails?
-            const res = await fetch('http://0.0.0.0:5000/api/auth/deleteUserById', {
+            const res = await fetch(API_ROUTES.DELETE_USER_BY_ID, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
