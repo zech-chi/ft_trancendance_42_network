@@ -5,6 +5,7 @@ import { authRoutes } from "./src/user.route";
 import { userSchemas } from './src/user.schema';
 import cookie from '@fastify/cookie';
 import jwt from '@fastify/jwt';
+import cors from '@fastify/cors';
 
 dotenv.config();
 
@@ -17,6 +18,12 @@ const fastify = Fastify({ logger: true });
 // register routes
 // fastify.register(routesDashboard, { prefix: "/api/auth/" });
 fastify.register(authRoutes, { prefix: "/api/auth" });
+
+fastify.register(cors, {
+  origin: ['http://localhost:3000', 'http://0.0.0.0:3000'], // allow your frontend's origin
+  credentials: true,               // <— important!
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ✅ important
+});
 
 // register jwt and cookie plugins
 fastify.register(cookie, {
