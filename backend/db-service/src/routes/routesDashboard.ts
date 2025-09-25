@@ -25,4 +25,12 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         }
         return user;
     });
+
+    // fetch all users by search term limited by 7
+    fastify.get('/search', async (request: FastifyRequest<{ Querystring: { prefix: string } }>, reply: FastifyReply) => {
+        const { prefix } = request.query;
+        const stmt = db.prepare("SELECT * FROM users WHERE userName LIKE ? ORDER BY userName ASC LIMIT 7");
+        const users = stmt.all(`${prefix}%`);
+        return { status: "ok", users: users };
+    });
 }

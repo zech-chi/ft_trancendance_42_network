@@ -28,9 +28,28 @@ export type FetchUserParams = z.infer<typeof fetchUserParams>;
 // type fetch user response
 export type FetchUserResponse = z.infer<typeof fetchUserResponse>;
 
+
+
+// search user by prefix schema
+const searchUserParams = z.object({
+    prefix: z.string().min(1).max(100),
+});
+
+// search user response schema
+const searchUserResponse = z.object({
+    users: z.array(fetchUserResponse),
+});
+
+// type search user request 
+export type SearchUserParams = z.infer<typeof searchUserParams>;
+// type search user response
+export type SearchUserResponse = z.infer<typeof searchUserResponse>;
+
 const { schemas, $ref } = buildJsonSchemas({
    fetchUserParams,
     fetchUserResponse,
+    searchUserParams,
+    searchUserResponse,
 });
 
 export const dashboardSchemas = { schemas, $ref };
