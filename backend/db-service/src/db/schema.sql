@@ -114,6 +114,20 @@ CREATE TABLE IF NOT EXISTS Friends (
     FOREIGN KEY (blocked_by) REFERENCES Users(id)
 );
 
+-- CREATE TABLE Friends (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     sender_userName TEXT NOT NULL,
+--     receiver_userName TEXT NOT NULL,
+--     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'blocked')),
+--     blockedBy TEXT REFERENCES Users(userName),
+--     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+--     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+--     FOREIGN KEY (sender_userName) REFERENCES Users(userName),
+--     FOREIGN KEY (receiver_userName) REFERENCES Users(userName),
+--     UNIQUE (sender_userName, receiver_userName),
+--     FOREIGN KEY (blockedBy) REFERENCES Users(userName)
+-- );
+
 CREATE TABLE IF NOT EXISTS messages (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   sender_id INTEGER NOT NULL,

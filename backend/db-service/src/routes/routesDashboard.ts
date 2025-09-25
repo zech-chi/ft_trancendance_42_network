@@ -35,36 +35,6 @@ export default async function routesDashboard(fastify: FastifyInstance) {
     });
 
 
-
-//     async function getRadarData(userName: string) {
-//   try {
-//     const row = await dbGetAsync(`
-//       SELECT
-//         quick_reflexes,
-//         strategic_thinking,
-//         precision_shots,
-//         pattern_recognition,
-//         anticipating_moves,
-//         board_control,
-//         adaptive_playstyle,
-//         risk_management,
-//         mind_games
-//       FROM
-//         Users
-//       JOIN
-//         RadarData ON Users.id = RadarData.userId
-//       WHERE
-//         Users.userName = ?;
-//     `, [userName]);
-//     if (!row)
-//       return null;
-//     return row;
-//   } catch (err) {
-//     throw err;
-//   }
-// }
-
-
     // fetch radar stats for a user
     fastify.get('/radarData/:userName', async (request: FastifyRequest<{ Params: { userName: string } }>, reply: FastifyReply) => {
         const { userName } = request.params;
@@ -93,4 +63,59 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         }
         return stats;
     });
+
+
+    // fetch friends of a user depending on status (all, accepted, pending, blocked)
+//     async function getFriends(userName: string, status: string) {
+//   try {
+//     let rows = [];
+//     if (status === 'accepted') {
+//       rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE (sender_userName = ? OR receiver_userName = ?) AND status = ?;`, [userName, userName, status]);
+//     } else if (status === 'pending') {
+//       rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE receiver_userName = ? AND status = ?;`, [userName, status]);
+//     } else if (status === 'blocked') {
+//       rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE blockedBy = ? AND status = ?;`, [userName, status]);
+//     }
+//     return rows;
+//   } catch (err) {
+//     throw err;
+//   }
+// }
+
+    fastify.get('/friends/:userId', async (
+    request: FastifyRequest<{ Params: { userId: string }; Querystring: { status: string } }>,
+    reply: FastifyReply
+  ) => {
+    const { userId } = request.params;
+    const { status } = request.query;
+
+    let stmt;
+    let params: any[] = []; 
+
+    if (status === 'accepted') {
+      stmt = db.prepare(
+        `SELECT * FROM Friends WHERE (sender_id = ? OR receiver_id = ?) AND status = ?;`
+      );
+      params = [userId, userId, status];
+    } else if (status === 'pending') {
+      stmt = db.prepare(
+        `SELECT * FROM Friends WHERE receiver_id = ? AND status = ?;`
+      );
+      params = [userId, status];
+    } else if (status === 'blocked') {
+      stmt = db.prepare(
+        `SELECT * FROM Friends WHERE blocked_by = ? AND status = ?;`
+      );
+      params = [userId, status];
+    } else {
+      reply.status(400).send({ success: 'ko', message: 'Invalid status' });
+      return null;
+    }
+
+    const friends = stmt.all(...params);
+    return { status: 'ok', friends };
+  }
+);
+
+
 }
