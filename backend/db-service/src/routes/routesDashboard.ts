@@ -13,4 +13,16 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         console.log(users);
         return { status: "ok", message: "Hello from DB service!" , users: users};
     });
+
+    // fetch User by userName
+    fastify.get('/users/:userName', async (request: FastifyRequest<{ Params: { userName: string } }>, reply: FastifyReply) => {
+        const { userName } = request.params;
+        const stmt = db.prepare("SELECT * FROM users WHERE userName = ?");
+        const user = stmt.get(userName);
+        if (!user) {
+            reply.status(404).send({success: "ko", message: "User not found" }); 
+            return null;
+        }
+        return user;
+    });
 }
