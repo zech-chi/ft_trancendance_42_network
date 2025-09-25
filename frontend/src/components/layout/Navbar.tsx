@@ -151,7 +151,7 @@ function SearchForm(): JSX.Element {
       setShowDropdown(true);
       try {
         const res = await fetch(
-          `http://localhost:5000/api/searchUsers?prefix=${encodeURIComponent(
+          `http://localhost:5002/api/dashboard/search\?prefix\=${encodeURIComponent(
             inputValue
           )}`
         );
