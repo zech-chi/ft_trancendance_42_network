@@ -104,3 +104,38 @@ export async function fetchRadarDataHandler(
         return null;
     }
 }
+
+
+// fetch friends by status for a user
+export async function fetchFriendsByStatusHandler(
+    request: FastifyRequest<{ Params: { userId: string }; Querystring: { status: string } }>,
+    reply: FastifyReply
+) {
+    const { userId } = request.params;
+    const { status } = request.query;
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/dashboard/friends/${userId}?status=${encodeURIComponent(status)}`);
+
+        console.log("response status from friends service: ", response.status, userId, status);
+        if (!response.ok) {
+            reply.status(404).send({ message: "No friends found" });
+            return { friends: [] };
+        }
+
+        const data = await response.json();
+
+        if (data.status === "ko") {
+            reply.status(404).send({ message: "No friends found" });
+            return { friends: [] };
+        }
+
+        console.log("data from friends service: ", data);
+
+        return { friends: data.friends || [] };
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return { friends: [] };
+    }
+}

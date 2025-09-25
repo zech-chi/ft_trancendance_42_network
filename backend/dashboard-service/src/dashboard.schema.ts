@@ -80,6 +80,34 @@ export type RadarStatsParams = z.infer<typeof radarStatsParams>;
 // type radar charts stats response
 export type RadarStatsResponse = z.infer<typeof radarStatsResponse>;
 
+
+// params schema
+const fetchFriendsParams = z.object({
+  userId: z.number(),
+});
+
+// query schema
+const fetchFriendsQuery = z.object({
+  status: z.enum(["accepted", "pending", "blocked"]),
+});
+
+// fetch Friends by status response schema
+const fetchFriendsResponse = z.object({
+    friends: z.array(z.object({
+      id: z.number(),
+      sender_id: z.number(),
+      receiver_id: z.number(),
+      status: z.enum(['accepted', 'pending', 'blocked']),
+      blocked_by: z.number().nullable()
+    })),
+});
+
+export type fetchFriendsParams = z.infer<typeof fetchFriendsParams>;
+export type fetchFriendsResponse = z.infer<typeof fetchFriendsResponse>;
+export type fetchFriendsQuery = z.infer<typeof fetchFriendsQuery>;
+
+
+
 // build and export the json schemas
 const { schemas, $ref } = buildJsonSchemas({
    fetchUserParams,
@@ -88,6 +116,9 @@ const { schemas, $ref } = buildJsonSchemas({
     searchUserResponse,
     radarStatsParams,
     radarStatsResponse,
+    fetchFriendsParams,
+    fetchFriendsResponse,
+    fetchFriendsQuery
 });
 
 export const dashboardSchemas = { schemas, $ref };
