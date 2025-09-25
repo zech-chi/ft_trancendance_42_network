@@ -176,15 +176,15 @@ CREATE TABLE IF NOT EXISTS messages (
 
 INSERT OR IGNORE INTO Users (id, fullName, userName, email, password, bio, imageUrl, rank, last_seen, level, progress, online)
 VALUES
-(1, 'Zakaria Echifaouy', 'zelabbas', 'zakaria@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://cdn.intra.42.fr/users/520fcec86c5c997878e60f48d447f0a1/zelabbas.jpg', 1, strftime('%s','now') - 120, 5, 75.5, 1),
+(1, 'Zakaria Echifaouy', 'zelabbas', 'zakaria@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://cdn.intra.42.fr/users/520fcec86c5c997878e60f48d447f0a1/zelabbas.jpg', 1, strftime('%s','now') - 120, 5, 0.75, 1),
 
-(2, 'Mohamed Karim', 'mkarim', 'mkarim@example.com', 'hash12345', 'Excited to join 🚀', 'https://cdn.intra.42.fr/users/db4a3023c112e0d3d3bcf65d84609d6f/mkarim.jpg', 2, strftime('%s','now') - 300, 3, 45.0, 1),
+(2, 'Mohamed Karim', 'mkarim', 'mkarim@example.com', 'hash12345', 'Excited to join 🚀', 'https://cdn.intra.42.fr/users/db4a3023c112e0d3d3bcf65d84609d6f/mkarim.jpg', 2, strftime('%s','now') - 300, 3, 0.45, 1),
 
-(3, 'Zechechafoui', 'zechi', 'zechi@example.com', 'hash12345', 'Let’s play!', 'https://cdn.intra.42.fr/users/d450751394f7288bce91b5b7123585d4/zech-chi.jpg', 0, strftime('%s','now') - 600, 2, 20.0, 0),
+(3, 'Zechechafoui', 'zechi', 'zechi@example.com', 'hash12345', 'Let’s play!', 'https://cdn.intra.42.fr/users/d450751394f7288bce91b5b7123585d4/zech-chi.jpg', 0, strftime('%s','now') - 600, 2, 0.2, 0),
 
-(4, 'Taha Kannane', 'tkannane', 'taha@example.com', 'hash12345', 'Love challenges ⚡', 'https://cdn.intra.42.fr/users/48278b81919442a7e864dd8fc9810d81/tkannane.jpg', 3, strftime('%s','now') - 900, 4, 60.0, 1),
+(4, 'Taha Kannane', 'tkannane', 'taha@example.com', 'hash12345', 'Love challenges ⚡', 'https://cdn.intra.42.fr/users/48278b81919442a7e864dd8fc9810d81/tkannane.jpg', 3, strftime('%s','now') - 900, 4, 0.6, 1),
 
-(5, 'Mohamed Takrayout', 'mohtakara', 'mohtakara@example.com', 'hash12345', 'Chess & Pong addict 🏓', 'https://cdn.intra.42.fr/users/999ab4136febfd6fb81fb7d0aaea002a/mohtakra.jpg', 1, strftime('%s','now') - 1800, 1, 10.0, 0);
+(5, 'Mohamed Takrayout', 'mohtakara', 'mohtakara@example.com', 'hash12345', 'Chess & Pong addict 🏓', 'https://cdn.intra.42.fr/users/999ab4136febfd6fb81fb7d0aaea002a/mohtakra.jpg', 1, strftime('%s','now') - 1800, 1, 0.1, 0);
 
 
 INSERT OR IGNORE INTO Friends (sender_id, receiver_id, status)
@@ -194,13 +194,15 @@ VALUES
 (1, 4, 'pending'),
 (2, 5, 'blocked');
 
-INSERT OR IGNORE INTO RadarData (userId, Quick_Reflexes, Strategic_Thinking, Precision_Shots, Pattern_Recognition, Anticipating_Moves, Board_Control, Adaptive_Playstyle, Risk_Management, Mind_Games)
+INSERT OR REPLACE INTO RadarData 
+(userId, Quick_Reflexes, Strategic_Thinking, Precision_Shots, Pattern_Recognition, Anticipating_Moves, Board_Control, Adaptive_Playstyle, Risk_Management, Mind_Games)
 VALUES
-(1, 85, 70, 90, 60, 75, 80, 70, 65, 60),
-(2, 60, 85, 70, 80, 65, 70, 75, 60, 55),
-(3, 40, 50, 55, 45, 60, 50, 40, 35, 30),
-(4, 90, 88, 92, 85, 80, 86, 89, 84, 90),
-(5, 50, 60, 55, 65, 58, 62, 57, 54, 50);
+(1, 17, 14, 18, 12, 15, 16, 14, 13, 12),
+(2, 12, 17, 14, 16, 13, 14, 15, 12, 11),
+(3, 8, 10, 11, 9, 12, 10, 8, 7, 6),
+(4, 18, 18, 19, 17, 16, 17, 18, 17, 18),
+(5, 10, 12, 11, 13, 12, 12, 11, 11, 10);
+
 
 INSERT OR IGNORE INTO ChartsData (userId, game, totalGamesWithAi, gamesWithAiEasy, gamesWithAiMedium, gamesWithAiHard, totalWins, easyWins, mediumWins, hardWins, friendsWins, friendsLosses, friendsTotalGames)
 VALUES

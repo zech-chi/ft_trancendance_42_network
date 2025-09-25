@@ -33,4 +33,64 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         const users = stmt.all(`${prefix}%`);
         return { status: "ok", users: users };
     });
+
+
+
+//     async function getRadarData(userName: string) {
+//   try {
+//     const row = await dbGetAsync(`
+//       SELECT
+//         quick_reflexes,
+//         strategic_thinking,
+//         precision_shots,
+//         pattern_recognition,
+//         anticipating_moves,
+//         board_control,
+//         adaptive_playstyle,
+//         risk_management,
+//         mind_games
+//       FROM
+//         Users
+//       JOIN
+//         RadarData ON Users.id = RadarData.userId
+//       WHERE
+//         Users.userName = ?;
+//     `, [userName]);
+//     if (!row)
+//       return null;
+//     return row;
+//   } catch (err) {
+//     throw err;
+//   }
+// }
+
+
+    // fetch radar stats for a user
+    fastify.get('/radarData/:userName', async (request: FastifyRequest<{ Params: { userName: string } }>, reply: FastifyReply) => {
+        const { userName } = request.params;
+        const stmt = db.prepare(`
+          SELECT
+            quick_reflexes,
+            strategic_thinking,
+            precision_shots,
+            pattern_recognition,
+            anticipating_moves,
+            board_control,
+            adaptive_playstyle,
+            risk_management,
+            mind_games
+          FROM
+            Users
+          JOIN
+            RadarData ON Users.id = RadarData.userId
+          WHERE
+            Users.userName = ?;
+        `);
+        const stats = stmt.get(userName);
+        if (!stats) {
+            reply.status(404).send({ success: "ko", message: "User not found" });
+            return null;
+        }
+        return stats;
+    });
 }

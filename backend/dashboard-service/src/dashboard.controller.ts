@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { dashboardSchemas, FetchUserParams, FetchUserResponse } from "./dashboard.schema"
+import { dashboardSchemas, FetchUserParams, FetchUserResponse, RadarStatsParams } from "./dashboard.schema"
 import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
 
@@ -71,5 +71,36 @@ export async function fetchSearchUserHandler(
     } catch (error) {
         reply.status(400).send({ message: "something went wrong!" });
         return { users: [] };
+    }
+}
+
+// fetch radar data for a user 
+export async function fetchRadarDataHandler(
+    request: FastifyRequest<{ Params: RadarStatsParams }>,
+    reply: FastifyReply
+) {
+    const { userName } = request.params;
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/dashboard/radarData/${userName}`);
+
+        if (!response.ok) {
+            reply.status(404).send({ message: "Radar data not found" });
+            return null;
+        }
+
+        const data = await response.json();
+        console.log("data from db service: ", data);
+
+        if (data.status === "ko") {
+            reply.status(404).send({ message: "Radar data not found" });
+            return null;
+        }
+
+        return data || null;
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return null;
     }
 }
