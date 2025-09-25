@@ -3,9 +3,10 @@ import React, { use } from 'react';
 import { JSX } from 'react';
 import { useState, useEffect } from 'react';
 import { Dispatch, SetStateAction } from "react";
-import { fetchUser, fetchFriends } from '@/app/lib/apiDashboard';
+import { fetchUser, fetchFriends, fetchUserById } from '@/app/lib/apiDashboard';
 import Cookies from 'js-cookie';
 import {useLoggedUserName} from '@/context/LoggedUserNameContext';
+import { useLoggedUserId } from '@/context/UserIdContext';
 
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
@@ -144,14 +145,17 @@ type ProfileInfoProps = {
 
 
 type Friends = {
-    sender_userName: string;
-    receiver_userName: string;
+    id: number;
+    sender_id: number;
+    receiver_id: number;
     status: string;
+    blocked_by: number | null;
 }
 
 
 function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
     const { loggedUserName } = useLoggedUserName();
+    const { loggedUserId } = useLoggedUserId();
     const [friend, setFriend] = useState<any | null>(null);
     const [hoveredChat, setHoveredChat] = useState(false);
     const [hoveredGames, setHoveredGames] = useState(false);
@@ -162,9 +166,9 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
         setTimeout(() => {
             setFriend(null);
             const fetchData = async () => {
-            const user1 = await fetchUser(friends.sender_userName);
-            const user2 = await fetchUser(friends.receiver_userName);
-            if (user1.userName === loggedUserName) {
+            const user1 = await fetchUserById(friends.sender_id);
+            const user2 = await fetchUserById(friends.receiver_id);
+            if (user1.id === loggedUserId) {
                 setFriend(user2);
             } else {
                 setFriend(user1);
@@ -172,7 +176,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
           };
           fetchData();
         }, 500);
-    }, [friends, loggedUserName]);
+    }, [friends, loggedUserId]);
 
     if (!friend) {
         return (
@@ -252,6 +256,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
 
 function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : {friends: Friends, changeComponent:boolean, setChangeComponent: React.Dispatch<React.SetStateAction<boolean>>}) : JSX.Element {
     const { loggedUserName } = useLoggedUserName();
+    const { loggedUserId } = useLoggedUserId();
     const [friend, setFriend] = useState<any | null>(null);
 
 
@@ -260,9 +265,9 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
         setTimeout(() => {
           const fetchData = async () => {
             setFriend(null);
-            const user1 = await fetchUser(friends.sender_userName);
-            const user2 = await fetchUser(friends.receiver_userName);
-            if (user1.userName === loggedUserName) {
+            const user1 = await fetchUserById(friends.sender_id);
+            const user2 = await fetchUserById(friends.receiver_id);
+            if (user1.id === loggedUserId) {
                 setFriend(user2);
             } else {
                 setFriend(user1);
@@ -270,7 +275,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
           };
           fetchData();
         }, 500);
-    }, [friends, loggedUserName]);
+    }, [friends, loggedUserId]);
 
     if (!friend) {
         return (
@@ -339,8 +344,8 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                                     'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    user1: friends.sender_userName,
-                                    user2: friends.receiver_userName,
+                                    user1: friends.sender_id,
+                                    user2: friends.receiver_id,
                                 }),
                             });
                             const data = await response.json();
@@ -378,8 +383,8 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                                     'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    user1: friends.sender_userName,
-                                    user2: friends.receiver_userName,
+                                    user1: friends.sender_id,
+                                    user2: friends.receiver_id,
                                 }),
                             });
                             const data = await response.json();
@@ -412,6 +417,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
 
 function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent} : {friends: Friends, changeComponent:boolean, setChangeComponent: React.Dispatch<React.SetStateAction<boolean>>}) : JSX.Element {
     const { loggedUserName } = useLoggedUserName();
+    const { loggedUserId } = useLoggedUserId();
     const [friend, setFriend] = useState<any | null>(null);
 
 
@@ -420,9 +426,9 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
         setTimeout(() => {
           const fetchData = async () => {
             setFriend(null);
-            const user1 = await fetchUser(friends.sender_userName);
-            const user2 = await fetchUser(friends.receiver_userName);
-            if (user1.userName === loggedUserName) {
+            const user1 = await fetchUserById(friends.sender_id);
+            const user2 = await fetchUserById(friends.receiver_id);
+            if (user1.id === loggedUserId) {
                 setFriend(user2);
             } else {
                 setFriend(user1);
@@ -430,7 +436,7 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
           };
           fetchData();
         }, 400);
-    }, [friends, loggedUserName]);
+    }, [friends, loggedUserId]);
 
     if (!friend) {
         return (
@@ -499,8 +505,8 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                                         'Content-Type': 'application/json',
                                     },
                                     body: JSON.stringify({
-                                        user1: friends.sender_userName,
-                                        user2: friends.receiver_userName,
+                                        user1: friends.sender_id,
+                                        user2: friends.receiver_id,
                                     }),
                                 });
                                 const data = await response.json();
@@ -535,6 +541,7 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
 
 function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friends: Friends, changeComponent:boolean, setChangeComponent: React.Dispatch<React.SetStateAction<boolean>>}) : JSX.Element {
     const { loggedUserName } = useLoggedUserName();
+    const { loggedUserId } = useLoggedUserId();
     const [friend, setFriend] = useState<any | null>(null);
 
 
@@ -543,9 +550,9 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
         setTimeout(() => {
           const fetchData = async () => {
             setFriend(null);
-            const user1 = await fetchUser(friends.sender_userName);
-            const user2 = await fetchUser(friends.receiver_userName);
-            if (user1.userName === loggedUserName) {
+            const user1 = await fetchUserById(friends.sender_id);
+            const user2 = await fetchUserById(friends.receiver_id);
+            if (user1.id === loggedUserId) {
                 setFriend(user2);
             } else {
                 setFriend(user1);
@@ -553,7 +560,7 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
           };
           fetchData();
         }, 100);
-    }, [friends, loggedUserName]);
+    }, [friends, loggedUserId]);
 
     if (!friend) {
         return (
@@ -622,8 +629,8 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                                         'Content-Type': 'application/json',
                                     },
                                     body: JSON.stringify({
-                                        user1: friends.sender_userName,
-                                        user2: friends.receiver_userName,
+                                        user1: friends.sender_id,
+                                        user2: friends.receiver_id,
                                     }),
                                 });
                                 const data = await response.json();
@@ -656,6 +663,7 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
 
 export function Friends({ choice }: { choice: FriendsChoice }): JSX.Element {
     const { loggedUserName } = useLoggedUserName();
+    const { loggedUserId } = useLoggedUserId();
     const [friends, setFriends] = useState<any[]>([]);
     const [changeComponent, setChangeComponent] = useState(false);
 
@@ -663,9 +671,9 @@ export function Friends({ choice }: { choice: FriendsChoice }): JSX.Element {
         setFriends([]);
         Cookies.set('SelectedChoiceFriends', choice, { expires: 365 });
         if (loggedUserName) {
-            fetchFriends(loggedUserName, choice)
+            fetchFriends(loggedUserId, choice)
                 .then((data) => {
-                    setFriends(data);
+                    setFriends(data.friends);
                     console.log("Friends data: ", data);
                 }
             )

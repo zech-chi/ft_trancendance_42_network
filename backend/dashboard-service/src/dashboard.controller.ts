@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { dashboardSchemas, FetchUserParams, FetchUserResponse, RadarStatsParams } from "./dashboard.schema"
+import { dashboardSchemas, FetchUserByIdParams, FetchUserParams, FetchUserResponse, RadarStatsParams } from "./dashboard.schema"
 import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
 
@@ -22,6 +22,37 @@ export async function fetchUserHandler(
 
     try {
         const user = await fetch("http://localhost:5000/api/dashboard/users/" + userName);
+
+        if (!user.ok) {
+            reply.status(404).send({ message: "User not found" });
+            return;
+        }
+
+        const userData = await user.json();
+
+        if (userData.success === "ko") {
+            reply.status(404).send({ message: "User not found" });
+            return;
+        }
+
+        return userData || null;
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return null;
+    }
+}
+
+
+
+export async function fetchUserByIdHandler(
+    request: FastifyRequest<{ Params: FetchUserByIdParams }>,
+    reply: FastifyReply
+) {
+    const { userId } = request.params;
+
+    try {
+        const user = await fetch("http://localhost:5000/api/dashboard/usersId/" + userId);
 
         if (!user.ok) {
             reply.status(404).send({ message: "User not found" });

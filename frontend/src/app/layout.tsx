@@ -3,6 +3,7 @@
 import './globals.css';
 import { LoggedUserNameProvider } from '@/context/LoggedUserNameContext';
 import { SelectedUserNameProvider } from '@/context/SelectedUserNameContext';
+import { LoggedUserIdProvider } from '@/context/UserIdContext';
 
 const BG_URL = 'https://images6.alphacoders.com/134/1344450.jpeg';
 
@@ -23,15 +24,23 @@ export default function RootLayout({
         style={{ backgroundImage: `url('${BG_URL}')` }}
       >
         <LoggedUserNameProvider>
+
           <SelectedUserNameProvider>
+
+            <LoggedUserIdProvider>
+
             <main className="relative bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url('${BG_URL}')` }}
             >
               {children} {/* This renders the content of your page.tsx files */}
             </main>
+
+          </LoggedUserIdProvider>
+
           </SelectedUserNameProvider>
-        </LoggedUserNameProvider>
-      </body>
-    </html>
+          
+      </LoggedUserNameProvider>
+    </body>
+  </html>
   );
 }

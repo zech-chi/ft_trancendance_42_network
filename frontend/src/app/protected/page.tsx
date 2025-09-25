@@ -6,6 +6,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import { useEffect } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+import { useLoggedUserId } from "@/context/UserIdContext";
 // import Login from "@/components/Login";
 import { TopDashboard } from "@/components/TopDashboard";
 import { Friends } from "@/components/Friends";
@@ -179,6 +180,7 @@ export default function Home() : JSX.Element {
 	// }
 	const { loggedUserName, setLoggedUserName } = useLoggedUserName();
 	const { selectedUserName, setSelectedUserName } = useSelectedUserName();
+	const { loggedUserId, setLoggedUserId } = useLoggedUserId();
 	const [showRightComp, setShowRightComp] = useState<boolean>(false);
 	const [loading, setLoading] = useState(true);
 	const router = useRouter();
@@ -190,10 +192,12 @@ export default function Home() : JSX.Element {
 		if (!user || !user.userName) {
 			setLoggedUserName(null);
 			setSelectedUserName(null);
+			setLoggedUserId(0);
 			router.push("/login");
 		} else {
 			setLoggedUserName(user.userName);
 			setSelectedUserName(user.userName);
+			setLoggedUserId(user.id);
 		}
 		setLoading(false);
 	  }
