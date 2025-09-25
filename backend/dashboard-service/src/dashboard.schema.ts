@@ -6,7 +6,6 @@ const fetchUserParams = z.object({
     userName: z.string(),
 });
 
-
 // fetch user response schema
 const fetchUserResponse = z.object({
     id: z.number(),
@@ -45,11 +44,50 @@ export type SearchUserParams = z.infer<typeof searchUserParams>;
 // type search user response
 export type SearchUserResponse = z.infer<typeof searchUserResponse>;
 
+// request radar charts stats params schema
+export const radarStatsParams = z.object({
+    userName: z.string(),
+});
+
+
+// data from db service:  {
+//   Quick_Reflexes: 40,
+//   Strategic_Thinking: 50,
+//   Precision_Shots: 55,
+//   Pattern_Recognition: 45,
+//   Anticipating_Moves: 60,
+//   Board_Control: 50,
+//   Adaptive_Playstyle: 40,
+//   Risk_Management: 35,
+//   Mind_Games: 30
+// }
+
+// radar charts stats schema
+const radarStatsResponse = z.object({
+    Quick_Reflexes: z.number(),
+    Strategic_Thinking: z.number(),
+    Precision_Shots: z.number(),
+    Pattern_Recognition: z.number(),
+    Anticipating_Moves: z.number(),
+    Board_Control: z.number(),
+    Adaptive_Playstyle: z.number(),
+    Risk_Management: z.number(),
+    Mind_Games: z.number(),
+});
+
+// type radar charts stats request
+export type RadarStatsParams = z.infer<typeof radarStatsParams>;
+// type radar charts stats response
+export type RadarStatsResponse = z.infer<typeof radarStatsResponse>;
+
+// build and export the json schemas
 const { schemas, $ref } = buildJsonSchemas({
    fetchUserParams,
     fetchUserResponse,
     searchUserParams,
     searchUserResponse,
+    radarStatsParams,
+    radarStatsResponse,
 });
 
 export const dashboardSchemas = { schemas, $ref };

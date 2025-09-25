@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 // import Login from "@/components/Login";
-// import { TopDashboard } from "@/components/TopDashboard";
+import { TopDashboard } from "@/components/TopDashboard";
 // import { Friends } from "@/components/Friends";
 // import { History } from "@/components/History";
 // import { Rank } from "@/components/Rank";
@@ -18,6 +18,7 @@ import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 // import Statistics from "@/components/Statistics";
 import { fetchUser } from "../(auth)/login/page";
 import { useRouter } from "next/navigation";
+import Statistics from "@/components/Statistics";
 
 type GameName = 'pong' | 'parchesi';
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
@@ -50,24 +51,24 @@ type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 // }
 
 
-// function LeftComponent(): JSX.Element {
-// 	return (
-// 		<div className="flex flex-col items-center space-x-4 h-full 2xl:w-[70%]
-// 			w-[calc(100%-20px)] xl:w-full
-// 			ml-2.5 xl:ml-0
-// 			mr-2.5
-// 			bg-black/50 backdrop-blur
-// 			rounded-[25px]
-// 			text-white
-// 			overflow-y-auto custom-scrollbar 
-// 		">
-// 			<div className="flex flex-col w-full gap-1">
-// 				<TopDashboard />
-// 				<Statistics />
-// 			</div>
-// 		</div>
-// 	);
-// }
+function LeftComponent(): JSX.Element {
+	return (
+		<div className="flex flex-col items-center space-x-4 h-full 2xl:w-[70%]
+			w-[calc(100%-20px)] xl:w-full
+			ml-2.5 xl:ml-0
+			mr-2.5
+			bg-black/50 backdrop-blur
+			rounded-[25px]
+			text-white
+			overflow-y-auto custom-scrollbar 
+		">
+			<div className="flex flex-col w-full gap-1">
+				<TopDashboard />
+				<Statistics />
+			</div>
+		</div>
+	);
+}
 
 // function RightComponent({ show }: { show: boolean }): JSX.Element {
 // 	const [buttonChoice, setButtonChoice] = useState<string>('friends');
@@ -229,15 +230,7 @@ export default function Home() : JSX.Element {
 						<img src="/hide.png" alt="hide" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-60 hover:opacity-100 2xl:hidden"/>} 
 					</button>
 
-					{/* display user information */}
-					<div className="flex flex-col items-center justify-center bg-green-600 ">
-						<h2 className="text-white">User Information</h2>
-						{/* Display user information here */}
-						<p>Logged user is : {loggedUserName}</p>
-						<p>Selected user is : {selectedUserName}</p>
-					</div>
-
-					{/* <LeftComponent /> */}
+					<LeftComponent />
 					{/* <RightComponent show={showRightComp} /> */}
 				</main>
 			</div>
