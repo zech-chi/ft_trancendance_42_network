@@ -64,24 +64,6 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         return stats;
     });
 
-
-    // fetch friends of a user depending on status (all, accepted, pending, blocked)
-//     async function getFriends(userName: string, status: string) {
-//   try {
-//     let rows = [];
-//     if (status === 'accepted') {
-//       rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE (sender_userName = ? OR receiver_userName = ?) AND status = ?;`, [userName, userName, status]);
-//     } else if (status === 'pending') {
-//       rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE receiver_userName = ? AND status = ?;`, [userName, status]);
-//     } else if (status === 'blocked') {
-//       rows = await dbGetAsyncAll(`SELECT * FROM Friends WHERE blockedBy = ? AND status = ?;`, [userName, status]);
-//     }
-//     return rows;
-//   } catch (err) {
-//     throw err;
-//   }
-// }
-
     fastify.get('/friends/:userId', async (
     request: FastifyRequest<{ Params: { userId: string }; Querystring: { status: string } }>,
     reply: FastifyReply
@@ -89,8 +71,11 @@ export default async function routesDashboard(fastify: FastifyInstance) {
     const { userId } = request.params;
     const { status } = request.query;
 
+    console.log("request params: ", request.params);
+    console.log("request query: ", request.query);
+
     let stmt;
-    let params: any[] = []; 
+    let params: any[] = [];
 
     if (status === 'accepted') {
       stmt = db.prepare(

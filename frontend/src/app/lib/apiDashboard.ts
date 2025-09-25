@@ -47,9 +47,9 @@ export const fetchFriends = async (userName: string, choice: string) => {
   }
   let response ;
   if (status !== '')
-      response = await fetch(`http://localhost:5000/Friends/${userName}?status=${status}`);
+      response = await fetch(`http://localhost:5002/Friends/${userName}?status=${status}`);
   else 
-      response = await fetch(`http://localhost:5000/SentRequestFriends/${userName}`);
+      response = await fetch(`http://localhost:5002/SentRequestFriends/${userName}`);
   if (!response.ok) {
   //   throw new Error('Failed to fetch games');
     console.log("Error");
