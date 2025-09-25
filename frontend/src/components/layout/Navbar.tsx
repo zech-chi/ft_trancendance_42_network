@@ -6,6 +6,8 @@ import { JSX } from 'react';
 import Image from "next/image";
 import { fetchUser } from '@/app/lib/apiDashboard';
 import { useLoggedUserName } from '@/context/LoggedUserNameContext';
+import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+
 import { useRef } from "react";
 
 function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
@@ -133,6 +135,8 @@ interface UserSearch {
 }
 
 function SearchForm(): JSX.Element {
+
+  const { setSelectedUserName } = useSelectedUserName();
   const [inputValue, setInputValue] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<UserSearch[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -238,11 +242,16 @@ function SearchForm(): JSX.Element {
             ) : filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <li
-                  key={user.id}
+                  key={user.userName}
                   className="flex items-center gap-2 px-4 py-2 cursor-pointer"
                   style={{ color: "#D7D7D7", transition: "background-color 0.2s ease" }}
                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(100,33,52,0.7)"}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                  onClick={() => {
+                    setSelectedUserName(user.userName);
+                    setInputValue("");
+                    setShowDropdown(false);
+                  }}
                 >
                   <img
                     src={user.imageUrl}
