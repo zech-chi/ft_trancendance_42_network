@@ -3,6 +3,7 @@ import { JSX } from "react";
 import { useEffect, useState } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+import { useLoggedUserId } from "@/context/UserIdContext";
 import { useRouter } from "next/navigation"; 
 import Link from "next/link";
 import Image from "next/image";
@@ -30,6 +31,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { setLoggedUserName } = useLoggedUserName();
   const { setSelectedUserName } = useSelectedUserName();
+  const { setLoggedUserId } = useLoggedUserId();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -43,6 +45,7 @@ export default function LoginPage() {
         // alert("Already logged in, redirecting to home page.");
         setLoggedUserName(user.userName);
         setSelectedUserName(user.userName);
+        setLoggedUserId(user.id);
         router.push("/");
         return; 
       }
@@ -67,6 +70,7 @@ export default function LoginPage() {
       if (res.ok) {
         setLoggedUserName(data.userName);
         setSelectedUserName(data.userName);
+        setLoggedUserId(data.id);
         router.push("/");
       } else {
         setError(data.message || "Login failed");

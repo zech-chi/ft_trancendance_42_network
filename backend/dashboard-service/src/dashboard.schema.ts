@@ -6,6 +6,10 @@ const fetchUserParams = z.object({
     userName: z.string(),
 });
 
+const fetchUserByIdParams = z.object({
+    userId: z.number(),
+});
+
 // fetch user response schema
 const fetchUserResponse = z.object({
     id: z.number(),
@@ -26,6 +30,8 @@ const fetchUserResponse = z.object({
 export type FetchUserParams = z.infer<typeof fetchUserParams>;
 // type fetch user response
 export type FetchUserResponse = z.infer<typeof fetchUserResponse>;
+// type fetch user by id request
+export type FetchUserByIdParams = z.infer<typeof fetchUserByIdParams>;
 
 
 
@@ -118,7 +124,8 @@ const { schemas, $ref } = buildJsonSchemas({
     radarStatsResponse,
     fetchFriendsParams,
     fetchFriendsResponse,
-    fetchFriendsQuery
+    fetchFriendsQuery,
+    fetchUserByIdParams,
 });
 
 export const dashboardSchemas = { schemas, $ref };

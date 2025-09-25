@@ -7,6 +7,15 @@ export const fetchUser = async (userName: string) => {
     return data;
 }
 
+export const fetchUserById = async (userId: number) => {
+    const response = await fetch(`http://localhost:5002/api/dashboard/usersId/${userId}`);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+}
+
 export const fetchUsers = async () => {
     const response = await fetch(`http://localhost:5000/users/`);
     if (!response.ok) {
@@ -36,7 +45,7 @@ export const fetchRankData = async () => {
 }
 
 /** friends component */
-export const fetchFriends = async (userName: string, choice: string) => {
+export const fetchFriends = async (userId: number | null, choice: string) => {
   let status: string = '';
   if (choice === 'friends') {
       status = 'accepted';
@@ -47,9 +56,9 @@ export const fetchFriends = async (userName: string, choice: string) => {
   }
   let response ;
   if (status !== '')
-      response = await fetch(`http://localhost:5002/Friends/${userName}?status=${status}`);
+      response = await fetch(`http://localhost:5002/api/dashboard/friends/${userId}?status=${status}`);
   else 
-      response = await fetch(`http://localhost:5002/SentRequestFriends/${userName}`);
+      response = await fetch(`http://localhost:5002/SentRequestFriends/${userId}`);
   if (!response.ok) {
   //   throw new Error('Failed to fetch games');
     console.log("Error");

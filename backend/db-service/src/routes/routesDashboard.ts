@@ -26,6 +26,18 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         return user;
     });
 
+     // fetch User by userId
+    fastify.get('/usersId/:userId', async (request: FastifyRequest<{ Params: { userId: string } }>, reply: FastifyReply) => {
+        const { userId } = request.params;
+        const stmt = db.prepare("SELECT * FROM users WHERE id = ?");
+        const user = stmt.get(userId);
+        if (!user) {
+            reply.status(404).send({success: "ko", message: "User not found" });
+            return null;
+        }
+        return user;
+    });
+
     // fetch all users by search term limited by 7
     fastify.get('/search', async (request: FastifyRequest<{ Querystring: { prefix: string } }>, reply: FastifyReply) => {
         const { prefix } = request.query;
@@ -101,6 +113,7 @@ export default async function routesDashboard(fastify: FastifyInstance) {
     return { status: 'ok', friends };
   }
 );
+
 
 
 }

@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref } from "./dashboard.schema"
-import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler } from './dashboard.controller';
+import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler } from './dashboard.controller';
 
 export async function dashboardRoutes(app: FastifyInstance) {
     // for testing
@@ -20,6 +20,20 @@ export async function dashboardRoutes(app: FastifyInstance) {
             },
         },
         fetchUserHandler
+    );
+
+     // fetch user by userId
+    app.get(
+        '/usersId/:userId',
+        {
+            schema: {
+                params: $ref('fetchUserByIdParams'),
+                response: {
+                    200: $ref('fetchUserResponse'),
+                },
+            },
+        },
+        fetchUserByIdHandler
     );
 
     // search users by prefix 
