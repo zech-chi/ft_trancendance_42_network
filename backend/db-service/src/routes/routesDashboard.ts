@@ -181,4 +181,28 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         }
     });
 
+
+    // same logic to unblock a user
+    fastify.put('/friends/unblock', async (request: FastifyRequest<{ Body: { sender_id: string; receiver_id: string } }>, reply: FastifyReply) => {
+        const { sender_id, receiver_id } = request.body;
+        if (!sender_id || !receiver_id) {
+            return reply.code(400).send({ error: 'Missing sender_id or receiver_id' });
+        }
+        try {
+            const stmt = db.prepare(`
+                UPDATE Friends
+                SET status = 'accepted', blocked_by = NULL
+                WHERE (blocked_by = ? AND ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)))
+                  AND status = 'blocked';
+            `);
+            const result = stmt.run(sender_id, sender_id, receiver_id, receiver_id, sender_id);
+            if (result.changes === 0) {
+                return reply.code(404).send({ error: 'No blocked friendship found to unblock' });
+            }
+            return reply.send({ message: 'User unblocked successfully' });
+        } catch (err) {
+            return reply.code(400).send({ error: '❌ Error running query' });
+        }
+    });
+
 }

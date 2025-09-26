@@ -232,5 +232,33 @@ export async function friendAcceptHandler(
     }
 }
 
-// curl to test the friend accept endpoint
-// curl -X PUT http://localhost:5002/api/dashboard/friends/accept -H "Content-Type: application/json" -d '{"sender_id":6,"receiver_id":7}'
+
+// unblock friend handler
+export async function friendUnblockHandler(
+    request: FastifyRequest<{ Body: FriendParams }>,
+    reply: FastifyReply
+) {
+    const { sender_id, receiver_id } = request.body;
+
+    try {
+        const response = await fetch("http://localhost:5000/api/dashboard/friends/unblock", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ sender_id, receiver_id }),
+        });
+
+        if (!response.ok) {
+            reply.status(400).send({ message: "Failed to unblock friend" });
+            return { success: "ko" };
+        }
+
+        const data = await response.json();
+        return data || { success: "ok" };
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return { success: "ko" };
+    }
+}
