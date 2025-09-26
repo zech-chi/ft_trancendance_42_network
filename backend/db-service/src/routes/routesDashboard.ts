@@ -115,6 +115,36 @@ export default async function routesDashboard(fastify: FastifyInstance) {
 );
 
 
+
+    fastify.get('/friends/sentrequest/:userId', async (
+    request: FastifyRequest<{ Params: { userId: string }; Querystring: { status: string } }>,
+    reply: FastifyReply
+  ) => {
+    const { userId } = request.params;
+    const { status } = request.query;
+
+    console.log("request params: ", request.params);
+    console.log("request query: ", request.query);
+
+    let stmt;
+    let params: any[] = [];
+
+    if (status === 'pending') {
+      stmt = db.prepare(
+        `SELECT * FROM Friends WHERE sender_id = ? AND status = ?;`
+      );
+      params = [userId, status];
+    } else {
+      reply.status(400).send({ success: 'ko', message: 'Invalid status' });
+      return null;
+    }
+
+    const friends = stmt.all(...params);
+    return { status: 'ok', friends };
+  }
+);
+
+
     //    app.delete('/Friends/Reject', async (request, reply) => {
     //   const { user1, user2 } = request.body as { user1: string, user2: string };
     //   if (!user1 || !user2) {
