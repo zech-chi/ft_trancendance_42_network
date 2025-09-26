@@ -624,14 +624,14 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                     onClick = {
                         async () => {
                             try {
-                                const response = await fetch(`http://localhost:5000/Friends/Unblock/`, {
+                                const response = await fetch(`http://localhost:5002/api/dashboard/friends/unblock`, {
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
                                     body: JSON.stringify({
-                                        user1: friends.sender_id,
-                                        user2: friends.receiver_id,
+                                        sender_id: loggedUserId,
+                                        receiver_id: friends.sender_id === loggedUserId ? friends.receiver_id : friends.sender_id,
                                     }),
                                 });
                                 const data = await response.json();

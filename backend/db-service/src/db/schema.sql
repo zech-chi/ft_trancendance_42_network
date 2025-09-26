@@ -212,7 +212,7 @@ VALUES
 
 -- Update a specific relation between two users
 UPDATE Friends
-SET status = 'pending'
+SET status = 'blocked', blocked_by = 7
 WHERE sender_id = 6 AND receiver_id = 7;
 
 
