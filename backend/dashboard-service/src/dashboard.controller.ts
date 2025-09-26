@@ -296,3 +296,34 @@ export async function friendUnblockHandler(
         return { success: "ko" };
     }
 }
+
+
+// friend request handler
+export async function friendRequestHandler(
+    request: FastifyRequest<{ Body: FriendParams }>,
+    reply: FastifyReply
+) {
+    const { sender_id, receiver_id } = request.body;
+
+    try {
+        const response = await fetch("http://localhost:5000/api/dashboard/friends/requestfriend", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ sender_id, receiver_id }),
+        });
+
+        if (!response.ok) {
+            reply.status(400).send({ message: "Failed to send friend request" });
+            return { success: "ko" };
+        }
+
+        const data = await response.json();
+        return data || { success: "ok" };
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return { success: "ko" };
+    }
+}
