@@ -58,7 +58,7 @@ export const fetchFriends = async (userId: number | null, choice: string) => {
   if (status !== '')
       response = await fetch(`http://localhost:5002/api/dashboard/friends/${userId}?status=${status}`);
   else 
-      response = await fetch(`http://localhost:5002/SentRequestFriends/${userId}`);
+      response = await fetch(`http://localhost:5002/api/dashboard/friends/sentrequest/${userId}?status=pending`);
   if (!response.ok) {
   //   throw new Error('Failed to fetch games');
     console.log("Error");

@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS Friends (
     sender_id INTEGER NOT NULL,
     receiver_id INTEGER NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'blocked')),
-    blocked_by INTEGER,
+    blocked_by INTEGER DEFAULT NULL,
     UNIQUE(sender_id, receiver_id),
     FOREIGN KEY (sender_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (receiver_id) REFERENCES Users(id) ON DELETE CASCADE,
@@ -212,7 +212,7 @@ VALUES
 
 -- Update a specific relation between two users
 UPDATE Friends
-SET status = 'blocked', blocked_by = 7
+SET status = 'pending', blocked_by = NULL
 WHERE sender_id = 6 AND receiver_id = 7;
 
 

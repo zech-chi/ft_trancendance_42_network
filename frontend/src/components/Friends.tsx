@@ -500,14 +500,14 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                     onClick = {
                         async () => {
                             try {
-                                const response = await fetch(`http://localhost:5000/Friends/Delete/`, {
+                                const response = await fetch(`http://localhost:5002/api/dashboard/friends/reject`, {
                                     method: 'DELETE',
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
                                     body: JSON.stringify({
-                                        user1: friends.sender_id,
-                                        user2: friends.receiver_id,
+                                        sender_id: friends.sender_id,
+                                        receiver_id: friends.receiver_id,
                                     }),
                                 });
                                 const data = await response.json();
@@ -687,7 +687,7 @@ export function Friends({ choice }: { choice: FriendsChoice }): JSX.Element {
     return (
           <div className="m-3 px-4 py-2 space-y-2 custom-scrollbar
           ">
-                {friends.length > 0 ? (
+                {friends && friends.length > 0 ? (
                     friends.map((friend, index) =>
                     choice === 'friend request' ? (
                         <DisplayFriendsRequest friends={friend} changeComponent={changeComponent} setChangeComponent={setChangeComponent}  key={index} />
