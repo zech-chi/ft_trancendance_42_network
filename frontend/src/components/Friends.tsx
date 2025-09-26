@@ -7,6 +7,7 @@ import { fetchUser, fetchFriends, fetchUserById } from '@/app/lib/apiDashboard';
 import Cookies from 'js-cookie';
 import {useLoggedUserName} from '@/context/LoggedUserNameContext';
 import { useLoggedUserId } from '@/context/UserIdContext';
+import { send } from 'process';
 
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
@@ -338,14 +339,14 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     onClick = {
                     async () => {
                         try {
-                            const response = await fetch(`http://localhost:5000/Friends/Reject/`, {
+                            const response = await fetch(`http://localhost:5002/api/dashboard/friends/reject`, {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    user1: friends.sender_id,
-                                    user2: friends.receiver_id,
+                                    sender_id: friends.sender_id,
+                                    receiver_id: friends.receiver_id,
                                 }),
                             });
                             const data = await response.json();
@@ -377,14 +378,14 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     onClick = {
                     async () => {
                         try {
-                            const response = await fetch(`http://localhost:5000/Friends/Accept/`, {
+                            const response = await fetch(`http://localhost:5002/api/dashboard/friends/accept`, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    user1: friends.sender_id,
-                                    user2: friends.receiver_id,
+                                    sender_id: friends.sender_id,
+                                    receiver_id: friends.receiver_id,
                                 }),
                             });
                             const data = await response.json();

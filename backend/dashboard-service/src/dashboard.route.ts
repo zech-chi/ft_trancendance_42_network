@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref } from "./dashboard.schema"
-import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler } from './dashboard.controller';
+import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler } from './dashboard.controller';
 
 export async function dashboardRoutes(app: FastifyInstance) {
     // for testing
@@ -79,6 +79,29 @@ export async function dashboardRoutes(app: FastifyInstance) {
         },
         // handler function to be implemented
         fetchFriendsByStatusHandler
+    );
+
+
+    // reject friend request
+    app.delete(
+        '/friends/reject',
+        {
+            schema: {
+                body: $ref('friendParams'),
+            },
+        },
+        friendRejectHandler
+    );
+
+    // accept friend request
+    app.put(
+        '/friends/accept',
+        {
+            schema: {
+                body: $ref('friendParams'),
+            },
+        },
+        friendAcceptHandler
     );
 }
 

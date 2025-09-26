@@ -115,5 +115,70 @@ export default async function routesDashboard(fastify: FastifyInstance) {
 );
 
 
+    //    app.delete('/Friends/Reject', async (request, reply) => {
+    //   const { user1, user2 } = request.body as { user1: string, user2: string };
+    //   if (!user1 || !user2) {
+    //     return reply.code(400).send({ error: 'Missing user1 or user2' });
+    //   }
+    //   try {
+    //     const rows = await dbGetAsyncAll(`
+    //       DELETE FROM Friends
+    //       WHERE status = 'pending'
+    //         AND (
+    //           (sender_userName = ? AND receiver_userName = ?)
+    //       OR (sender_userName = ? AND receiver_userName = ?)
+    //       );
+    //     `, [user1, user2, user2, user1]);
+    //     return reply.send({ message: 'Friend request rejected' });
+    //   } catch (err) {
+    //     return reply.code(400).send({ error: '❌ Error running query' });
+    //   }
+    // }
+    // );
+
+        // delete friend request or friendship using the db same logic just in this case use fastify.delete in body
+    fastify.delete('/friends/reject', async (request: FastifyRequest<{ Body: { sender_id: string; receiver_id: string } }>, reply: FastifyReply) => {
+        const { sender_id, receiver_id } = request.body;
+        if (!sender_id || !receiver_id) {
+            return reply.code(400).send({ error: 'Missing sender_id or receiver_id' });
+        }
+        try {
+            const stmt = db.prepare(`
+                DELETE FROM Friends
+                WHERE (sender_id = ? AND receiver_id = ?)
+                   OR (sender_id = ? AND receiver_id = ?);
+            `);
+            const result = stmt.run(sender_id, receiver_id, receiver_id, sender_id);
+            if (result.changes === 0) {
+                return reply.code(404).send({ error: 'No friendship or request found to delete' });
+            }
+            return reply.send({ message: 'Friendship or friend request deleted successfully' });
+        } catch (err) {
+            return reply.code(400).send({ error: '❌ Error running query' });
+        }
+    });
+
+
+    // same logic accept friend request
+    fastify.put('/friends/accept', async (request: FastifyRequest<{ Body: { sender_id: string; receiver_id: string } }>, reply: FastifyReply) => {
+        const { sender_id, receiver_id } = request.body;
+        if (!sender_id || !receiver_id) {
+            return reply.code(400).send({ error: 'Missing sender_id or receiver_id' });
+        }
+        try {
+            const stmt = db.prepare(`
+                UPDATE Friends
+                SET status = 'accepted'
+                WHERE sender_id = ? AND receiver_id = ? AND status = 'pending';
+            `);
+            const result = stmt.run(sender_id, receiver_id);
+            if (result.changes === 0) {
+                return reply.code(404).send({ error: 'No pending friend request found to accept' });
+            }
+            return reply.send({ message: 'Friend request accepted successfully' });
+        } catch (err) {
+            return reply.code(400).send({ error: '❌ Error running query' });
+        }
+    });
 
 }

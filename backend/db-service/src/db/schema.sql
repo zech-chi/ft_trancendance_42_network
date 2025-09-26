@@ -206,7 +206,16 @@ VALUES
 (1, 2, 'accepted'),
 (1, 3, 'accepted'),
 (1, 4, 'pending'),
-(2, 5, 'blocked');
+(2, 5, 'blocked'),
+(6, 7, 'accepted');
+
+
+-- Update a specific relation between two users
+UPDATE Friends
+SET status = 'pending'
+WHERE sender_id = 6 AND receiver_id = 7;
+
+
 
 INSERT OR REPLACE INTO RadarData 
 (userId, Quick_Reflexes, Strategic_Thinking, Precision_Shots, Pattern_Recognition, Anticipating_Moves, Board_Control, Adaptive_Playstyle, Risk_Management, Mind_Games)

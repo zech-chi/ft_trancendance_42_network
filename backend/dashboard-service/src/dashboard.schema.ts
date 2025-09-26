@@ -113,6 +113,15 @@ export type fetchFriendsResponse = z.infer<typeof fetchFriendsResponse>;
 export type fetchFriendsQuery = z.infer<typeof fetchFriendsQuery>;
 
 
+// friend parameters
+const friendParams = z.object({
+    sender_id: z.number(),
+    receiver_id: z.number(),
+});
+
+export type FriendParams = z.infer<typeof friendParams>;
+
+
 
 // build and export the json schemas
 const { schemas, $ref } = buildJsonSchemas({
@@ -126,6 +135,7 @@ const { schemas, $ref } = buildJsonSchemas({
     fetchFriendsResponse,
     fetchFriendsQuery,
     fetchUserByIdParams,
+    friendParams,
 });
 
 export const dashboardSchemas = { schemas, $ref };

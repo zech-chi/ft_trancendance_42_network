@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { dashboardSchemas, FetchUserByIdParams, FetchUserParams, FetchUserResponse, RadarStatsParams } from "./dashboard.schema"
+import { dashboardSchemas, FetchUserByIdParams, FetchUserParams, FetchUserResponse, FriendParams, RadarStatsParams } from "./dashboard.schema"
 import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
 
@@ -170,3 +170,67 @@ export async function fetchFriendsByStatusHandler(
         return { friends: [] };
     }
 }
+
+// friend request handler
+export async function friendRejectHandler(
+    request: FastifyRequest<{ Body: FriendParams }>,
+    reply: FastifyReply
+) {
+    const { sender_id, receiver_id } = request.body;
+
+    try {
+        const response = await fetch("http://localhost:5000/api/dashboard/friends/reject", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ sender_id, receiver_id }),
+        });
+
+        if (!response.ok) {
+            reply.status(400).send({ message: "Failed to reject friend request" });
+            return { success: "ko" };
+        }
+
+        const data = await response.json();
+        return data || { success: "ok" };
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return { success: "ko" };
+    }
+}
+
+
+// accept friend request handler
+export async function friendAcceptHandler(
+    request: FastifyRequest<{ Body: FriendParams }>,
+    reply: FastifyReply
+) {
+    const { sender_id, receiver_id } = request.body;
+
+    try {
+        const response = await fetch("http://localhost:5000/api/dashboard/friends/accept", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ sender_id, receiver_id }),
+        });
+
+        if (!response.ok) {
+            reply.status(400).send({ message: "Failed to accept friend request" });
+            return { success: "ko" };
+        }
+
+        const data = await response.json();
+        return data || { success: "ok" };
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return { success: "ko" };
+    }
+}
+
+// curl to test the friend accept endpoint
+// curl -X PUT http://localhost:5002/api/dashboard/friends/accept -H "Content-Type: application/json" -d '{"sender_id":6,"receiver_id":7}'
