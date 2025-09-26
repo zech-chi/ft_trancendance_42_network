@@ -216,6 +216,11 @@ SET status = 'pending', blocked_by = NULL
 WHERE sender_id = 6 AND receiver_id = 7;
 
 
+DELETE FROM Friends
+WHERE (sender_id = 6 AND receiver_id = 7)
+   OR (sender_id = 7 AND receiver_id = 6);
+
+
 
 INSERT OR REPLACE INTO RadarData 
 (userId, Quick_Reflexes, Strategic_Thinking, Precision_Shots, Pattern_Recognition, Anticipating_Moves, Board_Control, Adaptive_Playstyle, Risk_Management, Mind_Games)

@@ -235,4 +235,37 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         }
     });
 
+
+    // sent friend request
+    fastify.post('/friends/requestfriend', async (request: FastifyRequest<{ Body: { sender_id: string; receiver_id: string } }>, reply: FastifyReply) => {
+        const { sender_id, receiver_id } = request.body;
+        if (!sender_id || !receiver_id) {
+            return reply.code(400).send({ error: 'Missing sender_id or receiver_id' });
+        }
+        if (sender_id === receiver_id) {
+            return reply.code(400).send({ error: 'Cannot send friend request to yourself' });
+        }
+        try {
+            // Check if a friendship or request already exists
+            const checkStmt = db.prepare(`
+                SELECT * FROM Friends
+                WHERE (sender_id = ? AND receiver_id = ?)
+                   OR (sender_id = ? AND receiver_id = ?);
+            `);
+            const existing = checkStmt.get(sender_id, receiver_id, receiver_id, sender_id);
+            if (existing) {
+                return reply.code(400).send({ error: 'Friendship or request already exists' });
+            }
+
+            const insertStmt = db.prepare(`
+                INSERT INTO Friends (sender_id, receiver_id, status)
+                VALUES (?, ?, 'pending');
+            `);
+            insertStmt.run(sender_id, receiver_id);
+            return reply.send({ message: 'Friend request sent successfully' });
+        } catch (err) {
+            return reply.code(400).send({ error: '❌ Error running query' });
+        }
+    });
+
 }

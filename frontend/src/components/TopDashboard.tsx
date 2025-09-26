@@ -4,10 +4,12 @@ import { useEffect } from "react";
 import { fetchUser } from "@/app/lib/apiDashboard";
 import { motion } from 'framer-motion';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+import { useLoggedUserId } from "@/context/UserIdContext";
 
 const TOTAL_USERS = 133742;
 
 interface User {
+  id: number;
   fullName: string;
   userName: string;
   bio: string;
@@ -131,14 +133,41 @@ function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
   }
 
 export function TopDashboard(): JSX.Element {
-    const { selectedUserName, setSelectedUserName } = useSelectedUserName();
+    const { loggedUserId } = useLoggedUserId();
+    const { selectedUserName } = useSelectedUserName();
     const [user, setUser] = useState<User | null> (null);
 
 
 
-    // const handleSentRequestFriend = () => {
-    //     alert('Feature coming soon!');
-    // };
+    const handleSentRequestFriend = () => {
+        // fetch user id by user name
+        if (!user || !loggedUserId) return;
+
+        const sendFriendRequest = async () => {
+            try {
+               const response = await fetch(`http://localhost:5002/api/dashboard/friends/requestfriend`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sender_id: loggedUserId,
+                        receiver_id: user.id,
+                    }),
+                });
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log(data);
+            } catch (error) {
+                console.error("Error sending friend request:", error);
+                // should use  state do display the error for the loged user
+            }
+        };
+
+        sendFriendRequest();
+    };
 
     useEffect(() => {
         if (selectedUserName) {
@@ -170,9 +199,9 @@ export function TopDashboard(): JSX.Element {
                         <div className="flex justify-between ml-2">
                             <ProfileInfo fullName={user.fullName} userName={user.userName} bio={user.bio}/>
                             {/* add send friend request button */}
-                            {/* <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold px-5 py-2 rounded-full shadow-md hover:from-indigo-600 hover:to-blue-500 hover:scale-105 transition-transform duration-200 ease-in-out"
-                            onClick={handleSentRequestFriend} */}
-                            {/* >✨ Send Friend Request</button> */}
+                            <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold px-5 py-2 rounded-full shadow-md hover:from-indigo-600 hover:to-blue-500 hover:scale-105 transition-transform duration-200 ease-in-out"
+                            onClick={handleSentRequestFriend}
+                            >✨ Send Friend Request</button>
                             <DisplayRank
                             level={user.level}
                             progress={user.progress}
