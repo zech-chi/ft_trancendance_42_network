@@ -134,6 +134,12 @@ export function TopDashboard(): JSX.Element {
     const { selectedUserName, setSelectedUserName } = useSelectedUserName();
     const [user, setUser] = useState<User | null> (null);
 
+
+
+    // const handleSentRequestFriend = () => {
+    //     alert('Feature coming soon!');
+    // };
+
     useEffect(() => {
         if (selectedUserName) {
             setTimeout(() => {
@@ -163,6 +169,10 @@ export function TopDashboard(): JSX.Element {
                     <div className="flex flex-col h-full gap-2 flex-1">
                         <div className="flex justify-between ml-2">
                             <ProfileInfo fullName={user.fullName} userName={user.userName} bio={user.bio}/>
+                            {/* add send friend request button */}
+                            {/* <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold px-5 py-2 rounded-full shadow-md hover:from-indigo-600 hover:to-blue-500 hover:scale-105 transition-transform duration-200 ease-in-out"
+                            onClick={handleSentRequestFriend} */}
+                            {/* >✨ Send Friend Request</button> */}
                             <DisplayRank
                             level={user.level}
                             progress={user.progress}
