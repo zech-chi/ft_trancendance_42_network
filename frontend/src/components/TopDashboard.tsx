@@ -199,9 +199,15 @@ export function TopDashboard(): JSX.Element {
                         <div className="flex justify-between ml-2">
                             <ProfileInfo fullName={user.fullName} userName={user.userName} bio={user.bio}/>
                             {/* add send friend request button */}
-                            <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold px-5 py-2 rounded-full shadow-md hover:from-indigo-600 hover:to-blue-500 hover:scale-105 transition-transform duration-200 ease-in-out"
-                            onClick={handleSentRequestFriend}
-                            >✨ Send Friend Request</button>
+                            <button 
+                className={`bg-gradient-to-r from-blue-500 to-indigo-600 text-white max-h-[50px] min-w-[50px] rounded-full shadow-lg hover:from-indigo-600 hover:to-blue-500 hover:scale-105 hover:shadow-xl transform transition-all duration-200 ease-in-out flex items-center gap-1 justify-center
+                }`}
+                onClick={handleSentRequestFriend} >
+  
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                        </svg>
+                      </button>
                             <DisplayRank
                             level={user.level}
                             progress={user.progress}
