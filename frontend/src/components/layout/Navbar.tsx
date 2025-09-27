@@ -9,6 +9,7 @@ import { useLoggedUserName } from '@/context/LoggedUserNameContext';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 
 import { useRef } from "react";
+import { useSelectedUserId } from '@/context/SelectedUserId';
 
 function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
 	const [ userProfile, setUserProfile ] = useState<string | null>(null);
@@ -137,6 +138,7 @@ interface UserSearch {
 function SearchForm(): JSX.Element {
 
   const { setSelectedUserName } = useSelectedUserName();
+  const { setSelectedUserId } = useSelectedUserId();
   const [inputValue, setInputValue] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<UserSearch[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -249,6 +251,7 @@ function SearchForm(): JSX.Element {
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                   onClick={() => {
                     setSelectedUserName(user.userName);
+                    setSelectedUserId(user.id);
                     setInputValue("");
                     setShowDropdown(false);
                   }}

@@ -1,12 +1,24 @@
 
-export function FriendsStats() {
-    const data = {"totalGamesWithAi":974,"gamesWithAiEasy":53,"gamesWithAiMedium":451,"gamesWithAiHard":470,"totalWins":747,"easyWins":50,"mediumWins":408,"hardWins":289,"friendsWins":617,"friendsLosses":235,"friendsTotalGames":852}
-    const wins = data.friendsWins;
-    const losses = data.friendsLosses;
-    const totalGames = data.friendsTotalGames;
+import { GameStats } from "./Statistics"
 
-    const angleWins = (wins / totalGames) * 340;
-    const angleLosses = (losses / totalGames) * 340;
+export function FriendsStats({ data }: {data: GameStats}) {
+    // const data: GameStats = {"totalGamesWithAi":974,"gamesWithAiEasy":53,"gamesWithAiMedium":451,"gamesWithAiHard":470,"totalWins":747,"easyWins":50,"mediumWins":408,"hardWins":289,"friendsWins":617,"friendsLosses":235,"friendsTotalGames":852}
+    let wins = data.friendsWins;
+    let losses = data.friendsLosses;
+    let totalGames = data.friendsTotalGames;
+
+
+    let angleWins;
+    let angleLosses;
+
+    if (wins === 0 && losses === 0 && totalGames === 0) {
+        angleWins = (1 / 2) * 340;
+        angleLosses = (1 / 2) * 340;
+    }
+    else {
+        angleWins = (wins / totalGames) * 340;
+        angleLosses = (losses / totalGames) * 340;
+    }
 
     const radius = 90;
     const circumference = 2 * Math.PI * radius;

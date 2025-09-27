@@ -20,8 +20,9 @@ import { SelectedChoiceFriends } from "@/components/Friends";
 import { fetchUser } from "../(auth)/login/page";
 import { useRouter } from "next/navigation";
 import Statistics from "@/components/Statistics";
+import { useSelectedUserId } from "@/context/SelectedUserId";
 
-type GameName = 'pong' | 'parchesi';
+type GameName = 'pong' | 'parcheesi';
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
 function SearchForm(): JSX.Element {
@@ -180,6 +181,7 @@ export default function Home() : JSX.Element {
 	// }
 	const { loggedUserName, setLoggedUserName } = useLoggedUserName();
 	const { selectedUserName, setSelectedUserName } = useSelectedUserName();
+	const { selectedUserId, setSelectedUserId } = useSelectedUserId();
 	const { loggedUserId, setLoggedUserId } = useLoggedUserId();
 	const [showRightComp, setShowRightComp] = useState<boolean>(false);
 	const [loading, setLoading] = useState(true);
@@ -193,11 +195,13 @@ export default function Home() : JSX.Element {
 			setLoggedUserName(null);
 			setSelectedUserName(null);
 			setLoggedUserId(0);
+			setSelectedUserId(0);
 			router.push("/login");
 		} else {
 			setLoggedUserName(user.userName);
 			setSelectedUserName(user.userName);
 			setLoggedUserId(user.id);
+			setSelectedUserId(user.id);
 		}
 		setLoading(false);
 	  }

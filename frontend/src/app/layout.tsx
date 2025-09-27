@@ -2,6 +2,7 @@
 // import type { Metadata } from 'next';
 import './globals.css';
 import { LoggedUserNameProvider } from '@/context/LoggedUserNameContext';
+import { SelectedUserIdProvider } from '@/context/SelectedUserId';
 import { SelectedUserNameProvider } from '@/context/SelectedUserNameContext';
 import { LoggedUserIdProvider } from '@/context/UserIdContext';
 
@@ -26,7 +27,8 @@ export default function RootLayout({
         <LoggedUserNameProvider>
 
           <SelectedUserNameProvider>
-
+            <SelectedUserIdProvider>
+              
             <LoggedUserIdProvider>
 
             <main className="relative bg-cover bg-center bg-no-repeat"
@@ -36,6 +38,8 @@ export default function RootLayout({
             </main>
 
           </LoggedUserIdProvider>
+
+            </SelectedUserIdProvider>
 
           </SelectedUserNameProvider>
           

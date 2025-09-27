@@ -327,3 +327,36 @@ export async function friendRequestHandler(
         return { success: "ko" };
     }
 }
+
+
+// fetch charts data handler
+export async function fetchChartsDataHandler(
+    request: FastifyRequest<{ Params: { userId: string }; Querystring: { game: string } }>,
+    reply: FastifyReply
+) {
+    const { userId } = request.params;
+    const { game } = request.query;
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/dashboard/chartsdata/${userId}?game=${encodeURIComponent(game)}`);
+        
+        if (!response.ok) {
+            reply.status(404).send({ message: "Charts data not found" });
+            return null;
+        }
+
+        const data = await response.json();
+        console.log("data from db service: ", data);
+
+        if (data.status === "ko") {
+            reply.status(404).send({ message: "Charts data not found" });
+            return null;
+        }
+
+        return data || null;
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return null;
+    }
+}
