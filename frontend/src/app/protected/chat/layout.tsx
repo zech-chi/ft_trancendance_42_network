@@ -1,7 +1,7 @@
 // layout chat 
 import { SocketProvider } from "./context/SocketContext";
 import { Metadata } from "next";
-import {UserProvider} from "./context/UserContext";
+// import {UserProvider} from "./context/UserContext";
 import { AudioPlayerProvider } from "./context/AudioPlayerContext";
 
 
@@ -20,7 +20,7 @@ export default async function ChatLayout({
 
   return (
     <>
-    <UserProvider>
+    {/* <UserProvider> */}
         <SocketProvider>
             <AudioPlayerProvider>
 
@@ -28,7 +28,7 @@ export default async function ChatLayout({
             </AudioPlayerProvider>
         </SocketProvider>
 
-    </UserProvider>
+    {/* </UserProvider> */}
     </>
   );
 }
