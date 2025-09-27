@@ -8,10 +8,11 @@ import { ApiRoutes } from "../utils/ApiRoutes";
 import { ImageLightbox } from "./ImageLightbox";
 import { ConfirmationBlock } from "./ConfirmationBlock"; // Import the confirmation block component
 import { useSocket } from "../context/SocketContext";
-import { useUser } from "../context/UserContext";
+// import { useUser } from "../context/UserContext";
 import ChatInput from "./ChatInput";
 import HeaderContact from "./HeaderContact";
 import Messages from "./Messages";
+import { useLoggedUserId } from "@/context/UserIdContext";
 
 
 // this componenent will be rendring when no contact is selected
@@ -74,7 +75,9 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
 
 
   // to remove
-  const { userId } = useUser() as { userId: number | null };
+  // const { userId } = useUser() as { userId: number | null };
+  // const { loggedUserId: userId , setLoggedUserId } = useLoggedUserId();
+  
   //  const {
   //   localStream,
   //   remoteStream,
@@ -379,7 +382,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const response = await fetch(`${ApiRoutes.sendFile}/${userId}/${contact.id}`, { 
+      const response = await fetch(`${ApiRoutes.sendFile}/${currentUserId}/${contact.id}`, { 
         method: "POST",
         body: formData,
       });
@@ -482,7 +485,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
       return ;
     }
     // Logic to block the user goes here
-    console.log(`Blocking action from : ${userId} -> ${contact.id}`);
+    console.log(`Blocking action from : ${currentUserId} -> ${contact.id}`);
     // Close the confirmation block after blocking
     try {
       const response = await fetch(ApiRoutes.blockUser, {
