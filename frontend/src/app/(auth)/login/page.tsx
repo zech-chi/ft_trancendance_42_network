@@ -88,7 +88,7 @@ export default function LoginPage() {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
-        Loading...
+        Loading... 1
       </div>
     );
   }

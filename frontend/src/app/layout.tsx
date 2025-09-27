@@ -1,5 +1,6 @@
 // src/app/layout.tsx
 // import type { Metadata } from 'next';
+import { AuthUserProvider } from '@/context/AuthUserContext';
 import './globals.css';
 import { LoggedUserNameProvider } from '@/context/LoggedUserNameContext';
 import { SelectedUserIdProvider } from '@/context/SelectedUserId';
@@ -30,6 +31,7 @@ export default function RootLayout({
             <SelectedUserIdProvider>
               
             <LoggedUserIdProvider>
+        {/* <AuthUserProvider> */}
 
             <main className="relative bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url('${BG_URL}')` }}
@@ -37,6 +39,7 @@ export default function RootLayout({
               {children} {/* This renders the content of your page.tsx files */}
             </main>
 
+        {/* </AuthUserProvider> */}
           </LoggedUserIdProvider>
 
             </SelectedUserIdProvider>

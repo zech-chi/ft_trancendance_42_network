@@ -1,4 +1,14 @@
+
+# ignore node_modules
 node_modules/
+
+# ignore uploaded files
+uploads/
+# ignore build artifacts
 dist/
+# ignore environment variables
 .env
-.DS_Store
+# ignore logs
+logs/
+# ignore coverage reports
+coverage/

@@ -183,7 +183,7 @@ export function TopDashboard(): JSX.Element {
     , [selectedUserName]);
 
     if (!user) {
-        return <div className="text-white">Loading...</div>;
+        return <div className="text-white">Loading...4</div>;
     }
 
     return (
