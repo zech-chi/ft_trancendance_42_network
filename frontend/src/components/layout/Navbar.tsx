@@ -240,7 +240,7 @@ function SearchForm(): JSX.Element {
               padding: "8px 0"
             }}>
             {isLoading ? (
-              <li className="px-4 py-2 text-sm" style={{ color: "#D7D7D7" }}>Loading...</li>
+              <li className="px-4 py-2 text-sm" style={{ color: "#D7D7D7" }}>Loading...5</li>
             ) : filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <li

@@ -93,7 +93,7 @@ export default function Statistics() {
     }, [game, selectedUserId]); // refetch data when game changes
 
     if (!data) {
-        return <div>Loading...</div>;
+        return <div>Loading...3</div>;
     }
 
     return (

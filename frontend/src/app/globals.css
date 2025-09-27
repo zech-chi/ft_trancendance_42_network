@@ -1,4 +1,4 @@
-@import "tailwindcss";
+/* @import "tailwindcss";
 
 :root {
   --background: #ffffff;
@@ -23,4 +23,214 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+} */
+
+@import "tailwindcss";
+
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* @theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+} */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  /* background: var(--background);
+  color: var(--foreground); */
+  background-image: url('/assets/bg.jpg');
+  font-family: Arial, Helvetica, sans-serif;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.settings-bg {
+  background-image: url('/assets/bgImg.jpg');
+  /* background-size: cover;
+  background-position: center; */
+  opacity: 0.80;
+}
+
+
+/* picker */
+
+.epr-main {
+  background-color: rgba(0,0,0,0.3) !important;
+  border-radius: 12px !important;
+  /* background-image: url('../assets/bgImg.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important; */
+  /* backdrop-filter: blur(10px) !important; */
+}
+
+.epr-search-container {
+  /* background-color: #a72b2b !important; dark background */
+  color: #fff !important;            /* white text */
+  border-radius: 8px !important;
+  border: 1px solid #070505 !important;
+}
+
+.epr-search-container:focus {
+  outline: none;
+}
+
+.epr-search-container input {
+  background-color: rgba(0,0,0,0.3) !important;
+  border: none;
+}
+
+.epr-search-container input:focus {
+  outline: none;
+  border: 1px solid gray;
+}
+
+/* Optional: style placeholder */
+.epr-search-input::placeholder {
+  color: #bbb !important;
+}
+
+.epr-emoji-category h2 {
+  background-color: rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px) !important;
+}
+
+
+
+/* chat  */
+.sent-bubble::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 0;
+  transform: translateX(100%);
+  width: 0;
+  height: 0;
+  border-top: 3px solid transparent;
+  border-left: 10px solid #e45f73;
+  border-bottom: 7px solid transparent;
+}
+
+.received-bubble::before {
+  content: "";
+  position: absolute;
+  top: 70%;
+  left: 0;
+  transform: translateX(-100%);
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-right: 10px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 3px solid transparent;
+}
+
+
+/* scrollbar chat */
+.scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox */
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+/* animation error chat */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s ease-out forwards;
+}
+/* animation error chat */
+
+
+/* animation for loader sending file */
+/* --- Animation for the three dots --- */
+.animated-dots span {
+  animation-name: blink;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+/* Add a delay for each subsequent dot */
+.animated-dots span:nth-of-type(2) {
+  animation-delay: 0.2s;
+}
+
+.animated-dots span:nth-of-type(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0% {
+    opacity: .2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: .2;
+  }
+}
+
+/* styling audio tag */
+audio::-webkit-media-controls-panel{
+  background-color: rgba(88, 65, 19, 0.7);
+}
+audio::-webkit-media-controls-play-button{
+  background-color: rgb(229, 239, 147);
+  border-radius: 50%;
+}
+audio::-webkit-media-controls-current-time-display{
+  color:#333;
+}
+audio::-webkit-media-controls-time-remaining-display{
+  color: #333;
+}
+audio::-webkit-media-controls-timeline{
+  border-radius: 40px;
+  background-color: rgba(188, 163, 163, 0.7);
+}
+audio::-webkit-media-controls-volume-slider{
+  background-color: rgba(229, 205, 205, 0.7);
+  border-radius: 50px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+audio::-webkit-media-controls-mute-button{
+  background-color: rgba(182, 143, 143, 0.7);
+  border-radius: 50%;
 }

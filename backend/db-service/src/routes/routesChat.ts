@@ -47,7 +47,7 @@ export default async function routesChat(fastify: FastifyInstance) {
     //     AND status = 'accepted'
         const stmt =  db.prepare(`
             SELECT * FROM friends
-            WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?))
+            WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND status = 'accepted'
         `);
 
         const friendship = stmt.get(userId1, userId2, userId2, userId1);
@@ -99,7 +99,7 @@ export default async function routesChat(fastify: FastifyInstance) {
         const { from, to } = request.body as { from: string, to: string };
         const stmt = db.prepare(`Update friends
             SET status = 'blocked', blocked_by = ?
-            WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)
+            WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
         `);
         try {
             const info = stmt.run(from, from, to, to, from);
@@ -119,7 +119,7 @@ export default async function routesChat(fastify: FastifyInstance) {
         const { from, to } = request.body as { from: string, to: string };
         const stmt = db.prepare(`
             SELECT * FROM friends
-            WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?))
+            WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?))
             AND status = 'blocked'
             AND blocked_by = ?
         `);
@@ -136,7 +136,7 @@ export default async function routesChat(fastify: FastifyInstance) {
         const { from, to } = request.body as { from: string, to: string };
         const stmt = db.prepare(`Update friends
             SET status = 'accepted', blocked_by = NULL
-            WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)
+            WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
         `);
         try {
             const info = stmt.run(from, to, to, from);
@@ -203,11 +203,11 @@ export default async function routesChat(fastify: FastifyInstance) {
         const sql = `
         -- Step 1: Same as before, but corrected to use 'accepted' and 'blocked' for message searching
         WITH UserRelationships AS (
-          SELECT friend_id AS contact_id, status, blocked_by, user_id as initiator FROM friends
-          WHERE user_id = ? AND status IN ('accepted', 'blocked', 'pending')
+          SELECT receiver_id AS contact_id, status, blocked_by, sender_id as initiator FROM friends
+          WHERE sender_id = ? AND status IN ('accepted', 'blocked')
           UNION
-          SELECT user_id AS contact_id, status, blocked_by, user_id as initiator FROM friends
-          WHERE friend_id = ? AND status IN ('accepted', 'blocked', 'pending')
+          SELECT sender_id AS contact_id, status, blocked_by, sender_id as initiator FROM friends
+          WHERE receiver_id = ? AND status IN ('accepted', 'blocked')
         ),
         
         -- Step 2: Same as before
@@ -228,9 +228,9 @@ export default async function routesChat(fastify: FastifyInstance) {
         -- Step 3: Combine everything with the simplified JOIN
         SELECT
           u.id,
-          u.name,
-          u.username,
-          u.avatar,
+          u.fullName,
+          u.userName,
+          u.imageUrl,
           u.online,
           u.last_seen AS lastSeen,
           ur.status,
