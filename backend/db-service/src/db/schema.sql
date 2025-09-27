@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS Games (
     user2_score INTEGER NOT NULL DEFAULT 0,
     user1_win INTEGER NOT NULL DEFAULT 0, -- 1 if user1 wins, 0 otherwise
     date_played DATETIME DEFAULT CURRENT_TIMESTAMP,
-    game_type TEXT NOT NULL DEFAULT 'pong' CHECK (game_type IN ('pong', 'parchesi')),
+    game_type TEXT NOT NULL DEFAULT 'pong' CHECK (game_type IN ('pong', 'parcheesi')),
     FOREIGN KEY (user1) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (user2) REFERENCES Users(id) ON DELETE CASCADE
 );
@@ -206,19 +206,19 @@ VALUES
 (1, 2, 'accepted'),
 (1, 3, 'accepted'),
 (1, 4, 'pending'),
-(2, 5, 'blocked'),
-(6, 7, 'accepted');
+(2, 5, 'blocked');
+-- (6, 7, 'accepted');
 
 
 -- Update a specific relation between two users
-UPDATE Friends
-SET status = 'pending', blocked_by = NULL
-WHERE sender_id = 6 AND receiver_id = 7;
+-- UPDATE Friends
+-- SET status = 'pending', blocked_by = NULL
+-- WHERE sender_id = 6 AND receiver_id = 7;
 
 
-DELETE FROM Friends
-WHERE (sender_id = 6 AND receiver_id = 7)
-   OR (sender_id = 7 AND receiver_id = 6);
+-- DELETE FROM Friends
+-- WHERE (sender_id = 6 AND receiver_id = 7)
+--    OR (sender_id = 7 AND receiver_id = 6);
 
 
 
@@ -235,10 +235,10 @@ VALUES
 INSERT OR IGNORE INTO ChartsData (userId, game, totalGamesWithAi, gamesWithAiEasy, gamesWithAiMedium, gamesWithAiHard, totalWins, easyWins, mediumWins, hardWins, friendsWins, friendsLosses, friendsTotalGames)
 VALUES
 (1, 'pong', 50, 20, 20, 10, 30, 10, 12, 8, 5, 3, 8),
-(2, 'parchesi', 40, 15, 15, 10, 18, 8, 6, 4, 7, 6, 13),
+(2, 'parcheesi', 40, 15, 15, 10, 18, 8, 6, 4, 7, 6, 13),
 (3, 'pong', 10, 5, 3, 2, 3, 1, 1, 1, 2, 5, 7),
 (4, 'pong', 100, 40, 35, 25, 60, 20, 25, 15, 30, 20, 50),
-(5, 'parchesi', 25, 10, 10, 5, 12, 6, 4, 2, 4, 7, 11);
+(5, 'parcheesi', 25, 10, 10, 5, 12, 6, 4, 2, 4, 7, 11);
 
 INSERT OR IGNORE INTO YearlyStats (userId, year, totalGames, totalActiveDays, maxStreak)
 VALUES
@@ -262,7 +262,7 @@ INSERT OR IGNORE INTO Games (user1, user2, user1_score, user2_score, user1_win, 
 VALUES
 (1, 2, 21, 18, 1, 'pong'),
 (2, 3, 20, 22, 0, 'pong'),
-(1, 4, 30, 25, 1, 'parchesi'),
+(1, 4, 30, 25, 1, 'parcheesi'),
 (5, 1, 15, 10, 0, 'pong');
 
 

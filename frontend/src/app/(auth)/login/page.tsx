@@ -7,6 +7,7 @@ import { useLoggedUserId } from "@/context/UserIdContext";
 import { useRouter } from "next/navigation"; 
 import Link from "next/link";
 import Image from "next/image";
+import { useSelectedUserId } from "@/context/SelectedUserId";
 
 export async function fetchUser() {
 	try {
@@ -31,6 +32,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { setLoggedUserName } = useLoggedUserName();
   const { setSelectedUserName } = useSelectedUserName();
+  const { setSelectedUserId } = useSelectedUserId();
   const { setLoggedUserId } = useLoggedUserId();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,6 +47,7 @@ export default function LoginPage() {
         // alert("Already logged in, redirecting to home page.");
         setLoggedUserName(user.userName);
         setSelectedUserName(user.userName);
+        setSelectedUserId(user.id);
         setLoggedUserId(user.id);
         router.push("/");
         return; 
@@ -70,6 +73,7 @@ export default function LoginPage() {
       if (res.ok) {
         setLoggedUserName(data.userName);
         setSelectedUserName(data.userName);
+        setSelectedUserId(data.id);
         setLoggedUserId(data.id);
         router.push("/");
       } else {

@@ -13,19 +13,19 @@ const navLinks = [
         activeIcon: '/HOME2.png'
     },
     { 
-        href: '/chat',
+        href: '/protected/chat',
         label: 'Chat',
         icon: '/CHAT.png',
         activeIcon: '/CHAT2.png'
     },
     { 
-        href: '/games',
+        href: '/protected/games',
         label: 'Games',
         icon: '/GAMES.png',
         activeIcon: '/GAMES2.png'
     },
     { 
-        href: '/settings',
+        href: '/protected/settings',
         label: 'Settings',
         icon: '/SETTINGS.png',
         activeIcon: '/SETTINGS2.png'

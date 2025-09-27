@@ -1,8 +1,9 @@
 'use client'
 import { motion } from 'framer-motion';
+import { GameStats } from './Statistics';
 
-export function AIStats() {
-    const data = {"totalGamesWithAi":974,"gamesWithAiEasy":53,"gamesWithAiMedium":451,"gamesWithAiHard":470,"totalWins":747,"easyWins":50,"mediumWins":408,"hardWins":289,"friendsWins":617,"friendsLosses":235,"friendsTotalGames":852}
+export function AIStats({ data }: {data: GameStats}) {
+    // const data = {"totalGamesWithAi":974,"gamesWithAiEasy":53,"gamesWithAiMedium":451,"gamesWithAiHard":470,"totalWins":747,"easyWins":50,"mediumWins":408,"hardWins":289,"friendsWins":617,"friendsLosses":235,"friendsTotalGames":852}
     const totalGamesWithAi = data.totalGamesWithAi;
     const gamesWithAiEasy = data.gamesWithAiEasy;
     const gamesWithAiMedium = data.gamesWithAiMedium;
@@ -18,9 +19,12 @@ export function AIStats() {
     const baseAngel = 90; // 90 degrees for each section
     const baseLength = (baseAngel / 360) * circumFerence;
 
-    const easyAngle = (easyWins / gamesWithAiEasy) * baseLength;
-    const mediumAngle = (mediumWins / gamesWithAiMedium) * baseLength;
-    const hardAngle = (hardWins / gamesWithAiHard) * baseLength;
+    // const easyAngle = (easyWins / gamesWithAiEasy) * baseLength;
+    // const mediumAngle = (mediumWins / gamesWithAiMedium) * baseLength;
+    // const hardAngle = (hardWins / gamesWithAiHard) * baseLength;
+    const easyAngle = gamesWithAiEasy === 0 ? 0 : (easyWins / gamesWithAiEasy) * baseLength;
+    const mediumAngle = gamesWithAiMedium === 0 ? 0 : (mediumWins / gamesWithAiMedium) * baseLength;
+    const hardAngle = gamesWithAiHard === 0 ? 0 : (hardWins / gamesWithAiHard) * baseLength;
 
     return (
         <div className="m-1 text-white rounded-2xl"

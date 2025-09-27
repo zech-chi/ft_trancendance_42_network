@@ -268,4 +268,22 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         }
     });
 
+
+
+    // get charts data for a game by userId and a query param game
+    fastify.get('/chartsdata/:userId', async (request: FastifyRequest<{ Params: { userId: string }; Querystring: { game: string } }>, reply: FastifyReply) => {
+        const { userId } = request.params;
+        const { game } = request.query;
+        if (!game) {
+            return reply.status(400).send({ success: "ko", message: "Missing game query parameter" });
+        }
+        const stmt = db.prepare("SELECT * FROM ChartsData WHERE userId = ? AND game = ?");
+        const stats = stmt.get(userId, game);
+        if (!stats) {
+            reply.status(404).send({ success: "ko", message: "No stats found for this user and game" });
+            return null;
+        }
+        return { status: "ok", stats: stats };
+    });
+
 }

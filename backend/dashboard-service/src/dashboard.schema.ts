@@ -123,6 +123,49 @@ export type FriendParams = z.infer<typeof friendParams>;
 
 
 
+// charts data shema request
+const chartsDataParams = z.object({
+    userId: z.number(),
+});
+
+// chart data shema query
+const chartsDataQuery = z.object({
+    game: z.enum(['pong', 'parcheesi']),
+});
+
+
+export type ChartsDataParams = z.infer<typeof chartsDataParams>;
+export type ChartsDataQuery = z.infer<typeof chartsDataQuery>;
+
+// response schema for charts data
+export const StatsSchema = z.object({
+  id: z.number().int(),
+  userId: z.number().int(),
+  game: z.string(),
+  totalGamesWithAi: z.number().int(),
+  gamesWithAiEasy: z.number().int(),
+  gamesWithAiMedium: z.number().int(),
+  gamesWithAiHard: z.number().int(),
+  totalWins: z.number().int(),
+  easyWins: z.number().int(),
+  mediumWins: z.number().int(),
+  hardWins: z.number().int(),
+  friendsWins: z.number().int(),
+  friendsLosses: z.number().int(),
+  friendsTotalGames: z.number().int(),
+});
+
+export const chartsDataResponse = z.object({
+  status: z.string(),
+  stats: StatsSchema,
+});
+
+// inferred TS types
+export type Stats = z.infer<typeof StatsSchema>;
+export type ChartsDataResponse = z.infer<typeof chartsDataResponse>;
+
+
+
 // build and export the json schemas
 const { schemas, $ref } = buildJsonSchemas({
    fetchUserParams,
@@ -136,6 +179,9 @@ const { schemas, $ref } = buildJsonSchemas({
     fetchFriendsQuery,
     fetchUserByIdParams,
     friendParams,
+    chartsDataParams,
+    chartsDataQuery,
+    chartsDataResponse,
 });
 
 export const dashboardSchemas = { schemas, $ref };

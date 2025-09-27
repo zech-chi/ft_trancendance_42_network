@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref } from "./dashboard.schema"
-import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler } from './dashboard.controller';
+import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler } from './dashboard.controller';
 
 export async function dashboardRoutes(app: FastifyInstance) {
     // for testing
@@ -139,6 +139,23 @@ export async function dashboardRoutes(app: FastifyInstance) {
             },
         },
         friendRequestHandler
+    );
+
+
+    // get charts data handler
+    app.get(
+        '/chartsdata/:userId',
+        {
+            schema: {
+                params: $ref('chartsDataParams'),
+                querystring: $ref('chartsDataQuery'),
+                response: {
+                    200: $ref('chartsDataResponse'),
+                },
+            },
+        },
+        // handler function to be implemented
+        fetchChartsDataHandler
     );
 }
 
