@@ -202,13 +202,13 @@ function Chat() {
                             h-[calc(100%-130px)]
                             xl:h-[calc(100%-75px)]
                             2xl:h-[calc(100%-85px)]
-                            2xl:mt-[67px] xl:mt-[60px]
+                            2xl:mt-[67px] xl:mt-[60px] bg-green-400 overflow-y-hidden
                         ">
-
-                             <div>
-      <div className="flex items-center justify-center h-screen p-4">
+        {/* h-[calc(100vh-60px)] */}
+        <div className="w-full">
+      <div className="flex items-center justify-center h-full p-2 py-0 bg-violet-400"> 
         {/* i should change the max-h because i add it for the textearea input message */}
-        <div className="relative w-full md:w-[90%] h-[100%] overflow-hidden rounded-[50px] flex flex-row gap-2 p-4 max-h-[1400px]">
+        <div className="relative w-full md:w-[90%] max-h-[850px] h-[80%] md:h-[70%] overflow-hidden rounded-[50px] flex flex-row gap-2 p-4 flex-1">
           {/* background layers */}
           <div className="absolute inset-0 settings-bg bg-cover bg-center"></div>
           <div className="absolute inset-0 bg-[rgba(9,0,0,0.5)]"></div>
