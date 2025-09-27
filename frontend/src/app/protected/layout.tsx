@@ -30,7 +30,7 @@ export default async function ProtectedLayout({
   return (
     <div className="h-screen flex items-center min-w-[200px] overflow-x-auto">
       <div className="flex flex-col w-full">
-        <p>welcome</p>
+        {/* <p>welcome</p> */}
         <div className="flex flex-1">{children}</div>
       </div>
     </div>
