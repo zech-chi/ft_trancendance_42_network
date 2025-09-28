@@ -53,10 +53,10 @@ function Settings() {
                         h-[calc(100%-130px)]
                         xl:h-[calc(100%-75px)]
                         2xl:h-[calc(100%-85px)]
-                        2xl:mt-[67px] xl:mt-[60px]
+                        2xl:mt-[67px] xl:mt-[60px] overflow-y-hidden
                     ">
-                        <div className="flex items-center justify-center h-screen p-4">
-      <div className="relative w-full md:w-[85%] h-[100%] overflow-hidden rounded-[50px] flex items-center justify-center p-4 max-h-[1200px]">
+                        <div className="flex items-center justify-center h-[90vh] p-4 w-full flex-1">
+      <div className="relative w-full md:w-[85%] h-[100%] overflow-hidden rounded-[50px] flex items-center justify-center p-4 max-h-[1200px] flex-1">
         {/* background layers */}
         <div className="absolute inset-0 settings-bg bg-cover bg-center"></div>
         <div className="absolute inset-0 bg-[rgba(9,0,0,0.5)]"></div>
