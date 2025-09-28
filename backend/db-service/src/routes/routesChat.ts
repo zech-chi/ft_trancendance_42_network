@@ -47,7 +47,7 @@ export default async function routesChat(fastify: FastifyInstance) {
     //     AND status = 'accepted'
         const stmt =  db.prepare(`
             SELECT * FROM friends
-            WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND status = 'accepted'
+            WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND ( status = 'accepted' OR status = 'blocked')
         `);
 
         const friendship = stmt.get(userId1, userId2, userId2, userId1);
@@ -117,6 +117,7 @@ export default async function routesChat(fastify: FastifyInstance) {
     // check if the user that wants to unblock is the one who blocked
     fastify.post("/canunblock", async (request: FastifyRequest, reply: FastifyReply) => {
         const { from, to } = request.body as { from: string, to: string };
+        console.log("Can unblock request from:", from, "to:", to);
         const stmt = db.prepare(`
             SELECT * FROM friends
             WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?))
@@ -134,6 +135,7 @@ export default async function routesChat(fastify: FastifyInstance) {
     // route that will be used to unblock a user
     fastify.post("/unblockuser", async (request: FastifyRequest, reply: FastifyReply) => {
         const { from, to } = request.body as { from: string, to: string };
+        console.log("Unblock request from:", from, "to:", to);
         const stmt = db.prepare(`Update friends
             SET status = 'accepted', blocked_by = NULL
             WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
