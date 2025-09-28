@@ -244,7 +244,7 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     const filename = path.basename(data.filename);
     const sanitizedFilename = uuid4() + filename;
     const filePath = path.join(uploadDir, sanitizedFilename);
-    // const fileUrl = `${request.protocol}://${request.hostname}:5000/api/chat/uploads/${sanitizedFilename}`; // the port should be in env file
+    // const fileUrl = `${request.protocol}://${request.hostname}:5003/api/chat/uploads/${sanitizedFilename}`; // the port should be in env file
     const fileUrl = `api/chat/uploads/${sanitizedFilename}`; // this is for nginx when the fron-end on https
 
     // Pipe the stream directly to a file. This is memory-efficient and non-corrupting.
@@ -260,7 +260,7 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
       console.log("File is a PDF, converting to images...");
       thumbnailPath = await ConvertFirstPageToImage(filePath);
       if (thumbnailPath) {
-        thumbnailPath = `${request.protocol}://${request.hostname}:5000/api/chat/uploads/${thumbnailPath}`;
+        thumbnailPath = `${request.protocol}://${request.hostname}:5003/api/chat/uploads/${thumbnailPath}`;
       }
     }
     
