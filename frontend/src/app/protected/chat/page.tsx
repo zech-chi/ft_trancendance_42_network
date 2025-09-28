@@ -194,21 +194,21 @@ function Chat() {
 
             <>
                     {/* update here was added w-full may can make some issues !!!!! */}
-                    <div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto"> 
+                    <div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto overflow-y-hidden"> 
                         <Sidebar />
                         <Navbar />
                         <main className="flex flex-row items-center justify-center relative overflow-x-hidden
                             xl:pl-20 2xl:pl-24 w-full
-                            h-[calc(100%-130px)]
-                            xl:h-[calc(100%-75px)]
-                            2xl:h-[calc(100%-85px)]
-                            2xl:mt-[67px] xl:mt-[60px] bg-green-400 overflow-y-hidden
+                            h-[calc(100vh-130px)]
+                            xl:h-[calc(100vh-75px)]
+                            2xl:h-[calc(100vh-85px)]
+                            2xl:mt-[67px] xl:mt-[60px] overflow-y-hidden
                         ">
         {/* h-[calc(100vh-60px)] */}
-        <div className="w-full h-screen bg-white z-100">
+      <div className="w-full h-[90vh]">
       <div className="flex items-center justify-center h-full p-2 py-0"> 
         {/* i should change the max-h because i add it for the textearea input message */}
-        <div className="relative w-full md:w-[90%] h-[80%] md:h-[90%] overflow-hidden rounded-[50px] flex flex-row gap-2 p-4 flex-1 max-h-[1200px]">
+        <div className="relative w-full md:w-[90%] h-[88%] md:h-[100%] overflow-hidden rounded-[50px] flex flex-row gap-2 p-4 flex-1">
           {/* background layers */}
           <div className="absolute inset-0 settings-bg bg-cover bg-center"></div>
           <div className="absolute inset-0 bg-[rgba(9,0,0,0.5)]"></div>
