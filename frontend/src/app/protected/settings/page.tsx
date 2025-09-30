@@ -13,7 +13,7 @@ type PropsProfileImage = {
 // profile image component
 function ProfileImage({ imgSrc, handleImageUpload }: PropsProfileImage) {
   return (
-    <div className="flex items-center justify-center mt-20 bg-green-200">
+    <div className="flex items-center justify-center mt-20">
         <div className="w-[130px] h-[130px] md:w-[160px] md:h-[160px] rounded-full border-2 border-black flex items-center justify-center relative">
           <img
             src={imgSrc}
@@ -49,7 +49,7 @@ function ProfileImage({ imgSrc, handleImageUpload }: PropsProfileImage) {
 // profile info 
 function ProfileInfo() {
   return (
-    <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-4 px-4 md:px-[50px] mt-20 bg-green-200">
+    <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-4 px-4 md:px-[50px] mt-20">
         <div className="flex flex-col items-center w-full">
           <label
             htmlFor="f-name"
@@ -140,7 +140,7 @@ type PropsProfilePasswords = {
 // profile passwords
 function ProfilePasswords({showOldPassword, setShowOldPassword, showNewPassword, setShowNewPassword, showConfirmPassword, setShowConfirmPassword}: PropsProfilePasswords) {
   return (
-    <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-4 px-4 md:px-[50px] mt-20 bg-green-200">
+    <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-4 px-4 md:px-[50px] mt-20">
       <div className="flex flex-col items-center w-full">
         <label
           htmlFor="o-password"
@@ -264,7 +264,7 @@ type PropsProfileBio = {
 // profile bio
 function ProfileBio({bioText, setBioText, textareaRef}: PropsProfileBio) {
   return (
-    <div className="flex items-center justify-center px-4 md:px-[9%] mt-20 bg-green-200">
+    <div className="flex items-center justify-center px-4 md:px-[9%] mt-20">
         <div className="flex flex-col items-center w-full max-w-[400px] md:max-w-[100%]">
           <label
             htmlFor="bio"
@@ -300,7 +300,7 @@ function ProfileBio({bioText, setBioText, textareaRef}: PropsProfileBio) {
 // profile language & email
 function ProfileLanguageEmail() {
   return (
-    <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-2 px-4 md:px-[50px] mt-20 bg-green-200">
+    <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-2 px-4 md:px-[50px] mt-20">
     <div className="flex flex-col items-center w-full">
       <label
         htmlFor="language"
@@ -375,7 +375,7 @@ function ProfileLanguageEmail() {
 // profile savings
 function ProfileSavings() {
   return (
-    <div className="flex justify-center mt-20 bg-green-400">
+    <div className="flex justify-center mt-20">
       <div className="relative flex justify-center w-full max-w-[140px] h-[56px] rounded-[20px] overflow-hidden border border-yellow-500/30 hover:border-2 hover:border-yellow-500">
         <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
 
