@@ -1,13 +1,7 @@
-'use client';
 // a component for the games page display welcome to games
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
-import { useRouter } from "next/navigation"; 
-export default function Games() {
-  const router = useRouter();
-  // adding two buttons pong, and parcheesi
-  // pong button redirect to /Games/pong
-  // parcheesi button redirect to / Games/parcheesi
+export default function Parcheesi() {
   return (
     <>
       {/* update here was added w-full may can make some issues !!!!! */}
@@ -25,18 +19,8 @@ export default function Games() {
         >
           <div className="flex flex-col items-center justify-center w-full h-full text-white">
             <h1 className="text-4xl font-bold mb-4">
-              Welcome to the Games Page! Choose
+              Welcome to the Parcheesi game Page!
             </h1>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2"
-              onClick={() => router.push('/protected/games/pong')}  
-            >
-              Pong  
-            </button>
-            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded m-2"
-              onClick={() => router.push('/protected/games/parcheesi')}
-            >
-              Parcheesi
-            </button>
             <p className="text-lg">Here you can find and play various games.</p>
           </div>
         </main>
