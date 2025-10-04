@@ -205,7 +205,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "CLEAR_LOBBY" });
 
     // redirect back to /online
-    window.location.href = "/online";
+    window.location.href = "/protected/games/parchisi/online";
   });
 
     return () => {
@@ -258,7 +258,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return new Promise((resolve, reject) => {
       if (!socket) return reject("No socket connected");
 
-      const username = "user" + Math.floor(Math.random() * 1000);
+      const username = loggedUserName;
       socket.emit("joinGame", { gameId, username });
 
       socket.once("gameJoined", (data: { success: boolean; error?: string }) => {
