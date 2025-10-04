@@ -1,14 +1,5 @@
 export const fetchUser = async (userName: string) => {
-    const response = await fetch(`http://localhost:5002/api/dashboard/users/${userName}`);
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
-}
-
-export const fetchUserById = async (userId: number) => {
-    const response = await fetch(`http://localhost:5002/api/dashboard/usersId/${userId}`);
+    const response = await fetch(`http://localhost:5000/users/${userName}`);
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
@@ -45,7 +36,7 @@ export const fetchRankData = async () => {
 }
 
 /** friends component */
-export const fetchFriends = async (userId: number | null, choice: string) => {
+export const fetchFriends = async (userName: string, choice: string) => {
   let status: string = '';
   if (choice === 'friends') {
       status = 'accepted';
@@ -56,9 +47,9 @@ export const fetchFriends = async (userId: number | null, choice: string) => {
   }
   let response ;
   if (status !== '')
-      response = await fetch(`http://localhost:5002/api/dashboard/friends/${userId}?status=${status}`);
+      response = await fetch(`http://localhost:5000/Friends/${userName}?status=${status}`);
   else 
-      response = await fetch(`http://localhost:5002/api/dashboard/friends/sentrequest/${userId}?status=pending`);
+      response = await fetch(`http://localhost:5000/SentRequestFriends/${userName}`);
   if (!response.ok) {
   //   throw new Error('Failed to fetch games');
     console.log("Error");
@@ -70,7 +61,7 @@ export const fetchFriends = async (userId: number | null, choice: string) => {
 
 /* radar chart component api */
 export const fetchRadarData = async (userName: string) => {
-  const response = await fetch(`http://localhost:5002/api/dashboard/radarData/${userName}`);
+  const response = await fetch(`http://localhost:5000/radarData/${userName}`);
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }

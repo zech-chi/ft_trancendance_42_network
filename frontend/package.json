@@ -9,22 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@emoji-mart/data": "^1.2.1",
-    "@emoji-mart/react": "^1.1.1",
-    "@heroicons/react": "^2.2.0",
-    "@types/js-cookie": "^3.0.6",
-    "emoji-mart": "^5.6.0",
-    "emoji-picker-react": "^4.12.2",
+    "@babylonjs/core": "^8.29.0",
+    "@babylonjs/gui": "^8.29.0",
+    "babylonjs": "^8.29.0",
+    "clsx": "^2.1.1",
     "framer-motion": "^12.23.22",
-    "js-cookie": "^3.0.5",
-    "lucide-react": "^0.513.0",
-    "next": "15.5.3",
+    "lucide-react": "^0.542.0",
+    "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-icons": "^5.5.0",
-    "react-textarea-autosize": "^8.5.9",
     "socket.io-client": "^4.8.1",
-    "wavesurfer.js": "^7.10.0"
+    "tailwind-scrollbar": "^4.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -32,11 +27,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/react-textarea-autosize": "^4.3.6",
-    "@types/wavesurfer.js": "^6.0.12",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9",
-    "eslint-config-next": "15.5.3",
-    "tailwindcss": "^4",
+    "eslint-config-next": "15.5.2",
+    "postcss": "^8.5.6",
+    "prettier": "^3.0.0-alpha.6",
+    "tailwindcss": "^4.1.12",
     "typescript": "^5"
   }
 }
