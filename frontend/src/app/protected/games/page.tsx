@@ -5,9 +5,9 @@ import Navbar from "@/components/layout/Navbar";
 import { useRouter } from "next/navigation"; 
 export default function Games() {
   const router = useRouter();
-  // adding two buttons pong, and parcheesi
+  // adding two buttons pong, and parchisi
   // pong button redirect to /Games/pong
-  // parcheesi button redirect to / Games/parcheesi
+  // parchisi button redirect to / Games/parchisi
   return (
     <>
       {/* update here was added w-full may can make some issues !!!!! */}
@@ -33,9 +33,9 @@ export default function Games() {
               Pong  
             </button>
             <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded m-2"
-              onClick={() => router.push('/protected/games/parcheesi')}
+              onClick={() => router.push('/protected/games/parchisi')}
             >
-              Parcheesi
+              parchisi
             </button>
             <p className="text-lg">Here you can find and play various games.</p>
           </div>
