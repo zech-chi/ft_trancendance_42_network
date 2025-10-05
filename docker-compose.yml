@@ -1,0 +1,84 @@
+services:
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - chat-service
+      - dashboard-service
+      - db-service
+      - ping-pong-service
+    networks:
+      - monitoring
+
+  # Backend Services
+  auth-service:
+    build: backend/auth-service
+    container_name: auth-service
+    ports:
+      - "5001:5001"
+    networks:
+      - monitoring
+    environment:
+      - SECRET_KEY=mysecretkey
+
+  chat-service:
+    build: backend/chat-service
+    container_name: chat-service
+    ports:
+      - "5003:5003"
+    networks:
+      - monitoring
+
+  dashboard-service:
+    build: backend/dashboard-service
+    container_name: dashboard-service
+    ports:
+      - "5002:5002"
+    networks:
+      - monitoring
+
+  db-service:
+    build: backend/db-service
+    container_name: db-service
+    ports:
+      - "5000:5000"
+    networks:
+      - monitoring
+
+  ping-pong-service:
+    build: backend/ping-pong-service
+    container_name: ping-pong-service
+    ports:
+      - "5500:5500"
+    networks:
+      - monitoring
+  # Prometheus
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  #   networks:
+  #     - monitoring
+
+  # # Grafana
+  # grafana:
+  #   image: grafana/grafana
+  #   container_name: grafana
+  #   ports:
+  #     - "4000:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   networks:
+  #     - monitoring
+
+networks:
+  monitoring:
+    driver: bridge

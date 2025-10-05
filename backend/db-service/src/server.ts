@@ -5,6 +5,7 @@ import type { Database } from "better-sqlite3";
 import routesChat from "./routes/routesChat";
 import routesDashboard from "./routes/routesDashboard";
 import routesAuth from "./routes/routesAuth";
+import routesPong from "./routes/routesPong";
 import dotenv from "dotenv";
 // import cors from '@fastify/cors';
 
@@ -35,6 +36,7 @@ fastify.decorate("db", db);
 fastify.register(routesChat, { prefix: "/api/chat" });
 fastify.register(routesAuth, { prefix: "api/auth" });
 fastify.register(routesDashboard, { prefix: "/api/dashboard" });
+fastify.register(routesPong, { prefix: "/api/pong" });
 
 // start server
 const start = async () => {

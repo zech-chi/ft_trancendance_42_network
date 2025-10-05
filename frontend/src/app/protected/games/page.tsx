@@ -1,6 +1,8 @@
 // a component for the games page display welcome to games
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
+// import link from nextjs
+import Link from "next/link";
 export default function Games() {
   return (
     <>
@@ -21,6 +23,14 @@ export default function Games() {
             <h1 className="text-4xl font-bold mb-4">
               Welcome to the Games Page!
             </h1>
+
+            {/* Link to Ping Pong Game */}
+            <Link
+              href="/protected/games/ping-pong"
+              className="text-blue-500 underline mb-2"
+            >
+              Play Ping Pong
+            </Link>
             <p className="text-lg">Here you can find and play various games.</p>
           </div>
         </main>
