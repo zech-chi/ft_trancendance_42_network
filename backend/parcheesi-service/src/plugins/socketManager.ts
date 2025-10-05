@@ -90,6 +90,22 @@ export default async function socketManager(io: Server) {
 
     });
 
+    socket.on("readyToPlay", async (data: { gameId: string; userName: string }) => {
+      const room = rooms.get(data.gameId);
+      if (!room) return;
+      
+      console.log((`Player ${data.userName} is ready in game ${data.gameId}`));
+      const player = room.players.find(p => p.userName === data.userName);
+      if (!player)
+        return;
+      room.readyPlayers++;
+      if (room.readyPlayers === room.players.length)
+        {
+          await room.startGame();
+        }
+
+    });
+
   //   socket.on("join-request", (data: { gameId: string; username: string}) => {
 
   //     const room = rooms.get(data.gameId);
@@ -177,7 +193,7 @@ export default async function socketManager(io: Server) {
           
         }
       room.broadcast("gameStarted", { gameId: room.id, players: room.players, board: room.board.toJSON(), currentPlayerId: room.currentPlayer });
-      await room.startGame();
+      // await room.startGame();
     });
 
 

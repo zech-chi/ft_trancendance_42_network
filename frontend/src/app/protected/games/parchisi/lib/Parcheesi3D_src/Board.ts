@@ -37,6 +37,8 @@ interface User {
 export class Board {
     // socket
     private socket!: Socket;
+    // gameId;
+    private gameId!: string;
 
     private scene: BABYLON.Scene;
     private redLabel?: GUI.TextBlock;
@@ -69,10 +71,11 @@ export class Board {
     private box1: BABYLON.Mesh | null = null;
     private box2: BABYLON.Mesh | null = null;
 
-    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string, socket: Socket) {
+    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string, socket: Socket, gameId: string) {
         this.scene = scene;
         this.gui = gui;
         this.socket = socket;
+        this.gameId = gameId;
         this.playerUserName = loggedUserName;
         this.memeGUI3d = new GUI.GUI3DManager(this.scene);
         // initialize the moveAbleMap with 0, 0 for each ball
@@ -82,6 +85,7 @@ export class Board {
         this.moveAbleMap.set(4, new BABYLON.Vector2(0, 0));
         console.log("You are playing as :", this.playerUserName);
         console.log("Socket initialized:", this.socket.id);
+        console.log("Game ID:", this.gameId);
     }
 
     public setMoveAble(data: MoveAbleType) {
@@ -97,7 +101,7 @@ export class Board {
         console.log("Moveable map updated:", this.moveAbleMap);
     }
 
-    public setPlayerTurn(color: PlayerColor) {
+    public async setPlayerTurn(color: PlayerColor) {
         this.playerTurn = color;
         // hide all buttons expect the current player's button
         if (this.redButton) this.redButton.isVisible = false;
@@ -362,7 +366,7 @@ export class Board {
             this.box2 = null;
         }
     }
-    private createSphere(sphere: SphereType) {
+    private async createSphere(sphere: SphereType) {
         console.log("->sphere" + sphere.type + String(sphere.id));
         const sphereName = "sphere" + sphere.type + String(sphere.id);
         const sphereMesh = BABYLON.MeshBuilder.CreateSphere(sphereName, {
@@ -370,7 +374,7 @@ export class Board {
             segments: 32,
           },  this.scene);
         const sphereMaterial = new BABYLON.StandardMaterial("sphere", this.scene);
-        sphereMaterial.bumpTexture = new BABYLON.Texture("Parcheesi3D_Media/texture.png", this.scene);
+        sphereMaterial.bumpTexture = new BABYLON.Texture("/media/texture.png", this.scene);
         // sphereMaterial.diffuseTexture = new BABYLON.Texture("Parcheesi3D_Media/background.png", this.scene);
         sphereMaterial.diffuseColor =  BABYLON.Color3.FromHexString(sphere.color);
         sphereMesh.material = sphereMaterial;
@@ -407,6 +411,7 @@ export class Board {
                                         // emit the move request to the server
                                         if (this.socket.connected) {
                                             this.socket.emit("moveRequest", {
+                                                gameId: this.gameId,
                                                 sphere_id: Number(sphere.id),
                                                 sphere_type: sphere.type,
                                                 choice: this.moveAbleMap.get(Number(sphere.id))?.x
@@ -429,6 +434,7 @@ export class Board {
                                         console.log("Box 2 clicked, you choose:", this.moveAbleMap.get(Number(sphere.id))?.y);
                                         if (this.socket.connected) {
                                             this.socket.emit("moveRequest", {
+                                                gameId: this.gameId,
                                                 sphere_id: Number(sphere.id),
                                                 sphere_type: sphere.type,
                                                 choice: this.moveAbleMap.get(Number(sphere.id))?.y
@@ -449,28 +455,27 @@ export class Board {
     }
 
 
-    public createSpheres(type: PlayerColor) {
+    public async createSpheres(type: PlayerColor) {
+        let spheres;
         switch (type) {
             case PlayerColor.RED:
-                RED_SPHERES.forEach(sphere => {
-                    this.createSphere(sphere);
-                });
+                spheres = RED_SPHERES;
                 break;
             case PlayerColor.GREEN:
-                GREEN_SPHERES.forEach(sphere => {
-                    this.createSphere(sphere);
-                });
+                spheres = GREEN_SPHERES;
                 break;
             case PlayerColor.YELLOW:
-                YELLOW_SPHERES.forEach(sphere => {
-                    this.createSphere(sphere);
-                });
+                spheres = YELLOW_SPHERES;
                 break;
             case PlayerColor.BLUE:
-                BLUE_SPHERES.forEach(sphere => {
-                    this.createSphere(sphere);
-                });
+                spheres = BLUE_SPHERES;
                 break;
+            default:
+                return;
+        }
+    
+        for (const sphere of spheres) {
+            await this.createSphere(sphere);
         }
     }
 
@@ -516,7 +521,7 @@ export class Board {
             // Emit the roll dice event to the server
             // this.socket.emit("requestRollDices", { color: type });
             if (this.socket.connected) {
-                this.socket.emit("requestRollDices", { color: type });
+                this.socket.emit("requestRollDices", { color: type, gameId: this.gameId });
                 console.log("Dice rolled for color:", type);
             } else {
                 console.error("Socket not connected!");
@@ -543,7 +548,7 @@ export class Board {
         this.gui.addControl(button);
     }
     
-    private createLabel(type: PlayerColor) {
+    private async createLabel(type: PlayerColor) {
         // Create the TextBlock control
         let label: GUI.TextBlock;
 
@@ -676,7 +681,7 @@ export class Board {
 
         // for debugging add a label with the user name
         // this contain the dice values
-        this.createLabel(obj.color);
+        await this.createLabel(obj.color);
     }
 
     private moveAnimation(meshName: string, position: Position, speed = 1.0) {
