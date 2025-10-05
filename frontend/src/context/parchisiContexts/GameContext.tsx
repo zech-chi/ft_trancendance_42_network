@@ -176,11 +176,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
         console.log("Successfully joined game")
       }
     })
-
-    socket.on("addPlayer", (playerData: { color: string; userName: string }) => {
-      console.log("New player added:", playerData.userName)
-      // The lobbyUpdate event will handle the full state update
-    })
     socket.on("gameStarted", (data: { gameId: string, players: Player[], board: object, currentPlayer: Player }) => {
       dispatch({ type: "GAME_STARTED", payload: data })
     })
@@ -214,7 +209,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
       socket.off("lobbyUpdate")
       socket.off("gameCreated")
       socket.off("gameJoined")
-      socket.off("addPlayer")
       socket.off("playerReady")
       socket.off("gameStarted")
       socket.off("error")

@@ -27,10 +27,17 @@ export function Parcheesi3DComponent() {
     const onResize = () => {
         gameRef.current?.resize();
     };
+    const hasEmitted = useRef(false);
+
+    // const [isLoaded, setIsLoaded] = useState(false);
 
     // setLoggedUserName('zech-chi');
     // connect to server
     useEffect(() => {
+        // if (isLoaded) return;
+        if (hasEmitted.current) return; // 🚫 Prevent duplicate emit
+        hasEmitted.current = true;
+
         if (canvasRef.current) {
             if (!socketRef) return
 
@@ -55,7 +62,7 @@ export function Parcheesi3DComponent() {
             });
             
             console.log("ready to play");
-            socketRef.emit("readyToPlay", { userName: loggedUserName, gameId: gameId });
+            socketRef.emit("readyToPlayX", { userName: loggedUserName, gameId: gameId });
             // Handle welcome message from the server
             socketRef.on("addPlayer", async (data: SphereDataType) => {
                 console.log("📥 Sphere data received:", data);
@@ -96,9 +103,10 @@ export function Parcheesi3DComponent() {
             socketRef.on("disconnect", () => {
                 console.log(chalk.red("Disconnected from server"));
             });
+            // setIsLoaded(true);
         }
         window.addEventListener("resize", onResize);
-        }, []);
+        }, [canvasRef.current]);
 
     return (
         <canvas ref={canvasRef} className="w-full h-full" id="renderCanvas"/>
