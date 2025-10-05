@@ -15,7 +15,7 @@ export default async function socketManager(io: Server) {
   
   
   const remote = io.of("/games/parchisi/online");
-  const local = io.of("/games/parchisi/local");
+  // const local = io.of("/games/parchisi/local");
   remote.on("connection", (socket: Socket) => {
     console.log(chalk.green(`Client connected: ${socket.id}`));
     /**
@@ -85,20 +85,24 @@ export default async function socketManager(io: Server) {
           })),
         };
         room.broadcast("lobbyUpdate", lobbyData); // everyone in the room
-        socket.emit("lobbyUpdate", lobbyData); // the joining player too 
+        // socket.emit("lobbyUpdate", lobbyData); // the joining player too 
         console.log("event sent to clients: lobbyUpdate", lobbyData);
 
     });
 
-    socket.on("readyToPlay", async (data: { gameId: string; userName: string }) => {
+    socket.on("readyToPlayX", async (data: { gameId: string; userName: string }) => {
       const room = rooms.get(data.gameId);
       if (!room) return;
       
-      console.log((`Player ${data.userName} is ready in game ${data.gameId}`));
+      console.log((`Player ${data.userName} is ready to x ${data.gameId}`));
       const player = room.players.find(p => p.userName === data.userName);
       if (!player)
         return;
       room.readyPlayers++;
+      if (room.readyPlayers > room.players.length)
+        {
+          socket.emit("error", { message: "counter more than player" });
+        }
       if (room.readyPlayers === room.players.length)
         {
           await room.startGame();
@@ -173,7 +177,6 @@ export default async function socketManager(io: Server) {
           })),
         });
         
-        // Check if all players are ready
       }
 
     });
@@ -193,7 +196,6 @@ export default async function socketManager(io: Server) {
           
         }
       room.broadcast("gameStarted", { gameId: room.id, players: room.players, board: room.board.toJSON(), currentPlayerId: room.currentPlayer });
-      // await room.startGame();
     });
 
 
@@ -310,91 +312,91 @@ export default async function socketManager(io: Server) {
   });
 
 
-  local.on("connection", (socket: Socket) => {
-    console.log(chalk.red(`Client connected locally: ${socket.id}`));
+  // local.on("connection", (socket: Socket) => {
+  //   console.log(chalk.red(`Client connected locally: ${socket.id}`));
 
-    socket.on("createGame", (data: {playersnumber:number}) => {
-      const gameId = "saw"
+  //   socket.on("createGame", (data: {playersnumber:number}) => {
+  //     const gameId = "saw"
       
-      // randomUUID(); // generate unique game id
-      const room = new localRoom(gameId, local, data.playersnumber);
+  //     // randomUUID(); // generate unique game id
+  //     const room = new localRoom(gameId, local, data.playersnumber);
 
-      room.onGameOver = (id: string) => {
-        console.log(chalk.red(`Cleaning up game ${id}`));
-        room.destroy();
-        localRooms.delete(id);
-      };
-      localRooms.set(gameId, room);
-      console.log(chalk.blue(`Game created with ID: ${gameId} with ${data.playersnumber} players`));
-      room.socket = socket; // assign the socket to the room for local play
-    });
+  //     room.onGameOver = (id: string) => {
+  //       console.log(chalk.red(`Cleaning up game ${id}`));
+  //       room.destroy();
+  //       localRooms.delete(id);
+  //     };
+  //     localRooms.set(gameId, room);
+  //     console.log(chalk.blue(`Game created with ID: ${gameId} with ${data.playersnumber} players`));
+  //     room.socket = socket; // assign the socket to the room for local play
+  //   });
 
-    socket.on("startGame",(data: { gameId: string }) => {
-      const room = localRooms.get(data.gameId);
-      if (!room)
-      {
-        console.log(chalk.red(`Game not found: ${data.gameId}`));
-        socket.emit("error", { message: "Game not found" });
-        return;
-      }
-      if (room.players.length < 2 && room.players.find(p => !p.isReady)) {
-        socket.emit("error", { message: "Not all players are ready" });
-        return;
+  //   socket.on("startGame",(data: { gameId: string }) => {
+  //     const room = localRooms.get(data.gameId);
+  //     if (!room)
+  //     {
+  //       console.log(chalk.red(`Game not found: ${data.gameId}`));
+  //       socket.emit("error", { message: "Game not found" });
+  //       return;
+  //     }
+  //     if (room.players.length < 2 && room.players.find(p => !p.isReady)) {
+  //       socket.emit("error", { message: "Not all players are ready" });
+  //       return;
           
-        }
-      room.broadcast("gameStarted", { gameId: room.id, players: room.players, board: room.board.toJSON(), currentPlayerId: room.currentPlayer });
-       room.startGame();
-    });
+  //       }
+  //     room.broadcast("gameStarted", { gameId: room.id, players: room.players, board: room.board.toJSON(), currentPlayerId: room.currentPlayer });
+  //      room.startGame();
+  //   });
 
-    socket.on("requestRollDices", async (data: { gameId: string, color:string }) => {
-      const room = localRooms.get(data.gameId);
-      if (!room) return;
+  //   socket.on("requestRollDices", async (data: { gameId: string, color:string }) => {
+  //     const room = localRooms.get(data.gameId);
+  //     if (!room) return;
 
-      const currentcolor = room.currentPlayer.color;
-      if (data.color !== currentcolor) {
-        socket.emit("error", { message: "Not your turn" });
-        return;
-      }
-      await room.handleRollDice();
-    });
+  //     const currentcolor = room.currentPlayer.color;
+  //     if (data.color !== currentcolor) {
+  //       socket.emit("error", { message: "Not your turn" });
+  //       return;
+  //     }
+  //     await room.handleRollDice();
+  //   });
 
-    socket.on("moveRequest", async(data: { gameId: string; sphere_id: number; sphere_type: string; choice: number, color:string }) => {
-      const room = localRooms.get(data.gameId);
-      if (!room) return;
+  //   socket.on("moveRequest", async(data: { gameId: string; sphere_id: number; sphere_type: string; choice: number, color:string }) => {
+  //     const room = localRooms.get(data.gameId);
+  //     if (!room) return;
 
-      const currentcolor = room.currentPlayer.color;
-      if (data.color !== currentcolor) {
-        socket.emit("error", { message: "Not your turn" });
-        return;
-      }
-      await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
-      if (room.board.peekGoal(room.currentPlayer.id - 1).occupiedBy.length === 4) {
-        room.broadcast("gameOver", {
-          winner: room.currentPlayer.userName,
-          color: room.currentPlayer.color,
-        });
-      }
-    });
+  //     const currentcolor = room.currentPlayer.color;
+  //     if (data.color !== currentcolor) {
+  //       socket.emit("error", { message: "Not your turn" });
+  //       return;
+  //     }
+  //     await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
+  //     if (room.board.peekGoal(room.currentPlayer.id - 1).occupiedBy.length === 4) {
+  //       room.broadcast("gameOver", {
+  //         winner: room.currentPlayer.userName,
+  //         color: room.currentPlayer.color,
+  //       });
+  //     }
+  //   });
     
-    // still need to hundle if the player want to leave the game and if the host leave the game
-    //still need to hundle if the game is over
+  //   // still need to hundle if the player want to leave the game and if the host leave the game
+  //   //still need to hundle if the game is over
 
-    socket.on("disconnect", () => {
-      console.log(chalk.red(`Client disconnected: ${socket.id}`));
+  //   socket.on("disconnect", () => {
+  //     console.log(chalk.red(`Client disconnected: ${socket.id}`));
 
-      // find the room this socket belongs to
-      for (const [id, room] of localRooms) {
-        if (room.socket?.id === socket.id) {
-          socket.emit("lobbyClosed", { message: "Room destroyed by host" });
-          room.destroy();
-          localRooms.delete(id);
-          console.log(chalk.magenta(`Local Game ${id} deleted (no players left).`));
-          break;
-        }
-      }
+  //     // find the room this socket belongs to
+  //     for (const [id, room] of localRooms) {
+  //       if (room.socket?.id === socket.id) {
+  //         socket.emit("lobbyClosed", { message: "Room destroyed by host" });
+  //         room.destroy();
+  //         localRooms.delete(id);
+  //         console.log(chalk.magenta(`Local Game ${id} deleted (no players left).`));
+  //         break;
+  //       }
+  //     }
 
-  });
+  // });
 
-  });
+  // });
 
 }

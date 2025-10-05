@@ -95,7 +95,6 @@ export class GameRoom {
   
     // send players info to clients after 1 second
     this.players.forEach(p => {
-        console.log(`username: ${p.userName}, color: ${p.color}, id: ${p.id}`);
         this.broadcast("addPlayer", {
           id: p.id,
           userName: p.userName,
@@ -118,7 +117,7 @@ export class GameRoom {
    * Broadcast a single step move for animation (keeps your original event format).
    * `where` and `speed` preserved from your previous code.
    */
-  private async emitMoveEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 1, delayMs = 500) {
+  private async emitMoveEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 2, delayMs = 500) {
     let se7en: boolean = false;
     let final: boolean = false;
     let placeofbr:number = 0;
@@ -130,7 +129,7 @@ export class GameRoom {
     if (typeof place === 'object')
     {
       placeofbr = place.homeIndex + 1;
-      se7en = true;
+       se7en = true;
     }else if ( place === 'home')
     {
       final = true;
@@ -138,6 +137,7 @@ export class GameRoom {
       placeofbr = this.board.peekGoal(piece.playerId - 1).occupiedBy.length;
       where = 'center';
     }
+    console.log("emitting move eventt to tile :", placeofbr);
     this.broadcast("move", {
       sphere_id: piece.id,
       sphere_type: color,
@@ -152,7 +152,7 @@ export class GameRoom {
   // jump> {"sphere_id":1,"sphere_type":"RED","place":1,"where":"center","speed":1, "maxHeight": 5, "toStartPosition": false}
 
   
-private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 1, toStartPosition = false, delayMs = 500) {
+private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 1, toStartPosition = false, delayMs = 200) {
     let se7en: boolean = false;
     let final: boolean = false;
     let placeofbr:number = 0;
@@ -238,7 +238,7 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
       let jumped = false;
       for (const step of decision.path) {
         if (jumped && decision.placeTojump && !decision.placeTojump.includes(step)) {
-          await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'center', 1);
+          await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'center');
           jumped = false;
         }
         if (decision.placeTojump && decision.placeTojump.includes(step) && step !== decision.to) {
@@ -246,7 +246,7 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
           continue;
         }
         else
-          await this.emitMoveEvent(decision.piece, playerColor as PlayerColor, step, 'center', 1);
+          await this.emitMoveEvent(decision.piece, playerColor as PlayerColor, step, 'center');
       }
     }
   
@@ -265,10 +265,10 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
       const newPiece = decision.piece;
   
       // Emit reposition for the older piece (shift it to left)
-      await this.emitMoveEvent(olderPiece, playerColor as PlayerColor, decision.to, 'left', 1);
+      await this.emitMoveEvent(olderPiece, playerColor as PlayerColor, decision.to, 'right');
   
       // Emit move for the newly placed piece to the right
-      await this.emitMoveEvent(newPiece, playerColor as PlayerColor, decision.to, 'right', 1);
+      await this.emitMoveEvent(newPiece, playerColor as PlayerColor, decision.to, 'left');
   
       return true;
     }
@@ -316,6 +316,7 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
       this.updateRemainMoves();
       return true;
     }
+    this.updateRemainMoves();
     return false;
   }
  
@@ -361,6 +362,7 @@ async handleRollDice() {
     });
     await this.leaveBaseAuto();
     await this.autoMove();
+    console.log(chalk.blue("remain moves after auto leave base and auto move", currentPlayer.Remain_moves.length));
       if ((!currentPlayer.Remain_moves || currentPlayer.Remain_moves.length === 0 ) && (!currentPlayer.bonus_moves || currentPlayer.bonus_moves.length === 0)) {
         // if no available moves left, go to next player
         console.log(`No available moves for player ${currentPlayer.userName}`);
