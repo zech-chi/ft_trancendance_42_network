@@ -10,6 +10,8 @@ import * as BABYLON from "@babylonjs/core";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import {MoveDataType} from "@/app/protected/games/parchisi/lib/Parcheesi3D_src/types";
 import { useSocket } from "@/context/parchisiContexts/SocketContext"
+import {useGame } from "@/context/parchisiContexts/GameContext";
+// import stat of socket
 
 
 
@@ -19,7 +21,9 @@ export function Parcheesi3DComponent() {
     const gameRef = useRef<Parcheesi3D | null>(null);
     // const socketRef = useRef<Socket| null>(null);
     const boardRef = useRef<Board | null>(null);
-    const { socket : socketRef } = useSocket()
+    const { socket : socketRef } = useSocket();
+    const { state } = useGame();
+    const gameId = state.gameId;
     const onResize = () => {
         gameRef.current?.resize();
     };
@@ -39,24 +43,27 @@ export function Parcheesi3DComponent() {
             // Start the render loop
             gameRef.current?.runRenderLoop();
             if (gameRef.current) {
-                boardRef.current = new Board(gameRef.current?.scene, gameRef.current.gui, loggedUserName as string, socketRef as Socket);
+                boardRef.current = new Board(gameRef.current?.scene, gameRef.current.gui, loggedUserName as string, socketRef as Socket, gameId as string);
                 boardRef.current.initialize();
             }
             
             if (!socketRef)
                     return;
-            // Handle welcome message from the server
+
             socketRef.on("welcome", (data) => {
                 console.log(chalk.blue("💬 Server says:", data.message));
             });
             
+            console.log("ready to play");
+            socketRef.emit("readyToPlay", { userName: loggedUserName, gameId: gameId });
+            // Handle welcome message from the server
             socketRef.on("addPlayer", async (data: SphereDataType) => {
                 console.log("📥 Sphere data received:", data);
                 await boardRef.current?.addPlayerAvatar(data);
                 boardRef.current?.createSpheres(data.color);
             });
             
-            socketRef.on("setPlayerTurn", (data: { color: PlayerColor }) => {
+            socketRef.on("setPlayerTurn", async(data: { color: PlayerColor }) => {
                 console.log(chalk.green("📥 Player turn set:", data.color));
                 boardRef.current?.setPlayerTurn(data.color);
             });

@@ -9,6 +9,7 @@ import chalk from "chalk";
 import { describe } from "node:test";
 
 const COLORS = [PlayerColor.RED, PlayerColor.YELLOW, PlayerColor.GREEN, PlayerColor.BLUE];
+
 export class GameRoom {
   id: string;
   players: Player[] = [];
@@ -16,6 +17,7 @@ export class GameRoom {
   board: Board;
   logic: GameLogic;
   currentPlayerIndex: number;
+  readyPlayers: number = 0;
 
   currentDice: number[] = [];
   bonusDice: number = 0;
@@ -92,26 +94,25 @@ export class GameRoom {
     this.gamestarted = true;
   
     // send players info to clients after 1 second
-    setTimeout(() => {
-      console.log(`anna hnaa`);
-      this.players.forEach(p => {
+    this.players.forEach(p => {
         console.log(`username: ${p.userName}, color: ${p.color}, id: ${p.id}`);
         this.broadcast("addPlayer", {
           id: p.id,
           userName: p.userName,
-          color: p.color
+          color: p.color,
         });
       });
-    }, 5000);
+
   
     console.log(chalk.red(
       `Game ${this.id} started with players: ${this.players.map(p => p.userName).join(", ")}`
     ));
   
     // set first player turn
-    this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });
+    setTimeout(() => {
+      this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });
+    }, 5000);
   }
-  
 
   /**
    * Broadcast a single step move for animation (keeps your original event format).
@@ -505,5 +506,8 @@ async handleRollDice() {
 
   get currentPlayer(): Player {
     return this.players[this.currentPlayerIndex];
+  }
+  get playerCount(): number {
+    return this.players.length;
   }
 }
