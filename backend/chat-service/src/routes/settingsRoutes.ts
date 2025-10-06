@@ -9,3 +9,13 @@ export async function ProfileRoutes(fastify: FastifyInstance) {
   // get user profile image
   fastify.get('/profileImage/:filename', getProfileImage);
 }
+
+
+// curl -X PATCH http://localhost:5003/api/settings/update/6 \
+//   -F "firstName=John" \
+//   -F "lastName=Doe" \
+//   -F "language=en" \
+//   -F "bio=Updated bio description" \
+//   -F "oldPassword=oldpass123" \
+//   -F "newPassword=newpass123" \
+//   -F "confirmPassowrd=newpass123"

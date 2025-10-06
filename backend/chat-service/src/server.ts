@@ -72,7 +72,7 @@ fastifyServer.register(cors, {
 });
 
 // Define a basic route
-fastifyServer.register(ProfileRoutes, {prefix: 'api/settings'});
+// fastifyServer.register(ProfileRoutes, {prefix: 'api/settings'});
 fastifyServer.register(chatRoutes, {prefix: 'api/chat'});
 
 // fastifyServer.get('/users', async (request, reply) => {
