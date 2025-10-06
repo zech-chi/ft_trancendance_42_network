@@ -210,7 +210,7 @@ function Chat() {
         {/* i should change the max-h because i add it for the textearea input message */}
         <div className="relative w-full md:w-[90%] h-[88%] md:h-[100%] overflow-hidden rounded-[50px] flex flex-row gap-2 p-4 flex-1">
           {/* background layers */}
-          <div className="absolute inset-0 settings-bg bg-cover bg-center"></div>
+          <div className="absolute inset-0 settings-profile-bg bg-cover bg-center"></div>
           <div className="absolute inset-0 bg-[rgba(9,0,0,0.5)]"></div>
 
            {/* --- Render Call-Related UI Conditionally --- */}
