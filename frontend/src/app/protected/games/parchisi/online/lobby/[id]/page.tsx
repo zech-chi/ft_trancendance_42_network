@@ -9,13 +9,15 @@ import Button from "@/components/ui/Button"
 import Card from "@/components/ui/Card"
 import { Crown, Users, Check, Clock, Copy } from "lucide-react"
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import Sidebar from "@/components/layout/Sidebar"
+import Navbar from "@/components/layout/Navbar"
 
-export default function LobbyPage({ params }: { params: { id: string } }) {
+export default function LobbyPage({ params }: { params: Promise<{ id: string }> }) {
 
   const { state, joinLobby, leaveLobby, toggleReady, startGame } = useGame()
   const { socket } = useSocket()
   const router = useRouter()
-  const gameId = params.id
+  const { id: gameId } = React.use(params)
   const [copied, setCopied] = useState(false)
   const [animatingPlayers, setAnimatingPlayers] = useState<Set<string>>(new Set())
 
@@ -124,7 +126,19 @@ useEffect(() => {
   const readyCount = state.lobby.players.filter((p) => p.isReady).length
   console.log("isHost:", isHost);
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto">
+<Sidebar />
+<Navbar />
+<main
+  className="flex flex-row items-center justify-center relative overflow-x-hidden
+                    xl:pl-20 2xl:pl-24 w-full
+                    h-[calc(100%-130px)]
+                    xl:h-[calc(100%-75px)]
+                    2xl:h-[calc(100%-85px)]
+                    2xl:mt-[67px] xl:mt-[60px]
+                "
+>
+<div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-2xl space-y-6">
         <Card title="Game Lobby" className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
@@ -255,5 +269,9 @@ useEffect(() => {
         )}
       </div>
     </div>
+</main>
+</div>
   )
 }
+
+

@@ -28,7 +28,7 @@ export default function Games() {
               Welcome to the Games Page! Choose
             </h1>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2"
-              onClick={() => router.push('/protected/games/pong')}  
+              onClick={() => router.push('/protected/games/ping-pong')}  
             >
               Pong  
             </button>

@@ -8,6 +8,8 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import {useGame } from "@/context/parchisiContexts/GameContext";
+import Sidebar from '@/components/layout/Sidebar';
+import Navbar from '@/components/layout/Navbar';
 
 // import { SocketProvider } from "@/contexts/SocketContext"
 // import { GameProvider } from "@/contexts/GameContext";
@@ -83,7 +85,19 @@ const handleJoinRoom = async(roomId: string) => {
   };
 
   return (
-    <div className="min-h-screen from-purple-900 to-indigo-800 p-4">
+    <div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto">
+<Sidebar />
+<Navbar />
+<main
+  className="flex flex-row items-center justify-center relative overflow-x-hidden
+                    xl:pl-20 2xl:pl-24 w-full
+                    h-[calc(100%-130px)]
+                    xl:h-[calc(100%-75px)]
+                    2xl:h-[calc(100%-85px)]
+                    2xl:mt-[67px] xl:mt-[60px]
+                "
+>
+    <div className="min-h-screen from-purple-900 to-indigo-800 p-4  flex-1 flex items-center justify-center">
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -220,5 +234,7 @@ const handleJoinRoom = async(roomId: string) => {
         </div>
       </div>
     </div>
+</main>
+</div>
   );
 }
