@@ -7,7 +7,7 @@ export async function ProfileRoutes(fastify: FastifyInstance) {
   fastify.patch('/update/:id', UpdateProfile);
 
   // get user profile image
-  fastify.get('/profileImage/:filename', getProfileImage);
+  fastify.get('/profileImage/*', getProfileImage);
 }
 
 
