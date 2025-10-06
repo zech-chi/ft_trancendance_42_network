@@ -1,9 +1,7 @@
 'use client'
 
-import next from "next";
 import { JSX } from "react";
 import { useState } from "react";
-import Image from "next/image";
 import { useEffect, useMemo } from "react";
 
 
@@ -17,21 +15,6 @@ type YearData = {
 type CalendarDashboardProps = {
     calendarData: { [year: number]: YearData };
 };
-
-// const data: {
-//     year: number;
-//     totalGames: number;
-//     totalActiveDays: number;
-//     maxStreak: number;
-//     activeYears?: number[];
-// } = {
-//     year: 2024,
-//     totalGames: 317,
-//     totalActiveDays:103,
-//     maxStreak: 30,
-//     activeYears: [2022, 2023, 2024],
-// }
-
 
 function getJanFirstDay(year: number): number {
     const date = new Date(year, 0, 1);
@@ -48,30 +31,12 @@ function isPrime(n: number): boolean {
       if (n % i === 0) return false
     }
     return true
-  }
-  
-
-function fillActiveDays(): { [key: number]: number } {
-    const activeDays: { [key: number]: number } = {};
-    for (let i = 1; i <= 366; i++) {
-        // activeDays[i] = 0;
-        // continue;
-        if (isPrime(i))
-            activeDays[i] = 0;
-        else
-            activeDays[i] = Math.random();
-    }
-    return activeDays;
 }
 
 export default function CalendarDashboard(): JSX.Element {
-    // const years = Object.keys(calendarData).map(Number).sort((a, b) => b - a);
-      // Memoize years so it only recalculates when calendarData changes
-
-    // static calendarData
-        const calendarData: { [year: number]: YearData } = {
+    const calendarData: { [year: number]: YearData } = {
         2022: {
-            totalGames: 250,
+            totalGames: 31,
             totalActiveDays: 90,
             maxStreak: 21,
             DaysData: (() => {
@@ -100,25 +65,24 @@ export default function CalendarDashboard(): JSX.Element {
             maxStreak: 30,
             DaysData: (() => {
             const days: { [key: number]: number } = {};
-            for (let i = 1; i <= 366; i++) { // Leap year
+            for (let i = 1; i <= 366; i++) {
                 days[i] = Math.random() > 0.6 ? Math.random() : 0;
             }
             return days;
             })(),
         },
-        };
-
-        
+    };
 
     const years = useMemo(() => {
         return Object.keys(calendarData).map(Number).sort((a, b) => b - a);
     }, [calendarData]);
+    
     const [ selectedYear, setSelectedYear ] = useState(years[0]);
     
     useEffect(() => {
         if (years.length > 0 && selectedYear !== years[0])
             setSelectedYear(years[0]);
-    }, [calendarData, years, setSelectedYear]);
+    }, [calendarData, years]);
     
     if (!selectedYear || !calendarData[selectedYear])
         return <div className="flex justify-center items-center h-full">Loading...</div>;
@@ -134,44 +98,38 @@ export default function CalendarDashboard(): JSX.Element {
     let stop = false;
     let totalDays = 1;
     const color1 = '#FEDF7F';
-    const color2 = '#F9545B';
-    const color3 = '#FF9D24';
     const color = color1;
 
-
-
-    console.log('years          ', years);
-    console.log('selected year', selectedYear);
-    console.log('calendar data    ', calendarData);
     const activeDays = calendarData[selectedYear].DaysData;
-    
-    console.log(calendarData);
 
     for (let i = 0; i < 63; i++) {
       const boxes = [];
       for (let j = 0; j < 7; j++) {
         if (divCounter < firstDay) {
             boxes.push(
-                <div key={j} className="w-4.5 h-4.5 rounded-[5px]"></div>
+                <div key={j} className="w-2 h-2 xs:w-2.5 xs:h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 rounded-sm sm:rounded-md"></div>
             );
             divCounter++;
             continue;
         }
         
         if (totalDays in activeDays && activeDays[totalDays] > 0) {
-            if (activeDays[totalDays] == 1)
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: 1}}></div> );
-            else if (activeDays[totalDays] >= 0.75)
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .8}}></div> );
-            else if (activeDays[totalDays] >= 0.5) 
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .60}}></div> );
-            else if (activeDays[totalDays] >= 0.25) 
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .40}}></div> );
-            else
-                boxes.push( <div key={j} className="w-4.5 h-4.5 rounded-[5px]" style={{ backgroundColor: color, opacity: .20}}></div> );
+            let opacity = 0.2;
+            if (activeDays[totalDays] == 1) opacity = 1;
+            else if (activeDays[totalDays] >= 0.75) opacity = 0.8;
+            else if (activeDays[totalDays] >= 0.5) opacity = 0.6;
+            else if (activeDays[totalDays] >= 0.25) opacity = 0.4;
+            
+            boxes.push(
+                <div 
+                    key={j} 
+                    className="w-2 h-2 xs:w-2.5 xs:h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 rounded-sm sm:rounded-md transition-all hover:scale-110 hover:ring-1 hover:ring-white/30" 
+                    style={{ backgroundColor: color, opacity }}
+                ></div>
+            );
         } else {
             boxes.push(
-              <div key={j} className="bg-black/50 w-4.5 h-4.5 rounded-[5px]"></div>
+              <div key={j} className="bg-black/50 w-2 h-2 xs:w-2.5 xs:h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 rounded-sm sm:rounded-md"></div>
             );
         }
         divCounter++;
@@ -192,13 +150,13 @@ export default function CalendarDashboard(): JSX.Element {
         if (nextMonth && !stop) {
             nextMonth = false;
             allBoxes.push(
-                <div key={i} className="flex flex-col gap-1 mx-0.5 mr-4.5">
+                <div key={i} className="flex flex-col gap-[2px] sm:gap-[3px] mx-[1px] sm:mx-[2px] mr-1 sm:mr-2 lg:mr-4">
                     {boxes}
                 </div>
             );
         } else {
             allBoxes.push(
-                <div key={i} className="flex flex-col gap-1 mx-0.5">
+                <div key={i} className="flex flex-col gap-[2px] sm:gap-[3px] mx-[1px] sm:mx-[2px]">
                     {boxes}
                 </div>
             );
@@ -207,53 +165,112 @@ export default function CalendarDashboard(): JSX.Element {
     }
 
     return (
-        <div className="flex flex-col w-full h-full">
-            <div className="flex justify-around">
-                <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
-                    <h2 className="text-white/80 text-xl font-bold">{data.totalGames} games in {selectedYear}</h2>
-                </div> 
-                <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
-                    <h2 className="text-white/80 text-xl font-bold">Total active days: {data.totalActiveDays}</h2>
-                </div> 
-                <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl">
-                    <h2 className="text-white/80 text-xl font-bold">Max streak: {data.maxStreak}</h2>
-                </div> 
+        <div className="flex flex-col w-full p-2 sm:p-4 lg:p-6">
+
+            <style jsx global>{`
+                /* Beautiful custom scrollbar */
+                .custom-scrollbar::-webkit-scrollbar {
+                    height: 8px;
+                }
                 
-                <div className="bg-black/30 hover:bg-black/40 py-2 px-4 m-2 rounded-4xl flex">
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 10px;
+                    margin: 0 20px;
+                }
+                
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: linear-gradient(90deg, #FEDF7F 0%, #FF9D24 100%);
+                    border-radius: 10px;
+                    border: 2px solid rgba(0, 0, 0, 0.2);
+                }
+                
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: linear-gradient(90deg, #FFE89F 0%, #FFB144 100%);
+                }
+            `}</style>
+
+            {/* Stats Grid - Responsive Layout */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
+                {/* Games Stat */}
+                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 hover:scale-105 border border-white/5">
+                    <p className="text-white/50 text-xs sm:text-sm mb-1">Total Games</p>
+                    <h2 className="text-white/90 text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-yellow-200 to-yellow-400 bg-clip-text text-transparent">{data.totalGames}</h2>
+                    <p className="text-white/40 text-xs mt-1">{selectedYear}</p>
+                </div>
+                
+                {/* Active Days Stat */}
+                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 hover:scale-105 border border-white/5">
+                    <p className="text-white/50 text-xs sm:text-sm mb-1">Active Days</p>
+                    <h2 className="text-white/90 text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-200 to-green-400 bg-clip-text text-transparent">{data.totalActiveDays}</h2>
+                    <p className="text-white/40 text-xs mt-1">{Math.round((data.totalActiveDays / 365) * 100)}% of year</p>
+                </div>
+                
+                {/* Max Streak Stat */}
+                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 hover:scale-105 border border-white/5">
+                    <p className="text-white/50 text-xs sm:text-sm mb-1">Max Streak</p>
+                    <h2 className="text-white/90 text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-200 to-red-400 bg-clip-text text-transparent">{data.maxStreak}</h2>
+                    <p className="text-white/40 text-xs mt-1">days in a row</p>
+                </div>
+                
+                {/* Year Selector */}
+                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 hover:scale-105 border border-white/5 flex flex-col justify-center">
+                    <p className="text-white/50 text-xs sm:text-sm mb-2">Select Year</p>
                     <select
                         value={selectedYear}
                         onChange={(event) => setSelectedYear(Number(event.target.value))}
-                        className="appearance-none text-white/80 text-xl font-bold"
+                        className="bg-white/10 text-white/90 text-lg sm:text-xl lg:text-2xl font-bold rounded-xl px-3 py-2 border border-white/10 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 cursor-pointer hover:bg-white/20 transition-all"
                     >
                         {years.map((year) => (
                             <option
                                 key={year}
                                 value={year}
-                                className="bg-black/30 hover:bg-black/40 text-white/80 text-xl font-bold"
-                                >
+                                className="bg-gray-800 text-white"
+                            >
                                 {year}
                             </option>
                         ))}
                     </select>
-                    <Image className="pointer-events-none ml-3" src='/select.png' alt="select" width={25} height={4} />
                 </div>
             </div>
-            <div className="flex flex-col">
-                <div className="" >
-                    <div className="flex mx-5 my-3 justify-center">
-                        {allBoxes}
-                    </div>
 
-                </div>
-                <div className="flex justify-around mx-4">
-                {[
-                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-                ].map((month) => (
-                    <div key={month} className="text-white/70 font-bold text-lg">
-                    {month}
+            {/* Calendar Section */}
+            <div className="flex flex-col bg-gradient-to-br from-black/6 to-black/1 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-6 border border-white/5">
+                {/* Calendar Grid with Month Labels - All Scrollable */}
+                <div className="overflow-x-auto custom-scrollbar pb-3">
+                    <div className="min-w-max">
+                        {/* Calendar Grid */}
+                        <div className="flex justify-center items-center px-2 sm:px-4 mb-3">
+                            <div className="flex gap-[1px] sm:gap-[2px]">
+                                {allBoxes}
+                            </div>
+                        </div>
+
+                        {/* Month Labels - Inside scroll view */}
+                        <div className="flex justify-around px-2 sm:px-4">
+                            {[
+                                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                            ].map((month) => (
+                                <div key={month} className="text-white/60 font-semibold text-xs sm:text-sm lg:text-base flex-1 text-center">
+                                    {month}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                ))}
+                </div>
+
+                {/* Legend */}
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-4 pt-4 border-t border-white/10">
+                    <span className="text-white/50 text-xs sm:text-sm font-medium">Less</span>
+                    {[0.2, 0.4, 0.6, 0.8, 1].map((opacity, idx) => (
+                        <div
+                            key={idx}
+                            className="w-3 h-3 sm:w-4 sm:h-4 rounded-sm sm:rounded-md hover:scale-125 transition-transform"
+                            style={{ backgroundColor: color1, opacity }}
+                        ></div>
+                    ))}
+                    <span className="text-white/50 text-xs sm:text-sm font-medium">More</span>
                 </div>
             </div>
         </div>
