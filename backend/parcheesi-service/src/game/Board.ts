@@ -122,6 +122,33 @@ export class Board {
     return { ...this.getGoal(playerIdx), occupants: [...this.getGoal(playerIdx).occupiedBy] };
   }
 
+
+  /**
+   * this function to get a tile by position
+   * returns the tile and its type (shared, home, base, goal)
+   * or undefined if not found
+   * it shoud use the low-level getters and peek helpers
+   */
+  getTileByPosition(position: BoardPosition, playerid:number = 0): {postions: SharedTile | GoalTile| HomePath | BaseArea |undefined} {
+    if (typeof position === 'number') {
+      if (!this.isValidSharedIndex(position)) return {postions: undefined};
+      return {postions: this.getShared(position)}; 
+    }
+    if (position === 'base' ) {
+      return {postions: this.getBase(0)}; // playerId is not used here
+    }
+    if (position === 'home') {
+      return {postions: this.getGoal(0)}; // playerId is not used here
+    }
+    if (typeof position === 'object' && 'homeIndex' in position) {
+      const hi = position.homeIndex;
+      if (!this.isValidHomeIndex(hi)) return {postions: undefined};
+      return {postions: this.getHome(playerid)}; // playerId is required here
+    }
+    return {postions: undefined};
+  }
+
+
   /* ----------------------------
    * Atomic mutation operations (no game rules)
    * ---------------------------- */
@@ -184,7 +211,6 @@ export class Board {
     overflowWarning: boolean; // true if occupancy exceeds typical limit (eg. >2) after insertion
   } {
     const prevPos = piece.position;
-
     // For safety, we do NOT automatically remove piece from previous position.
     // Caller should call removePieceAtomic(prev) before addPieceAtomic if needed.
     // But to keep pieces consistent, we still clear the previous reference if it exists:
@@ -247,8 +273,10 @@ export class Board {
     removedFromPrevious: boolean;
     addResult: ReturnType<Board['addPieceAtomic']>;
   } {
+    const prevPos = piece.position;
     const removed = this.removePieceAtomic(piece);
     const addResult = this.addPieceAtomic(piece, target);
+    addResult.previousPosition = prevPos; // preserve original previous position from before removal cause the one camming from add is now undefined
     return { removedFromPrevious: removed, addResult };
   }
 
@@ -333,6 +361,25 @@ export class Board {
         occupiedBy: goal.occupiedBy.map(p => ({ id: p.id, playerId: p.playerId })),
       })),
     };
+  }
+
+  getTileoccupants(position: BoardPosition, playerId: number = 1): Piece[] {
+    if (typeof position === 'number') {
+      if (!this.isValidSharedIndex(position)) return [];
+      return [...this.getShared(position).occupiedBy]; // shallow copy
+    }
+    if (position === 'base') {
+      return [...this.getBase(playerId - 1).pieces]; // playerId is required here
+    }
+    if (position === 'home') {
+      return [...this.getGoal(playerId - 1).occupiedBy]; // playerId is required here
+    }
+    if (typeof position === 'object' && 'homeIndex' in position) {
+      const hi = position.homeIndex;
+      if (!this.isValidHomeIndex(hi)) return [];
+      return [...this.getHome(playerId - 1).Hometile[hi].occupiedBy]; // playerId is required here
+    }
+    return [];
   }
 
 }
