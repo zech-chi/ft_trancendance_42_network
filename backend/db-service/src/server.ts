@@ -7,6 +7,7 @@ import routesDashboard from "./routes/routesDashboard";
 import routesAuth from "./routes/routesAuth";
 import routesPong from "./routes/routesPong";
 import dotenv from "dotenv";
+import metricsPlugin from "fastify-metrics";
 // import cors from '@fastify/cors';
 
 dotenv.config();
@@ -22,7 +23,7 @@ declare module "fastify" {
 console.log("==========>> DB_SECRET:", process.env.SECRET_KEY);  
 
 const fastify = Fastify({ logger: true });
-
+fastify.register(metricsPlugin, { endpoint: "/metrics" });
 // fastify.register(cors, {
 //   origin: ['http://localhost:3000', 'http://0.0.0.0:3000'], // allow your frontend's origin
 //   credentials: true,               // <— important!
