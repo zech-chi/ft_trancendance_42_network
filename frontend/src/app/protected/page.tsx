@@ -9,6 +9,7 @@ import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserId } from "@/context/UserIdContext";
 // import Login from "@/components/Login";
 import { TopDashboard } from "@/components/TopDashboard";
+import  CalendarDashboard  from "@/components/CalendarDashboard";
 import { Friends } from "@/components/Friends";
 // import { History } from "@/components/History";
 // import { Rank } from "@/components/Rank";
@@ -66,6 +67,7 @@ function LeftComponent(): JSX.Element {
 		">
 			<div className="flex flex-col w-full gap-1">
 				<TopDashboard />
+				<CalendarDashboard />
 				<Statistics />
 			</div>
 		</div>
@@ -113,72 +115,8 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 	);
 }
 
-
-
-// export default function Home() : JSX.Element {
-// 	const { loggedUserName, setLoggedUserName } = useLoggedUserName();
-// 	const { selectedUserName, setSelectedUserName } = useSelectedUserName();
-// 	const [showRightComp, setShowRightComp] = useState<boolean>(false);
-// 	const [loading, setLoading] = useState(true);
-// 	const router = useRouter();
-
-// 	useEffect(() => {
-// 	  async function checkAuth() {
-// 		const user = await fetchUser();
-// 		console.log("Fetched user:", user);
-// 		if (!user || !user.userName) {
-// 			setLoggedUserName(null);
-// 			setSelectedUserName(null);
-// 			router.push("/login");
-// 		} else {
-// 			setLoggedUserName(user.userName);
-// 			setSelectedUserName(user.userName);
-// 		}
-// 		setLoading(false);
-// 	  }
-// 	  checkAuth();
-// 	}
-// 	, []);
-
-// 	if (loading) {
-// 		return (
-// 			<div className="h-screen flex items-center justify-center text-white">
-// 			Loading...
-// 			</div>
-// 		);
-// 	}
-
-// 	if (loading) {
-// 		return <div className="h-screen flex items-center justify-center text-white">Loading...</div>;
-// 	}
-
-// 	return (
-//     	<>
-// 			<div className="h-screen flex-row items-center min-w-[200px] overflow-x-auto">
-// 				{/* <Sidebar />
-// 				<Navbar /> */}
-// 				<h1 className="text-white">loggedUserName = {loggedUserName}</h1>
-// 				<h1 className="text-white">selectedUserName = {selectedUserName}</h1>
-// 			</div>
-// 		</>
-//   );
-// }
-
     
 export default function Home() : JSX.Element {
-	// const { loggedUserName, setLoggedUserName } = useLoggedUserName();
-	// const [showRightComp, setShowRightComp] = useState<boolean>(false);
-
-	// useEffect(() => {
-	//   if (loggedUserName) {
-	// 	console.log(`Logged in user: ${loggedUserName}`);
-	//   }
-	// }
-	// , [loggedUserName]);
-
-	// if (!loggedUserName) {
-	// 	return <Login onLogin={setLoggedUserName} />;
-	// }
 	const { loggedUserName, setLoggedUserName } = useLoggedUserName();
 	const { selectedUserName, setSelectedUserName } = useSelectedUserName();
 	const { selectedUserId, setSelectedUserId } = useSelectedUserId();
