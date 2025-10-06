@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { dashboardRoutes } from "./src/dashboard.route";
 import { dashboardSchemas } from "./src/dashboard.schema";
 import cors from '@fastify/cors';
+import metricsPlugin from "fastify-metrics";
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ dotenv.config();
 console.log("==========>> DB_SECRET:", process.env.SECRET_KEY);  
 
 const fastify = Fastify({ logger: true });
-
+fastify.register(metricsPlugin, { endpoint: "/metrics" });
 
 // register routes
 // fastify.register(routesDashboard, { prefix: "/api/auth/" });

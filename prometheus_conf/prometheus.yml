@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 5s # fréquence de collecte
+
+scrape_configs:
+  - job_name: "fastify"
+    static_configs:
+      - targets:
+          [
+            "auth-service:5001",
+            "chat-service:5003",
+            "dashboard-service:5002",
+            "db-service:5000",
+            "ping-pong-service:5500",
+            "parcheesi-service:5555",
+          ]

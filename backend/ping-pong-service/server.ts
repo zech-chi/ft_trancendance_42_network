@@ -9,8 +9,12 @@ import authPlugin from './plugins/authPlugin';
 import fastifyCookie from "@fastify/cookie";
 import fastifyJwt from '@fastify/jwt';
 import {SocketFunction} from "./socket"
+import metricsPlugin from "fastify-metrics";
 
 const fastify = Fastify({ logger: false });
+
+fastify.register(metricsPlugin, { endpoint: "/metrics" });
+
 
 fastify.register(cors, {
   origin: ["http://localhost:3000"],
