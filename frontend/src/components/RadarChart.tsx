@@ -1,9 +1,5 @@
 'use client'
 import { useState, useRef, useEffect } from "react";
-import { fetchRadarData } from "@/app/lib/apiDashboard";
-import { useLoggedUserName } from "@/context/LoggedUserNameContext";
-import { select, u } from "framer-motion/client";
-import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 
 const points1 = [
     { x: 0, y: -90 },
@@ -40,26 +36,12 @@ const points4 = points1.map((
     }
 ));
 
-
 const points5 = points1.map((
     {x, y}) => ({
         x: x * (4 * scaleFactor - 3),
         y: y * (4 * scaleFactor - 3),
     }
 ));
-
-
-const pointsData =  [
-    17.2,
-    3,
-    17,
-    3.5,
-    9.1,
-    1,
-    15,
-    7.3,
-    13
-]
 
 const skills = [
     "Quick Reflexes",
@@ -91,45 +73,22 @@ function isPointBetweenAngles(x1: number, y1: number, sep1: { x: number, y: numb
 }
 
 export function RadarChart() {
-    const { selectedUserName } = useSelectedUserName();
     const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
     const [radarData, setRadarData] = useState<number[] | null>(null);
     const svgRef = useRef<SVGSVGElement>(null);
-    // State to hold the coordinates of the mouse pointer
     const [coords, setCoords] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
     
     const getScaleFactor = (x: number) => 0.2 + (x / 20) * 0.8;
-    // const radarData = [12.4,19.7,4.3,8.6,17.1,0.9,15.5,6.2,2.8];
 
-    // Fetch radar data from the API
+    // Demo data
     useEffect(() => {
-        if (selectedUserName) {
-          fetchRadarData(selectedUserName)
-            .then((data) => {
-              const radarDataArray = [
-                data.Quick_Reflexes,
-                data.Strategic_Thinking,
-                data.Precision_Shots,
-                data.Pattern_Recognition,
-                data.Anticipating_Moves,
-                data.Board_Control,
-                data.Adaptive_Playstyle,
-                data.Risk_Management,
-                data.Mind_Games,
-              ];
-              setRadarData(radarDataArray);
-            })
-            .catch((err) => console.error("Error: ", err));
-        }
-      }, [selectedUserName]);
-      
+        setRadarData([12.4, 19.7, 4.3, 8.6, 17.1, 0.9, 15.5, 6.2, 2.8]);
+    }, []);
 
     if (!radarData) {
         return <div className="text-white/10">Loading radarData...</div>;
     }
-    
 
-    // Scale the points based on the radar data
     const scaledPoints = radarData.map((value: number, index) => {
         const scale = getScaleFactor(value);
         return {
@@ -138,8 +97,6 @@ export function RadarChart() {
         }
     });
 
-    // Calculate the midpoints for the separators
-    // between the points to create the radar chart's sectors
     const sperators: { x: number; y: number }[] = [];
 
     for (let i = 1; i < 9; i++) {
@@ -158,11 +115,6 @@ export function RadarChart() {
         }
     )
 
-
-    // Reference to the SVG element 
-    // to calculate the mouse position relative to the SVG
-
-    // Function to set the hovered index based on the coordinates
     const setActivatedCircleIndex = (() => {
         if (coords.x === 0 && coords.y === 0)
             return ;
@@ -187,7 +139,6 @@ export function RadarChart() {
             setHoveredIndex(0);
     })
 
-    // Handle mouse movement over the SVG to calculate coordinates and set hovered index
     const handleMouseMove = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
         const svg = svgRef.current;
         if (!svg) return;
@@ -203,10 +154,8 @@ export function RadarChart() {
         )
 
         setActivatedCircleIndex();
-
     }
 
-    // Reset coordinates and hovered index when mouse leaves the SVG
     const resetCoords = () => {
         setCoords(
             {
@@ -218,14 +167,24 @@ export function RadarChart() {
     };
     
     return (
-        <div className="w-[90%] md:w-[50%] aspect-square rounded-[25px] flex flex-col items-center justify-center my-"
-        style={{
-            background:
-              'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)), linear-gradient(to right, rgba(42, 21, 34, 1), rgba(96, 31, 48, 1 ) 100%)',
-            backgroundBlendMode: 'overlay',
-          }}
+        <div className="w-full sm:w-[85%] md:w-[70%] lg:w-[60%] xl:w-[50%] 
+            aspect-square rounded-2xl sm:rounded-3xl 
+            flex flex-col items-center justify-center 
+            p-3 sm:p-4 md:p-5 lg:p-6
+            mx-auto my-2 sm:my-3 md:my-4"
+            style={{
+                background:
+                  'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)), linear-gradient(to right, rgba(42, 21, 34, 1), rgba(96, 31, 48, 1 ) 100%)',
+                backgroundBlendMode: 'overlay',
+            }}
         >
-            <svg ref={svgRef} className="w-[100%]  aspect-square" viewBox="-100 -100 200 200" onMouseMove={handleMouseMove} onMouseLeave={resetCoords}>
+            <svg 
+                ref={svgRef} 
+                className="w-full aspect-square" 
+                viewBox="-100 -100 200 200" 
+                onMouseMove={handleMouseMove} 
+                onMouseLeave={resetCoords}
+            >
                 {
                     sperators.map((point, index) => (
                         <line
@@ -260,7 +219,6 @@ export function RadarChart() {
                 />
                 <circle cx="0" cy="0" r="7.5" className="fill-black" />
 
-                {/* define gradient color */}
                 <defs>
                     <linearGradient id="myGradient">
                     <stop offset="0%" stopColor="#FE9734" stopOpacity="0.7"/>
@@ -287,19 +245,47 @@ export function RadarChart() {
                         />
                     ))
                 }
-                
 
                 <circle cx={coords.x} cy={coords.y} r="2"
                     className={(coords.x === 0 && coords.y === 0) ? "fill-transparent" : "fill-[#632133]"}
                 />
             </svg>
             {hoveredIndex !== -1 && (
-                <div className="flex flex-col items-center justify-center">
-                    <h1 className="text-xl md:text-2xl xl:text-3xl 2xl:text-4xl text-[#FEDF7F] font-bold">{skills[hoveredIndex]}</h1>
-                    <h1 className="text-l md:text-xl xl:text-2xl 2xl:text-3xl text-[#FEDF7F]/80 font-bold">{radarData[hoveredIndex]} / 20</h1>
+                <div className="absolute pointer-events-none"
+                    style={{
+                        // left: '50%',
+                        // top: '50%',
+                        transform: `translate(calc(-50% + ${scaledPoints[hoveredIndex].x * 0.45}%), calc(-50% + ${scaledPoints[hoveredIndex].y * 0.45}% - 60px))`
+                    }}>
+                    <div className="bg-gradient-to-br from-black/95 to-black/90 backdrop-blur-sm
+                        px-3 py-2 sm:px-4 sm:py-2.5 
+                        rounded-xl border border-[#FEDF7F]/30 shadow-2xl
+                        min-w-[140px] sm:min-w-[160px]
+                        animate-in fade-in slide-in-from-bottom-2 duration-200">
+                        <div className="flex flex-col items-center gap-1">
+                            <h3 className="text-[10px] sm:text-xs md:text-sm 
+                                text-[#FEDF7F] font-bold text-center leading-tight">
+                                {skills[hoveredIndex]}
+                            </h3>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-sm sm:text-base md:text-lg 
+                                    text-white font-bold">
+                                    {radarData[hoveredIndex]}
+                                </span>
+                                <span className="text-[9px] sm:text-[10px] md:text-xs 
+                                    text-white/60 font-medium">
+                                    / 20
+                                </span>
+                            </div>
+                        </div>
+                        <div className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 
+                            w-3 h-3 bg-gradient-to-br from-black/95 to-black/90 
+                            border-r border-b border-[#FEDF7F]/30 rotate-45" />
+                    </div>
                 </div>
             )}
         </div>
     );
-
 }
+
+export default RadarChart;

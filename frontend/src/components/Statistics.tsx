@@ -97,11 +97,11 @@ export default function Statistics() {
     }
 
     return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex flex-col items-center justify-center h-full bg-black/23">
       <ChooseGame game={game} setGame={setGame}/>
-      <div className="flex w-full">
+      <div className="flex w-full h-full items-center justify-center">
         <RadarChart/>
-        <div className='flex flex-col'>
+        <div className='flex flex-col items-center justify-center'>
             <FriendsStats data={data}/>
             <AIStats data={data}/>
         </div>
