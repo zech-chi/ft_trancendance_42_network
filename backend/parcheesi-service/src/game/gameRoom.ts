@@ -251,7 +251,7 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
         const olderPiece = beforeOccupants.find(p => p.id !== decision.piece.id);
         await this.emitMoveEvent(olderPiece!, playerColor as PlayerColor, decision.to, 'left');
       }
-  
+      let done = false;
       for (const step of decision.path) {
         if (jumped && decision.placeTojump && !decision.placeTojump.includes(step)) {
           await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'center');
@@ -274,10 +274,11 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
             const beforeOccupantsPrev = this.board.getTileoccupants(prevPosition);
             // check if the dice if containe 5 if yes return true other wise false
             const hasFive: boolean = this.currentDice.includes(5);
-            if (((typeof prevPosition === 'number' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1) || (typeof prevPosition === 'object' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1)) && !hasFive)
+            if (((typeof prevPosition === 'number' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1) || (typeof prevPosition === 'object' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1)) && !hasFive && !done)
               {
                 const olderPiece = beforeOccupantsPrev.find(p => p.id !== decision.piece.id);
                 await this.emitMoveEvent(olderPiece!, playerColor as PlayerColor, prevPosition, 'center');
+                done = true;
               }
           }
         
@@ -496,7 +497,7 @@ async handleRollDice() {
    if ( !result) return;
 
     // If the player has no remaining moves, go to next turn
-    if ((!player.Remain_moves || player.Remain_moves.length === 0 || this.currentDice.length === 0) && (!player.bonus_moves || player.bonus_moves.length === 0)) {
+    if (((!player.Remain_moves || player.Remain_moves.length === 0) && this.currentDice.length === 0) && ((!player.bonus_moves || player.bonus_moves.length === 0) && this.bonusDice === 0)) {
       this.nextTurn();
     }
     else
