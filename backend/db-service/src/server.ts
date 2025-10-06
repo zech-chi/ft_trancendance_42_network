@@ -7,6 +7,7 @@ import routesDashboard from "./routes/routesDashboard";
 import routesAuth from "./routes/routesAuth";
 import routesPong from "./routes/routesPong";
 import dotenv from "dotenv";
+import routesSettings from "./routes/routesSettings";
 // import cors from '@fastify/cors';
 
 dotenv.config();
@@ -37,6 +38,7 @@ fastify.register(routesChat, { prefix: "/api/chat" });
 fastify.register(routesAuth, { prefix: "api/auth" });
 fastify.register(routesDashboard, { prefix: "/api/dashboard" });
 fastify.register(routesPong, { prefix: "/api/pong" });
+fastify.register(routesSettings, { prefix: "/api/settings" });
 
 // start server
 const start = async () => {
