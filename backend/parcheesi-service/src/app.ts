@@ -27,12 +27,12 @@ export async function buildApp()
         methods: ['GET', 'POST'],
         credentials: true});
 
-    app.register(auth2FaPlugin,{prefix: "/auth"} );
+    // app.register(auth2FaPlugin,{prefix: "/auth"} );
     app.register(parchisiPlugin, {prefix:"/games/parchisi"});
-    app.get("/protected", {
-        preHandler: [app.auth]
-    }, async (req:any, reply:any) => {
-        return { message: "This is protected" };
-    })
+    // app.get("/protected", {
+    //     preHandler: [app.auth]
+    // }, async (req:any, reply:any) => {
+    //     return { message: "This is protected" };
+    // })
     return app;
 }

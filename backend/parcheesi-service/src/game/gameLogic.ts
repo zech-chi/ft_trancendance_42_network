@@ -204,6 +204,7 @@ export class GameLogic {
 
   else if (typeof targetPiece.position === 'object')
     {
+      console.log(chalk.green(`this is the home index`));
           const homeIdx = dice + targetPiece.position.homeIndex;
           if (homeIdx <= 0 || homeIdx > 7) return false;
           //read those after 

@@ -117,7 +117,7 @@ export class GameRoom {
    * Broadcast a single step move for animation (keeps your original event format).
    * `where` and `speed` preserved from your previous code.
    */
-  private async emitMoveEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 2, delayMs = 400) {
+  private async emitMoveEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 4, delayMs = 500) {
     let se7en: boolean = false;
     let final: boolean = false;
     let placeofbr:number = 0;
@@ -310,7 +310,7 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
     // }
   
     // Safety: if beforeOccupants length > 1 (shouldn't happen due to checks), handle gracefully: // ballshit remove after
-    if (beforeOccupants.length >= 2) {
+    if (beforeOccupants.length >= 2 && decision.to !== 'home') {
       // This is an illegal state in your rules (only max 2 allowed).
       // Remove the moved piece to restore consistency and report error.
       this.board.removePieceAtomic(decision.piece);

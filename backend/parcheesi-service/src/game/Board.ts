@@ -258,7 +258,7 @@ export class Board {
       const before = [...tile.occupiedBy];
       tile.occupiedBy.push(piece);
       piece.position = position;
-      return { previousPosition: prevPos, targetOccupantsBefore: before, overflowWarning: tile.occupiedBy.length > 1 };
+      return { previousPosition: prevPos, targetOccupantsBefore: before, overflowWarning: tile.occupiedBy.length > 2 };
     }
 
     throw new Error('Unsupported position variant');
