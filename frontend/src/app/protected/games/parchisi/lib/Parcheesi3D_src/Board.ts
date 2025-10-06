@@ -928,7 +928,7 @@ export class Board {
             await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
                 console.log("Jump animation completed");
             });
-            this.addMeme();
+            // this.addMeme();
         } else {
             if (!instruction.place || !instruction.where) {
                 console.error("Invalid jump instruction:", instruction);

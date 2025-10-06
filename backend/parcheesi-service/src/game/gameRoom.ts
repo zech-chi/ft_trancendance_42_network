@@ -2,7 +2,7 @@
 // GameRoom.ts
 import { Namespace, Server, Socket } from "socket.io";
 
-import { Player, PlayerColor, Piece, MoveDecision } from "../types";
+import { Player, PlayerColor, Piece, MoveDecision, BoardPosition } from "../types";
 import { Board } from "./Board";
 import { GameLogic } from "./gameLogic";
 import chalk from "chalk";
@@ -110,14 +110,14 @@ export class GameRoom {
     // set first player turn
     setTimeout(() => {
       this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });
-    }, 5000);
+    }, 3000);
   }
 
   /**
    * Broadcast a single step move for animation (keeps your original event format).
    * `where` and `speed` preserved from your previous code.
    */
-  private async emitMoveEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 2, delayMs = 500) {
+  private async emitMoveEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 2, delayMs = 400) {
     let se7en: boolean = false;
     let final: boolean = false;
     let placeofbr:number = 0;
@@ -152,11 +152,11 @@ export class GameRoom {
   // jump> {"sphere_id":1,"sphere_type":"RED","place":1,"where":"center","speed":1, "maxHeight": 5, "toStartPosition": false}
 
   
-private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 1, toStartPosition = false, delayMs = 200) {
+private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'base' | 'home' | { homeIndex: number }, where: 'center'|'left'|'right' = 'center', speed = 2, toStartPosition = false, delayMs = 500) {
     let se7en: boolean = false;
     let final: boolean = false;
     let placeofbr:number = 0;
-    let maxHeight = 5;
+    let maxHeight = 7;
     if (typeof place === 'number')
       {
         place += 1;
@@ -202,7 +202,7 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
       this.board.removePieceAtomic(target);
       this.board.addPieceAtomic(target, 'base');
       // broadcast move of captured piece to base (animation)
-      this.emitJumpEvent(target, actorColor, 'base', 'center', 1, true);
+      this.emitJumpEvent(target, actorColor, 'base', 'center', 2, true);
       this.bonusDice = 20;
     return target;
   }
@@ -216,14 +216,21 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
     }
     // 1) Execute captures (GameRoom is responsible for state mutation)
     if (decision.capture !== null) {
-      this.executeCaptures(decision.capture, playerColor as PlayerColor);
+      const capturedcolor = this.players.find(p => p.id === decision.capture?.playerId)?.color ?? decision.capture?.playerId;
+      console.log(chalk.red(`Piece ${decision.piece.id} with color ${playerColor} captures piece ${decision.capture?.id} piece color ${capturedcolor}`));
+      this.executeCaptures(decision.capture, capturedcolor as PlayerColor);
     }
     
     // 2) Move the piece on the board (atomic)
     const moveResult = this.board.movePieceAtomic(decision.piece, decision.to);
+    // if (!moveResult.removedFromPrevious)
+    // {
+    //   console.log(chalk.red(`Failed to move piece ${decision.piece.id} to ${decision.to}`));
+    //   return false;
+    // }
     const beforeOccupants = moveResult.addResult.targetOccupantsBefore; // occupants BEFORE insertion
+    const prevPosition = moveResult.addResult.previousPosition as BoardPosition; // previous position of the moving piece
     const overflow = moveResult.addResult.overflowWarning; // true if occupancy > allowed after insertion
-  
     // If a forbidden overflow happened (more than allowed occupants), roll back and reject
     if (overflow) {
       // remove the piece we just added
@@ -236,6 +243,15 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
     // Emit intermediate steps (if any). These are animation steps: center for path steps.
     if (decision.path && decision.path.length > 0) {
       let jumped = false;
+      let isOnRight = false;
+     if ((typeof decision.to === 'number' && beforeOccupants && beforeOccupants.length === 1) || (typeof decision.to === 'object' && beforeOccupants && beforeOccupants.length === 1))
+      {
+        isOnRight = true;
+        // i have to find that piece that is not equal to the moving piece and put it on right
+        const olderPiece = beforeOccupants.find(p => p.id !== decision.piece.id);
+        await this.emitMoveEvent(olderPiece!, playerColor as PlayerColor, decision.to, 'left');
+      }
+  
       for (const step of decision.path) {
         if (jumped && decision.placeTojump && !decision.placeTojump.includes(step)) {
           await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'center');
@@ -245,8 +261,27 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
           jumped = true;
           continue;
         }
-        else
-          await this.emitMoveEvent(decision.piece, playerColor as PlayerColor, step, 'center');
+        else {
+          // regular step check if the destination is the final one and is occupied by only 1 piece meaning this following piece is that one, this is the logic i set it in the board class before emitting the move event
+          if (isOnRight && step === decision.to) {
+            await this.emitMoveEvent(decision.piece, playerColor as PlayerColor, step, 'right');
+          }else
+          {
+            await this.emitMoveEvent(decision.piece, playerColor as PlayerColor, step, 'center');
+             // i have to get the older tile before moving and check if there was there 2 pieces if yes move the piece witch is not this to center
+            console.log(`prev position : ${prevPosition}`);
+            // get the previous tile occupants before moving
+            const beforeOccupantsPrev = this.board.getTileoccupants(prevPosition);
+            // check if the dice if containe 5 if yes return true other wise false
+            const hasFive: boolean = this.currentDice.includes(5);
+            if (((typeof prevPosition === 'number' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1) || (typeof prevPosition === 'object' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1)) && !hasFive)
+              {
+                const olderPiece = beforeOccupantsPrev.find(p => p.id !== decision.piece.id);
+                await this.emitMoveEvent(olderPiece!, playerColor as PlayerColor, prevPosition, 'center');
+              }
+          }
+        
+        }
       }
     }
   
@@ -258,20 +293,20 @@ private async emitJumpEvent(piece: Piece, color: PlayerColor, place: number | 'b
       return true;
     }
   
-    if (beforeOccupants.length === 1 && decision.to !== 'home') {
-      // Tile had one piece already -> after insertion we have two pieces.
-      // Decide visual positions: existing (older) -> LEFT, new (recent) -> RIGHT
-      const olderPiece = beforeOccupants[0];
-      const newPiece = decision.piece;
+    // if (beforeOccupants.length === 1 && decision.to !== 'home') {
+    //   // Tile had one piece already -> after insertion we have two pieces.
+    //   // Decide visual positions: existing (older) -> LEFT, new (recent) -> RIGHT
+    //   const olderPiece = beforeOccupants[0];
+    //   const newPiece = decision.piece;
   
-      // Emit reposition for the older piece (shift it to left)
-      await this.emitMoveEvent(olderPiece, playerColor as PlayerColor, decision.to, 'right');
+    //   // Emit reposition for the older piece (shift it to left)
+    //   await this.emitMoveEvent(olderPiece, playerColor as PlayerColor, decision.to, 'right');
   
-      // Emit move for the newly placed piece to the right
-      await this.emitMoveEvent(newPiece, playerColor as PlayerColor, decision.to, 'left');
+    //   // Emit move for the newly placed piece to the right
+    //   await this.emitMoveEvent(newPiece, playerColor as PlayerColor, decision.to, 'left');
   
-      return true;
-    }
+    //   return true;
+    // }
   
     // Safety: if beforeOccupants length > 1 (shouldn't happen due to checks), handle gracefully: // ballshit remove after
     if (beforeOccupants.length >= 2) {
@@ -362,7 +397,6 @@ async handleRollDice() {
     });
     await this.leaveBaseAuto();
     await this.autoMove();
-    console.log(chalk.blue("remain moves after auto leave base and auto move", currentPlayer.Remain_moves.length));
       if ((!currentPlayer.Remain_moves || currentPlayer.Remain_moves.length === 0 ) && (!currentPlayer.bonus_moves || currentPlayer.bonus_moves.length === 0)) {
         // if no available moves left, go to next player
         console.log(`No available moves for player ${currentPlayer.userName}`);
@@ -473,7 +507,7 @@ async handleRollDice() {
       await this.autoMove();
       if (player.bonus_moves && player.bonus_moves.length > 0)
         this.announceMoveablePieces(player, player.bonus_moves);
-      else if (next)
+      else if (next || (!player.Remain_moves || player.Remain_moves.length === 0 || this.currentDice.length === 0) && (!player.bonus_moves || player.bonus_moves.length === 0))
         this.nextTurn();
       else
         this.announceMoveablePieces(player, player.Remain_moves);
