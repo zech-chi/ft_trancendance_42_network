@@ -101,7 +101,17 @@ export default async function socketManager(io: Server) {
       room.readyPlayers++;
       if (room.readyPlayers > room.players.length)
         {
-          socket.emit("error", { message: "counter more than player" });
+          //mean someone realoded the page and clicked ready again so need to send him all the playes places with the current player
+          room.readyPlayers = room.players.length;
+          for (const p of room.players)
+          {
+            //send each player his places i dont need socket , because i user this.broadcast
+           //loop thorght all peices of p 
+            for (const piece of p.pieces)
+            {
+              room.emitJumpEvent(piece, p.color, piece.position, 'center')
+            }
+          }
         }
       if (room.readyPlayers === room.players.length)
         {
