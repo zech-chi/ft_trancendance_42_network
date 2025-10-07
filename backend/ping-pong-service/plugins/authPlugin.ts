@@ -248,7 +248,7 @@ const authPlugin: FastifyPluginAsync<AuthPluginOptions> = async (
         return { success: false, error: "Not authenticated" };
     }
 
-    const response = await fetch(`http://localhost:5000/api/pong/friends/${userId}`);
+    const response = await fetch(`http://db-service:5000/api/pong/friends/${userId}`);
     if (!response.ok) {
         reply.status(400).send({ success: false, error: "Failed to fetch friends" });
         return;
@@ -274,7 +274,7 @@ const authPlugin: FastifyPluginAsync<AuthPluginOptions> = async (
 
     try {
       // now fetch user from db localhost:5000/api/pong/user/:id
-      const response = await fetch(`http://localhost:5000/api/pong/user/${id}`);
+      const response = await fetch(`http://db-service:5000/api/pong/user/${id}`);
       if (!response.ok) {
         reply.status(400).send({ success: false, error: "Failed to fetch user" });
         return;
