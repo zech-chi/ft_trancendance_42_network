@@ -493,3 +493,44 @@ function Settings() {
 }
 
 export default Settings;
+
+
+// async function updateUserProfile(userId) {
+//   const formData = new FormData();
+
+//   // Add text fields
+//   formData.append("firstName", "John");
+//   formData.append("lastName", "Doe");
+//   formData.append("language", "en");
+//   formData.append("bio", "Updated bio description");
+//   formData.append("oldPassword", "test12345");
+//   formData.append("newPassword", "newpass123");
+//   formData.append("confirmPassowrd", "newpass123");
+
+//   // Add profile image (optional)
+//   // Assuming you have a file input element:
+//   const fileInput = document.querySelector('#profileImage');
+//   if (fileInput && fileInput.files.length > 0) {
+//     formData.append("profileImage", fileInput.files[0]);
+//   }
+
+//   try {
+//     const response = await fetch(`http://localhost:5004/api/settings/update/${userId}`, {
+//       method: "PATCH",
+//       body: formData,
+//       // ❌ DO NOT set Content-Type manually! Fetch will handle it automatically for multipart
+//     });
+
+//     const result = await response.json();
+//     console.log("Server response:", result);
+
+//     if (result.status === "success") {
+//       alert("Profile updated successfully!");
+//     } else {
+//       alert(result.message || "Failed to update profile.");
+//     }
+//   } catch (err) {
+//     console.error("Error updating profile:", err);
+//   }
+// }
+

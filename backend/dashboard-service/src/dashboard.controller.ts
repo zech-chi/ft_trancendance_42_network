@@ -6,7 +6,7 @@ import { API_ROUTES } from "./utils/APIrouts";
 
 // // function to find user by email
 // export const fetchUser = async (userName: string) => {
-//     const response = await fetch(`http://localhost:5000/users/${userName}`);
+//     const response = await fetch(`http://db-service:5000/users/${userName}`);
 //     if (!response.ok) {
 //       throw new Error(`Error: ${response.status}`);
 //     }
@@ -21,7 +21,7 @@ export async function fetchUserHandler(
     const { userName } = request.params;
 
     try {
-        const user = await fetch("http://localhost:5000/api/dashboard/users/" + userName);
+        const user = await fetch("http://db-service:5000/api/dashboard/users/" + userName);
 
         if (!user.ok) {
             reply.status(404).send({ message: "User not found" });
@@ -52,7 +52,7 @@ export async function fetchUserByIdHandler(
     const { userId } = request.params;
 
     try {
-        const user = await fetch("http://localhost:5000/api/dashboard/usersId/" + userId);
+        const user = await fetch("http://db-service:5000/api/dashboard/usersId/" + userId);
 
         if (!user.ok) {
             reply.status(404).send({ message: "User not found" });
@@ -81,7 +81,7 @@ export async function fetchSearchUserHandler(
     const { prefix } = request.query;
 
     try {
-        const response = await fetch(`http://localhost:5000/api/dashboard/search?prefix=${encodeURIComponent(prefix)}`);;
+        const response = await fetch(`http://db-service:5000/api/dashboard/search?prefix=${encodeURIComponent(prefix)}`);;
 
         if (!response.ok) {
             reply.status(404).send({ message: "No users found" });
@@ -113,7 +113,7 @@ export async function fetchRadarDataHandler(
     const { userName } = request.params;
 
     try {
-        const response = await fetch(`http://localhost:5000/api/dashboard/radarData/${userName}`);
+        const response = await fetch(`http://db-service:5000/api/dashboard/radarData/${userName}`);
 
         if (!response.ok) {
             reply.status(404).send({ message: "Radar data not found" });
@@ -146,7 +146,7 @@ export async function fetchFriendsByStatusHandler(
     const { status } = request.query;
 
     try {
-        const response = await fetch(`http://localhost:5000/api/dashboard/friends/${userId}?status=${encodeURIComponent(status)}`);
+        const response = await fetch(`http://db-service:5000/api/dashboard/friends/${userId}?status=${encodeURIComponent(status)}`);
 
         console.log("response status from friends service: ", response.status, userId, status);
         if (!response.ok) {
@@ -180,7 +180,7 @@ export async function fetchFriendsBySentHandler(
     const { status } = request.query;
 
     try {
-        const response = await fetch(`http://localhost:5000/api/dashboard/friends/sentrequest/${userId}?status=${encodeURIComponent(status)}`);
+        const response = await fetch(`http://db-service:5000/api/dashboard/friends/sentrequest/${userId}?status=${encodeURIComponent(status)}`);
 
         console.log("response status from friends service: ", response.status, userId, status);
         if (!response.ok) {
@@ -213,7 +213,7 @@ export async function friendRejectHandler(
     const { sender_id, receiver_id } = request.body;
 
     try {
-        const response = await fetch("http://localhost:5000/api/dashboard/friends/reject", {
+        const response = await fetch("http://db-service:5000/api/dashboard/friends/reject", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -244,7 +244,7 @@ export async function friendAcceptHandler(
     const { sender_id, receiver_id } = request.body;
 
     try {
-        const response = await fetch("http://localhost:5000/api/dashboard/friends/accept", {
+        const response = await fetch("http://db-service:5000/api/dashboard/friends/accept", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -275,7 +275,7 @@ export async function friendUnblockHandler(
     const { sender_id, receiver_id } = request.body;
 
     try {
-        const response = await fetch("http://localhost:5000/api/dashboard/friends/unblock", {
+        const response = await fetch("http://db-service:5000/api/dashboard/friends/unblock", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -306,7 +306,7 @@ export async function friendRequestHandler(
     const { sender_id, receiver_id } = request.body;
 
     try {
-        const response = await fetch("http://localhost:5000/api/dashboard/friends/requestfriend", {
+        const response = await fetch("http://db-service:5000/api/dashboard/friends/requestfriend", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -338,7 +338,7 @@ export async function fetchChartsDataHandler(
     const { game } = request.query;
 
     try {
-        const response = await fetch(`http://localhost:5000/api/dashboard/chartsdata/${userId}?game=${encodeURIComponent(game)}`);
+        const response = await fetch(`http://db-service:5000/api/dashboard/chartsdata/${userId}?game=${encodeURIComponent(game)}`);
         
         if (!response.ok) {
             reply.status(404).send({ message: "Charts data not found" });

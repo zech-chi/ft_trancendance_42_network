@@ -8,7 +8,7 @@ import { ProfileRoutes } from './routes/settingsRoutes';
 import { setupSocket } from './socket/socket';
 import { Server as HttpServer } from 'http';
 import { ApidataBase } from './utils/ApiDataBase';
-
+import metricsPlugin from "fastify-metrics";
 // Create a server instance
 const fastifyServer: FastifyInstance = Fastify({
   logger: {
@@ -19,7 +19,7 @@ const fastifyServer: FastifyInstance = Fastify({
   //   cert: './certs/cert.pem' // Path to your SSL certificate file
   // }
 });
-
+fastifyServer.register(metricsPlugin, { endpoint: "/metrics" });
 // Register the multipart plugin for handling file uploads
 fastifyServer.register(fastifyMultipart, {
   throwFileSizeLimit: true, // Throw an error if the file size exceeds the limit
@@ -72,7 +72,7 @@ fastifyServer.register(cors, {
 });
 
 // Define a basic route
-fastifyServer.register(ProfileRoutes, {prefix: 'api/settings'});
+// fastifyServer.register(ProfileRoutes, {prefix: 'api/settings'});
 fastifyServer.register(chatRoutes, {prefix: 'api/chat'});
 
 // fastifyServer.get('/users', async (request, reply) => {
