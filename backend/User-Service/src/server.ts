@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { ProfileRoutes } from './routes/settingsRoutes';
 import multipart from '@fastify/multipart';
+import metricsPlugin from "fastify-metrics";
 
 
 
@@ -12,7 +13,7 @@ const server = Fastify({
   logger: {
   }
 });
-
+server.register(metricsPlugin, { endpoint: "/metrics" });
 // Create the profiles directory if it doesn't exist
 // createProfilesDir();
 

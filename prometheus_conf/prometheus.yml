@@ -12,4 +12,5 @@ scrape_configs:
             "db-service:5000",
             "ping-pong-service:5500",
             "parcheesi-service:5555",
+            "user-service:5004",
           ]
