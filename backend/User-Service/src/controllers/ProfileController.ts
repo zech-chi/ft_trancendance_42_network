@@ -307,7 +307,7 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
 
   // fetch to the db to update the user http://localhost:5000/api/settings/users/updateprofile/${id}
   try {
-    const response = await fetch(`http://localhost:5000/api/settings/users/updateprofile/${id}`, {
+    const response = await fetch(`http://db-service:5000/api/settings/users/updateprofile/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
