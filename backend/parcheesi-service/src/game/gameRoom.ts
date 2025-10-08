@@ -253,14 +253,16 @@ export class GameRoom {
       let done = false;
       for (const step of decision.path) {
         //log the type of step and placeToJump if there is, and thier values
-        console.log(chalk.blue(`Step type: ${typeof step}, value: ${JSON.stringify(step)}`));
-        console.log(chalk.blue(`placeToJump type: ${typeof decision.placeTojump}, value: ${JSON.stringify(decision.placeTojump)}`));
+        console.log(chalk.blue(`Step type: ${typeof step}, value: ${JSON.stringify(step)}   placeToJump type: ${typeof decision.placeTojump}, value: ${JSON.stringify(decision.placeTojump)}`));
         if (jumped && decision.placeTojump && !decision.placeTojump.some(p => (typeof p === 'object' && typeof step === 'object') ? p.homeIndex === step.homeIndex : p === step)) {
-          console.log(chalk.green(`Jumping over step: ${JSON.stringify(step)}`));
-          await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'center');
+          console.log(chalk.green(`now im jumping Jumping over step: ${JSON.stringify(step)}`));
+          if (isOnRight && step === decision.to)
+            await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'right', 3, false);
+          else
+            await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'center');
           jumped = false;
         }
-        else if (decision.placeTojump && decision.placeTojump.includes(step) && step !== decision.to) {
+        else if (decision.placeTojump && decision.placeTojump.some(p => (typeof p === 'object' && typeof step === 'object') ? p.homeIndex === step.homeIndex : p === step) && step !== decision.to) {
           jumped = true;
           continue;
         }
