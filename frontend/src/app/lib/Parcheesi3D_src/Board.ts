@@ -924,6 +924,44 @@ export class Board {
                 console.log("Jump animation completed");
             });
             this.addMeme();
+        } else if (instruction.se7en && instruction.place !== undefined && instruction.where !== undefined) {
+            let placeTojump;
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeTojump = se7enRed[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.GREEN:
+                    placeTojump = se7enGreen[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeTojump = se7enYellow[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.BLUE:
+                    placeTojump = se7enBlue[instruction.place][instruction.where];
+                    break;
+            }
+            await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
+                console.log("Jump animation completed");
+            });
+        }  else if (instruction.final && instruction.place !== undefined) {
+            let placeTojump;
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeTojump = finalRed[instruction.place];
+                    break;
+                case PlayerColor.GREEN:
+                    placeTojump = finalGreen[instruction.place];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeTojump = finalYellow[instruction.place];
+                    break;
+                case PlayerColor.BLUE:
+                    placeTojump = finalBlue[instruction.place];
+                    break;
+            }
+            await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
+                console.log("Jump animation completed");
+            });
         } else {
             if (!instruction.place || !instruction.where) {
                 console.error("Invalid jump instruction:", instruction);
