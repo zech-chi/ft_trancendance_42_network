@@ -233,7 +233,7 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
   }
 
   // extract all the fields from the fields object
-  const { firstName, lastName, language, bio, oldPassword, newPassword, confirmPassowrd} = fields;
+  const {fullName ,language, bio, oldPassword, newPassword, confirmPassowrd} = fields;
   const updates: string[] = [];
   const values: string[] = [];
 
@@ -249,14 +249,9 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
     values.push(`http://localhost:5004/api/settings/profileImage/${path.basename(profileImagePath)}`);
   }
 
-  if (firstName) {
-    updates.push('firstName = ?');
-    values.push(firstName);
-  }
-
-  if (lastName) {
-    updates.push('lastName = ?');
-    values.push(lastName);
+  if (fullName) {
+    updates.push('fullName = ?');
+    values.push(fullName);
   }
 
   if (language) {
