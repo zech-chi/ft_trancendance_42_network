@@ -186,7 +186,7 @@ export default function CalendarDashboard(): JSX.Element {
                 }
                 
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: linear-gradient(90deg, #FFE89F 0%, #FFB144 100%);
+                    background: white;
                 }
             `}</style>
 

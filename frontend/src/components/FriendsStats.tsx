@@ -22,7 +22,7 @@ export function FriendsStats({ data }: {data: GameStats}) {
 
     return (
         <div className="m-1 text-white w-full p-2 sm:p-3 md:p-4 h-[50%] lg:h-[100%]  flex justify-center items-center
-        bg-gradient-to-br from-black/20 to-black/10  backdrop-blur-sm hover:from-black/50 hover:to-black/30 rounded-2xl transition-all duration-300 hover:scale-103 border border-white/7
+        bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 rounded-2xl transition-all duration-300 hover:scale-103 border border-white/7
         "
         >
             <div className="flex flex-col md:flex-row justify-center md:justify-between items-center gap-3 sm:gap-4 md:gap-5 p-5">

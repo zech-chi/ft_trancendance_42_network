@@ -168,7 +168,7 @@ export function RadarChart() {
     
     return (
         <div className="m-1 text-white w-full h-[100%] flex justify-center items-center
-        bg-gradient-to-br from-black/20 to-black/10 backdrop-blur-lg hover:from-black/50 hover:to-black/30 rounded-2xl transition-all duration-300 hover:scale-103 border border-white/7
+        bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 rounded-2xl transition-all duration-300 hover:scale-103 border border-white/7
         "
         >
             <svg 
