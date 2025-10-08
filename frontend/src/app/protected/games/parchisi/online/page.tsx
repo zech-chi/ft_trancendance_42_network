@@ -37,9 +37,10 @@ function OnlinePageContent() {
   useEffect(() => {
   async function fetchRooms() {
     try {
-      const res = await fetch("http://localhost:5555/game/online/rooms");
+      const res = await fetch("http://localhost:5555/games/parchisi/online/rooms");
       const data = await res.json();
       setRooms(data);
+      console.log("Fetched rooms:", data);
     } catch (err) {
       console.error("Failed to load rooms", err);
     } finally {

@@ -6,7 +6,6 @@ import { Player, PlayerColor, Piece, MoveDecision, BoardPosition } from "../type
 import { Board } from "./Board";
 import { GameLogic } from "./gameLogic";
 import chalk from "chalk";
-import { describe } from "node:test";
 
 const COLORS = [PlayerColor.RED, PlayerColor.YELLOW, PlayerColor.GREEN, PlayerColor.BLUE];
 
@@ -24,7 +23,7 @@ export class GameRoom {
   gamestarted: boolean = false;
   gameOver: boolean = false;
   namespaceIO: Namespace;
-  onGameOver?: (roomId: string) => void;
+  // onGameOver?: (roomId: string) => void;
 
   constructor(roomId: string, namespace: Namespace) {
     this.id = roomId;
@@ -56,6 +55,8 @@ export class GameRoom {
   }
 
   newPlayer(username: string): Player {
+    // in this function i want to make awalys the color red for the first player then yellow for the second if there is only 2 players
+    // if the game have more of 2 player , red for the first , green for the second , yellow for the third and blue for the fourth, how i can do that ?
     const color = COLORS[this.players.length];
     const newPlayerId = this.players.length + 1;
     const player: Player = {
@@ -101,10 +102,7 @@ export class GameRoom {
         });
       });
 
-  
-    console.log(chalk.red(
-      `Game ${this.id} started with players: ${this.players.map(p => p.userName).join(", ")}`
-    ));
+
   
     // set first player turn
     setTimeout(() => {
@@ -136,7 +134,7 @@ export class GameRoom {
       placeofbr = this.board.peekGoal(piece.playerId - 1).occupiedBy.length;
       where = 'center';
     }
-    console.log("emitting move eventt to tile :", placeofbr);
+    // console.log("emitting move eventt to tile :", placeofbr , "andi its where :", where, "and its  :", se7en? "se7en":"shared path", "and its final :", final? "yes":"no");
     this.broadcast("move", {
       sphere_id: piece.id,
       sphere_type: color,
@@ -147,6 +145,8 @@ export class GameRoom {
       final,
     });
     await new Promise(resolve => setTimeout(resolve, delayMs));
+    console.log(chalk.green(`Emitting move event for piece ${piece.id}, with color ${color} to place ${placeofbr} (se7en: ${se7en}, final: ${final}) and where: ${where}`));
+
   }
   // jump> {"sphere_id":1,"sphere_type":"RED","place":1,"where":"center","speed":1, "maxHeight": 5, "toStartPosition": false}
 
@@ -183,6 +183,7 @@ export class GameRoom {
       maxHeight,
       toStartPosition
     });
+    console.log(chalk.green(`Emitting jump event for piece ${piece.id}, with color ${color} to place ${placeofbr} (se7en: ${se7en}, final: ${final}) and where: ${where}, toStartPosition: ${toStartPosition}`));
     await new Promise(resolve => setTimeout(resolve, delayMs));
   }
 
@@ -242,7 +243,7 @@ export class GameRoom {
     if (decision.path && decision.path.length > 0) {
       let jumped = false;
       let isOnRight = false;
-     if (( beforeOccupants && beforeOccupants.length === 1) && (typeof decision.to === 'object' || typeof decision.to === 'number'))
+     if (( beforeOccupants && beforeOccupants.length === 1) && ((typeof decision.to === "object" && 'homeIndex' in decision.to)|| typeof decision.to === 'number'))
       {
         isOnRight = true;
         // i have to find that piece that is not equal to the moving piece and put it on right
@@ -251,11 +252,15 @@ export class GameRoom {
       }
       let done = false;
       for (const step of decision.path) {
-        if (jumped && decision.placeTojump && !decision.placeTojump.includes(step)) {
+        //log the type of step and placeToJump if there is, and thier values
+        console.log(chalk.blue(`Step type: ${typeof step}, value: ${JSON.stringify(step)}`));
+        console.log(chalk.blue(`placeToJump type: ${typeof decision.placeTojump}, value: ${JSON.stringify(decision.placeTojump)}`));
+        if (jumped && decision.placeTojump && !decision.placeTojump.some(p => (typeof p === 'object' && typeof step === 'object') ? p.homeIndex === step.homeIndex : p === step)) {
+          console.log(chalk.green(`Jumping over step: ${JSON.stringify(step)}`));
           await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'center');
           jumped = false;
         }
-        if (decision.placeTojump && decision.placeTojump.includes(step) && step !== decision.to) {
+        else if (decision.placeTojump && decision.placeTojump.includes(step) && step !== decision.to) {
           jumped = true;
           continue;
         }
@@ -268,23 +273,22 @@ export class GameRoom {
             await this.emitMoveEvent(decision.piece, playerColor as PlayerColor, step, 'center');
              // i have to get the older tile before moving and check if there was there 2 pieces if yes move the piece witch is not this to center
             // get the previous tile occupants before moving
-            const beforeOccupantsPrev = this.board.getTileoccupants(prevPosition);
             // check if the dice if containe 5 if yes return true other wise false
             // check if there is a piece that still in the base if no move the older piece to center
-            if (((typeof prevPosition === 'number' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1) || (typeof prevPosition === 'object' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1)) && !done)
-              {
-                const olderPiece = beforeOccupantsPrev.find(p => p.id !== decision.piece.id);
-                const backtoCenter:boolean = (this.players.find(p => p.color === playerColor)?.pieces.filter(pc => pc.position === 'base') && this.currentDice.includes(5)) ? false : true;
-                console.log(`backtoCenter value is : `+ chalk.red(`${backtoCenter}`) + ` and currentdice is`+ chalk.red( `${this.currentDice}` ));
-                if (olderPiece && olderPiece.position === this.players.find(p => p.id === decision.piece.playerId)?.startIndex && !backtoCenter)
-                  continue;
-                console.log(chalk.red("moving the older piece to center from the previous tile"));
-                await this.emitMoveEvent(olderPiece!, playerColor as PlayerColor, prevPosition, 'center');
-                done = true;
-              }
+            // console.log(`DEBG: prev position : ${prevPosition}, beforeOccupantsPrev length: ${beforeOccupantsPrev.length}`);
           }
-        
+          
         }
+        const beforeOccupantsPrev = this.board.getTileoccupants(prevPosition, decision.piece.id);
+        if (((typeof prevPosition === 'number' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1) || ((typeof prevPosition === "object" && 'homeIndex' in prevPosition) && beforeOccupantsPrev && beforeOccupantsPrev.length === 1)) && !done)
+          {
+            const olderPiece = beforeOccupantsPrev.find(p => p.id !== decision.piece.id);
+            const backtoCenter:boolean = (this.players.find(p => p.color === playerColor)?.pieces.filter(pc => pc.position === 'base') && this.currentDice.includes(5)) ? false : true;
+            if (olderPiece && olderPiece.position === this.players.find(p => p.id === decision.piece.playerId)?.startIndex && !backtoCenter)
+              continue;
+            await this.emitMoveEvent(olderPiece!, playerColor as PlayerColor, prevPosition, 'center');
+            done = true;
+          }
       }
     }
   
@@ -343,7 +347,6 @@ export class GameRoom {
         // lm.moves typically [5]
         const decision = this.logic.movePieceDecision(currentPlayer, lm.piece, lm.moves[0]);
         if (decision !== undefined && decision.allowed) {
-          console.log(chalk.blue(`leave-base decision for piece ${lm.piece.id} with color ${currentPlayer.color} with move ${lm.moves[0]}`));
           if (decision.capture !== null)
             console.log(chalk.blue(`this piece is cuptured : ${this.players[decision.capture?.playerId - 1]}`));
           await this.executeMoveDecision(decision);
@@ -518,12 +521,10 @@ async handleRollDice() {
       // this.
       const next = await this.leaveBaseAuto();
       let auto = true;
-      var debg = 0;
+
       while (auto) {
-        console.log(chalk.blue("attempting auto move..." + debg++));
         auto = await this.autoMove();
       }
-      debg = 0;
       if (player.bonus_moves && player.bonus_moves.length > 0)
         this.announceMoveablePieces(player, player.bonus_moves);
       else if (next || (!player.Remain_moves || player.Remain_moves.length === 0 || this.currentDice.length === 0) && (!player.bonus_moves || player.bonus_moves.length === 0))
@@ -546,14 +547,7 @@ async handleRollDice() {
     this.bonusDice = 0;
     if (this.playerfinish()) {
       this.gameOver = true;
-      this.broadcast("gameEnded", {
-        winner: this.currentPlayer.userName,
-        color: this.currentPlayer.color,
-      });
-      if (this.onGameOver) {
-      this.onGameOver(this.id);
-    }
-      
+      console.log(chalk.magenta(`Player ${this.currentPlayer.userName} has won the game!`));    
       return;
     }
     this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });

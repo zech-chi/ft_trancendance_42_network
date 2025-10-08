@@ -24,11 +24,6 @@ export default async function socketManager(io: Server) {
     socket.on("createGame", (data: { username: string }) => {
       const gameId = randomUUID(); // generate unique game id
       const room = new GameRoom(gameId, remote);
-      room.onGameOver = (id: string) => {
-        console.log(chalk.red(`Cleaning up game ${id}`));
-        room.destroy();
-        rooms.delete(id);
-      };
       rooms.set(gameId, room); // remove old room if there is only one player or game over or host leave or all players leave
 
       console.log(chalk.blue(`Game created with ID: ${gameId} by ${data.username} --> remote game`));
@@ -86,7 +81,6 @@ export default async function socketManager(io: Server) {
         };
         room.broadcast("lobbyUpdate", lobbyData); // everyone in the room
         // socket.emit("lobbyUpdate", lobbyData); // the joining player too 
-        console.log("event sent to clients: lobbyUpdate", lobbyData);
 
     });
 
@@ -172,7 +166,7 @@ export default async function socketManager(io: Server) {
       const room = rooms.get(data.gameId);
       if (!room) return;
       
-      console.log((`Player ${data.username} is ready in game ${data.gameId}`));
+  
       const player = room.players.find(p => p.userName === data.username);
       if (player) {
         player.isReady = true;
@@ -242,12 +236,18 @@ export default async function socketManager(io: Server) {
 
       await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
 
-      if (room.board.peekGoal(room.currentPlayer.id - 1).occupiedBy.length === 4) {
+      if (room.gameOver) {
         room.broadcast("gameOver", {
           winner: room.currentPlayer.userName,
           color: room.currentPlayer.color,
         });
+        const id = room.id;
+        console.log(chalk.red(`Cleaning up game ${id}`));
+        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
+        room.destroy();
+        rooms.delete(id);
       }
+
     });
     
     socket.on("leaveLobby", (data: { lobbyId: string }) => {
