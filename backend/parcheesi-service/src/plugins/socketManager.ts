@@ -222,6 +222,18 @@ export default async function socketManager(io: Server) {
       }
 
       await room.handleRollDice();
+
+      if (room.gameOver) {
+        room.broadcast("gameOver", {
+          winner: room.currentPlayer.userName,
+          color: room.currentPlayer.color,
+        });
+        const id = room.id;
+        console.log(chalk.red(`Cleaning up game ${id}`));
+        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
+        room.destroy();
+        rooms.delete(id);
+      }
     });
 
     socket.on("moveRequest", async (data: { gameId: string; sphere_id: number; sphere_type: string; choice: number }) => {
@@ -247,7 +259,6 @@ export default async function socketManager(io: Server) {
         room.destroy();
         rooms.delete(id);
       }
-
     });
     
     socket.on("leaveLobby", (data: { lobbyId: string }) => {

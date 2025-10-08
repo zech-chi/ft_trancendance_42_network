@@ -193,7 +193,7 @@ export class GameRoom {
    * Execute captures (do not call GameLogic to capture — GameLogic only detected them).
    * Returns list of captured piece refs (after being moved to base).
    */
-  private executeCaptures(capture: { id: number; playerId: number; position: any }, actorColor: PlayerColor) {
+  private executeCaptures(capture: { id: number; playerId: number; position: any }, capturedcolor: PlayerColor) {
   
 
       const target = this.board.findPiece(capture.playerId, capture.id);
@@ -202,7 +202,7 @@ export class GameRoom {
       this.board.removePieceAtomic(target);
       this.board.addPieceAtomic(target, 'base');
       // broadcast move of captured piece to base (animation)
-      this.emitJumpEvent(target, actorColor, 'base', 'center', 2, true);
+      this.emitJumpEvent(target, capturedcolor, 'base', 'center', 2, true);
       this.bonusDice = 20;
     return target;
   }
@@ -544,14 +544,14 @@ async handleRollDice() {
   }
 
   nextTurn() {
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
-    this.currentDice = [];
-    this.bonusDice = 0;
     if (this.playerfinish()) {
       this.gameOver = true;
       console.log(chalk.magenta(`Player ${this.currentPlayer.userName} has won the game!`));    
       return;
     }
+    this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
+    this.currentDice = [];
+    this.bonusDice = 0;
     this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });
   }
 
