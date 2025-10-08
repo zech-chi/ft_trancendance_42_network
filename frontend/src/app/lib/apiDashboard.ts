@@ -26,6 +26,15 @@ export const fetchUsers = async () => {
     return data;
 }
 
+export const fetchFriendshipStatus = async (userId1: number, userId2: number) => {
+  const response = await fetch(`http://localhost:5002/api/dashboard/friends/status?userId1=${userId1}&userId2=${userId2}`);
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
+
 export const fetchGames = async (userName: string, gameType: string) => {
     const response = await fetch(`http://localhost:5000/Games/${userName}?gameType=${gameType}`);
     if (!response.ok) {

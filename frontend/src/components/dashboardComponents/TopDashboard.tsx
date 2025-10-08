@@ -1,7 +1,7 @@
 'use client';
 import { JSX, use, useState } from "react";
 import { useEffect } from "react";
-import { fetchUser } from "@/app/lib/apiDashboard";
+import { fetchFriendshipStatus, fetchUser } from "@/app/lib/apiDashboard";
 import { motion } from 'framer-motion';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
@@ -49,6 +49,12 @@ type RankInfoProps = {
   totalUsers: number;
 };
 
+type friendshipStatusType = {
+  status: 'self' | 'no_relationship' | 'accepted' | 'pending' | 'blocked';
+  blocked_by: boolean | null;
+}
+
+
 function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
     return (
       <div className="relative rounded-full  overflow-hidden
@@ -88,7 +94,7 @@ function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
     );
 }
 
-function ProfileInfo({ user }: {user : User}): JSX.Element {
+function ProfileInfo({ user, friendshipStatus }: {user : User, friendshipStatus: friendshipStatusType}): JSX.Element {
   const { loggedUserId } = useLoggedUserId();
   // const { friendshipStatus, setFriendshipStatus } = useState<string>("self");
 
@@ -136,7 +142,7 @@ function ProfileInfo({ user }: {user : User}): JSX.Element {
                 {user.fullName}
             </h2>
 
-            {loggedUserId !== user.id && (
+            {friendshipStatus.status === "no_relationship" && (
               <button
                 className="
                   text-white max-h-[40px] min-w-[40px] rounded-full 
@@ -149,12 +155,72 @@ function ProfileInfo({ user }: {user : User}): JSX.Element {
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
                 </svg>
-                {/* <svg className="w-6 h-6" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z" fill="white" />
-                  <path d="M14.707 13.293a1 1 0 00-1.414 0L11 15.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" fill="#22c55e" />
-                </svg> */}
               </button>
             )}
+            {friendshipStatus.status === "accepted" && (
+              <button
+                className="
+                  text-white max-h-[40px] min-w-[40px] rounded-full 
+                  shadow-lg bg-black/30 hover:scale-105 hover:shadow-xl 
+                  transform transition-all duration-200 ease-in-out 
+                  flex items-center gap-1 justify-center
+                "
+                // onClick={handleSentRequestFriend}
+              >
+              <svg className="w-6 h-6" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Person */}
+                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z" fill="white" />
+                {/* Green checkmark circle background */}
+                <circle cx="14" cy="14" r="3.5" fill="#22c55e" />
+                {/* Checkmark */}
+                <path 
+                  d="M12.5 14l1 1 2-2" 
+                  stroke="white" 
+                  strokeWidth="1.5" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+              </svg>
+              </button>
+            )}
+            {friendshipStatus.status === "pending" && (
+              <button
+                className="
+                  text-white max-h-[40px] min-w-[40px] rounded-full 
+                  shadow-lg bg-black/30 hover:scale-105 hover:shadow-xl 
+                  transform transition-all duration-200 ease-in-out 
+                  flex items-center gap-1 justify-center
+                "
+                // onClick={handleSentRequestFriend}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="w-6 h-6"
+                >
+                  {/* Person body */}
+                  <path
+                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h13"
+                    fill="white"
+                  />
+                  {/* Clock circle */}
+                  <circle cx="17.5" cy="17.5" r="4.5" fill="white" />
+                  {/* Clock face */}
+                  <circle cx="17.5" cy="17.5" r="4" fill="black" stroke="white" strokeWidth="0.5" />
+                  {/* Clock hands */}
+                  <path
+                    d="M17.5 14.5v3h2.5"
+                    stroke="white"
+                    strokeWidth="0.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            )}
+            
         </div>
         <h3 className="text-white/70 text-[8px] md:text-[12px] xl:text-[16px]">@{user.userName}</h3>
         <p className="text-white/60 bg-black/30 text-[6px] md:text-[10px] xl:text-[14px] p-1 md:px-1.5 xl:px-2 rounded-4xl w-auto max-w-[150px] md:max-w-[700px]">
@@ -196,10 +262,14 @@ function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
     );
   }
 
+
+
 export function TopDashboard(): JSX.Element {
     const { loggedUserId } = useLoggedUserId();
     const { selectedUserName } = useSelectedUserName();
+    const { selectedUserId } = useSelectedUserId();
     const [user, setUser] = useState<User | null> (null);
+    const [ friendshipStatus, setFriendshipStatus ] = useState<friendshipStatusType>({status: "self", blocked_by: null});
 
     useEffect(() => {
         if (selectedUserName) {
@@ -209,7 +279,17 @@ export function TopDashboard(): JSX.Element {
                     setUser(cur);
                 };
                 fetchData();
-            }, 200);
+            }, 100);
+
+            // Determine friendship status
+            setTimeout(() => {
+                const fetchData = async () => {
+                    if (!loggedUserId || !selectedUserId) return;
+                    const cur = await fetchFriendshipStatus(loggedUserId, selectedUserId);
+                    setFriendshipStatus(cur);
+                };
+                fetchData();
+            }, 100);
         }
     }
     , [selectedUserName]);
@@ -229,7 +309,7 @@ export function TopDashboard(): JSX.Element {
                     <ProfileImage imageUrl={user.imageUrl} online={user.online}/>
                     <div className="flex flex-col h-full gap-2 flex-1">
                         <div className="flex justify-between ml-2">
-                            <ProfileInfo user = {user}/>
+                            <ProfileInfo user = {user} friendshipStatus= {friendshipStatus}/>
                             <DisplayRank
                             level={user.level}
                             progress={user.progress}

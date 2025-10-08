@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 
 const navLinks = [
     { 
-        href: '/protected/',
+        href: '/',
         label: 'Home',
         icon: '/HOME.png',
         activeIcon: '/HOME2.png'
