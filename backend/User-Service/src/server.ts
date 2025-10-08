@@ -20,7 +20,7 @@ server.register(metricsPlugin, { endpoint: "/metrics" });
 server.register(cors, {
   origin: ['http://localhost:3000', 'http://localhost:5004'], // allow your frontend's origin
   credentials: true,               // <— important!
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ✅ important
+  methods: ['GET', 'POST', 'PATCH'], // ✅ important
 });
 
 
