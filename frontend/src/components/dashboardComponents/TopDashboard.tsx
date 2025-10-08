@@ -1,9 +1,11 @@
 'use client';
-import { JSX, useState } from "react";
+import { JSX, use, useState } from "react";
 import { useEffect } from "react";
 import { fetchUser } from "@/app/lib/apiDashboard";
 import { motion } from 'framer-motion';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useLoggedUserId } from "@/context/UserIdContext";
 
 const TOTAL_USERS = 133742;
@@ -86,15 +88,77 @@ function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
     );
 }
 
-function ProfileInfo({ fullName, userName, bio }: ProfileInfoProps): JSX.Element {
+function ProfileInfo({ user }: {user : User}): JSX.Element {
+  const { loggedUserId } = useLoggedUserId();
+  // const { friendshipStatus, setFriendshipStatus } = useState<string>("self");
+
+  // useEffect(() => {
+  //   try {
+  //     const fetchFriendshipStatus = async () => {
+        
+  //   }
+
+
+  const handleSentRequestFriend = () => {
+    // fetch user id by user name
+    if (!user || !loggedUserId) return;
+
+    const sendFriendRequest = async () => {
+        try {
+           const response = await fetch(`http://localhost:5002/api/dashboard/friends/requestfriend`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    sender_id: loggedUserId,
+                    receiver_id: user.id,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error("Error sending friend request:", error);
+            // should use  state do display the error for the loged user
+        }
+    };
+
+    sendFriendRequest();
+};
+
     return (
       <div className="flex flex-col justify-center h-full gap-1 mt-2">
-        <h2 className="text-[10px] md:text-[14px] xl:text-[18px] font-bold text-white/90">
-            {fullName}
-        </h2>
-        <h3 className="text-white/70 text-[8px] md:text-[12px] xl:text-[16px]">@{userName}</h3>
-        <p className="text-white/60 bg-black/30 text-[6px] md:text-[10px] xl:text-[14px] p-1 md:px-1.5 xl:px-2 rounded-4xl max-w-[150px] md:max-w-[700px]">
-          {bio}
+        <div className="flex gap-5">
+            <h2 className="text-[10px] md:text-[14px] xl:text-[18px] font-bold text-white/90">
+                {user.fullName}
+            </h2>
+
+            {loggedUserId !== user.id && (
+              <button
+                className="
+                  text-white max-h-[40px] min-w-[40px] rounded-full 
+                  shadow-lg bg-black/30 hover:scale-105 hover:shadow-xl 
+                  transform transition-all duration-200 ease-in-out 
+                  flex items-center gap-1 justify-center
+                "
+                onClick={handleSentRequestFriend}
+              >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+                </svg>
+                {/* <svg className="w-6 h-6" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z" fill="white" />
+                  <path d="M14.707 13.293a1 1 0 00-1.414 0L11 15.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" fill="#22c55e" />
+                </svg> */}
+              </button>
+            )}
+        </div>
+        <h3 className="text-white/70 text-[8px] md:text-[12px] xl:text-[16px]">@{user.userName}</h3>
+        <p className="text-white/60 bg-black/30 text-[6px] md:text-[10px] xl:text-[14px] p-1 md:px-1.5 xl:px-2 rounded-4xl w-auto max-w-[150px] md:max-w-[700px]">
+          {user.bio}
         </p>
       </div>
     );
@@ -137,38 +201,6 @@ export function TopDashboard(): JSX.Element {
     const { selectedUserName } = useSelectedUserName();
     const [user, setUser] = useState<User | null> (null);
 
-
-
-    const handleSentRequestFriend = () => {
-        // fetch user id by user name
-        if (!user || !loggedUserId) return;
-
-        const sendFriendRequest = async () => {
-            try {
-               const response = await fetch(`http://localhost:5002/api/dashboard/friends/requestfriend`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        sender_id: loggedUserId,
-                        receiver_id: user.id,
-                    }),
-                });
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status}`);
-                }
-                const data = await response.json();
-                console.log(data);
-            } catch (error) {
-                console.error("Error sending friend request:", error);
-                // should use  state do display the error for the loged user
-            }
-        };
-
-        sendFriendRequest();
-    };
-
     useEffect(() => {
         if (selectedUserName) {
             setTimeout(() => {
@@ -197,17 +229,7 @@ export function TopDashboard(): JSX.Element {
                     <ProfileImage imageUrl={user.imageUrl} online={user.online}/>
                     <div className="flex flex-col h-full gap-2 flex-1">
                         <div className="flex justify-between ml-2">
-                            <ProfileInfo fullName={user.fullName} userName={user.userName} bio={user.bio}/>
-                            {/* add send friend request button */}
-                            <button 
-                className={`bg-gradient-to-r from-blue-500 to-indigo-600 text-white max-h-[50px] min-w-[50px] rounded-full shadow-lg hover:from-indigo-600 hover:to-blue-500 hover:scale-105 hover:shadow-xl transform transition-all duration-200 ease-in-out flex items-center gap-1 justify-center
-                }`}
-                onClick={handleSentRequestFriend} >
-  
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
-                        </svg>
-                      </button>
+                            <ProfileInfo user = {user}/>
                             <DisplayRank
                             level={user.level}
                             progress={user.progress}

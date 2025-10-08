@@ -235,6 +235,33 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         }
     });
 
+    // get status of friendship between two users
+    fastify.get('/friends/status', async (request: FastifyRequest<{ Querystring: { userId1: string; userId2: string } }>, reply: FastifyReply) => {
+        const { userId1, userId2 } = request.query;
+        if (!userId1 || !userId2) {
+            return reply.code(400).send({ error: 'Missing userId1 or userId2' });
+        }
+        try {
+            if (userId1 === userId2) {
+                return reply.send({ status: 'self' });
+            }
+            const stmt = db.prepare(`
+                SELECT status, blocked_by FROM Friends
+                WHERE (sender_id = ? AND receiver_id = ?)
+                   OR (sender_id = ? AND receiver_id = ?);
+            `);
+            const friendship = stmt.get(userId1, userId2, userId2, userId1);
+            if (!friendship) {
+                return reply.send({ status: 'no_relationship' });
+            }
+            return reply.send(friendship);
+        } catch (err) {
+            return reply.code(400).send({ error: '❌ Error running query' });
+        }
+    }
+    );
+
+
 
     // sent friend request
     fastify.post('/friends/requestfriend', async (request: FastifyRequest<{ Body: { sender_id: string; receiver_id: string } }>, reply: FastifyReply) => {

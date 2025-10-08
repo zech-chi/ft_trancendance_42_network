@@ -164,6 +164,23 @@ export const chartsDataResponse = z.object({
 export type Stats = z.infer<typeof StatsSchema>;
 export type ChartsDataResponse = z.infer<typeof chartsDataResponse>;
 
+// friendship qery
+export const friendshipQuery = z.object({
+  userId1: z.string(),
+  userId2: z.string(),
+});
+
+// type friendship query
+export type FriendshipQuery = z.infer<typeof friendshipQuery>;
+
+// friendship response
+export const friendshipResponse = z.object({
+  status: z.enum(['accepted', 'pending', 'blocked', 'self', 'no-friendship']),
+  blocked_by: z.number().nullable(),
+});
+
+// type friendship response
+export type FriendshipResponse = z.infer<typeof friendshipResponse>;
 
 
 // build and export the json schemas
@@ -182,6 +199,8 @@ const { schemas, $ref } = buildJsonSchemas({
     chartsDataParams,
     chartsDataQuery,
     chartsDataResponse,
+    friendshipQuery,
+    friendshipResponse,
 });
 
 export const dashboardSchemas = { schemas, $ref };

@@ -1,6 +1,8 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref } from "./dashboard.schema"
 import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler } from './dashboard.controller';
+import { fetchFriendshipStatusHandler } from './dashboard.controller';
+
 
 export async function dashboardRoutes(app: FastifyInstance) {
     // for testing
@@ -156,6 +158,21 @@ export async function dashboardRoutes(app: FastifyInstance) {
         },
         // handler function to be implemented
         fetchChartsDataHandler
+    );
+
+    // get friendship status handler
+    app.get(
+        '/friends/status',
+        {
+            schema: {
+                querystring: $ref('friendshipQuery'),
+                response: {
+                    200: $ref('friendshipResponse'),
+                },
+            },
+        },
+        // handler function to be implemented
+        fetchFriendshipStatusHandler
     );
 }
 

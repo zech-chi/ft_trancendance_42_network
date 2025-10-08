@@ -360,3 +360,35 @@ export async function fetchChartsDataHandler(
         return null;
     }
 }
+
+// fetchFriendshipStatusHandler
+export async function fetchFriendshipStatusHandler(
+    request: FastifyRequest<{ Querystring: { userId1: string; userId2: string} }>,
+    reply: FastifyReply
+) {
+    const { userId1, userId2 } = request.query;
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/dashboard/friends/status?userId1=${userId1}&userId2=${userId2}`);
+
+        if (!response.ok) {
+            reply.status(404).send({ message: "Friendship status not found" });
+            return { status: "none" };
+        }
+
+        const data = await response.json();
+
+        if (data.status === "ko") {
+            reply.status(404).send({ message: "Friendship status not found" });
+            return { status: "none" };
+        }
+
+        console.log("data from friends service: ", data);
+
+        return { status: data.status || "none", blocked_by: data.blocked_by || null };
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return { status: "none" };
+    }
+} 

@@ -10,6 +10,7 @@ import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 
 import { useRef } from "react";
 import { useSelectedUserId } from '@/context/SelectedUserId';
+import { useLoggedUserId } from '@/context/UserIdContext';
 
 function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
 	const [ userProfile, setUserProfile ] = useState<string | null>(null);
@@ -44,6 +45,13 @@ function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
 }
 
 function Logo(): JSX.Element {
+  const { loggedUserId, setLoggedUserId } = useLoggedUserId();
+  const { selectedUserName, setSelectedUserName} = useSelectedUserName();
+  const { selectedUserId, setSelectedUserId } = useSelectedUserId();
+  const { loggedUserName, setLoggedUserName } = useLoggedUserName();
+
+  // on click to image set the selected user id and name in the context
+
   return (
     <div className="mr-5">
       {/* <Image
@@ -54,13 +62,16 @@ function Logo(): JSX.Element {
         className="rounded-full"
         priority
       /> */}
-      <Image
+      <img
           src="/PONG.png"
           alt="Logo"
           width={150}
           height={150}
           className="w-[75px] h-auto xl:w-[125px] 2xl:w-[150px]"
-          priority
+          onClick={() => {
+            setSelectedUserName(loggedUserName);
+            setSelectedUserId(loggedUserId);
+          }}
       />
 
     </div>

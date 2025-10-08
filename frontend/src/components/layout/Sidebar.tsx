@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 
 const navLinks = [
     { 
-        href: '/',
+        href: '/protected/',
         label: 'Home',
         icon: '/HOME.png',
         activeIcon: '/HOME2.png'
@@ -64,7 +64,7 @@ export default function Sidebar(): JSX.Element {
                         key={link.href}
                         href={link.href}
                         className={`flex items-center justify-center w-10 h-10 xl:w-13 xl:h-13 2xl:w-15 2xl:h-15 rounded-full transition 
-                            ${selected === link.href ? 'bg-black/50' : 'bg-black/30 hover:bg-black/70'}`}
+                            ${selected === link.href  ? 'bg-black/50' : 'bg-black/30 hover:bg-black/70'}`}
                         onClick={() => handleClick(link.href)}
                     >
                         <img src={selected === link.href ? link.activeIcon : link.icon} alt={link.label} className='w-[15px] h-[15px] xl:w-[20px] xl:h-[20px] 2xl:w-[25px] 2xl:h-[25px] ' />
