@@ -67,7 +67,7 @@ function LeftComponent(): JSX.Element {
 		">
 			<div className="flex flex-col w-full gap-1">
 				<TopDashboard />
-				<div className="p-2.5 m-2.5 rounded-4xl justify-center items-center flex"
+				<div className="p-2.5 m-2.5 rounded-2xl justify-center items-center flex"
 				style={{
 					background:
 					'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',

@@ -97,15 +97,27 @@ export default function Statistics() {
     }
 
     return (
-    <div className="flex flex-col items-center justify-center h-full bg-black/23">
+    <div className="flex flex-col items-center justify-center h-full m-2.5 rounded-2xl"
+    style={{
+        background:
+        'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
+        backgroundBlendMode: 'overlay',
+    }}>
       <ChooseGame game={game} setGame={setGame}/>
-      <div className="flex w-full h-full items-center justify-center">
-        <RadarChart/>
-        <div className='flex flex-col items-center justify-center'>
+      <div className="flex flex-col xl:flex-row w-full h-full items-center justify-center ">
+        <div className='flex flex-col lg:flex-row xl:flex-col  h-full tems-center justify-center  p-5
+            w-[100%]
+        '>
             <FriendsStats data={data}/>
             <AIStats data={data}/>
+        </div>
+        <div className='flex flex-col h-full items-center justify-center p-5
+            w-[100%]
+        '>
+            <RadarChart/>
         </div>
       </div>
     </div>
   );
+
 }

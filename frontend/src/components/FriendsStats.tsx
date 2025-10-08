@@ -21,17 +21,14 @@ export function FriendsStats({ data }: {data: GameStats}) {
     const circumference = 2 * Math.PI * radius;
 
     return (
-        <div className="m-1 text-white rounded-2xl w-full p-2 sm:p-3 md:p-4"
-        style={{
-            background:
-              'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)), linear-gradient(to left, rgba(42, 21, 34, 1), rgba(96, 31, 48, 1 ) 100%)',
-            backgroundBlendMode: 'overlay',
-          }}
+        <div className="m-1 text-white w-full p-2 sm:p-3 md:p-4 h-[50%] lg:h-[100%]  flex justify-center items-center
+        bg-gradient-to-br from-black/20 to-black/10  backdrop-blur-sm hover:from-black/50 hover:to-black/30 rounded-2xl transition-all duration-300 hover:scale-103 border border-white/7
+        "
         >
-            <div className="flex flex-col md:flex-row justify-center md:justify-between items-center gap-3 sm:gap-4 md:gap-5">
+            <div className="flex flex-col md:flex-row justify-center md:justify-between items-center gap-3 sm:gap-4 md:gap-5 p-5">
                 {/* Chart Section */}
                 <div className="flex flex-col items-center justify-center w-full md:w-auto">
-                    <div className="relative flex flex-col items-center justify-center w-48 h-48 xs:w-52 xs:h-52 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80">
+                    <div className="relative flex flex-col items-center justify-center w-full h-auto">
                         <svg viewBox="0 0 200 200" className="w-full h-full">
                             <circle
                                 cx="100"
@@ -75,7 +72,7 @@ export function FriendsStats({ data }: {data: GameStats}) {
 
                 {/* Stats Cards Section */}
                 <div className="flex flex-row md:flex-col gap-2 sm:gap-3 w-full md:w-auto justify-center">
-                    <div className="flex flex-col items-center justify-center bg-black/30 
+                    <div className="flex flex-col items-center justify-center bg-white/10 
                         px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-2 lg:px-8 lg:py-2
                         rounded-xl sm:rounded-2xl flex-1 md:flex-none">
                         <h3 className="text-[#56BA1C] font-bold text-xs sm:text-sm md:text-base">Win</h3>
@@ -83,7 +80,7 @@ export function FriendsStats({ data }: {data: GameStats}) {
                             {wins}
                         </p>
                     </div>
-                    <div className="flex flex-col items-center justify-center bg-black/30 
+                    <div className="flex flex-col items-center justify-center bg-white/10 
                         px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-2 lg:px-8 lg:py-2
                         rounded-xl sm:rounded-2xl flex-1 md:flex-none">
                         <h3 className="text-[#F63737] font-bold text-xs sm:text-sm md:text-base">Loss</h3>

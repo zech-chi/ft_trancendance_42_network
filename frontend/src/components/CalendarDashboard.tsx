@@ -129,7 +129,7 @@ export default function CalendarDashboard(): JSX.Element {
             );
         } else {
             boxes.push(
-              <div key={j} className="bg-black/50 w-2 h-2 xs:w-2.5 xs:h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 rounded-sm sm:rounded-md"></div>
+              <div key={j} className="bg-white/10 w-2 h-2 xs:w-2.5 xs:h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 rounded-sm sm:rounded-md"></div>
             );
         }
         divCounter++;
@@ -180,7 +180,7 @@ export default function CalendarDashboard(): JSX.Element {
                 }
                 
                 .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: linear-gradient(90deg, #FEDF7F 0%, #FF9D24 100%);
+                    background: black;
                     border-radius: 10px;
                     border: 2px solid rgba(0, 0, 0, 0.2);
                 }

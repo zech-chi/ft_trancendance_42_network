@@ -167,20 +167,13 @@ export function RadarChart() {
     };
     
     return (
-        <div className="w-full sm:w-[85%] md:w-[70%] lg:w-[60%] xl:w-[50%] 
-            aspect-square rounded-2xl sm:rounded-3xl 
-            flex flex-col items-center justify-center 
-            p-3 sm:p-4 md:p-5 lg:p-6
-            mx-auto my-2 sm:my-3 md:my-4"
-            style={{
-                background:
-                  'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)), linear-gradient(to right, rgba(42, 21, 34, 1), rgba(96, 31, 48, 1 ) 100%)',
-                backgroundBlendMode: 'overlay',
-            }}
+        <div className="m-1 text-white w-full h-[100%] flex justify-center items-center
+        bg-gradient-to-br from-black/20 to-black/10 backdrop-blur-lg hover:from-black/50 hover:to-black/30 rounded-2xl transition-all duration-300 hover:scale-103 border border-white/7
+        "
         >
             <svg 
                 ref={svgRef} 
-                className="w-full aspect-square" 
+                className="w-[75%] aspect-square" 
                 viewBox="-100 -100 200 200" 
                 onMouseMove={handleMouseMove} 
                 onMouseLeave={resetCoords}
