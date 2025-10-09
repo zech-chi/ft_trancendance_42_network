@@ -272,17 +272,17 @@ export default async function socketManager(io: Server) {
         room.players.splice(playerIndex, 1);
         room.sockets.delete(player.id);
         room.broadcast("removePlayer", { id: player.id });
-        console.log(chalk.yellow(`Player ${player.userName} left game ${data.lobbyId}`));
+        console.log(chalk.red(`Player ${player.userName} left game ${data.lobbyId}`));
         // If the host leaves, room should be deleted, and all players notified
 
         if (playerIndex === 0 || room.players.length === 0) {
           room.broadcast("lobbyClosed", { message: "Room destroyed by host" });
           if (playerIndex === 0){
-          console.log(chalk.magenta(`Host has left the lobby. Lobby is closed`));
+          console.log(chalk.red(`Host has left the lobby. Lobby is closed`));
           }
           else if (room.players.length === 0)
           {
-          console.log(chalk.magenta(`Game ${data.lobbyId} deleted (no players left).`));
+          console.log(chalk.red(`Game ${data.lobbyId} deleted (no players left).`));
           }
           rooms.delete(data.lobbyId);
         } else {
@@ -317,14 +317,14 @@ export default async function socketManager(io: Server) {
           room.sockets.delete(player.id);
 
           room.broadcast("removePlayer", { id: player.id });
-          console.log(chalk.yellow(`Player ${player.userName} removed from game ${id}`));
+          console.log(chalk.red(`Player ${player.userName} removed from game ${id}`));
 
           // cleanup if room empty
           if (room.players.length === 0) {
             room.broadcast("lobbyClosed", { message: "Room destroyed (no players left)" });
             room.destroy();
             rooms.delete(id);
-            console.log(chalk.magenta(`Game ${id} deleted (no players left).`));
+            console.log(chalk.red(`Game ${id} deleted (no players left).`));
           }
           break;
         }

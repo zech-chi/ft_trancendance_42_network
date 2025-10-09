@@ -111,7 +111,7 @@ export class GameLogic {
     if (!dice || dice.length === 0) return result;
 
     for (const piece of player.pieces) {
-      if (piece.position === "base") continue;
+      if (piece.position === "base" || piece.position === 'home') continue;
 
       const moves: number[] = [];
       for (const die of dice) {

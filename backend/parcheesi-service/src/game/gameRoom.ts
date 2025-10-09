@@ -7,7 +7,8 @@ import { Board } from "./Board";
 import { GameLogic } from "./gameLogic";
 import chalk from "chalk";
 
-const COLORS = [PlayerColor.RED, PlayerColor.YELLOW, PlayerColor.GREEN, PlayerColor.BLUE];
+const COLORS_2P = [PlayerColor.RED, PlayerColor.YELLOW];
+const COLORS_3P4P = [PlayerColor.RED, PlayerColor.GREEN,PlayerColor.YELLOW, PlayerColor.BLUE];
 
 export class GameRoom {
   id: string;
@@ -20,6 +21,7 @@ export class GameRoom {
 
   currentDice: number[] = [];
   bonusDice: number = 0;
+  isDouble: number = 0;
   gamestarted: boolean = false;
   gameOver: boolean = false;
   namespaceIO: Namespace;
@@ -53,11 +55,27 @@ export class GameRoom {
     this.gamestarted = false;
     this.gameOver = true;
   }
+  update2Greenplayer()
+  {
+    this.players[1].color = PlayerColor.GREEN;
+    this.players[1].startIndex = this.board.setStartIndex(this.players[1].color);
+    this.players[1].homeEntryIndex = this.board.setHomeEntryIndex(this.players[1].color);
+    this.board.setToWhom( this.players[1]);
+  }
 
   newPlayer(username: string): Player {
     // in this function i want to make awalys the color red for the first player then yellow for the second if there is only 2 players
-    // if the game have more of 2 player , red for the first , green for the second , yellow for the third and blue for the fourth, how i can do that ?
-    const color = COLORS[this.players.length];
+    // if the game have more of 2 player , red for the first , green for the second , yellow for the third and blue for the fourth, how i can do that ? so use the COLORS_2P and COLORS_3P4P arrays
+    let colors = COLORS_2P;
+    if (this.players.length == 2)
+    {
+      // now change all all the data of the second player to yellow to be a GREEN
+      colors = COLORS_3P4P;
+      this.update2Greenplayer();
+    }
+    else if (this.players.length > 2)
+      colors = COLORS_3P4P;
+    const color = colors[this.players.length];
     const newPlayerId = this.players.length + 1;
     const player: Player = {
       id: newPlayerId,
@@ -145,7 +163,7 @@ export class GameRoom {
       final,
     });
     await new Promise(resolve => setTimeout(resolve, delayMs));
-    console.log(chalk.green(`Emitting move event for piece ${piece.id}, with color ${color} to place ${placeofbr} (se7en: ${se7en}, final: ${final}) and where: ${where}`));
+    console.log(chalk.green(`move : `) + (`Emitting move event for piece ${piece.id}, with color ${color} to place ${placeofbr} (se7en: ${se7en}, final: ${final}) and where: ${where}`));
 
   }
   // jump> {"sphere_id":1,"sphere_type":"RED","place":1,"where":"center","speed":1, "maxHeight": 5, "toStartPosition": false}
@@ -183,7 +201,7 @@ export class GameRoom {
       maxHeight,
       toStartPosition
     });
-    console.log(chalk.green(`Emitting jump event for piece ${piece.id}, with color ${color} to place ${placeofbr} (se7en: ${se7en}, final: ${final}) and where: ${where}, toStartPosition: ${toStartPosition}`));
+    console.log(chalk.yellow(`Jump : `)+(`Emitting jump event for piece ${piece.id}, with color ${color} to place ${placeofbr} (se7en: ${se7en}, final: ${final}) and where: ${where}, toStartPosition: ${toStartPosition}`));
     await new Promise(resolve => setTimeout(resolve, delayMs));
   }
 
@@ -193,7 +211,7 @@ export class GameRoom {
    * Execute captures (do not call GameLogic to capture — GameLogic only detected them).
    * Returns list of captured piece refs (after being moved to base).
    */
-  private executeCaptures(capture: { id: number; playerId: number; position: any }, capturedcolor: PlayerColor) {
+  private async executeCaptures(capture: { id: number; playerId: number; position: any }, capturedcolor: PlayerColor) {
   
 
       const target = this.board.findPiece(capture.playerId, capture.id);
@@ -202,7 +220,7 @@ export class GameRoom {
       this.board.removePieceAtomic(target);
       this.board.addPieceAtomic(target, 'base');
       // broadcast move of captured piece to base (animation)
-      this.emitJumpEvent(target, capturedcolor, 'base', 'center', 2, true);
+      await this.emitJumpEvent(target, capturedcolor, 'base', 'center', 3, true);
       this.bonusDice = 20;
     return target;
   }
@@ -211,13 +229,13 @@ export class GameRoom {
   private async executeMoveDecision(decision: MoveDecision) {
     const playerColor = this.players.find(p => p.id === decision.piece.playerId)?.color ?? decision.piece.playerId;
     if (!decision.allowed) {
-      console.log(chalk.yellow(`Move not allowed for piece ${decision.piece.id}: ${decision.reason}`));
+      console.log(chalk.red(`Move not allowed for piece ${decision.piece.id}: ${decision.reason}`));
       return false;
     }
     // 1) Execute captures (GameRoom is responsible for state mutation)
     if (decision.capture !== null) {
       const capturedcolor = this.players.find(p => p.id === decision.capture?.playerId)?.color ?? decision.capture?.playerId;
-      this.executeCaptures(decision.capture, capturedcolor as PlayerColor);
+      await this.executeCaptures(decision.capture, capturedcolor as PlayerColor);
     }
     
     // 2) Move the piece on the board (atomic)
@@ -253,13 +271,13 @@ export class GameRoom {
       let done = false;
       for (const step of decision.path) {
         //log the type of step and placeToJump if there is, and thier values
-        console.log(chalk.blue(`Step type: ${typeof step}, value: ${JSON.stringify(step)}   placeToJump type: ${typeof decision.placeTojump}, value: ${JSON.stringify(decision.placeTojump)}`));
+        console.log(chalk.blue("tring step: ") + (`Step type: ${typeof step}, value: ${JSON.stringify(step)}   placeToJump type: ${typeof decision.placeTojump}, value: ${JSON.stringify(decision.placeTojump)}`));
         if (jumped && decision.placeTojump && !decision.placeTojump.some(p => (typeof p === 'object' && typeof step === 'object') ? p.homeIndex === step.homeIndex : p === step)) {
-          console.log(chalk.green(`now im jumping Jumping over step: ${JSON.stringify(step)}`));
+          console.log(chalk.green(`now im jumping over step: ${JSON.stringify(step)}`));
           if (isOnRight && step === decision.to)
             await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'right', 3, false);
           else
-            await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'center');
+            await this.emitJumpEvent(decision.piece, playerColor as PlayerColor, step, 'center', 3, false);
           jumped = false;
         }
         else if (decision.placeTojump && decision.placeTojump.some(p => (typeof p === 'object' && typeof step === 'object') ? p.homeIndex === step.homeIndex : p === step) && step !== decision.to) {
@@ -284,8 +302,11 @@ export class GameRoom {
         const beforeOccupantsPrev = this.board.getTileoccupants(prevPosition, decision.piece.id);
         if (((typeof prevPosition === 'number' && beforeOccupantsPrev && beforeOccupantsPrev.length === 1) || ((typeof prevPosition === "object" && 'homeIndex' in prevPosition) && beforeOccupantsPrev && beforeOccupantsPrev.length === 1)) && !done)
           {
+            
+            console.log(chalk.magenta(" back center: ") + (`Moving older piece back to center from position: ${JSON.stringify(prevPosition)} with color: ${playerColor}`));
             const olderPiece = beforeOccupantsPrev.find(p => p.id !== decision.piece.id);
             const backtoCenter:boolean = (this.players.find(p => p.color === playerColor)?.pieces.filter(pc => pc.position === 'base') && this.currentDice.includes(5)) ? false : true;
+            console.log(chalk.bold.yellow("DEBG: ") + ` actually position: ${decision.piece.position.toString()}  and the piece id : ${decision.piece.id}  and the player color : ${playerColor} prev position : ${prevPosition.toString()}, beforeOccupantsPrev if that tile length: ${beforeOccupantsPrev.length}, older piece : ${olderPiece?.id}, backtoCenter : ${backtoCenter}`);
             if (olderPiece && olderPiece.position === this.players.find(p => p.id === decision.piece.playerId)?.startIndex && !backtoCenter)
               continue;
             await this.emitMoveEvent(olderPiece!, playerColor as PlayerColor, prevPosition, 'center');
@@ -398,6 +419,70 @@ async autoMove(): Promise<boolean> {
   return false;
 }
 
+async doubleThreeTimes()
+{
+  if (this.currentDice[0] === this.currentDice[1]) {
+    this.isDouble++;
+    if (this.isDouble == 1)
+      {
+          // here going to be logic for hunldding if the player have a blocked piece , move on of them automaticly , without asking the player and consume the 2 dices one that piece
+          const currentPlayer = this.currentPlayer;
+          const blockedPieces = currentPlayer.pieces.filter(p => typeof p.position === 'number' && this.board.isTileBlocked(p.position, currentPlayer.id));
+          if (blockedPieces.length > 0) {
+            // Move the first blocked piece found
+            console.log(chalk.yellow(`Player ${currentPlayer.userName} has blocked pieces. Auto-moving one due to double roll.`));
+            const pieceToMove = blockedPieces[0];
+            for (const dieValue of this.currentDice) {
+              const decision = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue);
+              if (decision && decision.allowed) {
+                await this.executeMoveDecision(decision);
+                console.log(chalk.green(`Auto-moved blocked piece ${pieceToMove.id} for player ${currentPlayer.userName} due to double roll.`));
+              } else {
+                console.log(chalk.red(`Failed to auto-move blocked piece ${pieceToMove.id} for player ${currentPlayer.userName}.`));
+              }
+            }
+            this.currentDice = [];
+          }
+        }
+
+    else if (this.isDouble === 3)
+      {
+        // function to find the one piece that is not in the base and the with the highest position and send it to the base
+        const currentPlayer = this.currentPlayer;
+        this.isDouble = 0;
+        this.currentDice = [];
+        const piecesNotInBase = currentPlayer.pieces.filter(p => typeof p.position === 'number');
+        if (piecesNotInBase.length === 0) {
+          console.log(chalk.yellow(`All pieces of player ${currentPlayer.userName} are in base. No piece to send back.`));
+          return;
+        }
+        // Find the piece with the highest position
+        // home positions and home are not considered at all
+        let pieceToSendBack: Piece | null = null;
+        let highestPosition = -1;
+        for (const piece of piecesNotInBase) {
+          if (typeof piece.position === 'number' && piece.position > highestPosition) {
+            highestPosition = piece.position;
+            pieceToSendBack = piece;
+          }
+        }
+        if (pieceToSendBack) {
+          // Move the piece back to base with movePieceAtomic
+        this.board.movePieceAtomic(pieceToSendBack, 'base');
+          // Broadcast the jump to base
+          await this.emitJumpEvent(pieceToSendBack, currentPlayer.color, 'base', 'center', 3, true);
+          console.log(chalk.red(`Player ${currentPlayer.userName} rolled doubles three times! Piece ${pieceToSendBack.id} sent back to base.`));
+        } else {
+          console.log(chalk.yellow(`No valid piece found to send back for player ${currentPlayer.userName}.`));
+        }
+        
+      }
+  } else {
+    this.isDouble = 0;
+  }
+
+}
+
 async handleRollDice() {
     this.currentDice = this.logic.rollDice();
     const currentPlayer = this.currentPlayer;
@@ -407,6 +492,7 @@ async handleRollDice() {
       dice1: this.currentDice[0],
       dice2: this.currentDice[1]
     });
+    await this.doubleThreeTimes();
     await this.leaveBaseAuto();
     await this.autoMove();
       if ((!currentPlayer.Remain_moves || currentPlayer.Remain_moves.length === 0 ) && (!currentPlayer.bonus_moves || currentPlayer.bonus_moves.length === 0)) {
@@ -546,10 +632,13 @@ async handleRollDice() {
   nextTurn() {
     if (this.playerfinish()) {
       this.gameOver = true;
-      console.log(chalk.magenta(`Player ${this.currentPlayer.userName} has won the game!`));    
+      console.log(chalk.red(`Player ${this.currentPlayer.userName} has won the game!`));    
       return;
     }
-    this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
+    if (this.isDouble == 0)
+    {
+        this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
+    }
     this.currentDice = [];
     this.bonusDice = 0;
     this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });

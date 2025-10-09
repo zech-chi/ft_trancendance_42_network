@@ -363,6 +363,15 @@ export class Board {
     };
   }
 
+  isTileBlocked(position: BoardPosition, playerId: number): boolean {
+    const occupants = this.getTileoccupants(position, playerId);
+    if (occupants.length === 0) return false; // empty tile is not blocked
+    // A tile is considered blocked if it has 2 occupants of the same player
+    const samePlayerCount = occupants.filter(p => p.playerId === playerId).length;
+    return samePlayerCount === 2;
+
+  }
+
   getTileoccupants(position: BoardPosition, playerId: number = 1): Piece[] {
     if (typeof position === 'number') {
       if (!this.isValidSharedIndex(position)) return [];
