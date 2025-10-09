@@ -44,7 +44,7 @@ function ChooseGame({game, setGame}: ChooseGameProps) {
             </div>
                 <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => setGame('parcheesi')}>
                 <img
-                src={game === 'parcheesi' ? '/parcheesi_pink.png' : '/parcheesi_white.png'}
+                src={game === 'parcheesi' ? '/parcheesi_pink.png' : '/parcheesi.png'}
                 alt="parcheesi"
                 className="w-[25px] h-[25px] p-2
                 md:w-[30px] md:h-[30px] md:p-2

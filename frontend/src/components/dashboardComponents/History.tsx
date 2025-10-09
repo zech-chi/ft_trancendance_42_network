@@ -41,7 +41,7 @@ export function SelectGame({ game, setGame }: HistoryProps): JSX.Element {
                         />
                     </div>
                     <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => setGame('parcheesi')}>
-                        <img src={game === 'parcheesi' ? '/parcheesi_pink.png' : '/parcheesi_white.png'} alt="parcheesi" width={40} height={40}
+                        <img src={game === 'parcheesi' ? '/parcheesi_pink.png' : '/parcheesi.png'} alt="parcheesi" width={40} height={40}
                             className="p-2 cursor-pointer
                                 w-8 h-8 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11
                             "
