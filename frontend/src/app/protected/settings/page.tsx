@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { ChevronDown, Eye, EyeOff } from "lucide-react";
-import { X, Check } from 'lucide-react'; 
+import { X, Check } from "lucide-react";
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 
@@ -47,17 +47,23 @@ function ProfileImage({ imgSrc, handleImageUpload }: PropsProfileImage) {
   );
 }
 
-
 // props for profile info
 interface PropsProfileInfo {
   fullName: string;
   setFullName: (value: string) => void;
   userName: string;
-  setUserName: (value: string) => void;
+  is2FAEnabled: boolean;
+  setIs2FAEnabled: (value: boolean) => void;
 }
 
 // profile info
-function ProfileInfo({ fullName, setFullName, userName, setUserName }: PropsProfileInfo) {
+function ProfileInfo({
+  fullName,
+  setFullName,
+  userName,
+  is2FAEnabled,
+  setIs2FAEnabled,
+}: PropsProfileInfo) {
   return (
     <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-4 px-4 md:px-[50px] mt-20">
       <div className="flex flex-col items-center w-full">
@@ -65,7 +71,7 @@ function ProfileInfo({ fullName, setFullName, userName, setUserName }: PropsProf
           htmlFor="f-name"
           className="mb-1 text-white text-sm md:text-base font-bold"
         >
-        {/* full name */}
+          {/* full name */}
           Full Name
         </label>
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
@@ -86,30 +92,6 @@ function ProfileInfo({ fullName, setFullName, userName, setUserName }: PropsProf
           />
         </div>
       </div>
-
-      {/* <div className="flex flex-col items-center w-full">
-          <label
-            htmlFor="l-name"
-            className="mb-1 text-white text-sm md:text-base font-bold"
-          >
-            Last Name
-          </label>
-          <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
-            <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
-
-            <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
-
-            <input
-              type="text"
-              id="l-name"
-              placeholder="Enter your nickname"
-              className="relative z-10 w-full h-full p-4 text-yellow-200 font-semibold placeholder:text-yellow-100 text-center border border-yellow-500/30
-                  rounded-[20px] bg-transparent
-                  focus:outline-none focus:border-yellow-500 focus:border-2
-                  bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent"
-            />
-          </div>
-        </div> */}
 
       <div className="flex flex-col items-center w-full">
         <label
@@ -137,6 +119,45 @@ function ProfileInfo({ fullName, setFullName, userName, setUserName }: PropsProf
             // onChange={(e) => setUserName(e.target.value)}
             readOnly
           />
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center w-full">
+        <span className="mb-1 text-white font-bold text-sm md:text-base">
+        Two-factor authentication (2fa)
+        </span>
+
+        <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
+          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
+
+          {/* visible layer */}
+          <div
+            className="relative z-10 w-full h-full flex items-center justify-center gap-5 border border-yellow-500/30
+        rounded-[20px] bg-transparent bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent
+        focus-within:border-yellow-500 focus-within:border-2"
+          >
+            <button
+              onClick={() => setIs2FAEnabled(!is2FAEnabled)}
+              className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${
+                is2FAEnabled ? "bg-yellow-500" : "bg-gray-500"
+              }`}
+            >
+              <span
+                className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                  is2FAEnabled ? "translate-x-7" : "translate-x-1"
+                }`}
+              />
+            </button>
+
+            {/* <span
+              className={`font-bold ${
+                is2FAEnabled ? "text-green-400" : "text-red-400"
+              }`}
+            >
+              {is2FAEnabled ? "ON" : "OFF"}
+            </span> */}
+          </div>
         </div>
       </div>
     </div>
@@ -361,7 +382,7 @@ function ProfileLanguageEmail({ email }: PropsProfileLanguageEmail) {
             {/* to change later the default value to current languges */}
             <select
               id="language"
-              defaultValue="Select Language" 
+              defaultValue="Select Language"
               className="w-full appearance-none bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent text-yellow-200
            font-bold px-4 py-4 text-center focus:outline-none focus:border-amber-500"
               onChange={(e) => {
@@ -443,8 +464,6 @@ function ProfileSavings({ handleSave }: PropsProfileSavings) {
   );
 }
 
-
-
 // type PopupProps = {
 //   message: string;
 //   type: "success" | "error";
@@ -491,7 +510,7 @@ function Popup({ message, type, onClose }: PopupProps) {
         className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fadeIn"
         onClick={onClose}
       />
-      
+
       {/* Popup Card */}
       <div
         className={`relative p-8  text-white font-semibold 
@@ -515,7 +534,10 @@ function Popup({ message, type, onClose }: PopupProps) {
           ) : (
             <X size={48} className="text-red-400 mb-4 drop-shadow-lg" />
           )}
-          <p className="mb-6 tracking-wide drop-shadow-md" style={{ textShadow: '0 0 5px rgba(255,255,255,0.1)' }}>
+          <p
+            className="mb-6 tracking-wide drop-shadow-md"
+            style={{ textShadow: "0 0 5px rgba(255,255,255,0.1)" }}
+          >
             {message}
           </p>
           <button
@@ -525,7 +547,7 @@ function Popup({ message, type, onClose }: PopupProps) {
               shadow-lg shadow-[#8a2be2]/30
             `}
             onClick={onClose}
-            style={{ textShadow: '0 0 5px rgba(0,0,0,0.3)' }}
+            style={{ textShadow: "0 0 5px rgba(0,0,0,0.3)" }}
           >
             Ok
           </button>
@@ -534,8 +556,12 @@ function Popup({ message, type, onClose }: PopupProps) {
 
       <style jsx>{`
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
 
         @keyframes slideUp {
@@ -575,10 +601,11 @@ function Settings() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-
   // this is for popup
   const [popupMessage, setPopupMessage] = useState("");
-  const [popupType, setPopupType] = useState<"success" | "error" | "info">("success");
+  const [popupType, setPopupType] = useState<"success" | "error" | "info">(
+    "success"
+  );
   const [showPopup, setShowPopup] = useState(false);
 
   // email and language values
@@ -587,6 +614,7 @@ function Settings() {
   const [userName, setUserName] = useState("");
   // const [language, setLanguage] = useState("English");
 
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 
   const initialValues = useRef({
     fullName: "",
@@ -595,21 +623,19 @@ function Settings() {
 
   const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-
-
   // load the image from local storage if it exists
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     console.log("Image upload triggered ------>", event.target.files);
     const file = event.target.files?.[0];
     if (file) {
-
       if (file.size > MAX_IMAGE_SIZE) {
-        setPopupMessage("Image size exceeds 5MB limit. Please choose a smaller image.");
+        setPopupMessage(
+          "Image size exceeds 5MB limit. Please choose a smaller image."
+        );
         setPopupType("error");
         setShowPopup(true);
         return; // Stop processing if file is too large
       }
-
 
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -620,7 +646,6 @@ function Settings() {
       reader.readAsDataURL(file);
     }
   };
-
 
   const handleSave = async () => {
     console.log("Save button clicked");
@@ -650,14 +675,18 @@ function Settings() {
         setShowPopup(true);
         return; // Stop the save process
       }
-    } else if ((oldPassword || newPassword || confirmPassword) && !(oldPassword && newPassword && confirmPassword)) {
+    } else if (
+      (oldPassword || newPassword || confirmPassword) &&
+      !(oldPassword && newPassword && confirmPassword)
+    ) {
       // If any password field is filled, but not all of them
-      setPopupMessage("Please fill all password fields if you intend to change your password.");
+      setPopupMessage(
+        "Please fill all password fields if you intend to change your password."
+      );
       setPopupType("error");
       setShowPopup(true);
       return;
     }
-
 
     // Check for image change
     if (newProfileFile) {
@@ -674,14 +703,19 @@ function Settings() {
 
     try {
       const userId = "1"; // Replace with actual user ID from context/auth
-      const res = await fetch(`http://localhost:5004/api/settings/update/${userId}`, {
-        method: "PATCH", // Use PATCH for partial updates
-        body: formData, // No 'Content-Type' header needed for FormData
-      });
+      const res = await fetch(
+        `http://localhost:5004/api/settings/update/${userId}`,
+        {
+          method: "PATCH", // Use PATCH for partial updates
+          body: formData, // No 'Content-Type' header needed for FormData
+        }
+      );
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.message || `Failed to save profile: ${res.statusText}`);
+        throw new Error(
+          data.message || `Failed to save profile: ${res.statusText}`
+        );
       }
 
       // Success
@@ -699,11 +733,10 @@ function Settings() {
       setOldPassword(""); // Clear password fields
       setNewPassword("");
       setConfirmPassword("");
-      
+
       // set the full name and bio
       setFullName(fullName);
       setBioText(bioText);
-
     } catch (err: any) {
       console.error("Error saving profile:", err);
       setPopupMessage(err.message || "Something went wrong during save!");
@@ -722,13 +755,13 @@ function Settings() {
     }
   }, [bioText]);
 
-
-
   // user effect to fetch data from the backend from localhost:5000/api/settings/users/1
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/settings/users/1");
+        const response = await fetch(
+          "http://localhost:5000/api/settings/users/1"
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
         }
@@ -772,7 +805,7 @@ function Settings() {
                         2xl:mt-[67px] xl:mt-[60px] overflow-y-hidden
                     "
         >
-          <div className="flex items-center justify-center h-[90vh] p-4 w-full flex-1">
+          <div className="flex items-center justify-center h-[87vh] md:h-[90vh] p-4 w-full flex-1">
             <div className="relative w-full md:w-[85%] h-[100%] overflow-hidden rounded-[50px] flex items-center justify-center p-4 max-h-[1200px] flex-1">
               {/* background layers */}
               <div className="absolute inset-0 settings-profile-bg bg-cover bg-center"></div>
@@ -791,7 +824,8 @@ function Settings() {
                     fullName={fullName}
                     setFullName={setFullName}
                     userName={userName}
-                    setUserName={setUserName}
+                    is2FAEnabled={is2FAEnabled}
+                    setIs2FAEnabled={setIs2FAEnabled}
                   />
 
                   {/* form passowrd */}
@@ -818,12 +852,10 @@ function Settings() {
                   />
 
                   {/* language & email */}
-                  <ProfileLanguageEmail 
-                  email={email}
-                  />
+                  <ProfileLanguageEmail email={email} />
 
                   {/* save button */}
-                  <ProfileSavings handleSave={handleSave}/>
+                  <ProfileSavings handleSave={handleSave} />
                 </div>
               </div>
             </div>
@@ -831,13 +863,12 @@ function Settings() {
         </main>
 
         {showPopup && (
-        <Popup
-          message={popupMessage}
-          type={popupType}
-          onClose={() => setShowPopup(false)}
-        />
-      )}
-
+          <Popup
+            message={popupMessage}
+            type={popupType}
+            onClose={() => setShowPopup(false)}
+          />
+        )}
       </div>
     </>
   );
