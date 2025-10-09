@@ -3,15 +3,16 @@ import React from 'react';
 import { JSX } from 'react';
 import { useState, useEffect } from 'react';
 import { Dispatch, SetStateAction } from "react";
-import { fetchGames, fetchUser } from '@/app/lib/apiDashboard';
+import { fetchGames, fetchUser, fetchUserById } from '@/app/lib/apiDashboard';
 import Cookies from 'js-cookie';
 import {useLoggedUserName} from '@/context/LoggedUserNameContext';
+import { useLoggedUserId } from "@/context/UserIdContext";
 
 type GameName = 'pong' | 'parcheesi';
 type Game = {
     id: number;
-    user1: string;
-    user2: string;
+    user1: number;
+    user2: number;
     user1_score: number;
     user2_score: number;
     user1_win: boolean;
@@ -57,16 +58,17 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
     const [userCur, setUserCur] = useState<any | null>(null);
     const [userOther, setUserOther] = useState<any | null>(null);
     const { loggedUserName } = useLoggedUserName();
+    const { loggedUserId } = useLoggedUserId();
   
-    const isCurrentUserUser1 = loggedUserName === game.user1;
+    const isCurrentUserUser1 = loggedUserId === game.user1;
     const currentUserWon = (game.user1_win && isCurrentUserUser1) || (!game.user1_win && !isCurrentUserUser1);
     const opponentWon = !currentUserWon;
   
     useEffect(() => {
       setTimeout(() => {
         const fetchData = async () => {
-          const cur = await fetchUser(isCurrentUserUser1 ? game.user1 : game.user2);
-          const other = await fetchUser(isCurrentUserUser1 ? game.user2 : game.user1);
+          const cur = await fetchUserById(isCurrentUserUser1 ? game.user1 : game.user2);
+          const other = await fetchUserById(isCurrentUserUser1 ? game.user2 : game.user1);
           setUserCur(cur);
           setUserOther(other);
         };
@@ -167,20 +169,20 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
 export function History({ game, setGame }: HistoryProps): JSX.Element {
     const [games, setGames] = useState<any[]>([]);
 	const { loggedUserName } = useLoggedUserName();
+  const { loggedUserId } = useLoggedUserId();
     
 
     useEffect(() => {
         Cookies.set('SelectedGameHistory', game, { expires: 365 });
-        if (loggedUserName) {
-            fetchGames(loggedUserName, game)
+        if (loggedUserId) {
+            fetchGames(loggedUserId, game)
             .then((games) => {
               setGames(games)
-              console.log("Games fetched: ", games);
-                }
+                console.log("Games fetched: ", games);
+              }
             )
             .catch((err) => console.error("Error: ", err));
         }
-    
     }, [game]);
 
     return (

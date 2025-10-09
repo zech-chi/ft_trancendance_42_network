@@ -198,6 +198,30 @@ export const rankResponse = z.object({
 export type RankResponse = z.infer<typeof rankResponse>;
 export const rankListResponse = z.array(rankResponse);
 
+// game schema
+// params schema
+// query schema
+export const gameHistoryParams = z.object({
+  userId: z.number(),
+});
+export const gameHistoryQuery = z.object({
+  gameType: z.enum(['pong', 'parcheesi']),
+});
+export const gameHistoryResponse = z.object({
+  id: z.number(),
+  user1: z.string(),
+  user2: z.string(),
+  user1_score: z.number(),
+  user2_score: z.number(),
+  user1_win: z.boolean(),
+  date_played: z.string(),
+  game_type: z.string(),
+});
+
+// export type GameSchmaRequestParam = z.infer<typeof gameSchmaRequestParam>;
+// export type GameSchmaRequestQuery = z.infer<typeof gameSchmaRequestQuery>;
+// export type GameSchmaResponse = z.infer<typeof gameSchmaResponse>;
+
 
 // build and export the json schemas
 const { schemas, $ref } = buildJsonSchemas({
@@ -219,6 +243,9 @@ const { schemas, $ref } = buildJsonSchemas({
     friendshipResponse,
     rankResponse,
     rankListResponse,
+    gameHistoryParams,
+    gameHistoryQuery,
+    gameHistoryResponse,
 });
 
 export const dashboardSchemas = { schemas, $ref };

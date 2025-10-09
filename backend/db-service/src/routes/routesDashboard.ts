@@ -324,6 +324,53 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         return users;
     });
     
+
+    // app.get('/Games/:userName', async (request, reply) => {
+    //     const { userName } = request.params as UserParams;
+    //     const query = request.query as { gameType: string };
+    //     const gameType = query.gameType;
+  
+    //     if (!userName || !gameType) {
+    //       return reply.code(400).send({ error: 'Missing userName or gameType' });
+    //     }
+        
+    //     try {
+    //       const games = await getGames(userName, gameType);
+    //       return reply.send(games);
+  
+    //     } catch (err) {
+    //       return reply.code(500).send({ error: '❌ Error running query' });
+    //     }
+    //   });
+  
+    // get games history by userName and a query param gameType
+    fastify.get('/Games/:userId', async (request: FastifyRequest<{ Params: { userId: number }; Querystring: { gameType: string } }>, reply: FastifyReply) => {
+        const { userId } = request.params;
+        const { gameType } = request.query;
+        if (!userId || !gameType) {
+            return reply.code(400).send({ error: 'Missing userId or gameType' });
+        }
+        try {
+            const stmt = db.prepare(`
+                SELECT * FROM Games
+                WHERE user1 = ? OR user2 = ?
+                AND game_type = ?
+                ORDER BY date_played DESC
+            `);
+            const allGames = stmt.all(userId, userId, gameType);
+            let filteredGames;
+            if (gameType === 'all') {
+                filteredGames = allGames;
+            } else if (gameType === 'pong' || gameType === 'parcheesi') {
+                filteredGames = allGames.filter((game: any) => game.game_type === gameType);
+            } else {
+                return reply.code(400).send({ error: 'Invalid gameType. Must be "all", "ranked", or "unranked"' });
+            }
+            return reply.send(filteredGames);
+        } catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
+    });
     
 
 }

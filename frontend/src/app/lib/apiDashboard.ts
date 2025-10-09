@@ -35,8 +35,8 @@ export const fetchFriendshipStatus = async (userId1: number, userId2: number) =>
   return data;
 }
 
-export const fetchGames = async (userName: string, gameType: string) => {
-    const response = await fetch(`http://localhost:5000/Games/${userName}?gameType=${gameType}`);
+export const fetchGames = async (userId: number, gameType: string) => {
+    const response = await fetch(`http://localhost:5002/api/dashboard/Games/${userId}?gameType=${gameType}`);
     if (!response.ok) {
       throw new Error('Failed to fetch games');
     }

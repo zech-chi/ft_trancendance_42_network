@@ -1,7 +1,8 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { $ref } from "./dashboard.schema"
-import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler } from './dashboard.controller';
+import { $ref, gameHistoryResponse } from "./dashboard.schema"
+import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler, fetchGamesHandler } from './dashboard.controller';
 import { fetchFriendshipStatusHandler, fetchRankDataHandler } from './dashboard.controller';
+import { z } from 'zod';
 
 export async function dashboardRoutes(app: FastifyInstance) {
     // for testing
@@ -186,5 +187,20 @@ export async function dashboardRoutes(app: FastifyInstance) {
         },
         fetchRankDataHandler
     )
+
+    // game history
+    app.get(
+        '/Games/:userId',
+        {
+          schema: {
+            params: $ref('gameHistoryParams'),
+            querystring: $ref('gameHistoryQuery'),
+            response: {
+              200: z.array(gameHistoryResponse), // <- array
+            },
+          },
+        },
+        fetchGamesHandler
+      )      
 }
 

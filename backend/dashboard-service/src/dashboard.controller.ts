@@ -394,34 +394,6 @@ export async function fetchFriendshipStatusHandler(
 } 
 
 // fetchRankDataHandler
-// export async function fetchRankDataHandler(
-//     request: FastifyRequest,
-//     reply: FastifyReply
-// ) {
-//     try {
-//         const response = await fetch(`http://localhost:5000/api/dashboard/rank`);
-
-//         if (!response.ok) {
-//             reply.status(404).send({ message: "Rank data not found" });
-//             return [];
-//         }
-
-//         const data = await response.json();
-//         console.log("data from db service: ", data);
-
-//         if (data.status === "ko") {
-//             reply.status(404).send({ message: "Rank data not found" });
-//             return [];
-//         }
-
-//         return data.users || [];
-
-//     } catch (error) {
-//         reply.status(400).send({ message: "something went wrong!" });
-//         return [];
-//     }
-// }
-
 export async function fetchRankDataHandler(
     request: FastifyRequest,
     reply: FastifyReply
@@ -455,3 +427,45 @@ export async function fetchRankDataHandler(
     }
 }
 
+// fetchGamesHandler
+export async function fetchGamesHandler(
+    request: FastifyRequest<{ Params: { userId: number }; Querystring: { gameType: string } }>,
+    reply: FastifyReply
+  ) {
+    const { userId } = request.params;
+    const { gameType } = request.query;
+  
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/dashboard/Games/${userId}?gameType=${encodeURIComponent(gameType)}`
+      );
+  
+      if (!response.ok) {
+        reply.status(404).send({ message: "Games not found" });
+        return [];
+      }
+  
+      const data = await response.json();
+      console.log("data from DB service:", data);
+  
+      // normalize array
+      if (Array.isArray(data)) {
+        return data;
+      }
+      if (Array.isArray(data.games)) {
+        return data.games.map((game: { user1_win: any; }) => ({
+          ...game,
+          user1_win: Boolean(game.user1_win), // ensure boolean
+        }));
+      }
+  
+      reply.status(404).send({ message: "Invalid data format" });
+      return [];
+  
+    } catch (error) {
+      console.error("fetchGamesHandler error:", error);
+      reply.status(400).send({ message: "something went wrong!" });
+      return [];
+    }
+  }
+  
