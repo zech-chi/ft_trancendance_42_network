@@ -27,7 +27,7 @@ type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
 function SearchForm(): JSX.Element {
     return (
-      <form className="max-w-xl mx-auto flex-1">
+      <form className="max-w-xl mx-auto w-[60%]">
         <div className="relative w-full">
           <input
             type="text"
@@ -81,121 +81,121 @@ function LeftComponent(): JSX.Element {
 	);
 }
 
+
 function RightComponent({ show }: { show: boolean }): JSX.Element {
 	const [buttonChoice, setButtonChoice] = useState<string>('friends');
 	const [game, setGame] = useState<GameName>((Cookies.get('SelectedGameHistory') as GameName) || 'pong');
 	const [choice, setChoice] = useState<FriendsChoice>((Cookies.get('SelectedChoiceFriends') as FriendsChoice) || 'friends');
 	const [hovered, setHovered] = useState<number | null>(null);
+	const [hide, setHide] = useState<boolean>(false);
 
 	return (
-	  <div
-		className={`
-		  flex flex-col items-center space-x-4 h-full
-		  transition-all duration-300 ease-in-out
-		  bg-black/60
-		  rounded-[25px]
-		  backdrop-blur
-		  mr-2.5
-		  transform
-		  ${show
-			? "translate-x-0 opacity-100 pointer-events-auto"
-			: "translate-x-full opacity-0 pointer-events-none"}
-		  w-[calc(100%-20px)] md:w-[60%] xl:w-[50%] 2xl:w-[35%]
-		  absolute right-0 top-0
-		  2xl:static 2xl:translate-x-0 2xl:opacity-100 2xl:pointer-events-auto
-		  py-2.5
-		`}
-	  >
-		<SearchForm />
-		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto ">
-			{/* select game if buttonChoice is History */}
-			{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
-			{buttonChoice === 'friends' && <SelectedChoiceFriends choice={choice} setChoice={setChoice} />}
-			<div className="rounded-[25px] w-full  bg-black/45 overflow-y-auto overflow-x-auto min-w-[270px] custom-scrollbar mt-2.5 ">
-				{buttonChoice === 'friends' && <Friends choice={choice} />}
-				{buttonChoice === 'history' && <History game={game} setGame={setGame} />}
-				{buttonChoice === 'rank' && <Rank />}
+			<div
+				className={`
+				flex flex-col items-center space-x-4 h-full
+				transition-all duration-300 ease-in-out
+				bg-black/60
+				rounded-[25px]
+				backdrop-blur
+				mr-2.5
+				transform
+				${show
+					? "translate-x-0 opacity-100 pointer-events-auto"
+					: "translate-x-full opacity-0 pointer-events-none"}
+				w-[calc(100%-20px)] md:w-[60%] xl:w-[50%] 2xl:w-[35%]
+				absolute right-0 top-0
+				2xl:static 2xl:translate-x-0 2xl:opacity-100 2xl:pointer-events-auto
+				py-2.5
+				`}
+			>
+				<div className="w-full flex flex-row items-center justify-center gap-1 pr-20">
+				<SearchForm />
+				<aside
+						className="
+						bg-black/10 backdrop-blur-md
+						flex flex-row items-center justify-center
+						gap-2 p-2
+						rounded-full
+						border border-white/10
+						z-50
+						transition-all duration-300
+						"
+						>
+							{[
+							{ key: "friends", img: ["/friends.png", "/friends_pink.png"], alt: "Friends" },
+							{ key: "history", img: ["/history.png", "/history_pink.png"], alt: "History" },
+							{ key: "rank", img: ["/rank.png", "/rank_pink.png"], alt: "Rank" },
+							].map((btn) => (
+							<button
+								key={btn.key}
+								onClick={() => setButtonChoice(btn.key)}
+								className={`
+								w-6 h-6 rounded-full flex items-center justify-center
+								bg-black/40 hover:bg-black/70
+								transition-all duration-200
+								${buttonChoice === btn.key ? "ring-2" : ""}
+								`}
+							>
+								<Image
+								src={buttonChoice === btn.key ? btn.img[1] : btn.img[0]}
+								alt={btn.alt}
+								width={27}
+								height={27}
+								className="object-contain"
+								/>
+							</button>
+							))}
+					</aside>
+				</div>
+				<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto ">
+					{/* select game if buttonChoice is History */}
+					{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
+					{buttonChoice === 'friends' && <SelectedChoiceFriends choice={choice} setChoice={setChoice} />}
+					<div className="rounded-[25px] w-full  bg-black/45 overflow-y-auto overflow-x-auto min-w-[270px] custom-scrollbar mt-2.5 ">
+						{buttonChoice === 'friends' && <Friends choice={choice} />}
+						{buttonChoice === 'history' && <History game={game} setGame={setGame} />}
+						{buttonChoice === 'rank' && <Rank />}
+					</div>
+					{/* <aside
+						className=" fixed
+						right-4 top-1/2 -translate-y-1/2
+						bg-black/60 backdrop-blur-md
+						flex flex-col items-center justify-center
+						gap-6 p-4
+						rounded-full
+						border border-white/10
+						z-50
+						transition-all duration-300
+						"
+						>
+							{[
+							{ key: "friends", img: ["/friends.png", "/friends_pink.png"], alt: "Friends" },
+							{ key: "history", img: ["/history.png", "/history_pink.png"], alt: "History" },
+							{ key: "rank", img: ["/rank.png", "/rank_pink.png"], alt: "Rank" },
+							].map((btn) => (
+							<button
+								key={btn.key}
+								onClick={() => setButtonChoice(btn.key)}
+								className={`
+								w-14 h-14 rounded-full flex items-center justify-center
+								bg-black/40 hover:bg-black/70
+								transition-all duration-200
+								${buttonChoice === btn.key ? "ring-2" : ""}
+								`}
+							>
+								<Image
+								src={buttonChoice === btn.key ? btn.img[1] : btn.img[0]}
+								alt={btn.alt}
+								width={27}
+								height={27}
+								className="object-contain"
+								/>
+							</button>
+							))}
+					</aside> */}
+				</div>
 			</div>
-			<div className="flex justify-center items-center">
 
-			{/* <svg width="200" height="200" viewBox="0 0 150 150"> */}
-  {/* <g transform="rotate(45, 75, 75)"> */}
-    {/* Circle background */}
-    {/* <circle cx="75" cy="75" r="60" fill="red" stroke="none" /> */}
-
-    {/* Slice paths acting as buttons */}
-    {/* {[
-      { d: "M75 75 L135 75 A60 60 0 0 1 75 135 Z", choice: "friends", img: ["/friends.png","/friends_pink.png"] },
-      { d: "M75 75 L75 135 A60 60 0 0 1 15 75 Z", choice: "history", img: ["/history.png","/history_pink.png"] },
-      { d: "M75 75 L15 75 A60 60 0 0 1 75 15 Z", choice: "rank", img: ["/rank.png","/rank_pink.png"] },
-      { d: "M75 75 L75 15 A60 60 0 0 1 135 75 Z", choice: "other", img: ["/other.png","/other_pink.png"] },
-    ].map((slice, i) => (
-      <g
-        key={i}
-        onClick={() => setButtonChoice(slice.choice)}
-        onMouseEnter={() => setHovered(i)}
-        onMouseLeave={() => setHovered(null)}
-        style={{ cursor: "pointer", transformOrigin: "75px 75px", transition: "all 0.3s ease" }}
-      >
-        <path
-          d={slice.d}
-          fill={hovered === i || buttonChoice === slice.choice ? "#ff0077" : "black"}
-          transform={hovered === i ? "scale(1.05)" : ""}
-        />
-        <image
-          href={buttonChoice === slice.choice ? slice.img[1] : slice.img[0]}
-          x={50} // Adjust x,y to center the icon inside the slice
-          y={50}
-          width={25}
-          height={25}
-          style={{ pointerEvents: "none" }} // So click passes to <g>
-        />
-      </g>
-    ))}
-  </g>
-</svg> */}
-
-
-
-			</div>
-
-			<aside className="fixed right-2 top-1/2 -translate-y-1/2 h-113 w-23 rounded-full bg-black/60 backdrop-blur p-4 z-10 flex flex-col item-center justify-center gap-10">
-                <button className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex item-center justify-center transition"
-                  onClick={() => setButtonChoice('friends')}
-                >
-                  <Image
-                    src={buttonChoice === 'friends' ? '/friends_pink.png' : '/friends.png'}
-                    alt='friends'
-                    width={27}
-                    height={27}
-                    className="object-contain"
-                  />
-                </button>
-                <button className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex item-center justify-center transition"
-                  onClick={() => setButtonChoice('history')}
-                >
-                  <Image
-                    src={buttonChoice === 'history' ? '/history_pink.png' : '/history.png'}
-                    alt='history'
-                    width={27}
-                    height={27}
-                    className="object-contain"
-                  />
-                </button>
-                <button className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex item-center justify-center transition"
-                  onClick={() => setButtonChoice('rank')}
-                >
-                  <Image
-                    src={buttonChoice === 'rank' ? '/rank_pink.png' : '/rank.png'}
-                    alt='rank'
-                    width={27}
-                    height={27}
-                    className="object-contain"
-                  />
-                </button>
-            </aside>
-		</div>
-	  </div>
 	);
 }
 
