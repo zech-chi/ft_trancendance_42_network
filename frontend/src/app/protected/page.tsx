@@ -7,21 +7,20 @@ import { useEffect } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserId } from "@/context/UserIdContext";
-// import Login from "@/components/Login";
 import { TopDashboard } from "@/components/dashboardComponents/TopDashboard";
 import  CalendarDashboard  from "@/components/dashboardComponents/CalendarDashboard";
 import { Friends } from "@/components/dashboardComponents/Friends";
-// import { History } from "@/components/History";
-// import { Rank } from "@/components/Rank";
+import { History } from "@/components/dashboardComponents/History";
+import { Rank } from "@/components/dashboardComponents/Rank";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-// import { SelectGame } from "@/components/History";
+import { SelectGame } from "@/components/dashboardComponents/History";
 import Cookies from 'js-cookie';
 import { SelectedChoiceFriends } from "@/components/dashboardComponents/Friends";
-// import Statistics from "@/components/Statistics";
 import { fetchUser } from "../(auth)/login/page";
 import { useRouter } from "next/navigation";
 import Statistics from "@/components/dashboardComponents/Statistics";
 import { useSelectedUserId } from "@/context/SelectedUserId";
+import Image from 'next/image';
 
 type GameName = 'pong' | 'parcheesi';
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
@@ -84,10 +83,9 @@ function LeftComponent(): JSX.Element {
 
 function RightComponent({ show }: { show: boolean }): JSX.Element {
 	const [buttonChoice, setButtonChoice] = useState<string>('friends');
-	// const [game, setGame] = useState<GameName>('pong');
-	// const [choice, setChoice] = useState<FriendsChoice>('friends');
 	const [game, setGame] = useState<GameName>((Cookies.get('SelectedGameHistory') as GameName) || 'pong');
 	const [choice, setChoice] = useState<FriendsChoice>((Cookies.get('SelectedChoiceFriends') as FriendsChoice) || 'friends');
+	const [hovered, setHovered] = useState<number | null>(null);
 
 	return (
 	  <div
@@ -111,13 +109,91 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 		<SearchForm />
 		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto ">
 			{/* select game if buttonChoice is History */}
-			{/* {buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />} */}
+			{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
 			{buttonChoice === 'friends' && <SelectedChoiceFriends choice={choice} setChoice={setChoice} />}
 			<div className="rounded-[25px] w-full  bg-black/45 overflow-y-auto overflow-x-auto min-w-[270px] custom-scrollbar mt-2.5 ">
 				{buttonChoice === 'friends' && <Friends choice={choice} />}
-				{/* {buttonChoice === 'history' && <History game={game} setGame={setGame}/>} */}
-				{/* {buttonChoice === 'rank' && <Rank />} */}
+				{buttonChoice === 'history' && <History game={game} setGame={setGame} />}
+				{buttonChoice === 'rank' && <Rank />}
 			</div>
+			<div className="flex justify-center items-center">
+
+			{/* <svg width="200" height="200" viewBox="0 0 150 150"> */}
+  {/* <g transform="rotate(45, 75, 75)"> */}
+    {/* Circle background */}
+    {/* <circle cx="75" cy="75" r="60" fill="red" stroke="none" /> */}
+
+    {/* Slice paths acting as buttons */}
+    {/* {[
+      { d: "M75 75 L135 75 A60 60 0 0 1 75 135 Z", choice: "friends", img: ["/friends.png","/friends_pink.png"] },
+      { d: "M75 75 L75 135 A60 60 0 0 1 15 75 Z", choice: "history", img: ["/history.png","/history_pink.png"] },
+      { d: "M75 75 L15 75 A60 60 0 0 1 75 15 Z", choice: "rank", img: ["/rank.png","/rank_pink.png"] },
+      { d: "M75 75 L75 15 A60 60 0 0 1 135 75 Z", choice: "other", img: ["/other.png","/other_pink.png"] },
+    ].map((slice, i) => (
+      <g
+        key={i}
+        onClick={() => setButtonChoice(slice.choice)}
+        onMouseEnter={() => setHovered(i)}
+        onMouseLeave={() => setHovered(null)}
+        style={{ cursor: "pointer", transformOrigin: "75px 75px", transition: "all 0.3s ease" }}
+      >
+        <path
+          d={slice.d}
+          fill={hovered === i || buttonChoice === slice.choice ? "#ff0077" : "black"}
+          transform={hovered === i ? "scale(1.05)" : ""}
+        />
+        <image
+          href={buttonChoice === slice.choice ? slice.img[1] : slice.img[0]}
+          x={50} // Adjust x,y to center the icon inside the slice
+          y={50}
+          width={25}
+          height={25}
+          style={{ pointerEvents: "none" }} // So click passes to <g>
+        />
+      </g>
+    ))}
+  </g>
+</svg> */}
+
+
+
+			</div>
+
+			<aside className="fixed right-2 top-1/2 -translate-y-1/2 h-113 w-23 rounded-full bg-black/60 backdrop-blur p-4 z-10 flex flex-col item-center justify-center gap-10">
+                <button className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex item-center justify-center transition"
+                  onClick={() => setButtonChoice('friends')}
+                >
+                  <Image
+                    src={buttonChoice === 'friends' ? '/friends_pink.png' : '/friends.png'}
+                    alt='friends'
+                    width={27}
+                    height={27}
+                    className="object-contain"
+                  />
+                </button>
+                <button className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex item-center justify-center transition"
+                  onClick={() => setButtonChoice('history')}
+                >
+                  <Image
+                    src={buttonChoice === 'history' ? '/history_pink.png' : '/history.png'}
+                    alt='history'
+                    width={27}
+                    height={27}
+                    className="object-contain"
+                  />
+                </button>
+                <button className="bg-black/50 hover:bg-black/75 rounded-full w-15 h-15 flex item-center justify-center transition"
+                  onClick={() => setButtonChoice('rank')}
+                >
+                  <Image
+                    src={buttonChoice === 'rank' ? '/rank_pink.png' : '/rank.png'}
+                    alt='rank'
+                    width={27}
+                    height={27}
+                    className="object-contain"
+                  />
+                </button>
+            </aside>
 		</div>
 	  </div>
 	);
