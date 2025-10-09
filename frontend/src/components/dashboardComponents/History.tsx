@@ -108,18 +108,28 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
             border-black"
             />
           </div>
-          {
-            userOther.online && <div className="absolute 
-            bottom-[14px] right-[8px] w-2 h-2 
-            xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
-            bg-[#00FF04] rounded-full border-1 xl:border-2 border-black" />
-          }
-          {
-            !userOther.online && <div className="absolute
-            bottom-[14px] right-[8px] w-2 h-2
-            xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
-            bg-[#FF0000] rounded-full border-1  xl:border-2 border-black" />
-          }
+              {/* {
+                userCur.online && <div className="absolute 
+                bottom-[14px] right-[8px] w-2 h-2 
+                xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
+                bg-[#00FF04] rounded-full border-1 xl:border-2 border-black" />
+            }
+            {
+                !userCur.online && <div className="absolute
+                bottom-[14px] right-[8px] w-2 h-2
+                xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
+                bg-[#FF0000] rounded-full border-1  xl:border-2 border-black" />
+            } */}
+          <div
+            className={`
+              absolute bottom-[14px] right-[8px]
+              xl:bottom-[20px] xl:right-[10px]
+              w-2 h-2 xl:w-3 xl:h-3
+              rounded-full border-[1px] xl:border-[2px] border-black
+              ${userOther.online ? 'bg-[#00FF04]' : 'bg-[#FF0000]'}
+            `}
+          />
+
         </div>
   
         {/* Center Score & Date */}

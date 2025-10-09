@@ -64,7 +64,7 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
                 border-black/50"
                 />
             </div>
-            {
+            {/* {
                 userCur.online && <div className="absolute 
                 bottom-[14px] right-[8px] w-2 h-2 
                 xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
@@ -75,7 +75,16 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
                 bottom-[14px] right-[8px] w-2 h-2
                 xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
                 bg-[#FF0000] rounded-full border-1  xl:border-2 border-black" />
-            }
+            } */}
+               <div
+            className={`
+              absolute bottom-[14px] right-[8px]
+              xl:bottom-[20px] xl:right-[10px]
+              w-2 h-2 xl:w-3 xl:h-3
+              rounded-full border-[1px] xl:border-[2px] border-black
+              ${userCur.online ? 'bg-[#00FF04]' : 'bg-[#FF0000]'}
+            `}
+          />
             </div>
     
             {/* Center Score & Date */}
@@ -208,7 +217,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
                     border-black/50"
                     />
                 </div>
-                {
+                {/* {
                     friend.online && <div className="absolute 
                     bottom-[14px] right-[8px] w-2 h-2 
                     xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
@@ -219,7 +228,16 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
                     bottom-[14px] right-[8px] w-2 h-2
                     xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
                     bg-[#FF0000] rounded-full border-1  xl:border-2 border-black" />
-                }
+                } */}
+                  <div
+                    className={`
+                    absolute bottom-[14px] right-[8px]
+                    xl:bottom-[20px] xl:right-[10px]
+                    w-2 h-2 xl:w-3 xl:h-3
+                    rounded-full border-[1px] xl:border-[2px] border-black
+                    ${friend.online ? 'bg-[#00FF04]' : 'bg-[#FF0000]'}
+                    `}
+                />
                 </div>
         
                 {/* Center Score & Date */}
@@ -307,7 +325,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     border-black/50"
                     />
                 </div>
-                {
+                {/* {
                     friend.online && <div className="absolute 
                     bottom-[14px] right-[8px] w-2 h-2 
                     xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
@@ -318,7 +336,16 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     bottom-[14px] right-[8px] w-2 h-2
                     xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
                     bg-[#FF0000] rounded-full border-1  xl:border-2 border-black" />
-                }
+                } */}
+                  <div
+            className={`
+              absolute bottom-[14px] right-[8px]
+              xl:bottom-[20px] xl:right-[10px]
+              w-2 h-2 xl:w-3 xl:h-3
+              rounded-full border-[1px] xl:border-[2px] border-black
+              ${friend.online ? 'bg-[#00FF04]' : 'bg-[#FF0000]'}
+            `}
+          />
                 </div>
         
                 {/* Center Score & Date */}
@@ -468,7 +495,7 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                     border-black/50"
                     />
                 </div>
-                {
+                {/* {
                     friend.online && <div className="absolute 
                     bottom-[14px] right-[8px] w-2 h-2 
                     xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
@@ -479,7 +506,16 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                     bottom-[14px] right-[8px] w-2 h-2
                     xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
                     bg-[#FF0000] rounded-full border-1  xl:border-2 border-black" />
-                }
+                } */}
+                  <div
+            className={`
+              absolute bottom-[14px] right-[8px]
+              xl:bottom-[20px] xl:right-[10px]
+              w-2 h-2 xl:w-3 xl:h-3
+              rounded-full border-[1px] xl:border-[2px] border-black
+              ${friend.online ? 'bg-[#00FF04]' : 'bg-[#FF0000]'}
+            `}
+          />
                 </div>
         
                 {/* Center Score & Date */}
@@ -592,7 +628,7 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                     border-black/50"
                     />
                 </div>
-                {
+                {/* {
                     friend.online && <div className="absolute 
                     bottom-[14px] right-[8px] w-2 h-2 
                     xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
@@ -603,7 +639,16 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                     bottom-[14px] right-[8px] w-2 h-2
                     xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
                     bg-[#FF0000] rounded-full border-1  xl:border-2 border-black" />
-                }
+                } */}
+                  <div
+            className={`
+              absolute bottom-[14px] right-[8px]
+              xl:bottom-[20px] xl:right-[10px]
+              w-2 h-2 xl:w-3 xl:h-3
+              rounded-full border-[1px] xl:border-[2px] border-black
+              ${friend.online ? 'bg-[#00FF04]' : 'bg-[#FF0000]'}
+            `}
+          />
                 </div>
         
                 {/* Center Score & Date */}
