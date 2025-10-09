@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import {useLoggedUserName} from '@/context/LoggedUserNameContext';
 
 interface User {
+    id: number;
     fullName: string;
     userName: string;
     imageUrl: string;
@@ -17,20 +18,8 @@ interface User {
     online: boolean;
   }
 
-function DisplayData({userName} : {userName: string}): JSX.Element {
-    const [userCur, setUserCur] = useState<any | null>(null);
-  
-    useEffect(() => {
-      setTimeout(() => {
-        const fetchData = async () => {
-          const cur = await fetchUser(userName);
-          setUserCur(cur);
-        };
-        fetchData();
-      }, 1000);
-    }, [userName]);
-  
-    if (!userCur) {
+function DisplayData({user, rank} : {user: User, rank: number}): JSX.Element {
+    if (!user) {
       return (
         <div className="w-full flex items-center justify-center  h-[70px] md:h=[90px]  xl:h-[100px]
         rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
@@ -53,21 +42,21 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
                 border-l-transparent border-b-transparent 
                 flex items-center justify-center overflow-hidden rotate-225`}>
                 <img
-                src={userCur.imageUrl}
-                alt={userCur.userName}
+                src={user.imageUrl}
+                alt={user.userName}
                 className="w-full h-full object-cover rounded-full -rotate-225 
                 border-3 xl:border-4 2xl:border-5
                 border-black/50"
                 />
             </div>
             {
-                userCur.online && <div className="absolute 
+                user.online && <div className="absolute 
                 bottom-[14px] right-[8px] w-2 h-2 
                 xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
                 bg-[#00FF04] rounded-full border-1 xl:border-2 border-black" />
             }
             {
-                !userCur.online && <div className="absolute
+                !user.online && <div className="absolute
                 bottom-[14px] right-[8px] w-2 h-2
                 xl:bottom-[20px] xl:right-[10px]  xl:w-3 xl:h-3
                 bg-[#FF0000] rounded-full border-1  xl:border-2 border-black" />
@@ -79,11 +68,11 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
             <div className="
             text-[10px] md:text-[12px] l:text-[14px] xl:text-[15px]
             font-bold">
-                {userCur.fullName}
+                {user.fullName}
             </div>
             <div className="text-[#FEDF7F]/70 
             text-[8px] md:text-[10px] l:text-[12px] xl:text-[13px]">
-                {userCur.userName}
+                {user.userName}
             </div>
             </div>
         </div>
@@ -94,14 +83,16 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
         text-[15px]  l:text-[20px] xl:text-[35px] text-white/70
         font-bold
         ">
-        {userCur.rank === 1 && <img src="/rank1.png" alt='img rank1' className='w-auto h-10 lg:h-13'/>}
-        {userCur.rank === 2 && <img src="/rank2.png" alt='img rank1' className='w-auto h-10 lg:h-13'/>}
-        {userCur.rank === 3 && <img src="/rank3.png" alt='img rank1' className='w-auto h-10 lg:h-13'/>}
-        {userCur.rank > 3 && userCur.rank}
+        {rank === 1 && <img src="/rank1.png" alt='img rank1' className='w-auto h-10 lg:h-13'/>}
+        {rank === 2 && <img src="/rank2.png" alt='img rank1' className='w-auto h-10 lg:h-13'/>}
+        {rank === 3 && <img src="/rank3.png" alt='img rank1' className='w-auto h-10 lg:h-13'/>}
+        {rank > 3 && rank}
         </div>
       </div>
     );
-  }
+}
+
+
 
 export function Rank(): JSX.Element {
     const [users, setUsers] = useState<any>([]);
@@ -120,15 +111,17 @@ export function Rank(): JSX.Element {
 
 
     return (
-          <div className="m-3 px-4 py-2 space-y-2 custom-scrollbar
-          ">
-            { users.length > 0 ? (
-              users.map((user: User) => (
-                <DisplayData userName={user.userName} />
-              ))
-            ) : (
-              <div className="text-center font-bold text-[#FEDF7F]/50">No Users found</div>
-            )}
+      <div className="m-3 px-4 py-2 space-y-2 custom-scrollbar">
+        {users.length > 0 ? (
+          users.map((user: User, index: number) => (
+            <DisplayData key={user.id} user={user} rank={index + 1} />
+          ))
+        ) : (
+          <div className="text-center font-bold text-[#FEDF7F]/50">
+            No Users found
           </div>
+        )}
+      </div>
+
     );
 }

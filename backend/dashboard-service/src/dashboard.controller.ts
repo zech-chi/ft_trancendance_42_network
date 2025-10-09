@@ -392,3 +392,66 @@ export async function fetchFriendshipStatusHandler(
         return { status: "none" };
     }
 } 
+
+// fetchRankDataHandler
+// export async function fetchRankDataHandler(
+//     request: FastifyRequest,
+//     reply: FastifyReply
+// ) {
+//     try {
+//         const response = await fetch(`http://localhost:5000/api/dashboard/rank`);
+
+//         if (!response.ok) {
+//             reply.status(404).send({ message: "Rank data not found" });
+//             return [];
+//         }
+
+//         const data = await response.json();
+//         console.log("data from db service: ", data);
+
+//         if (data.status === "ko") {
+//             reply.status(404).send({ message: "Rank data not found" });
+//             return [];
+//         }
+
+//         return data.users || [];
+
+//     } catch (error) {
+//         reply.status(400).send({ message: "something went wrong!" });
+//         return [];
+//     }
+// }
+
+export async function fetchRankDataHandler(
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/dashboard/rank`);
+
+        if (!response.ok) {
+            reply.status(404).send({ message: "Rank data not found" });
+            return [];
+        }
+
+        const data = await response.json();
+        console.log("data from db service:", data);
+
+        if (Array.isArray(data)) {
+            const normalized = data.map(user => ({
+                ...user,
+                online: Boolean(user.online),
+            }));
+            return normalized;
+        }
+
+        reply.status(404).send({ message: "Invalid data format" });
+        return [];
+
+    } catch (error) {
+        console.error("Error fetching rank data:", error);
+        reply.status(400).send({ message: "something went wrong!" });
+        return [];
+    }
+}
+

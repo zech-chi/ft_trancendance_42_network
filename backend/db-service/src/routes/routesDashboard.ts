@@ -313,4 +313,17 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         return { status: "ok", stats: stats };
     });
 
+    // get rank data for all users
+    fastify.get('/rank', async (request: FastifyRequest, reply: FastifyReply) => {
+        const stmt = db.prepare(`
+            SELECT id, userName, fullName, imageUrl, level, progress, rank, progress, online
+            FROM Users
+            ORDER BY level DESC, progress DESC
+        `);
+        const users = stmt.all();
+        return users;
+    });
+    
+    
+
 }

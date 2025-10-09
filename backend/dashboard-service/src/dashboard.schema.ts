@@ -183,6 +183,22 @@ export const friendshipResponse = z.object({
 export type FriendshipResponse = z.infer<typeof friendshipResponse>;
 
 
+// rank response schema
+export const rankResponse = z.object({
+    id: z.number(),
+    fullName: z.string(),
+    userName: z.string(),
+    imageUrl: z.string(),
+    rank: z.number(),
+    level: z.number(),
+    progress: z.number(),
+    online: z.boolean(),
+});
+
+export type RankResponse = z.infer<typeof rankResponse>;
+export const rankListResponse = z.array(rankResponse);
+
+
 // build and export the json schemas
 const { schemas, $ref } = buildJsonSchemas({
    fetchUserParams,
@@ -201,6 +217,8 @@ const { schemas, $ref } = buildJsonSchemas({
     chartsDataResponse,
     friendshipQuery,
     friendshipResponse,
+    rankResponse,
+    rankListResponse,
 });
 
 export const dashboardSchemas = { schemas, $ref };

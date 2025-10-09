@@ -45,7 +45,7 @@ export const fetchGames = async (userName: string, gameType: string) => {
 }
 
 export const fetchRankData = async () => {
-  const response = await fetch(`http://localhost:5000/rank/`);
+  const response = await fetch(`http://localhost:5002/api/dashboard/rank`);
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }

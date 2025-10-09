@@ -1,8 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref } from "./dashboard.schema"
 import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler } from './dashboard.controller';
-import { fetchFriendshipStatusHandler } from './dashboard.controller';
-
+import { fetchFriendshipStatusHandler, fetchRankDataHandler } from './dashboard.controller';
 
 export async function dashboardRoutes(app: FastifyInstance) {
     // for testing
@@ -174,5 +173,18 @@ export async function dashboardRoutes(app: FastifyInstance) {
         // handler function to be implemented
         fetchFriendshipStatusHandler
     );
+
+    // add rank route
+    app.get(
+        '/rank',
+        {
+            schema: {
+                response: {
+                    200: $ref('rankListResponse'),
+                },
+            },
+        },
+        fetchRankDataHandler
+    )
 }
 
