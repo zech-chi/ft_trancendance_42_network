@@ -360,3 +360,112 @@ export async function fetchChartsDataHandler(
         return null;
     }
 }
+
+// fetchFriendshipStatusHandler
+export async function fetchFriendshipStatusHandler(
+    request: FastifyRequest<{ Querystring: { userId1: string; userId2: string} }>,
+    reply: FastifyReply
+) {
+    const { userId1, userId2 } = request.query;
+
+    try {
+        const response = await fetch(`http://db-service:5000/api/dashboard/friends/status?userId1=${userId1}&userId2=${userId2}`);
+
+        if (!response.ok) {
+            reply.status(404).send({ message: "Friendship status not found" });
+            return { status: "none" };
+        }
+
+        const data = await response.json();
+
+        if (data.status === "ko") {
+            reply.status(404).send({ message: "Friendship status not found" });
+            return { status: "none" };
+        }
+
+        console.log("data from friends service: ", data);
+
+        return { status: data.status || "none", blocked_by: data.blocked_by || null };
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return { status: "none" };
+    }
+} 
+
+// fetchRankDataHandler
+export async function fetchRankDataHandler(
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
+    try {
+        const response = await fetch(`http://db-service:5000/api/dashboard/rank`);
+
+        if (!response.ok) {
+            reply.status(404).send({ message: "Rank data not found" });
+            return [];
+        }
+
+        const data = await response.json();
+        console.log("data from db service:", data);
+
+        if (Array.isArray(data)) {
+            const normalized = data.map(user => ({
+                ...user,
+                online: Boolean(user.online),
+            }));
+            return normalized;
+        }
+
+        reply.status(404).send({ message: "Invalid data format" });
+        return [];
+
+    } catch (error) {
+        console.error("Error fetching rank data:", error);
+        reply.status(400).send({ message: "something went wrong!" });
+        return [];
+    }
+}
+
+// fetchGamesHandler
+export async function fetchGamesHandler(
+    request: FastifyRequest<{ Params: { userId: number }; Querystring: { gameType: string } }>,
+    reply: FastifyReply
+  ) {
+    const { userId } = request.params;
+    const { gameType } = request.query;
+  
+    try {
+      const response = await fetch(
+        `http://db-service:5000/api/dashboard/Games/${userId}?gameType=${encodeURIComponent(gameType)}`
+      );
+  
+      if (!response.ok) {
+        reply.status(404).send({ message: "Games not found" });
+        return [];
+      }
+  
+      const data = await response.json();
+      console.log("data from DB service:", data);
+  
+      // normalize array
+      if (Array.isArray(data)) {
+        return data;
+      }
+      if (Array.isArray(data.games)) {
+        return data.games.map((game: { user1_win: any; }) => ({
+          ...game,
+          user1_win: Boolean(game.user1_win), // ensure boolean
+        }));
+      }
+  
+      reply.status(404).send({ message: "Invalid data format" });
+      return [];
+  
+    } catch (error) {
+      console.error("fetchGamesHandler error:", error);
+      reply.status(400).send({ message: "something went wrong!" });
+      return [];
+    }
+  }
+  

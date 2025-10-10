@@ -1,6 +1,9 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { $ref } from "./dashboard.schema"
-import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler } from './dashboard.controller';
+import { $ref, gameHistoryResponse } from "./dashboard.schema"
+import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler, fetchGamesHandler } from './dashboard.controller';
+import { fetchFriendshipStatusHandler, fetchRankDataHandler } from './dashboard.controller';
+import { z } from 'zod';
+
 
 export async function dashboardRoutes(app: FastifyInstance) {
     // for testing
@@ -157,5 +160,48 @@ export async function dashboardRoutes(app: FastifyInstance) {
         // handler function to be implemented
         fetchChartsDataHandler
     );
+
+     // get friendship status handler
+     app.get(
+        '/friends/status',
+        {
+            schema: {
+                querystring: $ref('friendshipQuery'),
+                response: {
+                    200: $ref('friendshipResponse'),
+                },
+            },
+        },
+        // handler function to be implemented
+        fetchFriendshipStatusHandler
+    );
+
+    // add rank route
+    app.get(
+        '/rank',
+        {
+            schema: {
+                response: {
+                    200: $ref('rankListResponse'),
+                },
+            },
+        },
+        fetchRankDataHandler
+    );
+
+    // game history
+    app.get(
+        '/Games/:userId',
+        {
+          schema: {
+            params: $ref('gameHistoryParams'),
+            querystring: $ref('gameHistoryQuery'),
+            response: {
+              200: z.array(gameHistoryResponse), // <- array
+            },
+          },
+        },
+        fetchGamesHandler
+      );
 }
 

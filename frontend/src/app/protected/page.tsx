@@ -7,27 +7,27 @@ import { useEffect } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserId } from "@/context/UserIdContext";
-// import Login from "@/components/Login";
-import { TopDashboard } from "@/components/TopDashboard";
-import { Friends } from "@/components/Friends";
-// import { History } from "@/components/History";
-// import { Rank } from "@/components/Rank";
+import { TopDashboard } from "@/components/dashboardComponents/TopDashboard";
+import  CalendarDashboard  from "@/components/dashboardComponents/CalendarDashboard";
+import { Friends } from "@/components/dashboardComponents/Friends";
+import { History } from "@/components/dashboardComponents/History";
+import { Rank } from "@/components/dashboardComponents/Rank";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-// import { SelectGame } from "@/components/History";
+import { SelectGame } from "@/components/dashboardComponents/History";
 import Cookies from 'js-cookie';
-import { SelectedChoiceFriends } from "@/components/Friends";
-// import Statistics from "@/components/Statistics";
+import { SelectedChoiceFriends } from "@/components/dashboardComponents/Friends";
 import { fetchUser } from "../(auth)/login/page";
 import { useRouter } from "next/navigation";
-import Statistics from "@/components/Statistics";
+import Statistics from "@/components/dashboardComponents/Statistics";
 import { useSelectedUserId } from "@/context/SelectedUserId";
+import Image from 'next/image';
 
 type GameName = 'pong' | 'parcheesi';
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
 function SearchForm(): JSX.Element {
     return (
-      <form className="max-w-xl mx-auto flex-1">
+      <form className="max-w-xl mx-auto w-[60%]">
         <div className="relative w-full">
           <input
             type="text"
@@ -66,119 +66,141 @@ function LeftComponent(): JSX.Element {
 		">
 			<div className="flex flex-col w-full gap-1">
 				<TopDashboard />
+				<div className="p-2.5 m-2.5 rounded-2xl justify-center items-center flex"
+				style={{
+					background:
+					'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
+					backgroundBlendMode: 'overlay',
+				}}
+				>
+					<CalendarDashboard/>
+				</div>
 				<Statistics />
 			</div>
 		</div>
 	);
 }
 
+
 function RightComponent({ show }: { show: boolean }): JSX.Element {
 	const [buttonChoice, setButtonChoice] = useState<string>('friends');
-	// const [game, setGame] = useState<GameName>('pong');
-	// const [choice, setChoice] = useState<FriendsChoice>('friends');
 	const [game, setGame] = useState<GameName>((Cookies.get('SelectedGameHistory') as GameName) || 'pong');
 	const [choice, setChoice] = useState<FriendsChoice>((Cookies.get('SelectedChoiceFriends') as FriendsChoice) || 'friends');
+	const [hovered, setHovered] = useState<number | null>(null);
+	const [hide, setHide] = useState<boolean>(false);
 
 	return (
-	  <div
-		className={`
-		  flex flex-col items-center space-x-4 h-full
-		  transition-all duration-300 ease-in-out
-		  bg-black/60
-		  rounded-[25px]
-		  backdrop-blur
-		  mr-2.5
-		  transform
-		  ${show
-			? "translate-x-0 opacity-100 pointer-events-auto"
-			: "translate-x-full opacity-0 pointer-events-none"}
-		  w-[calc(100%-20px)] md:w-[60%] xl:w-[50%] 2xl:w-[35%]
-		  absolute right-0 top-0
-		  2xl:static 2xl:translate-x-0 2xl:opacity-100 2xl:pointer-events-auto
-		  py-2.5
-		`}
-	  >
-		<SearchForm />
-		<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto ">
-			{/* select game if buttonChoice is History */}
-			{/* {buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />} */}
-			{buttonChoice === 'friends' && <SelectedChoiceFriends choice={choice} setChoice={setChoice} />}
-			<div className="rounded-[25px] w-full  bg-black/45 overflow-y-auto overflow-x-auto min-w-[270px] custom-scrollbar mt-2.5 ">
-				{buttonChoice === 'friends' && <Friends choice={choice} />}
-				{/* {buttonChoice === 'history' && <History game={game} setGame={setGame}/>} */}
-				{/* {buttonChoice === 'rank' && <Rank />} */}
+			<div
+				className={`
+				flex flex-col items-center space-x-4 h-full
+				transition-all duration-300 ease-in-out
+				bg-black/60
+				rounded-[25px]
+				backdrop-blur
+				mr-2.5
+				transform
+				${show
+					? "translate-x-0 opacity-100 pointer-events-auto"
+					: "translate-x-full opacity-0 pointer-events-none"}
+				w-[calc(100%-20px)] md:w-[60%] xl:w-[50%] 2xl:w-[35%]
+				absolute right-0 top-0
+				2xl:static 2xl:translate-x-0 2xl:opacity-100 2xl:pointer-events-auto
+				py-2.5
+				`}
+			>
+				<div className="w-full flex flex-row items-center justify-center gap-1 pr-20">
+				<SearchForm />
+				<aside
+						className="
+						bg-black/10 backdrop-blur-md
+						flex flex-row items-center justify-center
+						gap-2 p-2
+						rounded-full
+						border border-white/10
+						z-50
+						transition-all duration-300
+						"
+						>
+							{[
+							{ key: "friends", img: ["/friends.png", "/friends_pink.png"], alt: "Friends" },
+							{ key: "history", img: ["/history.png", "/history_pink.png"], alt: "History" },
+							{ key: "rank", img: ["/rank.png", "/rank_pink.png"], alt: "Rank" },
+							].map((btn) => (
+							<button
+								key={btn.key}
+								onClick={() => setButtonChoice(btn.key)}
+								className={`
+								w-6 h-6 rounded-full flex items-center justify-center
+								bg-black/40 hover:bg-black/70
+								transition-all duration-200
+								${buttonChoice === btn.key ? "ring-2" : ""}
+								`}
+							>
+								<Image
+								src={buttonChoice === btn.key ? btn.img[1] : btn.img[0]}
+								alt={btn.alt}
+								width={27}
+								height={27}
+								className="object-contain"
+								/>
+							</button>
+							))}
+					</aside>
+				</div>
+				<div className="flex flex-col h-[calc(100%-50px)] w-full px-2.5 overflow-x-auto ">
+					{/* select game if buttonChoice is History */}
+					{buttonChoice === 'history' && <SelectGame game={game} setGame={setGame} />}
+					{buttonChoice === 'friends' && <SelectedChoiceFriends choice={choice} setChoice={setChoice} />}
+					<div className="rounded-[25px] w-full  bg-black/45 overflow-y-auto overflow-x-auto min-w-[270px] custom-scrollbar mt-2.5 ">
+						{buttonChoice === 'friends' && <Friends choice={choice} />}
+						{buttonChoice === 'history' && <History game={game} setGame={setGame} />}
+						{buttonChoice === 'rank' && <Rank />}
+					</div>
+					{/* <aside
+						className=" fixed
+						right-4 top-1/2 -translate-y-1/2
+						bg-black/60 backdrop-blur-md
+						flex flex-col items-center justify-center
+						gap-6 p-4
+						rounded-full
+						border border-white/10
+						z-50
+						transition-all duration-300
+						"
+						>
+							{[
+							{ key: "friends", img: ["/friends.png", "/friends_pink.png"], alt: "Friends" },
+							{ key: "history", img: ["/history.png", "/history_pink.png"], alt: "History" },
+							{ key: "rank", img: ["/rank.png", "/rank_pink.png"], alt: "Rank" },
+							].map((btn) => (
+							<button
+								key={btn.key}
+								onClick={() => setButtonChoice(btn.key)}
+								className={`
+								w-14 h-14 rounded-full flex items-center justify-center
+								bg-black/40 hover:bg-black/70
+								transition-all duration-200
+								${buttonChoice === btn.key ? "ring-2" : ""}
+								`}
+							>
+								<Image
+								src={buttonChoice === btn.key ? btn.img[1] : btn.img[0]}
+								alt={btn.alt}
+								width={27}
+								height={27}
+								className="object-contain"
+								/>
+							</button>
+							))}
+					</aside> */}
+				</div>
 			</div>
-		</div>
-	  </div>
+
 	);
 }
 
-
-
-// export default function Home() : JSX.Element {
-// 	const { loggedUserName, setLoggedUserName } = useLoggedUserName();
-// 	const { selectedUserName, setSelectedUserName } = useSelectedUserName();
-// 	const [showRightComp, setShowRightComp] = useState<boolean>(false);
-// 	const [loading, setLoading] = useState(true);
-// 	const router = useRouter();
-
-// 	useEffect(() => {
-// 	  async function checkAuth() {
-// 		const user = await fetchUser();
-// 		console.log("Fetched user:", user);
-// 		if (!user || !user.userName) {
-// 			setLoggedUserName(null);
-// 			setSelectedUserName(null);
-// 			router.push("/login");
-// 		} else {
-// 			setLoggedUserName(user.userName);
-// 			setSelectedUserName(user.userName);
-// 		}
-// 		setLoading(false);
-// 	  }
-// 	  checkAuth();
-// 	}
-// 	, []);
-
-// 	if (loading) {
-// 		return (
-// 			<div className="h-screen flex items-center justify-center text-white">
-// 			Loading...
-// 			</div>
-// 		);
-// 	}
-
-// 	if (loading) {
-// 		return <div className="h-screen flex items-center justify-center text-white">Loading...</div>;
-// 	}
-
-// 	return (
-//     	<>
-// 			<div className="h-screen flex-row items-center min-w-[200px] overflow-x-auto">
-// 				{/* <Sidebar />
-// 				<Navbar /> */}
-// 				<h1 className="text-white">loggedUserName = {loggedUserName}</h1>
-// 				<h1 className="text-white">selectedUserName = {selectedUserName}</h1>
-// 			</div>
-// 		</>
-//   );
-// }
-
     
 export default function Home() : JSX.Element {
-	// const { loggedUserName, setLoggedUserName } = useLoggedUserName();
-	// const [showRightComp, setShowRightComp] = useState<boolean>(false);
-
-	// useEffect(() => {
-	//   if (loggedUserName) {
-	// 	console.log(`Logged in user: ${loggedUserName}`);
-	//   }
-	// }
-	// , [loggedUserName]);
-
-	// if (!loggedUserName) {
-	// 	return <Login onLogin={setLoggedUserName} />;
-	// }
 	const { loggedUserName, setLoggedUserName } = useLoggedUserName();
 	const { selectedUserName, setSelectedUserName } = useSelectedUserName();
 	const { selectedUserId, setSelectedUserId } = useSelectedUserId();
