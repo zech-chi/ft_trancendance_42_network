@@ -15,6 +15,8 @@ export class Board {
   homePaths: HomePath[];       // 4 players, each has 7 home tiles (keeps Hometile field for compatibility)
   bases: BaseArea[];           // 4 bases (one per player)
   goals: GoalTile[];           // 4 final goals (one per player)
+  sharedPathLength = 68;
+  homePathLength = 7;
 
   constructor() {
     this.sharedPath = this.initializeSharedPath();
@@ -208,6 +210,7 @@ export class Board {
   addPieceAtomic(piece: Piece, position: BoardPosition): {
     previousPosition: BoardPosition | undefined;
     targetOccupantsBefore: Piece[];
+    occupantsBeforeMove?: Piece[]; // for movePieceAtomic
     overflowWarning: boolean; // true if occupancy exceeds typical limit (eg. >2) after insertion
   } {
     const prevPos = piece.position;
@@ -274,9 +277,14 @@ export class Board {
     addResult: ReturnType<Board['addPieceAtomic']>;
   } {
     const prevPos = piece.position;
+    // capture occupants before removal
+    const occupantsBeforeMove = this.getTileoccupants(prevPos, piece.playerId);
+    const targetOccupantsBefore = this.getTileoccupants(target, piece.playerId);
     const removed = this.removePieceAtomic(piece);
     const addResult = this.addPieceAtomic(piece, target);
     addResult.previousPosition = prevPos; // preserve original previous position from before removal cause the one camming from add is now undefined
+    addResult.targetOccupantsBefore = targetOccupantsBefore; // occupants before the piece was added
+    addResult.occupantsBeforeMove = occupantsBeforeMove; // occupants before the piece was removed
     return { removedFromPrevious: removed, addResult };
   }
 
