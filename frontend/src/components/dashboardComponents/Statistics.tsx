@@ -44,7 +44,7 @@ function ChooseGame({game, setGame}: ChooseGameProps) {
             </div>
                 <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => setGame('parcheesi')}>
                 <img
-                src={game === 'parcheesi' ? '/parcheesi_pink.png' : '/parcheesi_white.png'}
+                src={game === 'parcheesi' ? '/parcheesi_pink.png' : '/parcheesi.png'}
                 alt="parcheesi"
                 className="w-[25px] h-[25px] p-2
                 md:w-[30px] md:h-[30px] md:p-2
@@ -97,15 +97,27 @@ export default function Statistics() {
     }
 
     return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex flex-col items-center justify-center h-full m-2.5 rounded-2xl"
+    style={{
+        background:
+        'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
+        backgroundBlendMode: 'overlay',
+    }}>
       <ChooseGame game={game} setGame={setGame}/>
-      <div className="flex w-full">
-        <RadarChart/>
-        <div className='flex flex-col'>
+      <div className="flex flex-col xl:flex-row w-full h-full items-center justify-center ">
+        <div className='flex flex-col lg:flex-row xl:flex-col  h-full tems-center justify-center  p-5
+            w-[100%]
+        '>
             <FriendsStats data={data}/>
             <AIStats data={data}/>
+        </div>
+        <div className='flex flex-col h-full items-center justify-center p-5
+            w-[100%]
+        '>
+            <RadarChart/>
         </div>
       </div>
     </div>
   );
+
 }
