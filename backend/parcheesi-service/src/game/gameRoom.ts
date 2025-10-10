@@ -467,11 +467,19 @@ async doubleThreeTimes()
           }
         }
         if (pieceToSendBack) {
+          const piecepos = pieceToSendBack.position;
           // Move the piece back to base with movePieceAtomic
-        this.board.movePieceAtomic(pieceToSendBack, 'base');
+          this.board.movePieceAtomic(pieceToSendBack, 'base');
           // Broadcast the jump to base
           await this.emitJumpEvent(pieceToSendBack, currentPlayer.color, 'base', 'center', 3, true);
           console.log(chalk.red(`Player ${currentPlayer.userName} rolled doubles three times! Piece ${pieceToSendBack.id} sent back to base.`));
+          // check if there is another piece on that tile and move it to center
+          const tileOccupants = this.board.getTileoccupants(piecepos, currentPlayer.id);
+          if (tileOccupants && tileOccupants.length === 1) {
+            await this.emitMoveEvent(tileOccupants[0], currentPlayer.color, piecepos, 'center', 1);
+            console.log(chalk.magenta(`Moving remaining piece ${tileOccupants[0].id} to center after sending piece ${pieceToSendBack.id} back to base.`));
+          }
+        
         } else {
           console.log(chalk.yellow(`No valid piece found to send back for player ${currentPlayer.userName}.`));
         }

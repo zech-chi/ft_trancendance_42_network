@@ -55,13 +55,13 @@ export class GameLogic {
 
       // If tile empty or occupied by enemies only (we will let leaving be possible; GameRoom will decide captures)
       if (startTile.occupants.length === 0 || startTile.occupants.every(o => o.playerId !== player.id)) {
-        const allowedPieces = basePieces.slice(0, 2);
-        for (const p of allowedPieces) results.push({ piece: p, moves: [5] });
-        // consume both dice
-        removeDiceValue(5, 2);
-        return results;
-      }
-
+        const allowedCount = Math.min(basePieces.length, 2);
+      const allowedPieces = basePieces.slice(0, allowedCount);
+      for (const p of allowedPieces) results.push({ piece: p, moves: [5] });
+      // consume the correct number of dice , at most 2
+      removeDiceValue(5, allowedCount);
+      return results;
+}
       // If there is exactly one friendly piece on start tile, allow only one piece to leave and consume one die
       if (startTile.occupants.length === 1 && startTile.occupants[0].playerId === player.id) {
         const p = basePieces[0];
