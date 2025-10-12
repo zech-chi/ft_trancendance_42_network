@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
+import fastify, { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref, RegisterUserInput, LoginUserInput } from "./user.schema"
 import { RegisterUser } from './user.controller.register';
 import { LoginUser } from './user.controller.signin';
@@ -67,6 +67,118 @@ export async function authRoutes(app: FastifyInstance) {
         return reply.code(401).send({ message: 'Invalid token' });
       }
     });
+    
+  //   // Google OAuth login - will redirect to Google
+  //     app.get('/login/google', async (req, reply) => {
+  //   // if already logged in, redirect to profile
+  //   // const user = (req.session as any).user;
+  //   // if (user) return reply.redirect('/profile'); // already logged in
+  //   const fastifyAny = app as any;
+
+  //   // manually generate Google OAuth URL
+  //   fastifyAny.googleOAuth2.generateAuthorizationUri(req, reply, (err: any, uri: string) => {
+      
+  //     if (err) {
+  //       fastifyAny.log.error('Error generating authorization URI:', err);
+  //         return reply.status(400).send('Could not generate authorization URI');
+  //       }
+  //       return reply.redirect(uri);
+  //     });
+  // });
+
+
+    // Google OAuth callback
+//    app.get('/login/google/callback', async (req, reply) => {
+
+//     try {
+//     const fastifyAny = app as any;
+//     console.log("request session at callback =======>> ", req.session);
+
+//   const token = await fastifyAny.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req);
+//   const accessToken = token.token.access_token;
+
+//   console.log('Access Token =======>> ', accessToken);
+
+//   // fetch user info
+//   const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+//     headers: { Authorization: `Bearer ${accessToken}` }
+//   }).then(res => res.json());
+
+//   console.log('User info =======>> ', userInfo);
+//   console.log("request session =======>> ", req.session);
+
+//   // to remove that shite later
+//   (req.session as any).user = {
+//     id: userInfo.sub,
+//     email: userInfo.email,
+//     name: userInfo.name,
+//     picture: userInfo.picture
+//   };
+
+
+
+//   // store user info in the db later !
+//   // send the data to the db 
+//   reply.send(userInfo);
+//   } catch (err) {
+//     console.error('Error in Google OAuth callback:', err);
+//     reply.status(400).send('Authentication failed something went wrong!');
+//   }
+// });
+
+app.get('/login/google', async (req, reply) => {
+  // if already logged in, redirect to profile
+  // const user = (req.session as any).user;
+  // if (user) return reply.redirect('/profile'); // already logged in
+
+  const fastifyAny = app as any;
+
+  // manually generate Google OAuth URL
+  fastifyAny.googleOAuth2.generateAuthorizationUri(req, reply, (err: any, uri: string) => {
+    if (err) {
+      fastifyAny.log.error('Error generating authorization URI:', err);
+      return reply.status(400).send('Could not generate authorization URI');
+    }
+    return reply.redirect(uri);
+  });
+});
+
+// callback route
+app.get('/login/google/callback', async (req, reply) => {
+
+  try {
+
+
+  const fastifyAny = app as any;
+  const token = await fastifyAny.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req);
+  const accessToken = token.token.access_token;
+
+  console.log('Access Token =======>> ', accessToken);
+
+  // fetch user info
+  const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  }).then(res => res.json());
+
+  console.log('User info =======>> ', userInfo);
+  // console.log("request session =======>> ", req.session);
+
+  // to remove that shite later
+  // (req.session as any).user = {
+  //   id: userInfo.sub,
+  //   email: userInfo.email,
+  //   name: userInfo.name,
+  //   picture: userInfo.picture
+  // };
+
+  // should check
+
+  return reply.redirect('http://localhost:3000/');
+  } catch(error) {
+    console.log(error);
+    return reply.status(400).send({message: "something went wron!"})
+  }
+});
     
     // display that user routes are registered
     app.log.info('user routes registered')
