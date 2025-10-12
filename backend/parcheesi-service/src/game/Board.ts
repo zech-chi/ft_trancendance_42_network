@@ -11,7 +11,7 @@ import {
  * atomic operations. Game rules and side-effects belong to GameLogic/GameRoom.
  */
 export class Board {
-  sharedPath: SharedTile[];    // 68 shared tiles (0..67)
+  sharedPath: SharedTile[];    // 68 shared tiles (0..
   homePaths: HomePath[];       // 4 players, each has 7 home tiles (keeps Hometile field for compatibility)
   bases: BaseArea[];           // 4 bases (one per player)
   goals: GoalTile[];           // 4 final goals (one per player)

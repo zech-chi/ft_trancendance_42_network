@@ -26,7 +26,8 @@ const auth2FARoutes: FastifyPluginAsync = async (fastify) => {
         const qrCodeDataUrl = await generateQRCode(otpAuthUrl);
 
         // Send QR code via email
-        await sendEmail(username+'@gmail.com', "Your 2FA QR Code", `<img src="${qrCodeDataUrl}" />`);
+        const email = username + '@gmail.com';
+        await sendEmail(email, "Your 2FA QR Code", `<img src="${qrCodeDataUrl}" />`);
 
         reply.send({ message: "2FA setup email sent" });
     });

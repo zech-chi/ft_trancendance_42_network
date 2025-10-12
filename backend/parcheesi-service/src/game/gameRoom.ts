@@ -24,7 +24,6 @@ export class GameRoom {
   gamestarted: boolean = false;
   gameOver: boolean = false;
   namespaceIO: Namespace;
-  // onGameOver?: (roomId: string) => void;
 
   constructor(roomId: string, namespace: Namespace) {
     this.id = roomId;

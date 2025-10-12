@@ -5,7 +5,7 @@ import {GameProvider} from "@/context/parchisiContexts/GameContext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-        <SocketProvider namespace="online">
+        <SocketProvider>
           <GameProvider>{children}</GameProvider>
         </SocketProvider>
   );

@@ -28,8 +28,12 @@ function OnlinePageContent() {
   const [isJoining, setIsJoining] = useState(false);
 
   const router = useRouter();
-  const { socket, isConnected } = useSocket();
+  const { socket, setNamespace, isConnected } = useSocket();
   const { state ,createGame, joinLobby } = useGame();
+
+useEffect(() => {
+  setNamespace("online");
+}, []);
 
   /* EXISTING ROOMS  */
   const [rooms, setRooms] = useState<{id:string; players:number; status:string}[]>([]);

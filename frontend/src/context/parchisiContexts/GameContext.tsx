@@ -1,26 +1,16 @@
 "use client"
 
-import { createContext, useContext, useReducer, type ReactNode, useEffect } from "react"
+import { createContext, useContext, useReducer, type ReactNode, useEffect, use } from "react"
 import { useSocket } from "./SocketContext"
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
-// import { Route } from "lucide-react"
-// import { describe } from "node:test"
-import type { BoardTheme, DiceSkin, PieceSkin } from "@/types/game"
 
-interface customzation
-{
-  pieceSkin: PieceSkin
-    diceSkin: DiceSkin
-  boardTheme: BoardTheme
-}
+
 
 interface Player {
   id: string
   userName: string
   isReady: boolean
   color: string
-  avatar?: string
-  customzation?: customzation
 }
 
 interface Lobby {
@@ -33,8 +23,8 @@ interface GameState {
   lobby: Lobby | null
   currentPlayer: Player | null
   gameStarted: boolean
-  gameId: string | null
-  board: object | undefined
+  gameId: string | null;
+  gametype?: string;
 }
 
 type GameAction =
@@ -52,7 +42,6 @@ const initialState: GameState = {
   currentPlayer: null,
   gameStarted: false,
   gameId: null,
-  board: undefined,
 
 }
 
@@ -128,7 +117,6 @@ function gameReducer(state: GameState, action: GameAction): GameState {
             ...state, // copy old state
             gameStarted: true,
             gameId: action.payload.gameId,
-            board: action.payload.board,
             lobby:{
               ...state.lobby,
               players: action.payload.players
@@ -146,7 +134,7 @@ interface GameContextType {
   leaveLobby: (lobbyId: string) => void
   toggleReady: (gameId: string, username: string) => void
   startGame: (gameId: string) => void
-  createGame: () => Promise<string>
+  createGame: (playernumber?: number) => Promise<string>
 }
 
 const GameContext = createContext<GameContextType | null>(null)
@@ -156,12 +144,13 @@ const GameContext = createContext<GameContextType | null>(null)
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const {loggedUserName, setLoggedUserName} = useLoggedUserName();
-  const { socket } = useSocket()
+  const { socket, namespace } = useSocket()
 
   // Socket event listeners
   useEffect(() => {
-    if (!socket) return
+    if (!socket || namespace != 'online') return
 
+      state.gametype = 'online';
     // Listen for lobby updates from backend
     socket.on("lobbyUpdate", (lobbyData: Lobby) => {
       dispatch({ type: "SET_LOBBY", payload: lobbyData })
@@ -214,7 +203,30 @@ export function GameProvider({ children }: { children: ReactNode }) {
       socket.off("error")
       socket.off("roomFull")
     }
-  }, [socket])
+  }, [socket, namespace])
+
+  // useEffect(() => {
+  //   if (!socket || namespace != 'local') return
+
+  //   state.gametype = 'local';
+
+  //   // Clear lobby when switching to local
+  //   dispatch({ type: "CLEAR_LOBBY" });
+  //   socket.on ("gameStarted", (data: { gameId: string }) => {
+  //     dispatch({ type: "INIT_LOBBY", payload: { gameId: data.gameId, hostId: socket.id || "" } });
+
+  //   })
+  //   socket.on("error", ({ message }: { message: string }) => {
+  //     console.error("Socket error:", message)
+  //     alert(message)
+  //   })
+    
+  //   return () => {
+  //     dispatch({ type: "CLEAR_LOBBY" })
+  //     socket.off("gameStarted")
+  //     socket.off("error")
+  //   }
+  // }, [socket, namespace])
 
   const leaveLobby = (lobbyId: string) => {
     if (!socket) return
@@ -231,13 +243,28 @@ export function GameProvider({ children }: { children: ReactNode }) {
     if (!socket) return
     socket.emit("startGame", { gameId: gameId })
   }
-  const createGame = async (): Promise<string> => {
+  const createGame = async (playernumber?: number): Promise<string> => {
     return new Promise((resolve, reject) => {
+      
       if (!socket) return reject("No socket connected");
-
+      
+      state.gametype = namespace;
       const username = loggedUserName;
-      socket.emit("createGame", { username });
-      socket.once("gameCreated", (data: { gameId: string }) => {
+      const isLocal = namespace === "local";
+      if (playernumber && (playernumber < 2 || playernumber > 4))
+      {
+        return reject("Invalid number of players");
+      }
+      else if (playernumber && (playernumber >= 2 && playernumber <= 4))
+      {
+        socket.emit("createGame", { username, playersnumber: playernumber });
+      }
+      else
+      {
+        socket.emit("createGame", { username });
+      }
+      const successEvent = isLocal ? "gameStarted" : "gameCreated";
+      socket.once(successEvent, (data: { gameId: string }) => {
         if (data?.gameId) {
           dispatch({ type: "INIT_LOBBY", payload: { gameId: data.gameId , hostId: socket.id || ""} });
           resolve(data.gameId);
@@ -245,6 +272,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
           reject("Failed to create game");
         }
       });
+      socket.once("error", (data: { message: string }) => {
+        reject(data.message || "Failed to create game");
+      }
+      );
     });
   };
 
