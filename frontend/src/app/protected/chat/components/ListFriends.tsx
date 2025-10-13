@@ -128,6 +128,7 @@ function ListFriends({
   };
 }, [socket, selectedChat?.id, contactsList]);
 
+
   return (
     // sidebar for list friends
     <div
@@ -136,7 +137,7 @@ function ListFriends({
         ${
           showSidebar
             ? "translate-x-0 left-0 top-4 absolute p-2 bg-[rgba(0,0,0,0.8)] backdrop-blur-md z-20"
-            : "-translate-x-full absolute left-0 top-4 z-0"
+            : "-translate-x-full absolute left-0 top-0 h-full"
         }`}
     >
       {/* search input */}
