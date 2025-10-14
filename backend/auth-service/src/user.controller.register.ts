@@ -73,7 +73,7 @@ export async function RegisterUser(
         console.log('New user created:', newUser);
         
         // add new row in RadarData for the new user
-        const radarDataId = await addNewRadarDataRow(newUser.id);
+        const radarDataId = await addNewRadarDataRow(newUser.id); 
         // add new rows in ChartsData for the new user
         // one for parcheesi and one for pong
         const chartsDataId = await addNewChartsDataRows(newUser.id);

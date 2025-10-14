@@ -1,8 +1,10 @@
 import fastify, { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref, RegisterUserInput, LoginUserInput } from "./user.schema"
-import { RegisterUser } from './user.controller.register';
+import { RegisterUser, addNewChartsDataRows, addNewRadarDataRow, createUser, findUserIfExists } from './user.controller.register';
 import { LoginUser } from './user.controller.signin';
 import { findUserByEmail } from './user.controller.signin';
+import bcrypt from "bcryptjs";
+import { API_ROUTES } from "./utils/APIrouts";
 
 interface JwtPayload {
   email: string;
@@ -161,17 +163,55 @@ app.get('/login/google/callback', async (req, reply) => {
   }).then(res => res.json());
 
   console.log('User info =======>> ', userInfo);
-  // console.log("request session =======>> ", req.session);
+  // if gmail already in databae
+  const fullName = userInfo.name;
+  const imageUrl = userInfo.picture;
+  const userName = userInfo.given_name;
+  const email = userInfo.email;
 
-  // to remove that shite later
-  // (req.session as any).user = {
-  //   id: userInfo.sub,
-  //   email: userInfo.email,
-  //   name: userInfo.name,
-  //   picture: userInfo.picture
-  // };
 
-  // should check
+  const existingUser = await findUserIfExists(userName, email);
+  let user;
+
+  if (!existingUser) {
+    // random password 
+    const randomPassword = await bcrypt.hash(Math.random().toString(36).slice(-8), 10);
+    // add user
+    user = await createUser(fullName, userName, email, randomPassword);
+    // update imageUrl
+    // add data
+    const radarDataId = await addNewRadarDataRow(user.id);
+    const chartsDataId = await addNewChartsDataRows(user.id);
+
+    if (!radarDataId || !chartsDataId) {
+        // should I delete the user if this fails?
+        const res = await fetch(API_ROUTES.DELETE_USER_BY_ID, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: user.id })
+        });
+        if (!res.ok)
+            console.error('Failed to delete user:', await res.text());
+        return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
+    }
+    
+  } else {
+    console.log("user already exists with this gmail : ", email);
+    user = existingUser;
+  }
+  
+  // JWT and cookie:
+  const JWTtoken = await reply.jwtSign({ id: user.id, email: user.email });
+  // set token in cookie
+  reply.setCookie('token', JWTtoken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax', // for development, use 'strict' in production
+      path: '/',
+      maxAge: 54 * 60 * 60 // 1 day
+  });
 
   return reply.redirect('http://localhost:3000/');
   } catch(error) {
