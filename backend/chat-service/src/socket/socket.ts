@@ -25,7 +25,7 @@ export function setupSocket(server: HttpServer) {
 
     ioInstance = io;  // ✅ save for later global access
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     console.log("A user connected:", socket.id);
 
     // add the new user to the online users map
@@ -40,7 +40,7 @@ export function setupSocket(server: HttpServer) {
       console.log(`User ${userId} connected on socket ${socket.id}`);
 
       // Set the online status in the database
-      setOnlineTodb(userId, true, false);
+      await setOnlineTodb(userId, true, false);
     }
 
     console.log("Online users:", onlineUsers);
@@ -56,7 +56,7 @@ export function setupSocket(server: HttpServer) {
     });
 
     // Handle disconnection
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log("A user disconnected:", socket.id);
      // Remove socket from all users
       for (const [uid, sockets] of onlineUsers) {
@@ -69,7 +69,7 @@ export function setupSocket(server: HttpServer) {
       // Emit the updated list of online users to all clients
       io.emit("onlineUsers", Array.from(onlineUsers.keys()));
       // Set the online status in the database
-      setOnlineTodb(userId, false, true);
+      await setOnlineTodb(userId, false, true);
 
       console.log(`keys of onlineUsers after disconnection:`, Array.from(onlineUsers.keys()));
       console.log("Online users after disconnection:", onlineUsers);
@@ -185,24 +185,46 @@ export function sendBlockEventToUser(userId: string, event: string, friendId: st
 }
 
 // this function will be used to set the online status of a user in back-end
-export function setOnlineTodb(userId: string, status: boolean, updateLastSeen: boolean) {
+export async function setOnlineTodb(userId: string, status: boolean, updateLastSeen: boolean) {
 
   console.log(`Setting online status for user ${userId} to ${status}`);
-  let stmt;
-  let result;
-  if (updateLastSeen) { 
-      stmt = db.prepare(`UPDATE users SET online = ?, last_seen = ? WHERE id = ?`);
-      result = stmt.run(status ? 1 : 0, getTime(), userId);
-  } else {
-      stmt = db.prepare(`UPDATE users SET online = ? WHERE id = ?`);
-      result = stmt.run(status ? 1 : 0, userId);
+
+  // let stmt;
+  // let result;
+  // if (updateLastSeen) { 
+  //     stmt = db.prepare(`UPDATE users SET online = ?, last_seen = ? WHERE id = ?`);
+  //     result = stmt.run(status ? 1 : 0, getTime(), userId);
+  // } else {
+  //     stmt = db.prepare(`UPDATE users SET online = ? WHERE id = ?`);
+  //     result = stmt.run(status ? 1 : 0, userId);
+  // }
+
+  // if (result.changes === 0) {
+  //   console.log(`Failed to update online status for user ${userId}`);
+  // } else {
+  //   console.log(`User ${userId} online status updated to ${status}`);
+  // }
+
+  try {
+        // send the request to db-service
+      const res = await fetch('http://db-service:5000/api/chat/setOnlineStatus', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, status, updateLastSeen, time: getTime() }),
+      });
+
+      if (!res.ok) {
+        console.log(`Failed to update online status for user ${userId}`);
+      }
+      else {
+        console.log(`User ${userId} online status updated to ${status}`);
+      }
+  } catch (error) {
+      console.error('Error updating online status:', error);
   }
 
-  if (result.changes === 0) {
-    console.log(`Failed to update online status for user ${userId}`);
-  } else {
-    console.log(`User ${userId} online status updated to ${status}`);
-  }
 }
 
 // this function will be used to send the event delete message or update a message to the specific user

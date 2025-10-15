@@ -22,7 +22,9 @@ CREATE TABLE IF NOT EXISTS Users (
   last_seen INTEGER,
   level INTEGER DEFAULT 0,
   progress REAL DEFAULT 0,
-  online INTEGER DEFAULT 0
+  online INTEGER DEFAULT 0,
+  online_in_chat BOOLEAN DEFAULT FALSE,
+  last_seen_in_chat INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS RadarData (
@@ -266,13 +268,13 @@ VALUES
 (5, 1, 15, 10, 0, 'pong');
 
 -- while db is running and already created lets add Games data
-INSERT OR IGNORE INTO Games (user1, user2, user1_score, user2_score, user1_win, game_type)
-VALUES
-(3, 4, 18, 21, 0, 'pong'),
-(2, 5, 25, 20, 1, 'parcheesi'),
-(4, 5, 22, 22, 0, 'pong'),
-(11, 18, 19, 17, 1, 'pong'),
-(11, 1, 19, 17, 1, 'pong'),
-(11, 2, 19, 17, 1, 'pong'),
-(11, 3,  19, 17, 1, 'pong'),
-(11, 4, 19, 17, 1, 'parcheesi');
+-- INSERT OR IGNORE INTO Games (user1, user2, user1_score, user2_score, user1_win, game_type)
+-- VALUES
+-- (3, 4, 18, 21, 0, 'pong'),
+-- (2, 5, 25, 20, 1, 'parcheesi'),
+-- (4, 5, 22, 22, 0, 'pong'),
+-- (11, 18, 19, 17, 1, 'pong'),
+-- (11, 1, 19, 17, 1, 'pong'),
+-- (11, 2, 19, 17, 1, 'pong'),
+-- (11, 3,  19, 17, 1, 'pong'),
+-- (11, 4, 19, 17, 1, 'parcheesi');
