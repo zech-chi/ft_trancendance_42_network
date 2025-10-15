@@ -39,6 +39,8 @@ export class Board {
     private socket!: Socket;
     // gameId;
     private gameId!: string;
+    // remote or local
+    private isLocal: boolean = false;
 
     private scene: BABYLON.Scene;
     private redLabel?: GUI.TextBlock;
@@ -50,6 +52,7 @@ export class Board {
     private greenButton?: GUI.Button;
     private blueButton?: GUI.Button;
     private yellowButton?: GUI.Button;
+    private clickedSphereColor: PlayerColor = PlayerColor.RED;
 
     private gui: GUI.AdvancedDynamicTexture;
     // Dice values for each player 
@@ -71,13 +74,14 @@ export class Board {
     private box1: BABYLON.Mesh | null = null;
     private box2: BABYLON.Mesh | null = null;
 
-    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string, socket: Socket, gameId: string) {
+    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string, socket: Socket, gameId: string, isLocal: boolean = false) {
         this.scene = scene;
         this.gui = gui;
         this.socket = socket;
         this.gameId = gameId;
         this.playerUserName = loggedUserName;
         this.memeGUI3d = new GUI.GUI3DManager(this.scene);
+        this.isLocal = isLocal;
         // initialize the moveAbleMap with 0, 0 for each ball
         this.moveAbleMap.set(1, new BABYLON.Vector2(0, 0));
         this.moveAbleMap.set(2, new BABYLON.Vector2(0, 0));
@@ -86,6 +90,7 @@ export class Board {
         console.log("You are playing as :", this.playerUserName);
         console.log("Socket initialized:", this.socket.id);
         console.log("Game ID:", this.gameId);
+        console.log("Is Local Game:", this.isLocal);
     }
 
     public setMoveAble(data: MoveAbleType) {
@@ -93,7 +98,7 @@ export class Board {
             console.error("Invalid moveAble data:", data);
             return;
         }
-        if (data.sphere_type !== this.playerColor) {
+        if (!this.isLocal && data.sphere_type !== this.playerColor) {
             return;
         }
         console.log("Moveable data received:", data);
@@ -109,7 +114,10 @@ export class Board {
         if (this.yellowButton) this.yellowButton.isVisible = false;
         if (this.blueButton) this.blueButton.isVisible = false;
 
-        if (this.playerColor === color) {
+        // zelabass
+        this.clickedSphereColor = color;
+
+        if (this.isLocal || this.playerColor === color) {
             switch (color) {
                 case PlayerColor.RED:
                     if (this.redButton) this.redButton.isVisible = true;
@@ -321,7 +329,7 @@ export class Board {
 
     private createTextureForBoxWithChice(choice: number) : BABYLON.StandardMaterial {
         const dynamicTexture = new BABYLON.DynamicTexture("dynamicTexture", 256, this.scene, true);
-        dynamicTexture.drawText(String(choice), null, 150, "bold 120px Arial", COLORS_LOW_DARK[this.playerColor], COLORS_VERY_DARK[this.playerColor], true);
+        dynamicTexture.drawText(String(choice), null, 150, "bold 120px Arial", COLORS_LOW_DARK[this.clickedSphereColor], COLORS_VERY_DARK[this.clickedSphereColor], true);
 
         const material = new BABYLON.StandardMaterial("boxMat", this.scene);
         material.diffuseTexture = dynamicTexture;
@@ -381,22 +389,24 @@ export class Board {
         sphereMesh.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
 
         // add click event to the sphere if the sphere is the player's color
-        if (this.playerColor === sphere.type && this.playerUserName) {
+        if ((this.isLocal ) || (this.playerColor === sphere.type && this.playerUserName)) {
             sphereMesh.actionManager = new BABYLON.ActionManager(this.scene);
             sphereMesh.actionManager.registerAction(
                 new BABYLON.ExecuteCodeAction(
                     BABYLON.ActionManager.OnPickTrigger,
                     (evt) => {
-                        this.resetBoxes();
+                        this.resetBoxes();~
                         console.log("Sphere clicked:", sphereMesh.name);
                         console.log("moveAble : ", this.moveAbleMap.get(Number(sphere.id)));
-                        if (this.moveAbleMap.get(Number(sphere.id))?.x !== 0) {
-                            this.box1 = this.createBoxWithChoice(this.moveAbleMap.get(Number(sphere.id))?.x as number, sphereMesh.position);
+                        if (this.clickedSphereColor === sphere.type) {
+                            if (this.moveAbleMap.get(Number(sphere.id))?.x !== 0) {
+                                this.box1 = this.createBoxWithChoice(this.moveAbleMap.get(Number(sphere.id))?.x as number, sphereMesh.position);
 
-                            if (this.moveAbleMap.get(Number(sphere.id))?.y !== 0) {
-                                this.box1.position.x -= 1.5; // offset the second box to the right
-                                this.box2 = this.createBoxWithChoice(this.moveAbleMap.get(Number(sphere.id))?.y as number, sphereMesh.position);
-                                this.box2.position.x += 1.5; // offset the second box to the right
+                                if (this.moveAbleMap.get(Number(sphere.id))?.y !== 0) {
+                                    this.box1.position.x -= 1.5; // offset the second box to the right
+                                    this.box2 = this.createBoxWithChoice(this.moveAbleMap.get(Number(sphere.id))?.y as number, sphereMesh.position);
+                                    this.box2.position.x += 1.5; // offset the second box to the right
+                                }
                             }
                         }
 
@@ -656,7 +666,7 @@ export class Board {
             return;
         }
 
-        if (this.playerUserName === obj.userName) {
+        if (this.isLocal || this.playerUserName === obj.userName) {
             this.playerColor = obj.color;
         }
 

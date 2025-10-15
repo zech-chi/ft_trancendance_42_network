@@ -33,7 +33,7 @@ export default class localRoom {
      return this.players.length;
    }
 
-  constructor(roomId: string, namespace: Namespace, playersnum: number) {
+  constructor(roomId: string, namespace: Namespace, playersnum: number, ) {
     if (playersnum < 2 || playersnum > 4) {
         throw new Error("Invalid number of players. Must be between 2 and 4.");
     }
@@ -43,7 +43,7 @@ export default class localRoom {
     this.currentPlayerIndex = 0;
     this.namespaceIO = namespace;
     for (let i = 0; i < playersnum; i++) {
-      const player = this.newPlayer(`Player ${i + 1}` , playersnum);
+      const player = this.newPlayer(`hello` , playersnum);
       this.addPlayer(player);
     }
 

@@ -339,9 +339,9 @@ export default async function socketManager(io: Server) {
     socket.on("createGame", (data: {playersnumber:number}) => {
       const gameId = randomUUID(); // generate unique game id
       const room = new localRoom(gameId, local, data.playersnumber);
+      room.socket = socket; // assign the socket to the room for local play
       localRooms.set(gameId, room);
 
-      room.socket = socket; // assign the socket to the room for local play
       //create game mean the game started immediatly
       room.broadcast("gameStarted", { gameId: room.id, players: room.players, currentPlayerId: room.currentPlayer });
     });
@@ -382,12 +382,12 @@ export default async function socketManager(io: Server) {
 
 
 
-    socket.on("moveRequest", async(data: { gameId: string; sphere_id: number; sphere_type: string; choice: number, color:string }) => {
+    socket.on("moveRequest", async(data: { gameId: string; sphere_id: number; sphere_type: string; choice: number }) => {
       const room = localRooms.get(data.gameId);
       if (!room) return;
 
       const currentcolor = room.currentPlayer.color;
-      if (data.color !== currentcolor) {
+      if (data.sphere_type !== currentcolor) {
         socket.emit("error", { message: "Not your turn" });
         return;
       }
