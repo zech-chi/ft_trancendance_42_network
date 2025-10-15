@@ -13,7 +13,7 @@ import { MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES } from "../utils/consta
 import { fromPath } from "pdf2pic"
 import { getTime } from "../utils/getTime";
 import { MessageRequestBody } from "../types/message";
-import { checkIds } from "../utils/utilsControllerChat";
+import { checkFriendship, checkIds, checkRequestBody, checkUserExists } from "../utils/utilsControllerChat";
 import { ALLOWED_MIMETYPES_CHAT } from "../utils/constants";
 import { sendMessageToUser } from "../socket/socket";
 import { ApidataBase } from "../utils/ApiDataBase";
@@ -192,6 +192,7 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     return; // If the request is not multipart, exit the function
   }
 
+
   // uncomment this when we merge with the authentication system
   // const user = request.user;
  
@@ -215,7 +216,20 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     //   });
     // }
     if (!checkIds(reply, from, to, "You cannot send a file to yourself.")){
+      console.log("here 2");
       return; // If checkIds returns false, exit the function
+    }
+
+    // check userif exist to send 
+     if (!(await checkUserExists(reply, to))) {
+        console.log("here 3");
+          return; // If the user does not exist, exit the function
+     }
+
+    // check friendship between from and to
+     if (!(await checkFriendship(reply, from, to, "You can only send messages to friends.", true))) {
+        console.log("here 4");
+          return; // If the users are not friends, exit the function
     }
 
     const data = await request.file();
@@ -248,7 +262,7 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     // const fileUrl = `api/chat/uploads/${sanitizedFilename}`; // this is for nginx when the fron-end on https
 
     // Pipe the stream directly to a file. This is memory-efficient and non-corrupting.
-    await pump(data.file, fs.createWriteStream(filePath));
+    await pump(data.file, fs.createWriteStream(filePath)); 
 
     if (!checkFileTruncated(reply, data, filePath)) {
       return; // If the file was truncated, exit the function

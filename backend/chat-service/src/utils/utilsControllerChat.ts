@@ -97,7 +97,7 @@ export async function checkUserExists(reply:FastifyReply ,userId: string): Promi
 }
 
 // this function will be used to check if the users are friends or not
-export async function checkFriendship(reply: FastifyReply,from: string, to: string, errorMessage: string): Promise<boolean> {
+export async function checkFriendship(reply: FastifyReply,from: string, to: string, errorMessage: string, accepted: boolean): Promise<boolean> {
     // that the correct way to check friendship
     // SELECT * FROM friends
     // WHERE
@@ -113,7 +113,7 @@ export async function checkFriendship(reply: FastifyReply,from: string, to: stri
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ userId1: from, userId2: to })
+        body: JSON.stringify({ userId1: from, userId2: to, checkAccepted: accepted })
       });
     
     if (!response.ok) {
