@@ -16,13 +16,13 @@ export async function findUserIfExists(userName: string, email: string): Promise
 }
 
 // function to create a new user
-export async function createUser(fullName: string, userName: string, email: string, hashedPassword: string): Promise<any> {
+export async function createUser(fullName: string, userName: string, email: string, hashedPassword: string, imageUrl: string): Promise<any> {
     const user = await fetch(API_ROUTES.CREATE_USER, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ fullName, userName, email, password: hashedPassword })
+        body: JSON.stringify({ fullName, userName, email, password: hashedPassword, imageUrl })
     }).then(res => res.json());
     return user;
 }
@@ -67,9 +67,11 @@ export async function RegisterUser(
 
         // hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        const imageUrl = `https://api.dicebear.com/9.x/notionists/svg?seed=${userName}`;
     
         // create new user
-        const newUser = await createUser(fullName, userName, email, hashedPassword);
+        const newUser = await createUser(fullName, userName, email, hashedPassword, imageUrl);
         console.log('New user created:', newUser);
         
         // add new row in RadarData for the new user

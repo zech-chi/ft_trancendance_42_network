@@ -165,10 +165,13 @@ app.get('/login/google/callback', async (req, reply) => {
   console.log('User info =======>> ', userInfo);
   // if gmail already in databae
   const fullName = userInfo.name;
-  const imageUrl = userInfo.picture;
-  const userName = userInfo.given_name;
+  let imageUrl = userInfo.picture;
   const email = userInfo.email;
+  const userName = email.split('@')[0];
 
+  if (!imageUrl || imageUrl === "") {
+    imageUrl = `https://api.dicebear.com/9.x/notionists/svg?seed=${userName}`;
+  }
 
   const existingUser = await findUserIfExists(userName, email);
   let user;
@@ -177,7 +180,7 @@ app.get('/login/google/callback', async (req, reply) => {
     // random password 
     const randomPassword = await bcrypt.hash(Math.random().toString(36).slice(-8), 10);
     // add user
-    user = await createUser(fullName, userName, email, randomPassword);
+    user = await createUser(fullName, userName, email, randomPassword, imageUrl);
     // update imageUrl
     // add data
     const radarDataId = await addNewRadarDataRow(user.id);
