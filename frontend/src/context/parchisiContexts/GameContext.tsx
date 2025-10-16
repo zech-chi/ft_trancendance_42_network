@@ -249,6 +249,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (!socket) return reject("No socket connected");
       
       state.gametype = namespace;
+      console.log (`createGame with user : ${loggedUserName} in namespace ${namespace}`);
       const username = loggedUserName;
       const isLocal = namespace === "local";
       if (playernumber && (playernumber < 2 || playernumber > 4))

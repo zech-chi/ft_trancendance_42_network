@@ -29,7 +29,7 @@ function OnlinePageContent() {
 
   const router = useRouter();
   const { socket, setNamespace, isConnected } = useSocket();
-  const { state ,createGame, joinLobby } = useGame();
+  const { state , createGame, joinLobby } = useGame();
 
 useEffect(() => {
   setNamespace("online");
@@ -57,6 +57,8 @@ useEffect(() => {
   const interval = setInterval(fetchRooms, 5000);
   return () => clearInterval(interval);
 }, []);
+
+
 const handleJoinRoom = async(roomId: string) => {
     setGameCode(roomId);
     handleJoinGame(roomId); // reuse your existing join logic

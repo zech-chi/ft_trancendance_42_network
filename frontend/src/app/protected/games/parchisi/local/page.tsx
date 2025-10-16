@@ -35,9 +35,9 @@ export default function LocalGamePage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-4 text-center">Local Multiplayer</h2>
+<div className="flex items-center justify-center h-[calc(100vh-75px)]">
+  <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h2 className="text-4xl font-bold mb-4 text-center">Local Multiplayer</h2>
         <div className="mb-4">
           <label className="block mb-2 text-gray-700">Number of Players:</label>
           <select

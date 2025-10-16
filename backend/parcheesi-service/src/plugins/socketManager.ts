@@ -197,7 +197,6 @@ export default async function socketManager(io: Server) {
       if (room.players.length < 2 && room.players.find(p => !p.isReady)) {
         socket.emit("error", { message: "Not all players are ready" });
         return;
-          
         }
       room.broadcast("gameStarted", { gameId: room.id, players: room.players, board: room.board.toJSON(), currentPlayerId: room.currentPlayer });
     });
@@ -320,8 +319,15 @@ export default async function socketManager(io: Server) {
           console.log(chalk.red(`Player ${player.userName} removed from game ${id}`));
 
           // cleanup if room empty
-          if (room.players.length === 0) {
+          if (room.players.length === 1 || room.players.length === 0) {
             room.broadcast("lobbyClosed", { message: "Room destroyed (no players left)" });
+            if (room.players.length === 1){
+              room.gameOver = true;
+              room.broadcast("gameOver", {
+                  winner: room.currentPlayer.userName,
+                  color: room.currentPlayer.color,
+                });
+            }
             room.destroy();
             rooms.delete(id);
             console.log(chalk.red(`Game ${id} deleted (no players left).`));
