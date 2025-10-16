@@ -1,7 +1,14 @@
-// src/app/page.tsx
-import { redirect } from "next/navigation";
+'use client';
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  // redirect root `/` to `/dashboard`
-  redirect("/protected");
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/login");
+  }, [router]);
+
+  return null; // render nothing while redirecting
 }
