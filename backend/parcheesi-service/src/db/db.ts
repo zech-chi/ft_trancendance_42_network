@@ -46,4 +46,40 @@ db.prepare(`
   )
 `).run();
 
+//export the type of each table for usage in other files
+export type User = {
+  id: number;
+  username: string;
+  password: string;
+  email: string;
+  email_verified: boolean;
+  twofa_secret: string | null;
+  twofa_enabled: boolean;
+  created_at: Date;
+};
+export type RefreshToken = {
+  id: number;
+  user_id: number;
+  token_hash: string;
+  expires_at: Date;
+  created_at: Date;
+  revoked: boolean;
+};
+export type EmailCode = {
+  id: number;
+  user_id: number | null;
+  email: string;
+  code: string;
+  purpose: string;
+  expires_at: Date;
+  used: boolean;
+  created_at: Date;
+};
+
+// export type DbType = {
+//   users: User;
+//   refresh_tokens: RefreshToken;
+//   email_codes: EmailCode;
+// };
+
 export default db;

@@ -1,12 +1,12 @@
 import { FastifyPluginAsync } from "fastify";
-import db from "../db/db";
+import db , {User, EmailCode} from "../db/db";
 import { generateSecret, verifyToken } from "../utils/twofa";
 import { generateQRCode } from "../utils/qrcode";
 import { sendEmail } from "../utils/mailer";
 
 const auth2fa: FastifyPluginAsync = async (fastify) => {
   // Setup TOTP (return secret + qr)
-  fastify.post("/2fa/setup-totp", async (request: any, reply: any) => {
+  fastify.post("/setup-totp", async (request: any, reply: any) => {
     const { userId } = request.body;
     if (!userId) return reply.code(400).send({ error: "missing" });
 
@@ -22,9 +22,9 @@ const auth2fa: FastifyPluginAsync = async (fastify) => {
   });
 
   // Enable TOTP after verifying a code
-  fastify.post("/2fa/enable-totp", async (request: any, reply: any) => {
+  fastify.post("/enable-totp", async (request: any, reply: any) => {
     const { userId, token } = request.body;
-    const row = db.prepare("SELECT twofa_secret FROM users WHERE id = ?").get(userId);
+    const row = db.prepare("SELECT twofa_secret FROM users WHERE id = ?").get(userId) as User;
     if (!row || !row.twofa_secret) return reply.code(400).send({ error: "no secret" });
 
     const ok = verifyToken(row.twofa_secret, token);
@@ -42,16 +42,16 @@ const auth2fa: FastifyPluginAsync = async (fastify) => {
       if (!payload || !payload.need2fa) return reply.code(400).send({ error: "invalid temp token" });
 
       const userId = payload.sub;
-      const row = db.prepare("SELECT * FROM email_codes WHERE user_id = ? AND purpose='login_otp' AND used=0 ORDER BY created_at DESC").get(userId);
+      const row = db.prepare("SELECT * FROM email_codes WHERE user_id = ? AND purpose='login_otp' AND used=0 ORDER BY created_at DESC").get(userId) as EmailCode;
       if (!row) return reply.code(400).send({ error: "no code" });
       if (row.code !== code) return reply.code(400).send({ error: "invalid code" });
-      if (row.expires_at < new Date().toISOString()) return reply.code(400).send({ error: "expired" });
+      if (row.expires_at < new Date()) return reply.code(400).send({ error: "expired" });
 
       // mark used
       db.prepare("UPDATE email_codes SET used = 1 WHERE id = ?").run(row.id);
 
       // issue final access & refresh tokens
-      const userRow = db.prepare("SELECT id, username FROM users WHERE id = ?").get(userId);
+      const userRow = db.prepare("SELECT id, username FROM users WHERE id = ?").get(userId) as User ;
       const accessToken = fastify.jwt.sign({ sub: userRow.id, username: userRow.username });
       const refreshTokenRaw = require("crypto").randomBytes(64).toString("hex");
       const refreshHash = require("crypto").createHash("sha256").update(refreshTokenRaw).digest("hex");
@@ -73,14 +73,14 @@ const auth2fa: FastifyPluginAsync = async (fastify) => {
       if (!payload || !payload.need2fa) return reply.code(400).send({ error: "invalid temp token" });
 
       const userId = payload.sub;
-      const row = db.prepare("SELECT twofa_secret FROM users WHERE id = ?").get(userId);
+      const row = db.prepare("SELECT twofa_secret FROM users WHERE id = ?").get(userId) as User;
       if (!row || !row.twofa_secret) return reply.code(400).send({ error: "no twofa" });
 
       const ok = verifyToken(row.twofa_secret, token);
       if (!ok) return reply.code(400).send({ error: "invalid token" });
 
       // success → issue access + refresh tokens (same code as above)
-      const userRow = db.prepare("SELECT id, username FROM users WHERE id = ?").get(userId);
+      const userRow = db.prepare("SELECT id, username FROM users WHERE id = ?").get(userId) as User;
       const accessToken = fastify.jwt.sign({ sub: userRow.id, username: userRow.username });
       const refreshTokenRaw = require("crypto").randomBytes(64).toString("hex");
       const refreshHash = require("crypto").createHash("sha256").update(refreshTokenRaw).digest("hex");
@@ -97,13 +97,13 @@ const auth2fa: FastifyPluginAsync = async (fastify) => {
   // send a login email OTP on demand
   fastify.post("/2fa/send-email-otp", async (request: any, reply: any) => {
     const { username } = request.body;
-    const userRow = db.prepare("SELECT id, email FROM users WHERE username = ?").get(username);
+    const userRow = db.prepare("SELECT id, email FROM users WHERE username = ?").get(username) as User;
     if (!userRow) return reply.code(404).send({ error: "not found" });
 
     const code = (Math.floor(100000 + Math.random() * 900000)).toString();
     const expiresAt = new Date(Date.now() + 5*60*1000).toISOString();
 
-    db.prepare("INSERT INTO email_codes (user_id, email, code, purpose, expires_at) VALUES (?, ?, ?, ?, ?)")
+    db.prepare("INSERT INTO email_codes (user_id, email, code, purpose, expires_at) VALUES (?, ?, ?, ?, ?)") 
       .run(userRow.id, userRow.email, code, "login_otp", expiresAt);
 
     await sendEmail(userRow.email, "Your login code", `<p>Your login code: <b>${code}</b></p>`);

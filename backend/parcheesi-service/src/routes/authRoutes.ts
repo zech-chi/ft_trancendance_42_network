@@ -1,9 +1,10 @@
 import { FastifyPluginAsync } from "fastify";
-import db from "../db/db";
+import db, { EmailCode, User, RefreshToken } from "../db/db";
 import bcrypt from "bcrypt";
 import { sendEmail} from "../utils/mailer";
 import { signAccessToken } from "../utils/jwt";
 import crypto from "crypto";
+
 
 const authRoutes: FastifyPluginAsync = async (fastify) => {
   // register
@@ -38,10 +39,10 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
     const { email, code } = request.body;
     if (!email || !code) return reply.code(400).send({ error: "missing fields" });
 
-    const row = db.prepare("SELECT * FROM email_codes WHERE email = ? AND purpose='email_verification' AND used = 0 ORDER BY created_at DESC").get(email);
+    const row = db.prepare("SELECT * FROM email_codes WHERE email = ? AND purpose='email_verification' AND used = 0 ORDER BY created_at DESC").get(email) as EmailCode;
     if (!row) return reply.code(400).send({ error: "code not found" });
 
-    if (row.expires_at < new Date().toISOString()) return reply.code(400).send({ error: "code expired" });
+    if (row.expires_at < new Date()) return reply.code(400).send({ error: "code expired" });
     if (row.code !== code) return reply.code(400).send({ error: "invalid code" });
 
     db.prepare("UPDATE users SET email_verified = 1 WHERE id = ?").run(row.user_id);
@@ -55,11 +56,15 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
     const { username, password } = request.body;
     if (!username || !password) return reply.code(400).send({ error: "missing" });
 
-    const row = db.prepare("SELECT id, username, password, twofa_enabled, email FROM users WHERE username = ?").get(username);
+    const row = db.prepare("SELECT id, username, password, twofa_enabled, email FROM users WHERE username = ?").get(username) as User; 
     if (!row) return reply.code(401).send({ error: "invalid" });
 
     const ok = await bcrypt.compare(password, row.password);
     if (!ok) return reply.code(401).send({ error: "invalid" });
+
+    if (row.email_verified === false) {
+      return reply.code(403).send({ error: "email not verified" });
+    }
 
     if (row.twofa_enabled) {
       // generate temporary 2FA session token (short lived) — we use a JWT claim need2fa:true
@@ -91,15 +96,15 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
   });
 
   // refresh token
-  fastify.post("/refresh", async (request: any, reply) => {
+  fastify.post("/refresh", async (request: any, reply: any) => {
     const { refreshToken } = request.body;
     if (!refreshToken) return reply.code(400).send({ error: "missing" });
     const refreshHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
-    const tokenRow = db.prepare("SELECT * FROM refresh_tokens WHERE token_hash = ? AND revoked = 0").get(refreshHash);
+    const tokenRow = db.prepare("SELECT * FROM refresh_tokens WHERE token_hash = ? AND revoked = 0").get(refreshHash) as RefreshToken;
     if (!tokenRow) return reply.code(401).send({ error: "invalid" });
-    if (tokenRow.expires_at < new Date().toISOString()) return reply.code(401).send({ error: "expired"});
+    if (tokenRow.expires_at < new Date()) return reply.code(401).send({ error: "expired"});
 
-    const userRow = db.prepare("SELECT id, username FROM users WHERE id = ?").get(tokenRow.user_id);
+    const userRow = db.prepare("SELECT id, username FROM users WHERE id = ?").get(tokenRow.user_id) as User;
     const accessToken = fastify.jwt.sign({ sub: userRow.id, username: userRow.username });
     return reply.send({ accessToken });
   });
