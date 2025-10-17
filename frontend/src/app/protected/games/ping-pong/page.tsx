@@ -83,7 +83,7 @@ export default function Test() {
       id: 3,
       label: "TOURNEMENT",
       className: "costum-path-4",
-      pageLink: "../games/ping-pong/modes/local",
+      pageLink: "../games/ping-pong/modes/tournament",
     },
   ];
 

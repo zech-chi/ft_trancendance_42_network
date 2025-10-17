@@ -1,0 +1,72 @@
+"use client";
+
+import PingPongCanvas from "../../../components/PongCanvas";
+import { useSettings } from "../../../context/settings/SettingsContext";
+import React, { use, useState } from "react";
+import { useLoggedUserId } from "@/context/UserIdContext";
+import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+
+
+export default function CreateTournament() {
+    const { loggedUserId } = useLoggedUserId();
+    const { loggedUserName } = useLoggedUserName();
+    const { settings } = useSettings();
+    const [ t_name, t_setName ] = useState("");
+    const [ t_number_of_players, t_setNumberOfPlayers ] = useState(4);   // default to 4 players ( 4 or 8 )
+    const [ t_isPrivate, t_setIsPrivate ] = useState(false); // default to public ( public or private )
+    const [ t_nakeName, t_setNakeName ] = useState("");
+
+
+    return (
+        <>
+            <form className="flex flex-col gap-4 bg-black/70 p-6 rounded-lg">
+                <label>
+                    Tournament Name:
+                    <input
+                        type="text"
+                        value={t_name}
+                        onChange={(e) => t_setName(e.target.value)}
+                        className="ml-2 p-1 rounded bg-white/10 border border-white/20"
+                    />
+                </label>
+                <label>
+                    Number of Players:
+                    <select
+                        value={t_number_of_players}
+                        onChange={(e) => t_setNumberOfPlayers(parseInt(e.target.value))}
+                        className="ml-2 p-1 rounded bg-white/10 border border-white/20"
+                    >
+                        <option value={4}>4</option>
+                        <option value={8}>8</option>
+                    </select>
+                </label>
+                <label>
+                    Privacy:
+                    <select
+                        value={t_isPrivate ? "private" : "public"}
+                        onChange={(e) => t_setIsPrivate(e.target.value === "private")}
+                        className="ml-2 p-1 rounded bg-white/10 border border-white/20"
+                    >
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                    </select>
+                </label>
+                <label>
+                    Nickname:
+                    <input
+                        type="text"
+                        value={t_nakeName || ""}
+                        onChange={(e) => t_setNakeName(e.target.value)}
+                        className="ml-2 p-1 rounded bg-white/10 border border-white/20"
+                    />
+                </label>
+                <button
+                    type="submit"
+                    className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Create Tournament
+                </button>
+            </form>
+        </>
+    )
+}

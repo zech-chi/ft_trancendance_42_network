@@ -324,23 +324,23 @@
 services:
   # ---------------------------
   # Frontend
-  frontend:
-    build: ./frontend
-    container_name: frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - auth-service
-      - chat-service
-      - dashboard-service
-      - db-service
-      - ping-pong-service
-      - parcheesi-service
-      - user-service
-    networks:
-      - monitoring
-    logging:
-      driver: json-file
+  # frontend:
+  #   build: ./frontend
+  #   container_name: frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - auth-service
+  #     - chat-service
+  #     - dashboard-service
+  #     - db-service
+  #     - ping-pong-service
+  #     - parcheesi-service
+  #     - user-service
+  #   networks:
+  #     - monitoring
+  #   logging:
+  #     driver: json-file
 
   # ---------------------------
   # Backend Services
@@ -418,89 +418,89 @@ services:
     logging:
       driver: json-file
 
-  # ---------------------------
-  # Prometheus & Grafana
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - monitoring
+  # # ---------------------------
+  # # Prometheus & Grafana
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
+  #   networks:
+  #     - monitoring
 
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "4000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    networks:
-      - monitoring
-    volumes:
-      - grafana_data:/var/lib/grafana
+  # grafana:
+  #   image: grafana/grafana
+  #   container_name: grafana
+  #   ports:
+  #     - "4000:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   networks:
+  #     - monitoring
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
 
-  # ---------------------------
-  # Elasticsearch + Kibana
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms1g -Xmx1g
-    ports:
-      - "9200:9200"
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
-    networks:
-      - monitoring
+  # # ---------------------------
+  # # Elasticsearch + Kibana
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+  #   container_name: elasticsearch
+  #   environment:
+  #     - discovery.type=single-node
+  #     - xpack.security.enabled=false
+  #     - ES_JAVA_OPTS=-Xms1g -Xmx1g
+  #   ports:
+  #     - "9200:9200"
+  #   volumes:
+  #     - es_data:/usr/share/elasticsearch/data
+  #   networks:
+  #     - monitoring
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.15.0
-    container_name: kibana
-    depends_on:
-      - elasticsearch
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    networks:
-      - monitoring
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.15.0
+  #   container_name: kibana
+  #   depends_on:
+  #     - elasticsearch
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #   ports:
+  #     - "5601:5601"
+  #   networks:
+  #     - monitoring
 
-  # ---------------------------
-  # Logstash avec wait-for-elasticsearch
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.15.0
-    container_name: logstash
-    depends_on:
-      - elasticsearch
-    entrypoint: /bin/bash -c "until curl -s http://elasticsearch:9200 >/dev/null; do echo 'Waiting for Elasticsearch...' ; sleep 5; done; exec /usr/share/logstash/bin/logstash -f /usr/share/logstash/pipeline"
-    ports:
-      - "5044:5044"
-      - "9600:9600"
-    volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
-    networks:
-      - monitoring
+  # # ---------------------------
+  # # Logstash avec wait-for-elasticsearch
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:8.15.0
+  #   container_name: logstash
+  #   depends_on:
+  #     - elasticsearch
+  #   entrypoint: /bin/bash -c "until curl -s http://elasticsearch:9200 >/dev/null; do echo 'Waiting for Elasticsearch...' ; sleep 5; done; exec /usr/share/logstash/bin/logstash -f /usr/share/logstash/pipeline"
+  #   ports:
+  #     - "5044:5044"
+  #     - "9600:9600"
+  #   volumes:
+  #     - ./logstash/pipeline:/usr/share/logstash/pipeline
+  #   networks:
+  #     - monitoring
 
-  # ---------------------------
-  # Filebeat
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:8.15.0
-    container_name: filebeat
-    user: root
-    depends_on:
-      - logstash
-    volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-    networks:
-      - monitoring
+  # # ---------------------------
+  # # Filebeat
+  # filebeat:
+  #   image: docker.elastic.co/beats/filebeat:8.15.0
+  #   container_name: filebeat
+  #   user: root
+  #   depends_on:
+  #     - logstash
+  #   volumes:
+  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+  #   networks:
+  #     - monitoring
 
 # ---------------------------
 volumes:
