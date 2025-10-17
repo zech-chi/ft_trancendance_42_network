@@ -73,8 +73,8 @@ export class Parcheesi3D {
         }, this.scene);
     
         const backgroundMaterial = new BABYLON.BackgroundMaterial("backgroundMaterial", this.scene);
-        backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/TropicalSunnyDay", this.scene);
-        // backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/skybox2", this.scene);
+        // backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/TropicalSunnyDay", this.scene);
+        backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/skybox2", this.scene);
         // backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/environment.env", this.scene);
         backgroundMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     

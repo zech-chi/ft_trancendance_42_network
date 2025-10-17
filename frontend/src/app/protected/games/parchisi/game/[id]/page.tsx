@@ -5,10 +5,34 @@ import { JSX } from "react";
 import { useEffect } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 // import Login from "@/components/Login";
+import { usePathname } from "next/navigation";
+import { useSocket } from "@/context/parchisiContexts/SocketContext";
 import { Parcheesi3DComponent } from "@/components/parchisi_game/Parcheesi3D";
+import { useGame } from "@/context/parchisiContexts/GameContext";
+import {useRouter} from "next/navigation";
 
 export default function Games() : JSX.Element {
 	const { loggedUserName, setLoggedUserName } = useLoggedUserName();
+	  const pathname = usePathname();
+  const { namespace, setNamespace } = useSocket();
+  const{state} = useGame();
+  const router = useRouter();
+
+  useEffect(() => {
+    // If user leaves /game/[id] page, reset namespace to null → disconnect
+    if (!pathname.startsWith('/protected/games/parchisi/game/')) {
+      if (namespace !== null) {
+        setNamespace(null);
+      }
+    }
+    // If user is in /game/[id], do nothing → keep socket connected
+  }, [pathname, namespace, setNamespace]);
+
+  useEffect(() => {
+	if (state.lobby === null) {
+	  router.push("/protected/games/parchisi/")
+	}
+  }, [state.lobby])
 
 	return (
     	<>
@@ -31,3 +55,4 @@ export default function Games() : JSX.Element {
 		</>
   );
 }
+

@@ -15,7 +15,7 @@ export default async function socketManager(io: Server) {
   
   
   const remote = io.of("/games/parchisi/online");
-  // const local = io.of("/games/parchisi/local");
+  const local = io.of("/games/parchisi/local");
   remote.on("connection", (socket: Socket) => {
     console.log(chalk.green(`Client connected: ${socket.id}`));
     /**
@@ -24,11 +24,6 @@ export default async function socketManager(io: Server) {
     socket.on("createGame", (data: { username: string }) => {
       const gameId = randomUUID(); // generate unique game id
       const room = new GameRoom(gameId, remote);
-      room.onGameOver = (id: string) => {
-        console.log(chalk.red(`Cleaning up game ${id}`));
-        room.destroy();
-        rooms.delete(id);
-      };
       rooms.set(gameId, room); // remove old room if there is only one player or game over or host leave or all players leave
 
       console.log(chalk.blue(`Game created with ID: ${gameId} by ${data.username} --> remote game`));
@@ -86,7 +81,6 @@ export default async function socketManager(io: Server) {
         };
         room.broadcast("lobbyUpdate", lobbyData); // everyone in the room
         // socket.emit("lobbyUpdate", lobbyData); // the joining player too 
-        console.log("event sent to clients: lobbyUpdate", lobbyData);
 
     });
 
@@ -99,10 +93,20 @@ export default async function socketManager(io: Server) {
       if (!player)
         return;
       room.readyPlayers++;
-      if (room.readyPlayers > room.players.length)
-        {
-          socket.emit("error", { message: "counter more than player" });
-        }
+      // if (room.readyPlayers > room.players.length)
+      //   {
+      //     //mean someone realoded the page and clicked ready again so need to send him all the playes places with the current player
+      //     room.readyPlayers = room.players.length;
+      //     for (const p of room.players)
+      //     {
+      //       //send each player his places i dont need socket , because i user this.broadcast
+      //      //loop thorght all peices of p 
+      //       for (const piece of p.pieces)
+      //       {
+      //         room.emitJumpEvent(piece, p.color, piece.position, 'center')
+      //       }
+      //     }
+      //   }
       if (room.readyPlayers === room.players.length)
         {
           await room.startGame();
@@ -162,7 +166,7 @@ export default async function socketManager(io: Server) {
       const room = rooms.get(data.gameId);
       if (!room) return;
       
-      console.log((`Player ${data.username} is ready in game ${data.gameId}`));
+  
       const player = room.players.find(p => p.userName === data.username);
       if (player) {
         player.isReady = true;
@@ -193,7 +197,6 @@ export default async function socketManager(io: Server) {
       if (room.players.length < 2 && room.players.find(p => !p.isReady)) {
         socket.emit("error", { message: "Not all players are ready" });
         return;
-          
         }
       room.broadcast("gameStarted", { gameId: room.id, players: room.players, board: room.board.toJSON(), currentPlayerId: room.currentPlayer });
     });
@@ -207,7 +210,7 @@ export default async function socketManager(io: Server) {
      * Other events like requestRollDices, moveRequest, disconnect…
      * should now first check the correct room
      */
-    socket.on("requestRollDices", async (data: { gameId: string }) => {
+    socket.on("requestRollDices", async (data: { gameId: string}) => {
       const room = rooms.get(data.gameId);
       if (!room) return;
 
@@ -218,6 +221,18 @@ export default async function socketManager(io: Server) {
       }
 
       await room.handleRollDice();
+
+      if (room.gameOver) {
+        room.broadcast("gameOver", {
+          winner: room.currentPlayer.userName,
+          color: room.currentPlayer.color,
+        });
+        const id = room.id;
+        console.log(chalk.red(`Cleaning up game ${id}`));
+        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
+        room.destroy();
+        rooms.delete(id);
+      }
     });
 
     socket.on("moveRequest", async (data: { gameId: string; sphere_id: number; sphere_type: string; choice: number }) => {
@@ -232,11 +247,16 @@ export default async function socketManager(io: Server) {
 
       await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
 
-      if (room.board.peekGoal(room.currentPlayer.id - 1).occupiedBy.length === 4) {
+      if (room.gameOver) {
         room.broadcast("gameOver", {
           winner: room.currentPlayer.userName,
           color: room.currentPlayer.color,
         });
+        const id = room.id;
+        console.log(chalk.red(`Cleaning up game ${id}`));
+        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
+        room.destroy();
+        rooms.delete(id);
       }
     });
     
@@ -251,17 +271,17 @@ export default async function socketManager(io: Server) {
         room.players.splice(playerIndex, 1);
         room.sockets.delete(player.id);
         room.broadcast("removePlayer", { id: player.id });
-        console.log(chalk.yellow(`Player ${player.userName} left game ${data.lobbyId}`));
+        console.log(chalk.red(`Player ${player.userName} left game ${data.lobbyId}`));
         // If the host leaves, room should be deleted, and all players notified
 
         if (playerIndex === 0 || room.players.length === 0) {
           room.broadcast("lobbyClosed", { message: "Room destroyed by host" });
           if (playerIndex === 0){
-          console.log(chalk.magenta(`Host has left the lobby. Lobby is closed`));
+          console.log(chalk.red(`Host has left the lobby. Lobby is closed`));
           }
           else if (room.players.length === 0)
           {
-          console.log(chalk.magenta(`Game ${data.lobbyId} deleted (no players left).`));
+          console.log(chalk.red(`Game ${data.lobbyId} deleted (no players left).`));
           }
           rooms.delete(data.lobbyId);
         } else {
@@ -296,14 +316,21 @@ export default async function socketManager(io: Server) {
           room.sockets.delete(player.id);
 
           room.broadcast("removePlayer", { id: player.id });
-          console.log(chalk.yellow(`Player ${player.userName} removed from game ${id}`));
+          console.log(chalk.red(`Player ${player.userName} removed from game ${id}`));
 
           // cleanup if room empty
-          if (room.players.length === 0) {
+          if (room.players.length === 1 || room.players.length === 0) {
             room.broadcast("lobbyClosed", { message: "Room destroyed (no players left)" });
+            if (room.players.length === 1){
+              room.gameOver = true;
+              room.broadcast("gameOver", {
+                  winner: room.currentPlayer.userName,
+                  color: room.currentPlayer.color,
+                });
+            }
             room.destroy();
             rooms.delete(id);
-            console.log(chalk.magenta(`Game ${id} deleted (no players left).`));
+            console.log(chalk.red(`Game ${id} deleted (no players left).`));
           }
           break;
         }
@@ -312,91 +339,98 @@ export default async function socketManager(io: Server) {
   });
 
 
-  // local.on("connection", (socket: Socket) => {
-  //   console.log(chalk.red(`Client connected locally: ${socket.id}`));
+  local.on("connection", (socket: Socket) => {
+    console.log(chalk.yellow(`Client connected locally: ${socket.id}`));
 
-  //   socket.on("createGame", (data: {playersnumber:number}) => {
-  //     const gameId = "saw"
-      
-  //     // randomUUID(); // generate unique game id
-  //     const room = new localRoom(gameId, local, data.playersnumber);
+    socket.on("createGame", (data: {playersnumber:number}) => {
+      const gameId = randomUUID(); // generate unique game id
+      const room = new localRoom(gameId, local, data.playersnumber);
+      room.socket = socket; // assign the socket to the room for local play
+      localRooms.set(gameId, room);
 
-  //     room.onGameOver = (id: string) => {
-  //       console.log(chalk.red(`Cleaning up game ${id}`));
-  //       room.destroy();
-  //       localRooms.delete(id);
-  //     };
-  //     localRooms.set(gameId, room);
-  //     console.log(chalk.blue(`Game created with ID: ${gameId} with ${data.playersnumber} players`));
-  //     room.socket = socket; // assign the socket to the room for local play
-  //   });
-
-  //   socket.on("startGame",(data: { gameId: string }) => {
-  //     const room = localRooms.get(data.gameId);
-  //     if (!room)
-  //     {
-  //       console.log(chalk.red(`Game not found: ${data.gameId}`));
-  //       socket.emit("error", { message: "Game not found" });
-  //       return;
-  //     }
-  //     if (room.players.length < 2 && room.players.find(p => !p.isReady)) {
-  //       socket.emit("error", { message: "Not all players are ready" });
-  //       return;
-          
-  //       }
-  //     room.broadcast("gameStarted", { gameId: room.id, players: room.players, board: room.board.toJSON(), currentPlayerId: room.currentPlayer });
-  //      room.startGame();
-  //   });
-
-  //   socket.on("requestRollDices", async (data: { gameId: string, color:string }) => {
-  //     const room = localRooms.get(data.gameId);
-  //     if (!room) return;
-
-  //     const currentcolor = room.currentPlayer.color;
-  //     if (data.color !== currentcolor) {
-  //       socket.emit("error", { message: "Not your turn" });
-  //       return;
-  //     }
-  //     await room.handleRollDice();
-  //   });
-
-  //   socket.on("moveRequest", async(data: { gameId: string; sphere_id: number; sphere_type: string; choice: number, color:string }) => {
-  //     const room = localRooms.get(data.gameId);
-  //     if (!room) return;
-
-  //     const currentcolor = room.currentPlayer.color;
-  //     if (data.color !== currentcolor) {
-  //       socket.emit("error", { message: "Not your turn" });
-  //       return;
-  //     }
-  //     await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
-  //     if (room.board.peekGoal(room.currentPlayer.id - 1).occupiedBy.length === 4) {
-  //       room.broadcast("gameOver", {
-  //         winner: room.currentPlayer.userName,
-  //         color: room.currentPlayer.color,
-  //       });
-  //     }
-  //   });
+      //create game mean the game started immediatly
+      room.broadcast("gameStarted", { gameId: room.id, players: room.players, currentPlayerId: room.currentPlayer });
+    });
     
-  //   // still need to hundle if the player want to leave the game and if the host leave the game
-  //   //still need to hundle if the game is over
 
-  //   socket.on("disconnect", () => {
-  //     console.log(chalk.red(`Client disconnected: ${socket.id}`));
+    socket.on("readyToPlayX", async (data: { gameId: string;}) => {
+      const room = localRooms.get(data.gameId);
+      if (!room) return;
 
-  //     // find the room this socket belongs to
-  //     for (const [id, room] of localRooms) {
-  //       if (room.socket?.id === socket.id) {
-  //         socket.emit("lobbyClosed", { message: "Room destroyed by host" });
-  //         room.destroy();
-  //         localRooms.delete(id);
-  //         console.log(chalk.magenta(`Local Game ${id} deleted (no players left).`));
-  //         break;
-  //       }
-  //     }
+        await room.startGame();
+    });
 
-  // });
+    socket.on("requestRollDices", async (data: { gameId: string, color:string }) => {
+      const room = localRooms.get(data.gameId);
+      if (!room) return;
 
-  // });
+      const currentcolor = room.currentPlayer.color;
+      if (data.color !== currentcolor) {
+        socket.emit("error", { message: "Not your turn" });
+        return;
+      }
+      await room.handleRollDice();
+      if (room.gameOver) {
+        room.broadcast("gameOver", {
+          winner: room.currentPlayer.userName,
+          color: room.currentPlayer.color,
+        });
+        const id = room.id;
+        console.log(chalk.red(`Cleaning up game ${id}`));
+        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
+        room.destroy();
+        rooms.delete(id);
+      }
+
+    });
+
+
+
+
+
+    socket.on("moveRequest", async(data: { gameId: string; sphere_id: number; sphere_type: string; choice: number }) => {
+      const room = localRooms.get(data.gameId);
+      if (!room) return;
+
+      const currentcolor = room.currentPlayer.color;
+      if (data.sphere_type !== currentcolor) {
+        socket.emit("error", { message: "Not your turn" });
+        return;
+      }
+      await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
+       
+      if (room.gameOver) {
+        room.broadcast("gameOver", {
+          winner: room.currentPlayer.userName,
+          color: room.currentPlayer.color,
+        });
+        const id = room.id;
+        console.log(chalk.red(`Cleaning up game ${id}`));
+        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
+        room.destroy();
+        rooms.delete(id);
+      }
+    });
+    
+    // still need to hundle if the player want to leave the game and if the host leave the game
+    //still need to hundle if the game is over
+
+    socket.on("disconnect", () => {
+      console.log(chalk.red(`Client disconnected: ${socket.id}`));
+
+      // find the room this socket belongs to
+      for (const [id, room] of localRooms) {
+        if (room.socket?.id === socket.id) {
+          socket.emit("lobbyClosed", { message: "Room destroyed by host" });
+          room.destroy();
+          localRooms.delete(id);
+          console.log(chalk.magenta(`Local Game ${id} deleted (no players left).`));
+          break;
+        }
+      }
+
+  });
+
+  });
 
 }

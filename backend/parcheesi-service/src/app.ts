@@ -5,7 +5,6 @@ import auth2FaPlugin from './plugins/auth2FaPlugin';
 import fastifyCors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
 import dotenv from "dotenv";
-import metricsPlugin from "fastify-metrics";
 dotenv.config();
 
 
@@ -13,7 +12,6 @@ dotenv.config();
 export async function buildApp()
 {
     const app = fastify();
-    app.register(metricsPlugin, { endpoint: "/metrics" });
 
     app.register(fastifyJwt,{
             secret: process.env.SECRET_KEY || "super_code"});
@@ -29,12 +27,12 @@ export async function buildApp()
         methods: ['GET', 'POST'],
         credentials: true});
 
-    app.register(auth2FaPlugin,{prefix: "/auth"} );
+    // app.register(auth2FaPlugin,{prefix: "/auth"} );
     app.register(parchisiPlugin, {prefix:"/games/parchisi"});
-    app.get("/protected", {
-        preHandler: [app.auth]
-    }, async (req:any, reply:any) => {
-        return { message: "This is protected" };
-    })
+    // app.get("/protected", {
+    //     preHandler: [app.auth]
+    // }, async (req:any, reply:any) => {
+    //     return { message: "This is protected" };
+    // })
     return app;
 }
