@@ -23,9 +23,9 @@ export default async function routesAuth(fastify: FastifyInstance) {
     });
 
     fastify.post('/createUser', async (request: FastifyRequest, reply: FastifyReply) => {
-        const { fullName, userName, email, password } = request.body as { fullName: string, userName: string, email: string, password: string };
-        const stmt = db.prepare('INSERT INTO Users (fullName, userName, email, password) VALUES (?, ?, ?, ?)');
-        const info = stmt.run(fullName, userName, email, password);
+        const { fullName, userName, email, password, imageUrl } = request.body as { fullName: string, userName: string, email: string, password: string, imageUrl: string};
+        const stmt = db.prepare('INSERT INTO Users (fullName, userName, email, password, imageUrl) VALUES (?, ?, ?, ?, ?)');
+        const info = stmt.run(fullName, userName, email, password, imageUrl);
         return { id: info.lastInsertRowid, fullName, userName, email };
     });
 

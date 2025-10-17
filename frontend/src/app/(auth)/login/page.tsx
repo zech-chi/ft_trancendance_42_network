@@ -18,11 +18,11 @@ export async function fetchUser() {
 			const data = await response.json();
 			return data;
 		} else {
-			console.error('Failed to fetch user:', response.statusText);
+			console.log('Failed to fetch user:', response.statusText);
 			return null;
 		}
 	} catch (error) {
-		console.error('Error fetching user:', error);
+		console.log('Error fetching user:', error);
 		return null;
 	}
 }
@@ -49,13 +49,17 @@ export default function LoginPage() {
         setSelectedUserName(user.userName);
         setSelectedUserId(user.id);
         setLoggedUserId(user.id);
-        router.push("/");
+        router.push("/protected");
         return; 
       }
       setLoading(false);
     }
     checkAuth();
   }, []);
+
+  const handleGoogle = () => {
+      window.location.href = "http://localhost:5001/api/auth/login/google";
+  };
   
   const handleLogin = async () => {
     try {
@@ -141,7 +145,9 @@ export default function LoginPage() {
         </div>
 
         {/* Social Logins */}
-        <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#FEDF7F]/50 transition mb-2">
+        <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#FEDF7F]/50 transition mb-2"
+            onClick={handleGoogle}
+        >
           {/* <Image src="/google-icon.png" alt="Google" width={20} height={20} /> */}
           Continue with Google
         </button>

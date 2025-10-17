@@ -201,68 +201,50 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 
     
 export default function Home() : JSX.Element {
-	const { loggedUserName, setLoggedUserName } = useLoggedUserName();
-	const { selectedUserName, setSelectedUserName } = useSelectedUserName();
+	// const { loggedUserName, setLoggedUserName } = useLoggedUserName();
+	// const { selectedUserName, setSelectedUserName } = useSelectedUserName();
 	const { selectedUserId, setSelectedUserId } = useSelectedUserId();
-	const { loggedUserId, setLoggedUserId } = useLoggedUserId();
+	// const { loggedUserId, setLoggedUserId } = useLoggedUserId();
 	const [showRightComp, setShowRightComp] = useState<boolean>(false);
-	const [loading, setLoading] = useState(true);
+	// const [loading, setLoading] = useState(true);
 	const router = useRouter();
 
-	useEffect(() => {
-	  async function checkAuth() {
-		const user = await fetchUser();
-		console.log("Fetched user:", user);
-		if (!user || !user.userName) {
-			setLoggedUserName(null);
-			setSelectedUserName(null);
-			setLoggedUserId(0);
-			setSelectedUserId(0);
-			router.push("/login");
-		} else {
-			setLoggedUserName(user.userName);
-			setSelectedUserName(user.userName);
-			setLoggedUserId(user.id);
-			setSelectedUserId(user.id);
-		}
-		setLoading(false);
-	  }
-	  checkAuth();
-	}
-	, []);
+	// useEffect(() => {
+	// 	// wait until AuthUserProvider sets selectedUserId
+	// 	if (selectedUserId !== null) {
+	// 		router.push("/protected");
+	// 	}
+	// }, [selectedUserId, router]);
 
-	if (loading) {
+	// if (selectedUserId === null) {
+	// 	return <div></div>;
+	// }
+
 		return (
-			<div className="h-screen flex items-center justify-center text-white">
-			Loading...
-			</div>
-		);
-	}
+			<>
+				{/* update here was added w-full may can make some issues !!!!! */}
+				<div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto"> 
+					<Sidebar />
+					<Navbar />
+					<main className="flex flex-row items-center justify-center relative overflow-x-hidden
+						xl:pl-20 2xl:pl-24 w-full
+						h-[calc(100%-130px)]
+						xl:h-[calc(100%-75px)]
+						2xl:h-[calc(100%-85px)]
+						2xl:mt-[67px] xl:mt-[60px]
+					">
+						<button className="text-white absolute top-1 right-3 2xl:hidde z-13"
+						onClick={() => setShowRightComp(prev => !prev)}
+						>
+							{!showRightComp ? <img src="/show.png" alt="show" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-70 hover:opacity-100 2xl:hidden"/> : 
+							<img src="/hide.png" alt="hide" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-60 hover:opacity-100 2xl:hidden"/>} 
+						</button>
+	
+						<LeftComponent />
+						<RightComponent show={showRightComp} />
+					</main>
+				</div>
+			</>
+	  );
 
-	return (
-    	<>
-			{/* update here was added w-full may can make some issues !!!!! */}
-			<div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto"> 
-				<Sidebar />
-				<Navbar />
-				<main className="flex flex-row items-center justify-center relative overflow-x-hidden
-					xl:pl-20 2xl:pl-24 w-full
-					h-[calc(100%-130px)]
-					xl:h-[calc(100%-75px)]
-					2xl:h-[calc(100%-85px)]
-					2xl:mt-[67px] xl:mt-[60px]
-				">
-					<button className="text-white absolute top-1 right-3 2xl:hidde z-13"
-					onClick={() => setShowRightComp(prev => !prev)}
-					>
-						{!showRightComp ? <img src="/show.png" alt="show" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-70 hover:opacity-100 2xl:hidden"/> : 
-						<img src="/hide.png" alt="hide" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-60 hover:opacity-100 2xl:hidden"/>} 
-					</button>
-
-					<LeftComponent />
-					<RightComponent show={showRightComp} />
-				</main>
-			</div>
-		</>
-  );
 }
