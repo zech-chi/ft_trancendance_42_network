@@ -23,8 +23,8 @@ export const AuthUserProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const {selectedUserId, setSelectedUserId} = useSelectedUserId();
     const { setLoggedUserName } = useLoggedUserName();
     const { setLoggedUserId } = useLoggedUserId();
-
-  const router = useRouter();
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
   useEffect(() => {
     async function checkAuth() {
@@ -42,9 +42,18 @@ export const AuthUserProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setSelectedUserId(user.id);
         setLoggedUserId(user.id);
       }
+      setLoading(false);
     }
     checkAuth();
   } , []);
+
+	if (loading) {
+		return (
+			<div className="h-screen flex items-center justify-center text-white">
+			Loading...
+			</div>
+		);
+	}
 
   return (
     <AuthUserContext.Provider value={{ selectedUserId, selectedUserName, setSelectedUserId, setSelectedUserName }}>

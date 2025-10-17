@@ -26,7 +26,7 @@ function Chat() {
 
     const { loggedUserName, setLoggedUserName } = useLoggedUserName();
     const { loggedUserId: userId , setLoggedUserId } = useLoggedUserId();
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const router = useRouter();
         
     // alert the userid 
@@ -57,22 +57,22 @@ function Chat() {
 
 
 
-  useEffect(() => {
-    async function checkAuth() {
-        const user = await fetchUser();
-        console.log("Fetched user:", user);
-        if (!user || !user.userName) {
-            setLoggedUserName(null);
-            setLoggedUserId(0);
-            router.push("/login");
-        } else {
-            setLoggedUserName(user.userName);
-            setLoggedUserId(user.id);
-        }
-        setLoading(false);
-      }
-      checkAuth();
-}, []);
+//   useEffect(() => {
+//     async function checkAuth() {
+//         const user = await fetchUser();
+//         console.log("Fetched user:", user);
+//         if (!user || !user.userName) {
+//             setLoggedUserName(null);
+//             setLoggedUserId(0);
+//             router.push("/login");
+//         } else {
+//             setLoggedUserName(user.userName);
+//             setLoggedUserId(user.id);
+//         }
+//         setLoading(false);
+//       }
+//       checkAuth();
+// }, []);
         
        
   
@@ -182,13 +182,13 @@ function Chat() {
     });
   };
 
-   if (loading) {
-            return (
-                <div className="h-screen flex items-center justify-center text-white">
-                    Loading... 2
-                </div>
-            );
-        }
+  //  if (loading) {
+  //           return (
+  //               <div className="h-screen flex items-center justify-center text-white">
+  //                   Loading... 2
+  //               </div>
+  //           );
+  //       }
 
   return (
 
