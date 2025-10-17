@@ -28,8 +28,12 @@ function OnlinePageContent() {
   const [isJoining, setIsJoining] = useState(false);
 
   const router = useRouter();
-  const { socket, isConnected } = useSocket();
-  const { state ,createGame, joinLobby } = useGame();
+  const { socket, setNamespace, isConnected } = useSocket();
+  const { state , createGame, joinLobby } = useGame();
+
+useEffect(() => {
+  setNamespace("online");
+}, []);
 
   /* EXISTING ROOMS  */
   const [rooms, setRooms] = useState<{id:string; players:number; status:string}[]>([]);
@@ -37,9 +41,10 @@ function OnlinePageContent() {
   useEffect(() => {
   async function fetchRooms() {
     try {
-      const res = await fetch("http://localhost:5555/game/online/rooms");
+      const res = await fetch("http://localhost:5555/games/parchisi/online/rooms");
       const data = await res.json();
       setRooms(data);
+      console.log("Fetched rooms:", data);
     } catch (err) {
       console.error("Failed to load rooms", err);
     } finally {
@@ -52,6 +57,8 @@ function OnlinePageContent() {
   const interval = setInterval(fetchRooms, 5000);
   return () => clearInterval(interval);
 }, []);
+
+
 const handleJoinRoom = async(roomId: string) => {
     setGameCode(roomId);
     handleJoinGame(roomId); // reuse your existing join logic

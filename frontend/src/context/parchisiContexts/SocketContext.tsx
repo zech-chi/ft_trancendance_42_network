@@ -6,13 +6,15 @@ import { io, type Socket } from "socket.io-client"
 interface SocketContextType {
   socket: Socket | null
   isConnected: boolean
-  setNamespace: (ns: "online" | "local") => void;
+  namespace: "online" | "local"  | null;
+  setNamespace: (ns: "online" | "local" | null) => void;
 
 }
 
 const SocketContext = createContext<SocketContextType>({
   socket: null,
   isConnected: false,
+  namespace: "online",
   setNamespace: () => {},
 })
 
@@ -21,28 +23,37 @@ const socketMap: Record<"online" | "local", Socket | null> = {
   local: null,
 };
 
-export function SocketProvider({ children, namespace}: { children: ReactNode,  namespace: "online" | "local"  }) {
+export function SocketProvider({ children}: { children: ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null)
   const [isConnected, setIsConnected] = useState(false)
-  const [currentNamespace, setCurrentNamespace] = useState<"online" | "local">(namespace);
+  const [currentNamespace, setCurrentNamespace] = useState<"online" | "local" | null>(null);
 
   const allowedNamespaces = ["online", "local"] as const;
 
   useEffect(() => {
-     if (!allowedNamespaces.includes(namespace)) {
-      alert(`[SocketProvider] Invalid namespace: ${namespace}`);
+     if (!currentNamespace) {
+    // Disconnect any existing socket if namespace is null
+    if (socket) {
+      console.log("Disconnecting socket because namespace is null");
+      socket.disconnect();
+      setSocket(null);
+      setIsConnected(false);
+    }
+    return;
+  }
+    if (!allowedNamespaces.includes(currentNamespace)) {
+      alert(`[SocketProvider] Invalid namespace: ${currentNamespace}`);
       return;
     }
-    if (socketMap[namespace]) {
-      setSocket(socketMap[namespace]);
-      setIsConnected(socketMap[namespace]?.connected || false);
-      setCurrentNamespace(namespace);
-      return;
-    }
+   if (socketMap[currentNamespace]) {
+    setSocket(socketMap[currentNamespace]);
+    setIsConnected(socketMap[currentNamespace]?.connected || false);
+    return;
+  }
 
     // Initialize socket connection
-    
-    const socketInstance = io(`${process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5555"}/games/parchisi/${namespace}`,
+
+    const socketInstance = io(`${process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5555"}/games/parchisi/${currentNamespace}`,
       {
         transports: ["websocket"],
       })
@@ -57,25 +68,20 @@ export function SocketProvider({ children, namespace}: { children: ReactNode,  n
       window.location.href = "/" // Redirect to home on disconnect
       setIsConnected(false)
     })
-    socketMap[namespace] = socketInstance; // Save socket for reuse
+    socketMap[currentNamespace] = socketInstance; // Save socket for reuse
     setSocket(socketInstance);
-    setCurrentNamespace(namespace);
 
     return () => {
       // socketInstance.disconnect()
     }
-  }, [namespace])
+  }, [currentNamespace])
 
-  const setNamespace = (ns: "online" | "local") => {
-    if (!allowedNamespaces.includes(ns)) {
-      console.error(`[SocketProvider] Invalid namespace: ${ns}`);
-      return;
-    }
+  const setNamespace = (ns: "online" | "local" | null) => {
     setCurrentNamespace(ns);
   };
 
 return (
-    <SocketContext.Provider value={{ socket, isConnected, setNamespace }}>
+    <SocketContext.Provider value={{ socket, isConnected, namespace: currentNamespace ,setNamespace }}>
       {children}
     </SocketContext.Provider>
   );

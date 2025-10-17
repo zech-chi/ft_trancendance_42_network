@@ -24,6 +24,8 @@ export function Parcheesi3DComponent() {
     const { socket : socketRef } = useSocket();
     const { state } = useGame();
     const gameId = state.gameId;
+    let isLocal = false;
+    if (state.gametype === "local") isLocal = true;
     const onResize = () => {
         gameRef.current?.resize();
     };
@@ -50,7 +52,7 @@ export function Parcheesi3DComponent() {
             // Start the render loop
             gameRef.current?.runRenderLoop();
             if (gameRef.current) {
-                boardRef.current = new Board(gameRef.current?.scene, gameRef.current.gui, loggedUserName as string, socketRef as Socket, gameId as string);
+                boardRef.current = new Board(gameRef.current?.scene, gameRef.current.gui, loggedUserName as string, socketRef as Socket, gameId as string, isLocal);
                 boardRef.current.initialize();
             }
             

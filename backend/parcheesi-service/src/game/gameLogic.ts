@@ -55,13 +55,13 @@ export class GameLogic {
 
       // If tile empty or occupied by enemies only (we will let leaving be possible; GameRoom will decide captures)
       if (startTile.occupants.length === 0 || startTile.occupants.every(o => o.playerId !== player.id)) {
-        const allowedPieces = basePieces.slice(0, 2);
-        for (const p of allowedPieces) results.push({ piece: p, moves: [5] });
-        // consume both dice
-        removeDiceValue(5, 2);
-        return results;
-      }
-
+        const allowedCount = Math.min(basePieces.length, 2);
+      const allowedPieces = basePieces.slice(0, allowedCount);
+      for (const p of allowedPieces) results.push({ piece: p, moves: [5] });
+      // consume the correct number of dice , at most 2
+      removeDiceValue(5, allowedCount);
+      return results;
+}
       // If there is exactly one friendly piece on start tile, allow only one piece to leave and consume one die
       if (startTile.occupants.length === 1 && startTile.occupants[0].playerId === player.id) {
         const p = basePieces[0];
@@ -111,7 +111,7 @@ export class GameLogic {
     if (!dice || dice.length === 0) return result;
 
     for (const piece of player.pieces) {
-      if (piece.position === "base") continue;
+      if (piece.position === "base" || piece.position === 'home') continue;
 
       const moves: number[] = [];
       for (const die of dice) {
@@ -138,11 +138,11 @@ export class GameLogic {
   const playerIndex = (player.id >= 1) ? player.id - 1 : player.id;
   const canTraverseHome = (remainingSteps: number): boolean => {
     if (remainingSteps <= 0) return false;
-    if (remainingSteps > 7) return false; // home size is 7 (indices 0..6)
+    if (remainingSteps > 7) return false; // home size is 8 insluding home (indices 0..7)
     const destHomeIdx = remainingSteps - 1; // 1 step -> homeIndex 0
     for (let h = 0; h <= destHomeIdx; h++) {
       const ht = this.board.peekHome(playerIndex, h);
-      if (ht.occupants.length > 0) return false; // any occupant blocks
+      if (ht.occupants.length > 1) return false; // any occupant blocks
     }
     return true;
   };
@@ -216,7 +216,7 @@ export class GameLogic {
             const homeTile = this.board.peekHome(player.id - 1 , i);
             if (homeTile.occupants.length > 1) return false;
           }
-          console.log(chalk.red(`this home index is :${homeIdx}`))
+
           if (homeIdx === 7)
               return true;
           const  homedest = this.board.peekHome(player.id -1 , homeIdx);
@@ -293,7 +293,7 @@ export class GameLogic {
             if (ht.occupants.length > 1) return disallowed(`blocked-in-home-at-${h}`);
             else if (ht.occupants.length === 1)
             {
-              placeTojump.push({homeIndex:h});
+              placeTojump.push({homeIndex : h});
             }
             path.push({ homeIndex: h });
           } else {
@@ -321,8 +321,7 @@ export class GameLogic {
             placeTojump.push(idx);
           }
           path.push(idx); // include the entry shared tile in the path
-          
-  
+      
           const remaining = steps - s; // steps that will be applied inside home
           if (remaining > 7) return disallowed("overshoot-home");
   
@@ -334,7 +333,7 @@ export class GameLogic {
               path.push({ homeIndex: h });
               if (ht.occupants.length === 1)
               {
-                placeTojump.push({homeIndex:h});
+                placeTojump.push({homeIndex : h});
               }
             } else {
               // final goal
@@ -342,8 +341,6 @@ export class GameLogic {
             }
           }
           destPosition = path[path.length - 1];
-          if (typeof destPosition === 'object')
-              console.log(chalk.blue(`this is the dist ${destPosition.homeIndex}`))
           return { piece, from, to: destPosition!, path, capture: null, allowed: true, placeTojump };
         }
   
@@ -431,28 +428,57 @@ export class GameLogic {
    *
    * NOTE: We do NOT remove them here. We only return the list so GameRoom can act.
    */
+  // private _detectCapturesOnTile(
+  //   player: Player,
+  //   tileInfo: ReturnType<Board["peekShared"]>,
+  //   tileIndex: number
+  // ): { id: number; playerId: number; position: BoardPosition } | null {
+  
+  //   // If tile is safe, no capture possible
+  //   if (tileInfo.occupants.length === 0) return null;
+
+  //   // Find the first opponent piece on this tile
+  //   if (tileInfo.occupants.length === 1) 
+  //     {
+  //     if (tileInfo.isSafe && tileInfo.toWhom === player.color && tileInfo.occupants[0].playerId !== player.id)
+  //       {
+  //         const occupant = tileInfo.occupants[0];
+  //         if (occupant.playerId !== player.id) {
+  //           return { id: occupant.id, playerId: occupant.playerId, position: tileIndex };
+  //         }
+  //       }
+  //     else if (!tileInfo.isSafe)
+  //       {
+  //         const occupant = tileInfo.occupants[0];
+  //         if (occupant.playerId !== player.id) {
+  //           return { id: occupant.id, playerId: occupant.playerId, position: tileIndex };
+  //         }
+  //       }
+  //     return null;
+  //   }
+  //   // No opponent found → no capture
+  //   return null;
+  // }
+  //logic for capturing multiple pieces on safe tiles more understanding
+  
   private _detectCapturesOnTile(
     player: Player,
     tileInfo: ReturnType<Board["peekShared"]>,
     tileIndex: number
   ): { id: number; playerId: number; position: BoardPosition } | null {
-  
-    // If tile is safe, no capture possible
-    if (tileInfo.isSafe || tileInfo.occupants.length === 0) return null;
-  
-    // Find the first opponent piece on this tile
-    if (tileInfo.occupants.length === 1) 
-{
+    if (tileInfo.occupants.length === 0) return null;
+    if (tileInfo.occupants.length === 1) {
       const occupant = tileInfo.occupants[0];
-      if (occupant.playerId !== player.id) {
+      if (
+        (tileInfo.isSafe && tileInfo.toWhom === player.color && occupant.playerId !== player.id) ||
+        (!tileInfo.isSafe && occupant.playerId !== player.id)
+      ) {
         return { id: occupant.id, playerId: occupant.playerId, position: tileIndex };
       }
+      return null;
     }
-    // No opponent found → no capture
     return null;
   }
-  
-
 }
 
 

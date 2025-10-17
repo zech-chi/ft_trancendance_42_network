@@ -1,4 +1,5 @@
 // @ts-ignore
+// Speakeasy.js is a Node.js library primarily used for implementing two-factor authentication (2FA) in web applications. It specializes in generating and validating one-time passwords (OTPs), making it suitable for integrations with authenticator apps like Google Authenticator.
 import speakeasy from "speakeasy";
 
 export const generateSecret = () => {
