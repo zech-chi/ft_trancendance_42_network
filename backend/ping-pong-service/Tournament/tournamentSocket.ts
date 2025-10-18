@@ -7,6 +7,7 @@ import { JoinedPlayerOBJ } from "./types";
 import { TournamentID } from "./types";
 import { Server as SocketIOServer } from "socket.io";
 import { stringify } from "flatted";
+import { createTornamentGame } from "./tournamentGame";
 
 
 export function registerTournamentEvents(socket: Socket, tournamentSystem: TournamentSystem, io: SocketIOServer) {
@@ -64,7 +65,21 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
     console.log("🚀 Checking if tournament can start");
     // Here you would typically check if the tournament can start
     if (tournamentSystem.canWeStartTournament(obj.tournamentId)) {
-      io.to(obj.tournamentId).emit("tournament_started", { message: "Tournament started!" });
+      io.to(obj.tournamentId).emit("tournament_started", { message: "Tournament started!" }, );
+      // lets start the tournament
+      // player at index 0 vs player at index 1 of joinedPlayers --> Room1
+      // and player at index 2 vs player at index 3  join Room1 as spectators
+      // and so on...
+
+      console.log("1 ->>>>> tournament id : ", obj.tournamentId);
+
+      setTimeout(() => {
+        createTornamentGame(
+          obj.tournamentId,
+          tournamentSystem,
+          io
+        )
+      }, 2000); // small delay so clients can process first event
     } else {
       io.to(obj.tournamentId).emit("tournament_started", { message: "Tournament not started!" });
     }

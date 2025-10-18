@@ -7,6 +7,7 @@ export class Tournament {
     private name : string;
     private numberOfPlayers : number; // 4 | 8
     private joinedPlayersIds : number[] = [];
+    private joinedPlayersSockets : Socket[] = [];
     private isPrivate : boolean;
     private createdBy : number;
     private creatrionDate : Date = new Date();
@@ -56,6 +57,10 @@ export class Tournament {
         return this.joinedPlayersIds.length;
     }
 
+    getJoinedPlayersIds(): number[] {
+        return this.joinedPlayersIds;
+    }
+
     addPlayer(playerId: number, playerSocket: Socket): boolean {
         if (this.joinedPlayersIds.length >= this.numberOfPlayers) {
             return false; // tournament is full
@@ -65,6 +70,7 @@ export class Tournament {
         }
         this.joinedPlayersIds.push(playerId);
         // join player to room using socket
+        this.joinedPlayersSockets.push(playerSocket);
         this.io.to(playerSocket.id).socketsJoin(this.id);
         return true;
     } 

@@ -55,4 +55,12 @@ export class TournamentSystem {
         }
         return false;
     }
+
+    getJoinedPlayersIds(tournamentId: string): number[] | null {
+        const tournament = this.tournaments.get(tournamentId);
+        if (tournament) {
+            return tournament.getJoinedPlayersIds();
+        }
+        return null;
+    }
 }
