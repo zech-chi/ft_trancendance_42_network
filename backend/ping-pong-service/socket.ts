@@ -4,6 +4,9 @@ import { Server as SocketIOServer } from "socket.io";
 import { FastifyInstance } from "fastify/types/instance";
 import { v4 as uuidv4 } from "uuid";
 import { on } from "events";
+// tournament staff
+import { registerTournamentEvents } from "./Tournament/tournamentSocket";
+import { TournamentSystem } from "./Tournament/TournamentSystem";
 
 interface Player {
   id: number;
@@ -42,6 +45,8 @@ interface GameSettings {
   ball: string; // URL or identifier for ball sprite
 }
 
+// tournament system instance
+const tournamentSystem = new TournamentSystem();
 const rooms: Map<string, GameRoom> = new Map();
 const onlineUsers: Map<number, string> = new Map(); // Map userId to socketId
 const playerRooms: Map<number, string> = new Map(); // Map userId to roomId for quick lookup
@@ -124,6 +129,10 @@ export function SocketFunction(fastify: FastifyInstance) {
 
   io.on("connection", (socket) => {
     console.log("✅ New client connected:", socket.id);
+    
+    // Register tournament-related events here
+    registerTournamentEvents(socket, tournamentSystem, io);
+
 
     // 🔹 Register a user and mark them as online
     socket.on("register", async (user) => {
