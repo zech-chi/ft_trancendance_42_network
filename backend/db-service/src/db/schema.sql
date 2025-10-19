@@ -93,6 +93,29 @@ CREATE TABLE IF NOT EXISTS Games (
     FOREIGN KEY (user2) REFERENCES Users(id) ON DELETE CASCADE
 );
 
+
+-- add by youssef: ParchisiGame game table
+CREATE TABLE IF NOT EXISTS ParchisiGames (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,        -- game ID
+  started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  ended_at DATETIME,
+  
+  player1_id INTEGER NOT NULL,
+  player2_id INTEGER NOT NULL,
+  player3_id INTEGER,
+  player4_id INTEGER,
+  
+  winner_id INTEGER,                           -- who won
+  status TEXT DEFAULT 'playing' CHECK (status IN ('finished', 'playing')),
+
+  
+  FOREIGN KEY (player1_id) REFERENCES Users(id) ON DELETE CASCADE,
+  FOREIGN KEY (player2_id) REFERENCES Users(id) ON DELETE CASCADE,
+  FOREIGN KEY (player3_id) REFERENCES Users(id) ON DELETE CASCADE,
+  FOREIGN KEY (player4_id) REFERENCES Users(id) ON DELETE CASCADE,
+  FOREIGN KEY (winner_id) REFERENCES Users(id) ON DELETE SET NULL
+);
+
 -- CREATE TABLE IF NOT EXISTS friends (
 --   id INTEGER PRIMARY KEY AUTOINCREMENT,
 --   user_id INTEGER NOT NULL,
@@ -143,6 +166,7 @@ CREATE TABLE IF NOT EXISTS messages (
   FOREIGN KEY(sender_id) REFERENCES users(id),
   FOREIGN KEY(receiver_id) REFERENCES users(id)
 );
+
 
 -- INSERT OR IGNORE INTO users (username, password_hash)
 -- VALUES ('admin', '$2y$10$eImiTMZG4q4m5a1j...');

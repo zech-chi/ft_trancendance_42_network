@@ -302,7 +302,7 @@ export default async function socketManager(io: Server) {
     // still need to hundle if the player want to leave the game and if the host leave the game
     //still need to hundle if the game is over
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log(chalk.red(`Client disconnected: ${socket.id}`));
 
       // find the room this socket belongs to
@@ -312,6 +312,7 @@ export default async function socketManager(io: Server) {
         );
         if (playerIndex !== -1) {
           const player = room.players[playerIndex];
+          await room.resetPieces(player);
           room.players.splice(playerIndex, 1);
           room.sockets.delete(player.id);
 

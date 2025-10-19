@@ -657,4 +657,18 @@ async handleRollDice() {
   get playerCount(): number {
     return this.players.length;
   }
+  async resetPieces(player: Player) {
+    // Reset all pieces of the player to 'base'
+    for (const piece of player.pieces) {
+        // here i have to remove all the places of the pice
+        this.board.movePieceAtomic(piece, 'base');
+      // Broadcast the reset to base
+      await this.emitJumpEvent(piece, player.color, 'base', 'center', 3, true);
+    }
+    console.log(chalk.yellow(`All pieces of player ${player.userName} have been reset to base.`));
+  }
+
+ async storeGameStartInDB() {
+    
+  }
 }
