@@ -20,6 +20,7 @@ export default function JoinTournament() {
   const [t_isPrivate, t_setIsPrivate] = useState(false);
   const [t_nakeName, t_setNakeName] = useState("");
   const [publicTournaments, setPublicTournaments] = useState<Array<any>>([]);
+  const [ joinedUserIds, setJoinedUserIds ] = useState<Array<number>>([]);
 
   // 🔥 Fetch public tournaments on mount
   useEffect(() => {
@@ -50,7 +51,10 @@ export default function JoinTournament() {
     socketContext.socket?.on("joined_tournament", (data) => {
         console.log("✅ Join tournament response:", data);
         if (data.message === "Joined successfully") {
-            toast.success(data.message);
+            if (loggedUserId !== data.newUserJoinedId) {
+              toast.success(data.newUserJoinedId + " joined the tournament!");
+            }
+            setJoinedUserIds((prev) => [...prev, data.newUserJoinedId]);
             router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
         } else {
             toast.error(data.message);
