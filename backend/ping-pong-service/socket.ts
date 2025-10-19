@@ -425,6 +425,128 @@ socket.on("accept_invite", async ({ inviter, inviterName ,accepter, inviteId }) 
   }
 });
 
+
+socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter }) => {
+  console.log("🎯 Accept invite received from:", socket.data.user?.username);
+  
+  // Critical section: Prevent race conditions during room creation
+  const lockKey = `${inviter}-${accepter.id}`;
+  if (inviteLocks.has(lockKey)) {
+    socket.emit("game_error", { message: "Invitation already being processed" });
+    return;
+  }
+
+  // Set lock
+  inviteLocks.add(lockKey);
+
+  try {
+    // Authentication check
+    if (!socket.data.user || socket.data.user.id !== accepter.id) {
+      console.error("❌ User authentication failed");
+      socket.emit("game_error", { message: "User authentication failed" });
+      return;
+    }
+
+    // Check if users are already in a game (prevent double-joining)
+    if (playerRooms.has(inviter) || playerRooms.has(accepter.id)) {
+      socket.emit("game_error", { message: "One or both players are already in a game" });
+      return;
+    }
+
+    console.log(`✅ inviter: ${inviter}, accepter: ${accepter}`);
+    const inviterSocketId = onlineUsers.get(inviter);
+    const accepterSocketId = onlineUsers.get(accepter.id);
+    console.log("INVITER SOCKET ID:", inviterSocketId);
+    console.log("ACCEPTER SOCKET ID:", accepterSocketId);
+    
+    if (!inviterSocketId || !accepterSocketId) {
+      console.error("❌ One of the users is offline");
+      socket.emit("game_error", { message: "User is offline" });
+      return;
+    }
+
+    const roomId = `game-${uuidv4()}`;
+    const now = Date.now();
+
+    const gameRoom: GameRoom = {
+      players: [
+        { 
+          id: inviter, 
+          username: inviterName, 
+          side: "left", 
+          paddleY: 250, 
+          score: 0,
+          lastUpdate: now
+        },
+        { 
+          id: accepter.id, 
+          username: accepter.username, 
+          side: "right", 
+          paddleY: 250, 
+          score: 0,
+          lastUpdate: now
+        },
+      ],
+      ball: { x: 400, y: 300, dx: 6, dy: 3 },
+      width: 800,
+      height: 600,
+      paddleWidth: 15,
+      paddleHeight: 120,
+      maxScore: 8,
+      isRunning: false,
+      lastStateUpdate: now,
+      gameEnded: false // Initialize game end flag
+    };
+
+    // Atomic operations to prevent race conditions
+    rooms.set(roomId, gameRoom);
+    playerRooms.set(inviter, roomId);
+    playerRooms.set(accepter.id, roomId);
+
+    // Update user states to in_game
+    updateUserState(inviter, 'in_game');
+    updateUserState(accepter.id, 'in_game');
+
+    // Clean up the invitation
+    pendingInvitations.delete(accepter.id);
+
+    // Join both sockets to the room
+    io.to(inviterSocketId).socketsJoin(roomId);
+    io.to(accepterSocketId).socketsJoin(roomId);
+
+    const gameStartData = {
+      roomId,
+      players: gameRoom.players,
+      ball: gameRoom.ball,
+      gameState: "waiting",
+      timestamp: now
+    };
+
+    // Send to room
+    io.to(roomId).emit("game_started", gameStartData);
+
+    // Auto-start the game with proper synchronization
+    setTimeout(() => {
+      const room = rooms.get(roomId);
+      if (room && !room.isRunning) {
+        room.isRunning = true;
+        room.interval = setInterval(() => updateGameState(roomId, room), 8); // 120 FPS
+        io.to(roomId).emit("game_state_change", {
+          state: "playing",
+          timestamp: Date.now()
+        });
+        console.log(`🚀 Game auto-started in room ${roomId}`);
+      }
+    }, 2000);
+
+  } finally {
+    // Always release the lock after a delay to prevent rapid re-invites
+    setTimeout(() => {
+      inviteLocks.delete(lockKey);
+    }, 1000);
+  }
+});
+
     // 🔹 Handle paddle movement from clients (optimized for 120 FPS)
     socket.on("move_paddle", ({ roomId, yPosition, timestamp }) => {
       const room = rooms.get(roomId);

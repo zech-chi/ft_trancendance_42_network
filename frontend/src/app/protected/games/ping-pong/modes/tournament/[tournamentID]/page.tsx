@@ -25,6 +25,11 @@ export default function Play() {
     const handleGameStarting = (data: any) => {
       console.log("🚀 Tournament game is starting:", data);
       toast.success("Tournament game is starting!");
+      socket.emit("accept_invite_tournament", {
+        inviter: data.opponentId,
+        inviterName: `playerId_${data.opponentId}`,
+        accepter: socketContext.currentUser,
+      });
     };
 
     socket.on("tournament_started", handleStarted);

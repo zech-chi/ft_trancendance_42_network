@@ -72,6 +72,8 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
       // and so on...
 
       console.log("1 ->>>>> tournament id : ", obj.tournamentId);
+      
+
       createTornamentGame(
         obj.tournamentId,
         tournamentSystem,
