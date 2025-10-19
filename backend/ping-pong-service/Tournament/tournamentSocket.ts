@@ -72,14 +72,11 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
       // and so on...
 
       console.log("1 ->>>>> tournament id : ", obj.tournamentId);
-
-      setTimeout(() => {
-        createTornamentGame(
-          obj.tournamentId,
-          tournamentSystem,
-          io
-        )
-      }, 2000); // small delay so clients can process first event
+      createTornamentGame(
+        obj.tournamentId,
+        tournamentSystem,
+        io
+      );
     } else {
       io.to(obj.tournamentId).emit("tournament_started", { message: "Tournament not started!" });
     }
