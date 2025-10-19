@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSocket } from "../../../context/SocketContext";
 import toast from "react-hot-toast";
+import TournamentTree from "../components/TournamentTree";
 
 export default function Play() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function Play() {
       console.log("🚀 Tournament game is starting:", data);
       toast.success("Tournament game is starting!");
       socket.emit("accept_invite_tournament", {
-        inviter: data.opponentId,
+        inviter: data.opponentId === socketContext.currentUser?.id ? data.reciverId : data.opponentId,
         inviterName: `playerId_${data.opponentId}`,
         accepter: socketContext.currentUser,
       });
@@ -42,5 +43,10 @@ export default function Play() {
     };
   }, [socketContext.socket, tournamentId]);
 
-  return <div>Ping Pong Tournament Play Page</div>;
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-start p-4">
+      <h1 className="text-2xl font-bold mb-4">Tournament Bracket</h1>
+      <TournamentTree tournamentId={tournamentId || ""} />
+    </div>
+  )
 }
