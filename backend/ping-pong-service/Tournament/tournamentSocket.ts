@@ -24,7 +24,13 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
     );
     const success = tournamentSystem.addPlayerToTournament(tournament.getId(), obj.createdBy, socket);
     if (success) {
-        socket.emit("joined_tournament", { message: "Joined successfully" , tournamentId: tournament.getId()});
+      io.to(tournament.getId()).emit("joined_tournament", {
+        message: "Joined successfully",
+        round: 1,
+        tournamentId: tournament.getId(),
+        newUserJoinedId: obj.createdBy,
+        allPlayersJoinedIds: tournamentSystem.getTournament(tournament.getId())?.getJoinedPlayersIds() || []
+      });
     } else {
         socket.emit("joined_tournament", { message: "Failed to join tournament" });
     }

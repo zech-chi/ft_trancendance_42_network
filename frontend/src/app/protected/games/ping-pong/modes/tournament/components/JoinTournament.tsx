@@ -7,6 +7,8 @@ import { useLoggedUserId } from "@/context/UserIdContext";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSocket } from "../../../context/SocketContext";
 import toast from "react-hot-toast";
+import { useTournament } from "../context/TournamentTreeContext";
+
 
 export default function JoinTournament() {
   const router = useRouter();
@@ -21,6 +23,8 @@ export default function JoinTournament() {
   const [t_nakeName, t_setNakeName] = useState("");
   const [publicTournaments, setPublicTournaments] = useState<Array<any>>([]);
   const [ joinedUserIds, setJoinedUserIds ] = useState<Array<number>>([]);
+  const { updateMatch, matches, resetTournament } = useTournament();
+
 
   // 🔥 Fetch public tournaments on mount
   useEffect(() => {
@@ -48,18 +52,57 @@ export default function JoinTournament() {
 
       
 
+    // socketContext.socket?.on("joined_tournament", (data) => {
+    //     console.log("✅ Join tournament response:", data);
+    //     if (data.message === "Joined successfully") {
+    //         if (loggedUserId !== data.newUserJoinedId) {
+    //           toast.success(data.newUserJoinedId + " joined the tournament!");
+    //         }
+    //         setJoinedUserIds((prev) => [...prev, data.newUserJoinedId]);
+
+            
+    //         router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
+    //     } else {
+    //         toast.error(data.message);
+    //     }
+    // });
+
     socketContext.socket?.on("joined_tournament", (data) => {
-        console.log("✅ Join tournament response:", data);
-        if (data.message === "Joined successfully") {
-            if (loggedUserId !== data.newUserJoinedId) {
-              toast.success(data.newUserJoinedId + " joined the tournament!");
-            }
-            setJoinedUserIds((prev) => [...prev, data.newUserJoinedId]);
-            router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
-        } else {
-            toast.error(data.message);
+      console.log("✅ Join tournament response:", data);
+    
+      if (data.message === "Joined successfully") {
+
+        const { allPlayersJoinedIds, newUserJoinedId, round } = data;
+    
+        if (loggedUserId !== newUserJoinedId) {
+          toast.success(`Player ${newUserJoinedId} joined the tournament!`);
         }
+        // reset tournament context before updating
+        resetTournament();
+  
+        // ✅ Update Tournament Context
+        // Example: 4-player tournament → round 1 fills semi1 first, then semi2
+        allPlayersJoinedIds.forEach((pid: number, index: number) => {
+          const playerData = {
+            playerId: pid,
+            name: `Player ${pid}`,
+            image: `https://api.dicebear.com/9.x/thumbs/svg?seed=${pid}`,
+            status: "waiting",
+          };
+        
+          if (index === 0) updateMatch("semi1", "player1", playerData);
+          else if (index === 1) updateMatch("semi1", "player2", playerData);
+          else if (index === 2) updateMatch("semi2", "player1", playerData);
+          else if (index === 3) updateMatch("semi2", "player2", playerData);
+        });
+    
+        // ✅ Redirect once context is updated
+        router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
+      } else {
+        toast.error(data.message);
+      }
     });
+    
 
   }, [socketContext]);
 
