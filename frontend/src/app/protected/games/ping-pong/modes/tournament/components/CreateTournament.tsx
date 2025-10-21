@@ -9,9 +9,12 @@ import { useSocket } from "../../../context/SocketContext";
 import toast from "react-hot-toast";
 import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
+import { useTreeTournament } from "../context/TreeTournamentContext";
+import { Player, Match, TreeTournament } from "../context/TreeTournamentContext";
 
 
 export default function CreateTournament() {
+    const { tournamentTree, JoinTournament, resetTournament } = useTreeTournament();
     const router = useRouter() ;
     const socketContext = useSocket();
     const { loggedUserId } = useLoggedUserId();
@@ -20,6 +23,15 @@ export default function CreateTournament() {
     const [ t_name, t_setName ] = useState("");
     const [ t_number_of_players, t_setNumberOfPlayers ] = useState(4);   // default to 4 players ( 4 or 8 )
     const [ t_isPrivate, t_setIsPrivate ] = useState(false); // default to public ( public or private )
+
+    const makePlayersFromIds = (ids: number[]): Player[] => {
+        return ids.map(id => ({
+            id,
+            name: `playerId_${id}`,
+            avatarUrl: 'https://i.pravatar.cc/150?u=' + id,
+            status: "pending",
+        }));
+    }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,6 +59,7 @@ export default function CreateTournament() {
                 if (data.newUserJoinedId !== loggedUserId) { 
                     toast.success(data.newUserJoinedId);
                   }
+                JoinTournament(makePlayersFromIds(data.allPlayersJoinedIds));
                 router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
             } else {
                 toast.error(data.message);

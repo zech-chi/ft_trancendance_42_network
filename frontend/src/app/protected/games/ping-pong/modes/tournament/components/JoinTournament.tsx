@@ -7,8 +7,11 @@ import { useLoggedUserId } from "@/context/UserIdContext";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSocket } from "../../../context/SocketContext";
 import toast from "react-hot-toast";
+import { useTreeTournament } from "../context/TreeTournamentContext";
+import { Player, Match, TreeTournament } from "../context/TreeTournamentContext";
 
 export default function JoinTournament() {
+  const { tournamentTree, JoinTournament, resetTournament } = useTreeTournament();
   const router = useRouter();
   const socketContext = useSocket();
   const { loggedUserId } = useLoggedUserId();
@@ -20,6 +23,15 @@ export default function JoinTournament() {
   const [t_isPrivate, t_setIsPrivate] = useState(false);
   const [t_nakeName, t_setNakeName] = useState("");
   const [publicTournaments, setPublicTournaments] = useState<Array<any>>([]);
+
+  const makePlayersFromIds = (ids: number[]): Player[] => {
+    return ids.map(id => ({
+        id,
+        name: `playerId_${id}`,
+        avatarUrl: 'https://i.pravatar.cc/150?u=' + id,
+        status: "pending",
+    }));
+}
 
   // 🔥 Fetch public tournaments on mount
   useEffect(() => {
@@ -53,6 +65,7 @@ export default function JoinTournament() {
             if (data.newUserJoinedId !== loggedUserId) { 
               toast.success(data.newUserJoinedId);
             }
+            JoinTournament(makePlayersFromIds(data.allPlayersJoinedIds));
             router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
         } else {
             toast.error(data.message);
