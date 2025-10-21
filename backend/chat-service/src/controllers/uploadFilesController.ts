@@ -80,15 +80,17 @@ function checkDataFile(reply: FastifyReply, data: any): boolean {
 // check limit size for the request
 function checkSizeLimit(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
+  data: any
 ): boolean {
   const contentLength = request.headers["content-length"]
     ? parseInt(request.headers["content-length"])
     : 0;
 
+      console.log("==================> Content-Length:", contentLength, MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES, "  " ,getFileType(request.headers["content-type"]) , " ", data.mimetype);
   if (
     contentLength > MAX_FILE_SIZE_IN_BYTES ||
-    (getFileType(request.headers["content-type"] || "") === "audio" &&
+    (getFileType(data.mimetype) === "audio" &&
       contentLength > MAX_AUDIO_SIZE_IN_BYTES)
   ) {
     console.error("File size exceeds limit:", contentLength);
@@ -177,7 +179,7 @@ async function insertIntoDatabase(from: string, to: string, data: any, filename:
     fileName: filename, // Return the filename
     type: getFileType(data.mimetype), // Return the file type
     time: timeSend.slice(11, 16), // Return the time of upload
-    sent: false, // Assuming the file is sent immediately after upload
+    sent: true, // Assuming the file is sent immediately after upload
     from: from, // sender_id
     to: to, // receiver_id
   };
@@ -250,8 +252,9 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
 
   try {
     // check if size limit is exceeded using content-length header
-    if (!checkSizeLimit(request, reply)) {
-      return; // If size limit is exceeded, exit the function
+    if (!checkSizeLimit(request, reply, data)) {
+      data.file.resume(); // Consume the stream to prevent hanging
+      return reply; // If size limit is exceeded, exit the function
     }
 
     // Sanitize filename to prevent path traversal.
@@ -280,6 +283,11 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     
     const messageData = await insertIntoDatabase(from, to, data, filename, fileUrl, thumbnailPath);
 
+
+    // emit to the sender    
+    sendMessageToUser(from, messageData);
+
+    messageData.sent = false; // mark as not sent for the receiver
     // Emit the message to the specific user
     sendMessageToUser(to, messageData);
 

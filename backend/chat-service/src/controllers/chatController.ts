@@ -208,7 +208,9 @@ export async function addMessage(request: FastifyRequest, reply: FastifyReply) {
     // if (info.changes === 0) {
     //     return reply.status(500).send({ status: 'error', message: 'Failed to add message AWEDi 1.' });
     // }
-
+  
+    // send to the sender all sessions that the message was sent successfully
+  sendMessageToUser(from.toString(), messageData); 
   // send the message via socket io 
   messageData.sent = false; // Mark the message as sent
   sendMessageToUser(to.toString(), messageData);

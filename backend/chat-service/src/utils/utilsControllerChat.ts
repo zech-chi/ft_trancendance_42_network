@@ -297,7 +297,7 @@ type FriendDbRow = {
     fullName: string;
     userName: string;
     imageUrl: string;
-    online: number; // SQLite often returns booleans as 0 or 1
+    online_in_chat: number; // SQLite often returns booleans as 0 or 1
     lastSeen: number;
     status: 'accepted' | 'blocked';
     blockedBy: number | null;
@@ -391,7 +391,7 @@ type FriendDbRow = {
       name: row.fullName,
       username: row.userName,
       avatar: row.imageUrl,
-      online: !!row.online,
+      online: !!row.online_in_chat,
       lastSeen: row.lastSeen,
       blocked: row.status === 'blocked',
       blockedBy: row.blockedBy,
