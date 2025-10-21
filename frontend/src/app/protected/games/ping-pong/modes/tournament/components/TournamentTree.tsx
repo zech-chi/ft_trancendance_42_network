@@ -1,44 +1,42 @@
-'use client';
-
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { Trophy, User } from 'lucide-react';
-import { useTournament } from '../context/TournamentTreeContext';
 
-// ✅ Define PlayerType (must match your TournamentContext)
-type PlayerType = {
-  playerId: string | number | null;
-  name: string;
-  image: string | null;
-  status?: string;
-};
+const TournamentBracket = () => {
+  const [matches, setMatches] = useState({
+    // Semi-finals (4 players)
+    semi1: {
+      player1: {
+        name: 'None',
+        image: null,
+        status: 'not played',
+      },
+      player2: { name: 'None', image: null, status: 'not played' },
+    },
+    semi2: {
+      player1: { name: 'None', image: null, status: 'not played' },
+      player2: { name: 'None', image: null, status: 'not played' },
+    },
+    // Final (2 players)
+    final: {
+      player1: { name: 'None', image: null, status: 'not played' },
+      player2: { name: 'None', image: null, status: 'not played' },
+    },
+    // Winner
+    winner: { name: 'None', image: null },
+  });
 
-type PlayerCardProps = {
-  player: PlayerType;
-  size?: 'normal' | 'large';
-};
-
-const TournamentBracket: React.FC = () => {
-  const { matches } = useTournament();
-
-  // ✅ Debug: log when matches update (you can remove this later)
-  useEffect(() => {
-    console.log('🎨 Updated matches:', matches);
-  }, [matches]);
-
-  // ✅ Inner component for each player box
-  const PlayerCard: React.FC<PlayerCardProps> = ({ player, size = 'normal' }) => {
+  const PlayerCard = ({ player, size = 'normal' }) => {
     const isLarge = size === 'large';
     const cardHeight = isLarge ? 80 : 60;
     const imgSize = isLarge ? 50 : 40;
     const fontSize = isLarge ? 16 : 14;
 
-    // ✅ background color based on player status
     let bgColor = '#ffffff';
     if (player.status === 'win') bgColor = '#10b981';
-    else if (player.status === 'lose') bgColor = '#ef4444';
+    if (player.status === 'lose') bgColor = '#ef4444';
 
     return (
-      <g key={player.playerId ?? player.name}>
+      <g>
         {/* Card background */}
         <rect
           width={isLarge ? 220 : 180}
@@ -52,7 +50,6 @@ const TournamentBracket: React.FC = () => {
         {/* Player image or fallback icon */}
         {player.image ? (
           <image
-            key={player.image}
             href={player.image}
             x={15}
             y={cardHeight / 2 - imgSize / 2}
@@ -70,13 +67,15 @@ const TournamentBracket: React.FC = () => {
               stroke="#0ea5e9"
               strokeWidth="2"
             />
-            <User
-              x={imgSize / 2 + 15 - imgSize * 0.3}
-              y={cardHeight / 2 - imgSize * 0.3}
-              size={imgSize * 0.6}
-              stroke="#0ea5e9"
-              strokeWidth="2"
-            />
+            <g transform={`translate(${imgSize / 2 + 15}, ${cardHeight / 2})`}>
+              <User
+                size={imgSize * 0.6}
+                stroke="#0ea5e9"
+                strokeWidth="2"
+                x={-imgSize * 0.3}
+                y={-imgSize * 0.3}
+              />
+            </g>
           </>
         )}
 
@@ -96,7 +95,7 @@ const TournamentBracket: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-black/70 p-4 md:p-8">
+    <div className="w-full min-h-screen bg-black/70 from-slate-900  to-slate-900 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -113,7 +112,7 @@ const TournamentBracket: React.FC = () => {
             className="w-full h-auto"
             style={{ maxHeight: '80vh' }}
           >
-            {/* ===== SEMI-FINALS ===== */}
+            {/* Semi-Finals Label */}
             <text
               x="120"
               y="30"
@@ -126,33 +125,34 @@ const TournamentBracket: React.FC = () => {
             </text>
 
             {/* Semi-Final 1 */}
-            <g key="semi1-p1" transform="translate(50, 80)">
-              <PlayerCard key={matches.semi1.player1.playerId ?? 's1p1'} player={matches.semi1.player1} />
+            <g transform="translate(50, 80)">
+              <PlayerCard player={matches.semi1.player1} />
             </g>
-            <g key="semi1-p2" transform="translate(50, 160)">
-              <PlayerCard key={matches.semi1.player2.playerId ?? 's1p2'} player={matches.semi1.player2} />
+            <g transform="translate(50, 160)">
+              <PlayerCard player={matches.semi1.player2} />
             </g>
 
             {/* Semi-Final 2 */}
-            <g key="semi2-p1" transform="translate(50, 280)">
-              <PlayerCard key={matches.semi2.player1.playerId ?? 's2p1'} player={matches.semi2.player1} />
+            <g transform="translate(50, 280)">
+              <PlayerCard player={matches.semi2.player1} />
             </g>
-            <g key="semi2-p2" transform="translate(50, 360)">
-              <PlayerCard key={matches.semi2.player2.playerId ?? 's2p2'} player={matches.semi2.player2} />
+            <g transform="translate(50, 360)">
+              <PlayerCard player={matches.semi2.player2} />
             </g>
 
-            {/* Connectors Semi → Final */}
+            {/* Connector lines from Semi 1 to Final */}
             <line x1="230" y1="110" x2="320" y2="110" stroke="#0ea5e9" strokeWidth="3" />
             <line x1="230" y1="190" x2="320" y2="190" stroke="#0ea5e9" strokeWidth="3" />
             <line x1="320" y1="110" x2="320" y2="190" stroke="#0ea5e9" strokeWidth="3" />
             <line x1="320" y1="150" x2="420" y2="150" stroke="#0ea5e9" strokeWidth="3" />
 
+            {/* Connector lines from Semi 2 to Final */}
             <line x1="230" y1="310" x2="320" y2="310" stroke="#0ea5e9" strokeWidth="3" />
             <line x1="230" y1="390" x2="320" y2="390" stroke="#0ea5e9" strokeWidth="3" />
             <line x1="320" y1="310" x2="320" y2="390" stroke="#0ea5e9" strokeWidth="3" />
             <line x1="320" y1="350" x2="420" y2="350" stroke="#0ea5e9" strokeWidth="3" />
 
-            {/* ===== FINAL ===== */}
+            {/* Final Label */}
             <text
               x="500"
               y="30"
@@ -164,20 +164,21 @@ const TournamentBracket: React.FC = () => {
               FINAL
             </text>
 
-            <g key="final-p1" transform="translate(420, 120)">
-              <PlayerCard key={matches.final.player1.playerId ?? 'f1'} player={matches.final.player1} size="large" />
+            {/* Final Match */}
+            <g transform="translate(420, 120)">
+              <PlayerCard player={matches.final.player1} />
             </g>
-            <g key="final-p2" transform="translate(420, 320)">
-              <PlayerCard key={matches.final.player2.playerId ?? 'f2'} player={matches.final.player2} size="large" />
+            <g transform="translate(420, 320)">
+              <PlayerCard player={matches.final.player2} />
             </g>
 
-            {/* Connectors Final → Winner */}
+            {/* Connector lines from Final to Winner */}
             <line x1="600" y1="150" x2="720" y2="150" stroke="#0ea5e9" strokeWidth="3" />
             <line x1="600" y1="350" x2="720" y2="350" stroke="#0ea5e9" strokeWidth="3" />
             <line x1="720" y1="150" x2="720" y2="350" stroke="#0ea5e9" strokeWidth="3" />
             <line x1="720" y1="250" x2="820" y2="250" stroke="#0ea5e9" strokeWidth="3" />
 
-            {/* ===== CHAMPION ===== */}
+            {/* Winner Label */}
             <text
               x="900"
               y="30"
@@ -189,7 +190,8 @@ const TournamentBracket: React.FC = () => {
               CHAMPION
             </text>
 
-            <g key="winner" transform="translate(820, 210)">
+            {/* Winner */}
+            <g transform="translate(820, 210)">
               <rect
                 width="280"
                 height="100"
@@ -206,10 +208,12 @@ const TournamentBracket: React.FC = () => {
                 stroke="#0ea5e9"
                 strokeWidth="3"
               />
-              <User x={48} y={38} size={24} stroke="#0ea5e9" strokeWidth="2" />
+              <g transform="translate(60, 50)">
+                <User size={24} stroke="#0ea5e9" strokeWidth="2" x={-12} y={-12} />
+              </g>
               <text
                 x="110"
-                y="55"
+                y="45"
                 fill="#000000"
                 fontSize="20"
                 fontWeight="700"
@@ -218,24 +222,31 @@ const TournamentBracket: React.FC = () => {
                 {matches.winner.name}
               </text>
               <g transform="translate(240, 50)">
-                <Trophy size={32} fill="#fbbf24" stroke="#1e293b" strokeWidth="2" />
+                <Trophy
+                  size={32}
+                  fill="#fbbf24"
+                  stroke="#1e293b"
+                  strokeWidth="2"
+                  x={-16}
+                  y={-16}
+                />
               </g>
             </g>
           </svg>
         </div>
 
-        {/* ===== Legend ===== */}
+        {/* Legend */}
         <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-white border-2 border-slate-800" />
+            <div className="w-6 h-6 rounded bg-white border-2 border-slate-800"></div>
             <span className="text-white">Not Played</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-green-500 border-2 border-slate-800" />
+            <div className="w-6 h-6 rounded bg-green-500 border-2 border-slate-800"></div>
             <span className="text-white">Winner</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-red-500 border-2 border-slate-800" />
+            <div className="w-6 h-6 rounded bg-red-500 border-2 border-slate-800"></div>
             <span className="text-white">Eliminated</span>
           </div>
         </div>

@@ -1061,7 +1061,6 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter })
       y: room.height / 2,
       dx: (Math.random() > 0.5 ? 6 : -6), // Random horizontal direction
       dy: (Math.random() - 0.5) * 6, // Random vertical angle
-      // dy: 0
     };
     console.log("🔄 Ball reset:", room.ball);
   }

@@ -10,6 +10,7 @@ import JoinTournament from "./components/JoinTournament";
 
 export default function Tournament() {
     const [ isCreating, setIsCreating ] = useState(true); // toggle between create and join tournament
+    const [ Round1Player, setRound1Player ] = React.useState<Array<number>>([]);
 
     return (
         <div className="flex flex-col h-screen w-screen bg-cover bg-center overflow-auto justify-center items-center text-white bg-black/50">
@@ -31,7 +32,7 @@ export default function Tournament() {
                 Join Tournament
                 </button>
             </div>
-            {isCreating ? <CreateTournament /> : <JoinTournament />}
+            {isCreating ? <CreateTournament  /> : <JoinTournament />}
         </div>
     );
 }

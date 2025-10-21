@@ -6,7 +6,6 @@ import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "./context/SocketContext";
 import Notifications from "./components/Notifications";
 import { InviteProvider } from "./context/InviteContext";
-import { TournamentProvider } from './modes/tournament/context/TournamentTreeContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,9 +37,7 @@ export default function RootLayout({
     <SocketProvider>
       <InviteProvider>
       <Notifications />
-      <TournamentProvider>
         {children}
-      </TournamentProvider>
       </InviteProvider>
     </SocketProvider>
   </SettingsProvider>

@@ -13,6 +13,25 @@ import { createTornamentGame } from "./tournamentGame";
 export function registerTournamentEvents(socket: Socket, tournamentSystem: TournamentSystem, io: SocketIOServer) {
   console.log("🎮 Registering tournament events for:", socket.id);
 
+  // socket.on("create_tournament", async (obj : CreateTournamentOBJ) => {
+  //   console.log("🏆 Tournament creation requested");
+  //   const tournament = tournamentSystem.createTournament(
+  //       obj.name,
+  //       obj.number_of_players,
+  //       obj.isPrivate,
+  //       obj.createdBy,
+  //       io
+  //   );
+  //   const success = tournamentSystem.addPlayerToTournament(tournament.getId(), obj.createdBy, socket);
+  //   if (success) {
+  //       socket.emit("joined_tournament", { message: "Joined successfully" , tournamentId: tournament.getId()});
+  //   } else {
+  //       socket.emit("joined_tournament", { message: "Failed to join tournament" });
+  //   }
+
+  //   socket.emit("created_tournament", { message: "Tournament created successfully", tournamentId: tournament.getId() });
+  // });
+
   socket.on("create_tournament", async (obj : CreateTournamentOBJ) => {
     console.log("🏆 Tournament creation requested");
     const tournament = tournamentSystem.createTournament(
@@ -38,7 +57,6 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
     socket.emit("created_tournament", { message: "Tournament created successfully", tournamentId: tournament.getId() });
   });
 
-
   // socket.on("get_all_available_public_tournaments", async () => {
   //   console.log("📋 Fetching all available public tournaments");
   //   const publicTournaments = tournamentSystem.getAllPublicTournaments();
@@ -56,6 +74,16 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
       numberOfPlayers: t.getNumberOfPlayers()
      })) });
   });
+
+  // socket.on("join_tournament", async (obj : JoinedPlayerOBJ) => {
+  //   console.log("👥 Player Want to Join:", obj);
+  //   const success = tournamentSystem.addPlayerToTournament(obj.tournamentId, obj.playerId, socket);
+  //   if (success) {
+  //       socket.emit("joined_tournament", { message: "Joined successfully" , tournamentId: obj.tournamentId});
+  //   } else {
+  //       socket.emit("joined_tournament", { message: "Failed to join tournament" });
+  //   }
+  // });
 
   socket.on("join_tournament", async (obj : JoinedPlayerOBJ) => {
     console.log("👥 Player Want to Join:", obj);
@@ -94,9 +122,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
     } else {
       io.to(obj.tournamentId).emit("tournament_started", { message: "Tournament not started!" });
     }
-  });
-
-  
+});  
 //   socket.on("join_tournament", (data) => {
 //     console.log("👥 Player joined tournament:", data);
 //     socket.emit("joined_tournament", { message: "Joined successfully" });

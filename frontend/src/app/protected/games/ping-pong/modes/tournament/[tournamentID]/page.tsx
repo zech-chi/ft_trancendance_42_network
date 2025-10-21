@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSocket } from "../../../context/SocketContext";
 import toast from "react-hot-toast";
-import TournamentTree from "../components/TournamentTree";
 
 export default function Play() {
   const router = useRouter();
@@ -46,7 +45,18 @@ export default function Play() {
   return (
     <div className="w-full h-full flex flex-col items-center justify-start p-4">
       <h1 className="text-2xl font-bold mb-4">Tournament Bracket</h1>
-      <TournamentTree tournamentId={tournamentId || ""} />
+      <h2 >Round1</h2>
+      <div className="w-full max-w-md bg-gray-800 p-4 rounded-lg">
+        {Round1Player.length === 0 ? (
+          <p className="text-gray-400">No players in Round 1 yet.</p>
+        ) : (
+          Round1Player.map((playerId, index) => (
+            <div key={index} className="p-2 bg-gray-700 rounded mb-2">
+              <p className="text-white">Player ID: {playerId}</p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   )
 }
