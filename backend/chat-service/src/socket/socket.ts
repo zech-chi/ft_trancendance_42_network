@@ -166,23 +166,60 @@ export function sendMessageToUser(userId: string, message: any) {
 }
 
 // send the event block or unblock user to the specific user
+// export function sendBlockEventToUser(userId: string, event: string, friendId: string) {
+//   const sockets = onlineUsers.get(friendId); 
+//   console.log("=====> sockets:", sockets);
+//   console.log("onlineUsers:", onlineUsers);
+//   console.log(`Sending ${event} event to user ${friendId} for contact ${userId}`);
+//   if (sockets) {
+//     sockets.forEach((socketId) => {
+//       ioInstance?.to(socketId).emit(event, {
+//         userId, // the user who blocked or unblocked
+//         friendId, // the user who is blocked or unblocked
+//       }); // !to change to friendId
+//     });
+//     console.log(`Event ${event} sent to user ${friendId} for contact ${userId}`);
+//   } else {
+//     console.log(`User ${friendId} is not online.`);
+//   }
+// }
+// /backend/controllers/blockUser.ts
+
 export function sendBlockEventToUser(userId: string, event: string, friendId: string) {
-  const sockets = onlineUsers.get(friendId); 
-  console.log("=====> sockets:", sockets);
-  console.log("onlineUsers:", onlineUsers);
-  console.log(`Sending ${event} event to user ${friendId} for contact ${userId}`);
-  if (sockets) {
-    sockets.forEach((socketId) => {
+  const friendSockets = onlineUsers.get(friendId);
+  const userSockets = onlineUsers.get(userId);
+
+  console.log(`[sendBlockEventToUser] Emitting ${event} event`);
+  console.log(`→ To blocker (${userId}) sockets:`, userSockets);
+  console.log(`→ To blocked (${friendId}) sockets:`, friendSockets);
+
+  // Notify the blocked user (userB)
+  if (friendSockets) {
+    friendSockets.forEach((socketId) => {
       ioInstance?.to(socketId).emit(event, {
-        userId, // the user who blocked or unblocked
-        friendId, // the user who is blocked or unblocked
-      }); // !to change to friendId
+        userId,      // who blocked
+        friendId,    // who got blocked
+      });
     });
-    console.log(`Event ${event} sent to user ${friendId} for contact ${userId}`);
   } else {
     console.log(`User ${friendId} is not online.`);
   }
+
+  // 🔥 Also notify the blocker (userA) in all their sessions
+  if (userSockets) {
+    userSockets.forEach((socketId) => {
+      ioInstance?.to(socketId).emit(event, {
+        userId,      // who blocked
+        friendId,    // who got blocked
+      });
+    });
+  } else {
+    console.log(`User ${userId} is not online.`);
+  }
+
+  console.log(`Event ${event} emitted to both users.`);
 }
+
 
 // this function will be used to set the online status of a user in back-end
 export async function setOnlineTodb(userId: string, status: boolean, updateLastSeen: boolean) {
@@ -230,6 +267,7 @@ export async function setOnlineTodb(userId: string, status: boolean, updateLastS
 // this function will be used to send the event delete message or update a message to the specific user
 export function sendDeleteOrUpdateMessageEventToUser(userId: string, from: string ,event: string, messageId: string, Updatemessage: string) {
   const sockets = onlineUsers.get(userId);
+  const fromSockets = onlineUsers.get(from);
   console.log(`Sending ${event} event to user ${userId} for message ${messageId}`);
   if (sockets) {
     sockets.forEach((socketId) => {
@@ -243,5 +281,20 @@ export function sendDeleteOrUpdateMessageEventToUser(userId: string, from: strin
     console.log(`Event ${event} sent to user ${userId} for message ${messageId}`);
   } else {
     console.log(`User ${userId} is not online.`);
+  }
+
+  // 🔥 Also notify the sender (from) in all their session
+  if (fromSockets) {
+    fromSockets.forEach((socketId) => {
+      ioInstance?.to(socketId).emit(event, {
+        from, // the user who sent the message
+        userId,
+        messageId,
+        Updatemessage
+      });
+    });
+    console.log(`Event ${event} sent to sender ${from} for message ${messageId}`);
+  } else {
+    console.log(`Sender ${from} is not online.`);
   }
 }

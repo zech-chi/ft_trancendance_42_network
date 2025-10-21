@@ -136,57 +136,102 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
     }
   };
 
-  const handleBlockUser = ({userId, friendId} : {userId: number, friendId: number}) => {
-    console.log(friendId); // to remove
-    if (contact == null) {
-      return ;
-    }
-    console.warn("Block user event received for ID:", userId);
-    if (userId == contact.id) {
-      // contact.blocked = true; // Update the contact's blocked status
-      // contact.blockedBy = userId; // Update the contact's blockedBy status
-      setSelectedChat((prevContact) => {
-        if (!prevContact) return null;
+  // const handleBlockUser = ({userId, friendId} : {userId: number, friendId: number}) => {
+  //   console.log(friendId); // to remove
+  //   if (contact == null) {
+  //     return ;
+  //   }
+  //   console.warn("Block user event received for ID:", userId);
+  //   if (userId == contact.id) {
+  //     // contact.blocked = true; // Update the contact's blocked status
+  //     // contact.blockedBy = userId; // Update the contact's blockedBy status
+  //     setSelectedChat((prevContact) => {
+  //       if (!prevContact) return null;
       
-        return {
-          ...prevContact,
-          blocked: true,
-          blockedBy: userId,
-        };
-      });
-      setisClickedBlockIcon(false); // Close the confirmation block
-      // setMessage(`You can't reply to this conversation anymore!`);
-    }
-  }
-
-  const handleUnblockUser = ({userId, friendId} : {userId: number, friendId: number}) => {
-    console.log(friendId); // to remove
-    if (contact == null) {
-      return ;
-    }
-    console.warn("Unblock user event received for ID:", userId);
-    if (userId == contact.id) {
-      // contact.blocked = false; // Update the contact's blocked status
-      // contact.blockedBy = undefined; // Clear the blockedBy status
-      setSelectedChat((prevContact) => {
-        if (!prevContact) return null;
-        return {
-        ...prevContact,
-        blocked: false, // Update the contact's blocked status
-        blockedBy: undefined, // Clear the blockedBy status
-      }
-    }
+  //       return {
+  //         ...prevContact,
+  //         blocked: true,
+  //         blockedBy: userId,
+  //       };
+  //     });
+  //     setisClickedBlockIcon(false); // Close the confirmation block
+  //     // setMessage(`You can't reply to this conversation anymore!`);
+  //   }
+  // }
+  const handleBlockUser = ({ userId, friendId }: { userId: number; friendId: number }) => {
+    alert("Block user event received for ID:" + userId + " friendId: " + friendId);
+    if (!contact) return;
+  
+    // If current user is the one blocking
+    if (currentUserId == userId && contact.id == friendId) {
+      setSelectedChat((prev) => prev ? { ...prev, blocked: true, blockedBy: userId } : null);
+      setContactsList((prev) =>
+        prev.map((c) =>
+          c.id == friendId ? { ...c, blocked: true, blockedBy: userId } : c
+        )
       );
-      setisClickedBlockIcon(false); // Close the confirmation block
-      // setMessage(`You can now message ${contact.name} again!`);
+      setisClickedBlockIcon(false);
     }
-  }
+  
+    // If current user is the one being blocked
+    else if (currentUserId == friendId && contact.id == userId) {
+      setSelectedChat((prev) => prev ? { ...prev, blocked: true, blockedBy: userId } : null);
+      setisClickedBlockIcon(false);
+    }
+  };
+  
+
+  // const handleUnblockUser = ({userId, friendId} : {userId: number, friendId: number}) => {
+  //   console.log(friendId); // to remove
+  //   if (contact == null) {
+  //     return ;
+  //   }
+  //   console.warn("Unblock user event received for ID:", userId);
+  //   if (userId == contact.id) {
+  //     // contact.blocked = false; // Update the contact's blocked status
+  //     // contact.blockedBy = undefined; // Clear the blockedBy status
+  //     setSelectedChat((prevContact) => {
+  //       if (!prevContact) return null;
+  //       return {
+  //       ...prevContact,
+  //       blocked: false, // Update the contact's blocked status
+  //       blockedBy: undefined, // Clear the blockedBy status
+  //     }
+  //   }
+  //     );
+  //     setisClickedBlockIcon(false); // Close the confirmation block
+  //     // setMessage(`You can now message ${contact.name} again!`);
+  //   }
+  // }
+  const handleUnblockUser = ({ userId, friendId }: { userId: number; friendId: number }) => {
+    alert("Unblock user event received for ID:" + userId + " friendId: " + friendId);
+    if (!contact) return;
+  
+    // 🔓 If current user unblocked someone
+    if (currentUserId == userId && contact.id == friendId) {
+      setSelectedChat((prev) => prev ? { ...prev, blocked: false, blockedBy: undefined } : null);
+      setContactsList((prev) =>
+        prev.map((c) =>
+          c.id === friendId ? { ...c, blocked: false, blockedBy: undefined } : c
+        )
+      );
+      setisClickedBlockIcon(false);
+    }
+  
+    // 🔓 If current user got unblocked by someone
+    else if (currentUserId == friendId && contact.id == userId) {
+      setSelectedChat((prev) => prev ? { ...prev, blocked: false, blockedBy: undefined } : null);
+      setisClickedBlockIcon(false);
+    }
+  };
+  
 
   const handleDeleteMessage = ({ messageId, from, userId }: { messageId: number; from: number, userId: number }) => {
     if (contact == null) return ;
     console.warn("Delete message event received for ID:", messageId , from ,userId , currentUserId);
     // Check if the message belongs to the current contact
-    if (currentUserId == userId && contact.id == from) {
+    if ((contact.id == from || contact.id == userId)) {
+      alert("Deleting message with ID:" + messageId);
       // Filter out the deleted message from the messages list
       setMessagesList((prevMessages) => prevMessages.filter((msg) => msg.id != messageId));
     }
@@ -195,8 +240,9 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
   const handleUpdateMessage = ({ messageId, Updatemessage, from, userId }: { messageId: number; Updatemessage: string; from: number, userId: number }) => {
     if (contact == null) return ;
     console.warn("Update message event received for ID:", messageId, Updatemessage, from, userId);
+    alert("Updating message with ID:" + messageId + " to: " + Updatemessage);
     // Check if the message belongs to the current contact
-    if (currentUserId == userId && contact.id == from) {
+    if ((contact.id == from || contact.id == userId)) {
       // Update the specific message in the messages list
       setMessagesList((prevMessages) =>
         prevMessages.map((msg) =>
@@ -225,6 +271,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
 
 
   const  handleSendMessage = async () => {
+    // alert("send message called");
     if (contact == null) {
       return ;
     }
@@ -298,19 +345,19 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
       })
 
 
-      setMessagesList((prevMessages) => [
-        ...prevMessages,
-        {
-          id: data.data.id, // Assuming the server returns an ID for the message
-          type: data.data.type, // Assuming this is a text message
-          message: data.data.message, // The message content
-          time: data.data.time,
-          sent:data.data.sent,
-          url: data.data.url,
-          fileName: data.data.fileName,
-          thumbnailUrl: data.data.thumbnailUrl, // Optional thumbnail URL if applicable
-        },
-      ]);
+      // setMessagesList((prevMessages) => [
+      //   ...prevMessages,
+      //   {
+      //     id: data.data.id, // Assuming the server returns an ID for the message
+      //     type: data.data.type, // Assuming this is a text message
+      //     message: data.data.message, // The message content
+      //     time: data.data.time,
+      //     sent:data.data.sent,
+      //     url: data.data.url,
+      //     fileName: data.data.fileName,
+      //     thumbnailUrl: data.data.thumbnailUrl, // Optional thumbnail URL if applicable
+      //   },
+      // ]);
       setIsSending(false); // Reset sending state
       setInputValue("");
       // reorder the contact to the top of the list
@@ -415,12 +462,19 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
     setIsUploading(true);
 
     try {
+
+       // check if audio file exceeds the size limit
+      if (file.type.startsWith("audio/") && file.size > 10 * 1024 * 1024) {
+        throw new Error("Audio file exceeds limit size. Please try again with a smaller file.");
+      }
+
       // check if the file exceeds the size limit
       if (file.size > 100 * 1024 * 1024) {
         throw new Error("File exceeds limit size. Please try again with a smaller file.");
       }
 
       const fileData = await sendFileToServer(file);
+      // alert("File uploaded successfully:" + JSON.stringify(fileData) + " " + fileData);
 
       if (!fileData) {
         throw new Error("File data could not be processed by the server.");
@@ -448,18 +502,18 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           return c;
         });
       })
-       setMessagesList((prevMessages) => [
-        ...prevMessages,
-        {
-          id: fileData.id, // Assuming the server returns an ID for the message
-          type: fileData.type, // Assuming this is a file message
-          url: fileData.url, // URL of the uploaded file
-          fileName: fileData.filename, // Name of the file
-          thumbnailUrl: fileData.thumbnail, // Optional thumbnail URL if applicable
-          time: fileData.time, // Time of upload
-          sent: fileData.sent, // Assuming this is a sent message
-        },
-      ]);
+      //  setMessagesList((prevMessages) => [
+      //   ...prevMessages,
+      //   {
+      //     id: fileData.id, // Assuming the server returns an ID for the message
+      //     type: fileData.type, // Assuming this is a file message
+      //     url: fileData.url, // URL of the uploaded file
+      //     fileName: fileData.filename, // Name of the file
+      //     thumbnailUrl: fileData.thumbnail, // Optional thumbnail URL if applicable
+      //     time: fileData.time, // Time of upload
+      //     sent: fileData.sent, // Assuming this is a sent message
+      //   },
+      // ]);
 
       reorderContacts(contact.id);
 

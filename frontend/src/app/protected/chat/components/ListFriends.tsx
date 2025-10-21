@@ -38,7 +38,7 @@ function ListFriends({
 
   const handleIncomingMessage = (message: Message) => {
     console.warn("Received message:========>", message);
-    const contactIndex = contactsList.findIndex((c) => c.id == message.from);
+    const contactIndex = contactsList.findIndex((c) => c.id == message.from || c.id == message.to);
     if (contactIndex === -1) return;
     contactsList[contactIndex].lastMessage = {
       content: message.message ?? "",
@@ -50,6 +50,7 @@ function ListFriends({
     setUpdateMessage({ deleted: false, edited: false, id: -1 });
   };
 
+
   const handleBlockUser = ({ userId, friendId }: { userId: number; friendId: number }) => {
     console.warn("Handling block event for friend:", friendId);
     // Use the functional update form to avoid stale state.
@@ -57,7 +58,8 @@ function ListFriends({
       // Create a new array using .map()
       return prevContacts.map(contact => {
         // If this is the contact to block, create a new object for them
-        if (contact.id == userId) {
+        if (contact.id == friendId || contact.id == userId) {
+          alert(`You have been blocked by ${contact.name}`);
           return { ...contact, blocked: true , blockedBy: userId }; //! to change to friendId
         }
         // Otherwise, return the contact unchanged
@@ -70,17 +72,17 @@ function ListFriends({
     console.warn("Handling unblock event for friend:", friendId);
     setContactsList(prevContacts => 
       prevContacts.map(contact => 
-        contact.id == userId ? { ...contact, blocked: false, blockedBy: undefined } : contact
+       ( contact.id == friendId || contact.id == userId) ? { ...contact, blocked: false, blockedBy: undefined } : contact
       )
     );
   };
 
 
-  const handleDeleteMessage = ({from}: {from: number}) => {
+  const handleDeleteMessage = ({from, userId}: {from: number, userId: number}) => {
     // Check if the message belongs to the current contact
     setContactsList(prevContacts =>
       prevContacts.map(contact =>
-        contact.id == from
+        (contact.id == from || contact.id == userId)
           ? {
               ...contact,
               lastMessage: {
@@ -95,10 +97,10 @@ function ListFriends({
     setUpdateMessage(prevState => ({deleted: true, edited: false, id: from}));
   }
 
-  const handleUpdateMessage = ({from}: {from: number}) => {
+  const handleUpdateMessage = ({from, userId}: {from: number, userId: number}) => {
     setContactsList(prevContacts =>
       prevContacts.map(contact =>
-        contact.id == from
+        (contact.id == from || contact.id == userId)
           ? {
               ...contact,
               lastMessage: {
