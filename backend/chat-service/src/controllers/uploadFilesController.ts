@@ -244,6 +244,12 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     return; // If no file is uploaded, exit the function
   }
 
+  console.log("Checking file size limit...");
+    if (!checkSizeLimit(request, reply, data)) {
+      data.file.resume(); // Consume the stream to prevent hanging
+      return reply; // If size limit is exceeded, exit the function
+    }
+
   console.log("mimetype:", data.mimetype);
   // Check if the file type is allowed
   if (!isAllowedMimeType(reply, data.mimetype)) {
@@ -252,10 +258,11 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
 
   try {
     // check if size limit is exceeded using content-length header
-    if (!checkSizeLimit(request, reply, data)) {
-      data.file.resume(); // Consume the stream to prevent hanging
-      return reply; // If size limit is exceeded, exit the function
-    }
+    // console.log("Checking file size limit...");
+    // if (!checkSizeLimit(request, reply, data)) {
+    //   data.file.resume(); // Consume the stream to prevent hanging
+    //   return reply; // If size limit is exceeded, exit the function
+    // }
 
     // Sanitize filename to prevent path traversal.
     const filename = path.basename(data.filename);
