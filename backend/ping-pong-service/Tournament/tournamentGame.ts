@@ -268,6 +268,7 @@ export async function  createTornamentGame(tournamentId: string, tournamentSyste
         // Here you would create the game room, initialize game state, etc.
         // For simplicity, we'll just emit an event to the players to join the room.
 
+        console.log(`🚀 Emitting tournament_game_starting to players ${player1Id}  ---------VS--------- ${player2Id} in tournament ${tournamentId}`);
         io.to(tournamentId).emit("tournament_game_starting", 
         {
           message: "Tournament game is starting!",

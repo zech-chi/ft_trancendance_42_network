@@ -453,7 +453,7 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter })
       return;
     }
 
-    console.log(`✅ inviter: ${inviter}, accepter: ${accepter}`);
+    console.log(`✅ inviter: ${inviter}, accepter: ${accepter.id}`);
     const inviterSocketId = onlineUsers.get(inviter);
     const accepterSocketId = onlineUsers.get(accepter.id);
     console.log("INVITER SOCKET ID:", inviterSocketId);

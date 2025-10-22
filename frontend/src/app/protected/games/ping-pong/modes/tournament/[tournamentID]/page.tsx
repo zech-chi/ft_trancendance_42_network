@@ -12,29 +12,49 @@ export default function Play() {
   const socketContext = useSocket();
   const pathname = usePathname();
   const tournamentId = pathname.split("/").pop();
+  let hasEmitted = false;
 
   useEffect(() => {
     const socket = socketContext.socket;
     if (!socket || !tournamentId) return;
 
-    console.log("📡 Emitting canWeStartTournament...");
-    socket.emit("canWeStartTournament", { tournamentId });
-
+    
     const handleStarted = (data: any) => {
       console.log("✅ Tournament started:", data);
       toast.success(data.message);
     };
-
+    
     const handleGameStarting = (data: any) => {
       console.log("🚀 Tournament game is starting:", data);
       toast.success("Tournament game is starting!");
-      socket.emit("accept_invite_tournament", {
-        inviter: data.opponentId === socketContext.currentUser?.id ? data.reciverId : data.opponentId,
-        inviterName: `playerId_${data.opponentId}`,
-        accepter: socketContext.currentUser,
-      });
+      const inviterId = data.opponentId === socketContext.currentUser?.id ? data.reciverId : data.opponentId;
+      const accepterId = socketContext.currentUser?.id;
+      if (inviterId === data.reciverId) {
+        console.log("---->>>>>>>>>>>>>>> ids of opponents:", inviterId, accepterId);
+        socket.emit("accept_invite_tournament", {
+          inviter: inviterId,
+          inviterName: `playerId_${data.opponentId}`,
+          accepter: socketContext.currentUser,
+        });
+      }
     };
 
+
+    console.log("📡 Checking canWeStartTournament emission...");
+    const emitOnce = () => {
+      if (!hasEmitted) {
+        hasEmitted = true;
+        console.log("📡 Emitting canWeStartTournament...");
+        socket.emit("canWeStartTournament", { tournamentId });
+      }
+    };
+  
+    setTimeout(emitOnce, 1000);
+    
+    // console.log("📡 Emitting canWeStartTournament...");
+    // setTimeout(() => {
+    //   socket.emit("canWeStartTournament", { tournamentId });
+    // }, 1000);
     socket.on("tournament_started", handleStarted);
     socket.on("tournament_game_starting", handleGameStarting);
 
