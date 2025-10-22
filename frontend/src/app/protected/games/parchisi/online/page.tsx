@@ -11,8 +11,6 @@ import {useGame } from "@/context/parchisiContexts/GameContext";
 import Sidebar from '@/components/layout/Sidebar';
 import Navbar from '@/components/layout/Navbar';
 
-// import { SocketProvider } from "@/contexts/SocketContext"
-// import { GameProvider } from "@/contexts/GameContext";
 
 export default function OnlineGamePage() {
   return (
@@ -26,7 +24,8 @@ function OnlinePageContent() {
   const [gameCode, setGameCode] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
-
+  const [rooms, setRooms] = useState<{id:string; players:number; status:string}[]>([]);
+  const [isLoadingRooms, setIsLoadingRooms] = useState(true);
   const router = useRouter();
   const { socket, setNamespace, isConnected } = useSocket();
   const { state , createGame, joinLobby } = useGame();
@@ -36,15 +35,13 @@ useEffect(() => {
 }, []);
 
   /* EXISTING ROOMS  */
-  const [rooms, setRooms] = useState<{id:string; players:number; status:string}[]>([]);
-  const [isLoadingRooms, setIsLoadingRooms] = useState(true);
+    // Fetch rooms every 5 seconds
   useEffect(() => {
   async function fetchRooms() {
     try {
       const res = await fetch("http://localhost:5555/games/parchisi/online/rooms");
       const data = await res.json();
       setRooms(data);
-      console.log("Fetched rooms:", data);
     } catch (err) {
       console.error("Failed to load rooms", err);
     } finally {
@@ -52,8 +49,6 @@ useEffect(() => {
     }
   }
   fetchRooms();
-
-  // optional: poll every 5s to keep list fresh
   const interval = setInterval(fetchRooms, 5000);
   return () => clearInterval(interval);
 }, []);
@@ -61,11 +56,13 @@ useEffect(() => {
 
 const handleJoinRoom = async(roomId: string) => {
     setGameCode(roomId);
-    handleJoinGame(roomId); // reuse your existing join logic
+    await handleJoinGame(roomId); // reuse your existing join logic
 };
 
   /** CREATE GAME */
   const handleCreateGame = async () => {
+    if (isCreating) return; // Prevent double click
+    setIsCreating(true);
     try {
       setIsCreating(true);
       const gameId = await createGame();
@@ -73,12 +70,14 @@ const handleJoinRoom = async(roomId: string) => {
     } catch (err) {
       alert(err);
     } finally {
-      setIsCreating(false);
+      setTimeout(() => setIsCreating(false), 1500);
     }
   };
 
   /** JOIN GAME */
    const handleJoinGame = async (roomId?: string) => {
+    if (isJoining) return; // Prevent double click
+    setIsJoining(true);
     try {
       setIsJoining(true);
       const code  = roomId || gameCode
@@ -87,7 +86,7 @@ const handleJoinRoom = async(roomId: string) => {
     } catch (err) {
       alert(err);
     } finally {
-      setIsJoining(false);
+      setTimeout(() => setIsJoining(false), 1500);
     }
   };
 
@@ -108,7 +107,7 @@ const handleJoinRoom = async(roomId: string) => {
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Parshichi</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Parcheesi</h1>
           <p className="text-purple-200">Play Parcheesi online with friends</p>
         </div>
 

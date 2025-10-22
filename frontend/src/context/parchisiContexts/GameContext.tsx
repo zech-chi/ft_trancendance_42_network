@@ -3,6 +3,7 @@
 import { createContext, useContext, useReducer, type ReactNode, useEffect, use } from "react"
 import { useSocket } from "./SocketContext"
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import { data } from "framer-motion/client";
 
 
 
@@ -25,6 +26,8 @@ interface GameState {
   gameStarted: boolean
   gameId: string | null;
   gametype?: string;
+  winner?: string | null;
+  winnerColor?: string | null;
 }
 
 type GameAction =
@@ -36,13 +39,15 @@ type GameAction =
   | { type: "SET_CURRENT_PLAYER"; payload: Player }
   | { type: "GAME_STARTED"; payload: { gameId: string;players: Player[]; board: object; currentPlayer: Player } }
   | { type: "INIT_LOBBY"; payload: { gameId: string, hostId:string } }
+  | { type: "SET_WINNER"; payload: {winner: string, winnerColor: string} };
 
 const initialState: GameState = {
   lobby: null,
   currentPlayer: null,
   gameStarted: false,
   gameId: null,
-
+  winner: null,
+  winnerColor: null,
 }
 
 function gameReducer(state: GameState, action: GameAction): GameState {
@@ -123,6 +128,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
             },
             currentPlayer: action.payload.currentPlayer || null
           }
+    case "SET_WINNER":
+      return {
+        ...state,
+        winner: action.payload.winner,
+        winnerColor: action.payload.winnerColor
+      }
     default:
       return state
   }
@@ -191,6 +202,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     // redirect back to /online
     window.location.href = "/protected/games/parchisi/online";
   });
+  socket.on("gameOver", (data: {winner: string, color: string}) => {
+    dispatch({type:"SET_WINNER", payload: {winner: data.winner, winnerColor: data.color}});
+  })
 
     return () => {
       socket.off("removePlayer");

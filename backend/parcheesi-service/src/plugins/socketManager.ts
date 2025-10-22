@@ -25,6 +25,8 @@ export default async function socketManager(io: Server) {
       const gameId = randomUUID(); // generate unique game id
       const room = new GameRoom(gameId, remote);
       rooms.set(gameId, room); // remove old room if there is only one player or game over or host leave or all players leave
+      //check if the player name is already in this game or other games
+      rooms.forEach((r) => {r.players.forEach((p) => {p.userName === data.username && socket.emit("error", { message: "Username already in room" });});});
 
       console.log(chalk.blue(`Game created with ID: ${gameId} by ${data.username} --> remote game`));
       // Join creator into room
@@ -64,6 +66,12 @@ export default async function socketManager(io: Server) {
         socket.emit("roomFull", { message: "Room is full" });
         return;
       }
+      if (room.players.find(p => p.userName === data.username)) {
+        socket.emit("error", { message: "Username already taken in this room" });
+        return;
+      }
+
+      rooms.forEach((r) => {r.players.forEach((p) => {p.userName === data.username && socket.emit("error", { message: "Username already in other room" });});});
       socket.join(room.id);
 
       const player: Player = room.newPlayer(data.username);
@@ -93,73 +101,15 @@ export default async function socketManager(io: Server) {
       if (!player)
         return;
       room.readyPlayers++;
-      // if (room.readyPlayers > room.players.length)
-      //   {
-      //     //mean someone realoded the page and clicked ready again so need to send him all the playes places with the current player
-      //     room.readyPlayers = room.players.length;
-      //     for (const p of room.players)
-      //     {
-      //       //send each player his places i dont need socket , because i user this.broadcast
-      //      //loop thorght all peices of p 
-      //       for (const piece of p.pieces)
-      //       {
-      //         room.emitJumpEvent(piece, p.color, piece.position, 'center')
-      //       }
-      //     }
-      //   }
       if (room.readyPlayers === room.players.length)
         {
+          await room.storeGameStartInDB();
           await room.startGame();
         }
 
     });
 
-  //   socket.on("join-request", (data: { gameId: string; username: string}) => {
 
-  //     const room = rooms.get(data.gameId);
-  //     if (!room) {
-  //       socket.emit("error", { message: "Game not found" });
-  //       return;
-  //     }
-  //     if (room?.gamestarted) {
-  //       socket.emit("error", { message: "Game already started" });
-  //       return;
-  //     }
-      
-  //     if (room.players.length >= 4) {
-  //       socket.emit("roomFull", { message: "Room is full" });
-  //       return;
-  //     }
-  //     const hostId = room.players[0].id;
-  //     const hostSocketId = room.sockets.get(hostId);
-  //     if (hostSocketId)
-  //       {
-  //         room.namespaceIO.to(hostSocketId.id).emit("join-notification", {
-  //           gameId: data.gameId,
-  //           username: data.username,
-  //       });
-  //       }
-  //   })
-
-  // socket.on("join-response", (data :{ gameId:string; username:string; accepted:boolean}) => {
-      
-  //     const room = rooms.get(data.gameId);
-  //     if (!room) {
-  //       socket.emit("error", { message: "Game not found" });
-  //       return;
-  //     }
-  //     if (room?.gamestarted) {
-  //       socket.emit("error", { message: "Game already started" });
-  //       return;
-  //     }
-      
-  //     if (room.players.length >= 4) {
-  //       socket.emit("roomFull", { message: "Room is full" });
-  //       return;
-  //     }
-
-  //       socket.emit("join-response", { accepted:data.accepted });
-  //   })
 
   
     socket.on("readyToPlay", (data: { gameId: string; username: string }) => {
@@ -182,7 +132,6 @@ export default async function socketManager(io: Server) {
         });
         
       }
-
     });
 
     
@@ -223,15 +172,15 @@ export default async function socketManager(io: Server) {
       await room.handleRollDice();
 
       if (room.gameOver) {
-        room.broadcast("gameOver", {
-          winner: room.currentPlayer.userName,
-          color: room.currentPlayer.color,
-        });
-        const id = room.id;
-        console.log(chalk.red(`Cleaning up game ${id}`));
-        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
-        room.destroy();
-        rooms.delete(id);
+        await room.storeGameEndInDB(room.currentPlayer.userName);
+          room.broadcast("gameOver", {
+              winner: room.currentPlayer.userName,
+              color: room.currentPlayer.color,
+            })
+          const id = room.id;
+          console.log(chalk.red(`Cleaning up game ${id}`));
+          room.destroy();
+          rooms.delete(id);
       }
     });
 
@@ -248,15 +197,15 @@ export default async function socketManager(io: Server) {
       await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
 
       if (room.gameOver) {
+        await room.storeGameEndInDB(room.currentPlayer.userName);
         room.broadcast("gameOver", {
-          winner: room.currentPlayer.userName,
-          color: room.currentPlayer.color,
+            winner: room.currentPlayer.userName,
+            color: room.currentPlayer.color,
         });
-        const id = room.id;
-        console.log(chalk.red(`Cleaning up game ${id}`));
-        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
-        room.destroy();
-        rooms.delete(id);
+          const id = room.id;
+          console.log(chalk.red(`Cleaning up game ${id}`));
+          room.destroy();
+          rooms.delete(id);
       }
     });
     
@@ -312,6 +261,7 @@ export default async function socketManager(io: Server) {
         );
         if (playerIndex !== -1) {
           const player = room.players[playerIndex];
+          const username = room.currentPlayer.userName;
           await room.resetPieces(player);
           room.players.splice(playerIndex, 1);
           room.sockets.delete(player.id);
@@ -321,18 +271,24 @@ export default async function socketManager(io: Server) {
 
           // cleanup if room empty
           if (room.players.length === 1 || room.players.length === 0) {
-            room.broadcast("lobbyClosed", { message: "Room destroyed (no players left)" });
-            if (room.players.length === 1){
+            if (room.players.length === 1 && room.gamestarted){
+              
+              await room.storeGameEndInDB(username);
               room.gameOver = true;
               room.broadcast("gameOver", {
-                  winner: room.currentPlayer.userName,
-                  color: room.currentPlayer.color,
-                });
+                winner: username,
+                color: room.currentPlayer.color,
+              });
+                room.destroy();
+                rooms.delete(id);
+                console.log(chalk.red(`Game ${id} deleted (no players left).`));
+              return;
             }
             room.destroy();
             rooms.delete(id);
             console.log(chalk.red(`Game ${id} deleted (no players left).`));
           }
+          room.broadcast("lobbyClosed", { message: "Room destroyed (no players left)" });
           break;
         }
       }

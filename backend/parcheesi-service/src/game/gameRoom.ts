@@ -5,6 +5,8 @@ import { Player, PlayerColor, Piece, MoveDecision, BoardPosition } from "../type
 import { Board } from "./Board";
 import { GameLogic } from "./gameLogic";
 import chalk from "chalk";
+import fastify from "fastify";
+import { ApidataBase } from "../utils/ApiDatabase";
 
 const COLORS_2P = [PlayerColor.RED, PlayerColor.YELLOW];
 const COLORS_3P4P = [PlayerColor.RED, PlayerColor.GREEN,PlayerColor.YELLOW, PlayerColor.BLUE];
@@ -17,7 +19,7 @@ export class GameRoom {
   logic: GameLogic;
   currentPlayerIndex: number;
   readyPlayers: number = 0;
-
+  db_gameId: number = 0;
   currentDice: number[] = [];
   bonusDice: number = 0;
   isDouble: number = 0;
@@ -122,7 +124,8 @@ export class GameRoom {
   
     // set first player turn
     setTimeout(() => {
-      this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });
+      if (this.currentPlayer)
+        this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });
     }, 5000);
   }
 
@@ -668,7 +671,52 @@ async handleRollDice() {
     console.log(chalk.yellow(`All pieces of player ${player.userName} have been reset to base.`));
   }
 
- async storeGameStartInDB() {
-    
+  async storeGameStartInDB() {
+    const playerUsernames = this.players.map(p => p.userName);
+
+    try {
+      const response = await fetch(ApidataBase.SetstartGame, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ players: playerUsernames }),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Failed: ${response.status} - ${text}`);
+      }
+
+      const data = await response.json();
+      console.log(`✅ Game start stored in DB with ID: ${data.gameId}`);
+      this.db_gameId = data.gameId ;
+      return data.gameId;
+    } catch (err) {
+      console.error(`❌ Error storing game start: ${(err as Error).message}`);
+    }
   }
+async storeGameEndInDB(winnerUsername: string) {
+    try {
+      if (this.db_gameId === 0) {
+        throw new Error("Game ID is not set. Cannot store game end.");
+      }
+      const response = await fetch(`${ApidataBase.SetendGame}/${this.db_gameId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ winner: winnerUsername }),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Failed: ${response.status} - ${text}`);
+      }
+
+      const data = await response.json();
+      console.log(`✅ Game end stored in DB for game ID: ${this.db_gameId} with : ${data.success}`);
+      return true;
+    } catch (err) {
+      console.error(`❌ Error storing game end: ${(err as Error).message}`);
+      return false;
+    }
+
 }
+} 
