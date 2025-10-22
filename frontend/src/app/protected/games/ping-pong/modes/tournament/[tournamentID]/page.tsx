@@ -35,12 +35,11 @@ export default function Play() {
           inviter: inviterId,
           inviterName: `playerId_${data.opponentId}`,
           accepter: socketContext.currentUser,
+          tournamentId: tournamentId,
         });
       }
     };
 
-
-    console.log("📡 Checking canWeStartTournament emission...");
     const emitOnce = () => {
       if (!hasEmitted) {
         hasEmitted = true;

@@ -36,6 +36,7 @@ interface GameRoom {
   isRunning: boolean;
   lastStateUpdate: number; // For throttling game state broadcasts
   gameEnded: boolean; // Flag to prevent disconnect messages after natural game end
+  tounrnamentId?: string;
 }
 
 interface GameSettings {
@@ -426,7 +427,7 @@ socket.on("accept_invite", async ({ inviter, inviterName ,accepter, inviteId }) 
 });
 
 
-socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter }) => {
+socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, tournamentId }) => {
   console.log("🎯 Accept invite received from:", socket.data.user?.username);
   
   // Critical section: Prevent race conditions during room creation
@@ -495,7 +496,8 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter })
       maxScore: 8,
       isRunning: false,
       lastStateUpdate: now,
-      gameEnded: false // Initialize game end flag
+      gameEnded: false, // Initialize game end flag
+      tounrnamentId: tournamentId
     };
 
     // Atomic operations to prevent race conditions
@@ -1034,7 +1036,8 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter })
         winner,
         finalScore: room.players.map(p => ({ id: p.id, username: p.username, score: p.score })),
         reason: "max_score_reached",
-        timestamp: now
+        timestamp: now,
+        tournamentId: room.tounrnamentId,
       });
       console.log(`🏆 Game in room ${roomId} ended. Winner: ${winner.username}`);
       

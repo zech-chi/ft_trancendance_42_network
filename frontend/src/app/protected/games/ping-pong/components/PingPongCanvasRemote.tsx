@@ -638,7 +638,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       console.log(`Score updated. Scorer ID: ${data.scorer}`);
     });
 
-    socket.on("game_ended", (data: { winner?: Player; finalScore?: Player[]; reason?: string; disconnectedPlayer?: string; leftPlayer?: string }) => {
+    socket.on("game_ended", (data: { winner?: Player; finalScore?: Player[]; reason?: string; disconnectedPlayer?: string; leftPlayer?: string ; tournamentId?: string }) => {
       console.log("🛑 Game ended event received:", data);
       setGameStatus('finished');
       
@@ -658,7 +658,11 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       
       setTimeout(() => {
         // setInviteState(prev => ({ ...prev, [userId]: true })); // Removed - using new invitation system
-        router.push('/protected/games/ping-pong'); 
+        if (data.tournamentId) {
+          router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
+        } else {
+          router.push('/protected/games/ping-pong'); 
+        }
       }, 5000);
     });
 
