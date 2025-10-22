@@ -1039,7 +1039,7 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, t
         timestamp: now,
         tournamentId: room.tounrnamentId,
       });
-      console.log(`🏆 Game in room ${roomId} ended. Winner: ${winner.username}`);
+      console.log(`🏆 Game in room ${roomId} ended. Winner: ${winner.id}`);
       
       // Force cleanup of any orphaned states after game ends
       setTimeout(() => {

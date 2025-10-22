@@ -8,6 +8,8 @@ export class Tournament {
     private numberOfPlayers : number; // 4 | 8
     private joinedPlayersIds : number[] = [];
     private joinedPlayersSockets : Socket[] = [];
+    private finalPlayersIds : number[] = [];
+    private finalPlayersSockets : Socket[] = [];
     private isPrivate : boolean;
     private createdBy : number;
     private creatrionDate : Date = new Date();
@@ -48,6 +50,10 @@ export class Tournament {
         return this.creatrionDate;
     }
 
+    getfinalPlayersIds(): number[] {
+        return this.finalPlayersIds;
+    }
+
     // set state
     setState(newState: 'pending' | 'ongoing' | 'completed'): void {
         this.state = newState;
@@ -73,6 +79,18 @@ export class Tournament {
         this.joinedPlayersSockets.push(playerSocket);
         this.io.to(playerSocket.id).socketsJoin(this.id);
         return true;
-    } 
+    }
 
+    addPlayerToFinal(playerId: number, playerSocket: Socket): void {
+        // check if player is in finals already
+        if (this.finalPlayersIds.includes(playerId)) {
+            return;
+        }
+        this.finalPlayersIds.push(playerId);
+        this.finalPlayersSockets.push(playerSocket);
+    }
+
+    getFinalPlayersIds(): number[] {
+        return this.finalPlayersIds;
+    }
 };

@@ -56,11 +56,34 @@ export class TournamentSystem {
         return false;
     }
 
+    canWeStartFinal(tournamentId: string): boolean {
+        const tournament = this.tournaments.get(tournamentId);
+        if (tournament) {
+            return tournament.getfinalPlayersIds().length === 2;
+        }
+        return false;
+    }
+
+    getFinalPlayersIds(tournamentId: string): number[] | null {
+        const tournament = this.tournaments.get(tournamentId);
+        if (tournament) {
+            return tournament.getfinalPlayersIds();
+        }
+        return null;
+    }
+
     getJoinedPlayersIds(tournamentId: string): number[] | null {
         const tournament = this.tournaments.get(tournamentId);
         if (tournament) {
             return tournament.getJoinedPlayersIds();
         }
         return null;
+    }
+
+    addPlayertofinal(tournamentId: string, playerId: number, playerSocket: Socket): void {
+        const tournament = this.tournaments.get(tournamentId);
+        if (tournament) {
+            tournament.addPlayerToFinal(playerId, playerSocket);
+        }
     }
 }

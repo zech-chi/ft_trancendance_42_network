@@ -13,3 +13,8 @@ export interface JoinedPlayerOBJ {
 export interface TournamentID {
     tournamentId: string;
 }
+
+export interface WinnerOBJ {
+    tournamentId: string;
+    winnerId: number;
+}

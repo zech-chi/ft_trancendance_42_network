@@ -281,6 +281,44 @@ export async function  createTornamentGame(tournamentId: string, tournamentSyste
 }
 
 
+export async function  createTornamentGameFinal(tournamentId: string, tournamentSystem: TournamentSystem, io: SocketIOServer ) {
+  console.log("2 ->>>>> tournament id : ", tournamentId);
+
+  // player at index 0 vs player at index 1 of joinedPlayers --> Room1
+  // and player at index 2 vs player at index 3  join Room1 as spectators
+  // and so on...
+
+  const tournament = tournamentSystem.getTournament(tournamentId);
+  if (!tournament) {
+      console.error(`❌ Tournament with ID ${tournamentId} not found.`);
+      return;
+  }
+  const joinedPlayers = tournament.getJoinedPlayersIds();
+  const finalPlayerIds = tournament.getFinalPlayersIds();
+  console.log("3 ->>>>> finalPlayerIds : ", finalPlayerIds);
+  for (let i = 0; i < finalPlayerIds.length; i += 2) {
+      const player1Id = finalPlayerIds[i];
+      const player2Id = finalPlayerIds[i + 1];
+
+      // const roomId = `tournament-game-${tournamentId}-room-${i/2}-${uuidv4()}`;
+      // console.log(`🎮 Creating game room ${roomId} for players ${player1Id} and ${player2Id}`);
+
+      // Here you would create the game room, initialize game state, etc.
+      // For simplicity, we'll just emit an event to the players to join the room.
+
+      console.log(`🚀 Emitting tournament_game_starting to players ${player1Id}  ---------VS--------- ${player2Id} in tournament ${tournamentId}`);
+      io.to(tournamentId).emit("tournament_game_starting", 
+      {
+        message: "Tournament game is starting!",
+        reciverId: player1Id,
+        opponentId: player2Id,
+        spectators: joinedPlayers.filter((id, index) => index !== i && index !== i + 1)
+      });
+      // Additional logic to actually start the game can be added here
+  }
+}
+
+
 
 // export function createTornamentGame(socket: Socket) {
 //     socket.on("start_tournament_game", () => {

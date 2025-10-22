@@ -5,6 +5,7 @@ import { useSocket } from "../../../context/SocketContext";
 import toast from "react-hot-toast";
 import { useTreeTournament } from "../context/TreeTournamentContext"; 
 import TournamentBracket from "../components/TournamentTree";
+import { useSearchParams, useParams } from "next/navigation";
 
 export default function Play() {
   const { tournamentTree, JoinTournament, resetTournament } = useTreeTournament();
@@ -12,12 +13,16 @@ export default function Play() {
   const socketContext = useSocket();
   const pathname = usePathname();
   const tournamentId = pathname.split("/").pop();
+  const searchParams = useSearchParams();
+  const round = searchParams.get("round");
   let hasEmitted = false;
+  console.log(" hasEmitted value:", hasEmitted);
 
+  console.log("🏆 Tournament ID from URL:", tournamentId);
+  console.log("🔄 Current Tournament round:", round);
   useEffect(() => {
     const socket = socketContext.socket;
     if (!socket || !tournamentId) return;
-
     
     const handleStarted = (data: any) => {
       console.log("✅ Tournament started:", data);
@@ -40,23 +45,36 @@ export default function Play() {
       }
     };
 
-    const emitOnce = () => {
-      if (!hasEmitted) {
-        hasEmitted = true;
-        console.log("📡 Emitting canWeStartTournament...");
-        socket.emit("canWeStartTournament", { tournamentId });
+    /// first round
+    if (!round) {
+        const emitOnce = () => {
+          if (!hasEmitted) {
+            hasEmitted = true;
+            console.log("📡 Emitting canWeStartTournament...");
+            socket.emit("canWeStartTournament", { tournamentId });
+          }
+        };
+      
+        setTimeout(emitOnce, 1000);
+        
+        // console.log("📡 Emitting canWeStartTournament...");
+        // setTimeout(() => {
+        //   socket.emit("canWeStartTournament", { tournamentId });
+        // }, 1000);
+      } else {
+        const emitOnce = () => {
+          if (!hasEmitted) {
+            hasEmitted = true;
+            console.log("📡 Emitting canWeStartTournament...");
+            socket.emit("canWeStartFinal", { tournamentId });
+          }
+        };
+      
+        setTimeout(emitOnce, 1000);
       }
-    };
-  
-    setTimeout(emitOnce, 1000);
-    
-    // console.log("📡 Emitting canWeStartTournament...");
-    // setTimeout(() => {
-    //   socket.emit("canWeStartTournament", { tournamentId });
-    // }, 1000);
-    socket.on("tournament_started", handleStarted);
-    socket.on("tournament_game_starting", handleGameStarting);
-
+      socket.on("tournament_started", handleStarted);
+      socket.on("tournament_game_starting", handleGameStarting);
+      
     // 🧹 Clean up on unmount
     return () => {
       socket.off("tournament_started", handleStarted);
