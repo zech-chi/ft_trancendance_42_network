@@ -119,7 +119,7 @@ export default function Play() {
   }, [socketContext.socket, tournamentId]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start p-4">
+    <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-black/40">
       <h1 className="text-2xl font-bold mb-4">Tournament Bracket</h1>
       <TournamentBracket />
     </div>
