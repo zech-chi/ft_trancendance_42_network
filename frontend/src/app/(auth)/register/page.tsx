@@ -152,3 +152,9 @@ export default function SignupPage() {
     </div>
   );
 }
+
+// if (!data.user.isVerified) {
+//   router.push('/verify');
+// } else {
+//   router.push('/protected/dashboard');
+// }
