@@ -147,11 +147,41 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
 });  
 
 socket.on("winner_of_round1", async (obj : WinnerOBJ) => {
-    console.log("🏅 Winner reported for tournament:", obj);
-    tournamentSystem.addPlayertofinal(obj.tournamentId, obj.winnerId, socket);
-    console.log(" final players so far: ", tournamentSystem.getTournament(obj.tournamentId)?.getFinalPlayersIds());
+  console.log("🏅 Winner reported for tournament:", obj);
+  tournamentSystem.addPlayertofinal(obj.tournamentId, obj.winnerId, socket);
+  console.log(" final players so far: ", tournamentSystem.getTournament(obj.tournamentId)?.getFinalPlayersIds());
+  const finalPlayerIds = tournamentSystem.getTournament(obj.tournamentId)?.getFinalPlayersIds();
+    io.to(obj.tournamentId).emit("winner_reported_round1", {
+      message: `Winner ${obj.winnerId} reported for tournament ${obj.tournamentId}`,
+      playerIds: finalPlayerIds
+    });
     // You can add logic to check if the tournament is over and declare overall winner
 });
+
+socket.on("laddies_and_gentlemen_we_have_a_winner", async (obj : WinnerOBJ) => {
+  if (!tournamentSystem.getTournament(obj.tournamentId)) {
+    console.log("Tournament not found:", obj.tournamentId);
+    return;
+  }
+
+  const finalPlayerIds = tournamentSystem.getTournament(obj.tournamentId)?.getFinalPlayersIds();
+  if (finalPlayerIds?.length !== 2) {
+    console.log("tournament not done yet! to announce winner:", obj.tournamentId);
+    return ;
+  }
+
+  console.log("🏆🏆🏆🏆 Tournament Winner announced:", obj.winnerId);
+  // set winnerId,
+  tournamentSystem.setTournamentWinner(obj.tournamentId, obj.winnerId);
+  io.to(obj.tournamentId).emit("catch_the_winner", {
+    message: `Tournament Winner is ${obj.winnerId} for tournament ${obj.tournamentId}`,
+    winnerId: obj.winnerId
+  });
+});
+
+
+
+
 //   socket.on("join_tournament", (data) => {
 //     console.log("👥 Player joined tournament:", data);
 //     socket.emit("joined_tournament", { message: "Joined successfully" });

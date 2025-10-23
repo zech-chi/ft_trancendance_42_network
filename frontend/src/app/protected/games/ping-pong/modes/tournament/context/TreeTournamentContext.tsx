@@ -25,6 +25,7 @@ type TreeTournament = {
         match1 : Match | null,
     },
     'winner' : Player | null,
+    'final_played': boolean,
 }
 
 
@@ -65,6 +66,7 @@ export const TreeTournamentProvider = ({ children }: { children: React.ReactNode
                 },
             },
             'winner' : null,
+            'final_played': false,
         };
     };
 
@@ -93,9 +95,59 @@ export const TreeTournamentProvider = ({ children }: { children: React.ReactNode
                 },
             },
             'winner' : null,
+            final_played: false,
         };
         setTournamentTree(updatedTree);
     }
+
+    
+    const add_players_to_round2 = (players: Player[]) => {
+        setTournamentTree((prev) => {
+          // if no tree yet, initialize it first
+          const baseTree: TreeTournament =
+            prev ??
+            {
+              round1: {
+                match1: { Player1: null, Player2: null, score: null, round: 1 },
+                match2: { Player1: null, Player2: null, score: null, round: 1 },
+              },
+              round2: { match1: { Player1: null, Player2: null, score: null, round: 2 } },
+              winner: null,
+              final_played: false,
+            };
+      
+          const updatedTree = JSON.parse(JSON.stringify(baseTree)); // deep clone
+      
+          if (!updatedTree.round2.match1)
+            updatedTree.round2.match1 = { Player1: null, Player2: null, score: null, round: 2 };
+      
+          updatedTree.round2.match1.Player1 = players.length > 0 ? players[0] : null;
+          updatedTree.round2.match1.Player2 = players.length > 1 ? players[1] : null;
+          updatedTree.round2.match1.score = null;
+      
+          return updatedTree;
+        });
+    };
+
+    const setFinalPlayed = () => {
+        setTournamentTree((prev) => {
+          if (!prev) return prev;
+          const updatedTree = { ...prev, final_played: true };
+          return updatedTree;
+        });
+    }
+      
+    const getfinalPlayed = (): boolean => {
+        return tournamentTree ? tournamentTree.final_played : false;
+    }
+
+    const setTheWinner = (player: Player) => { 
+        setTournamentTree((prev) => {
+            if (!prev) return prev;
+            const updatedTree = { ...prev, winner: player };
+            return updatedTree;
+        });
+    } 
 
     // const updateMatchResult = (round: number, matchNumber: number, score: [number, number]) => {
     //     // logic to update match result and progress players in the tree
@@ -106,7 +158,7 @@ export const TreeTournamentProvider = ({ children }: { children: React.ReactNode
     };
 
     return (
-        <TreeTournamentContext.Provider value={{ tournamentTree, initializeTournament, JoinTournament, resetTournament }}>
+        <TreeTournamentContext.Provider value={{ tournamentTree, initializeTournament, JoinTournament, add_players_to_round2, resetTournament, setFinalPlayed, getfinalPlayed, setTheWinner }}>
             {children}
         </TreeTournamentContext.Provider>
     );

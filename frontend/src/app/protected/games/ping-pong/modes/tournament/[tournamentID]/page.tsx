@@ -3,12 +3,13 @@ import React, { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSocket } from "../../../context/SocketContext";
 import toast from "react-hot-toast";
-import { useTreeTournament } from "../context/TreeTournamentContext"; 
+import { useTreeTournament } from "../context/TreeTournamentContext";
+import { Player, Match, TreeTournament } from "../context/TreeTournamentContext";
 import TournamentBracket from "../components/TournamentTree";
 import { useSearchParams, useParams } from "next/navigation";
 
 export default function Play() {
-  const { tournamentTree, JoinTournament, resetTournament } = useTreeTournament();
+  const { tournamentTree, JoinTournament, add_players_to_round2, resetTournament, setTheWinner, getfinalPlayed, setFinalPlayed } = useTreeTournament();
   const router = useRouter();
   const socketContext = useSocket();
   const pathname = usePathname();
@@ -17,6 +18,25 @@ export default function Play() {
   const round = searchParams.get("round");
   let hasEmitted = false;
   console.log(" hasEmitted value:", hasEmitted);
+
+
+  const makePlayersFromIds = (ids: number[]): Player[] => {
+    return ids.map(id => ({
+        id,
+        name: `playerId_${id}`,
+        avatarUrl: 'https://i.pravatar.cc/150?u=' + id,
+        status: "pending",
+      }));
+  }
+
+  const makePlayerFromId = (id: number): Player => {
+    return {
+        id,
+        name: `playerId_${id}`,
+        avatarUrl: 'https://i.pravatar.cc/150?u=' + id,
+        status: "pending",
+    };
+  }
 
   console.log("🏆 Tournament ID from URL:", tournamentId);
   console.log("🔄 Current Tournament round:", round);
@@ -55,25 +75,41 @@ export default function Play() {
           }
         };
       
-        setTimeout(emitOnce, 1000);
+        setTimeout(emitOnce, 2000);
         
         // console.log("📡 Emitting canWeStartTournament...");
         // setTimeout(() => {
         //   socket.emit("canWeStartTournament", { tournamentId });
         // }, 1000);
-      } else {
-        const emitOnce = () => {
-          if (!hasEmitted) {
-            hasEmitted = true;
-            console.log("📡 Emitting canWeStartTournament...");
-            socket.emit("canWeStartFinal", { tournamentId });
-          }
+    } else {
+      const emitOnce = () => {
+        if (!hasEmitted) {
+          hasEmitted = true;
+          console.log("📡 Emitting canWeStartTournament...");
+          socket.emit("canWeStartFinal", { tournamentId });
+        } 
         };
-      
-        setTimeout(emitOnce, 1000);
+        
+        setTimeout(emitOnce, 5000);
       }
-      socket.on("tournament_started", handleStarted);
-      socket.on("tournament_game_starting", handleGameStarting);
+
+      if (!getfinalPlayed()) {
+        socket.on("tournament_started", handleStarted);
+        socket.on("tournament_game_starting", handleGameStarting);
+        socket.on("winner_reported_round1", (data: {message : string ; playerIds: number[]}) => {
+          console.log("📢 to the final --> :", data.playerIds);
+          add_players_to_round2(makePlayersFromIds(data.playerIds));
+        });
+        setFinalPlayed();
+      } else {
+        console.log(" Final already played.");
+      }
+
+    socket.on("catch_the_winner", (data: {message : string ; winnerId: number}) => {
+      console.log("🏆 Tournament Winner is --> :", data.winnerId);
+      toast.success(`🏆 Tournament Winner is playerId_${data.winnerId}`);
+      setTheWinner(makePlayerFromId(data.winnerId));
+    });
       
     // 🧹 Clean up on unmount
     return () => {

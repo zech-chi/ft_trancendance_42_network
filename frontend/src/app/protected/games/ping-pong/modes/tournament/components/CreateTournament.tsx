@@ -14,7 +14,7 @@ import { Player, Match, TreeTournament } from "../context/TreeTournamentContext"
 
 
 export default function CreateTournament() {
-    const { tournamentTree, JoinTournament, resetTournament } = useTreeTournament();
+    const { tournamentTree, initializeTournament, JoinTournament, resetTournament } = useTreeTournament();
     const router = useRouter() ;
     const socketContext = useSocket();
     const { loggedUserId } = useLoggedUserId();
@@ -34,7 +34,10 @@ export default function CreateTournament() {
     }
 
     const handleSubmit = (e: React.FormEvent) => {
+
         e.preventDefault();
+        initializeTournament();
+        resetTournament();
         // Here you would typically handle form submission, e.g., send data to the server
         console.log("Tournament Created:", {
             name: t_name,

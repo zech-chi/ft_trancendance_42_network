@@ -659,6 +659,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       setTimeout(() => {
         // setInviteState(prev => ({ ...prev, [userId]: true })); // Removed - using new invitation system
         if (data.tournamentId) {
+          socket.emit('laddies_and_gentlemen_we_have_a_winner', { tournamentId: data.tournamentId, winnerId: data.winner?.id });
           console.log("the winner of round 1 is", data.winner?.id);
           router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}?round=2`);
           socket.emit('winner_of_round1', { tournamentId: data.tournamentId, winnerId: data.winner?.id });

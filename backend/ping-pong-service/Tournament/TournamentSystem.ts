@@ -86,4 +86,19 @@ export class TournamentSystem {
             tournament.addPlayerToFinal(playerId, playerSocket);
         }
     }
+
+    getWinnerId(tournamentId: string): number | null {
+        const tournament = this.tournaments.get(tournamentId);
+        if (tournament) {
+            return tournament.getWinnerId();
+        }
+        return null;
+    }
+
+    setTournamentWinner(tournamentId: string, playerId: number): void {
+        const tournament = this.tournaments.get(tournamentId);
+        if (tournament) {
+            tournament.setWinnerId(playerId);
+        }
+    }
 }

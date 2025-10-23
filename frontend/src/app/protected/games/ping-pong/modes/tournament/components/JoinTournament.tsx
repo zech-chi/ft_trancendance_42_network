@@ -11,7 +11,7 @@ import { useTreeTournament } from "../context/TreeTournamentContext";
 import { Player, Match, TreeTournament } from "../context/TreeTournamentContext";
 
 export default function JoinTournament() {
-  const { tournamentTree, JoinTournament, resetTournament } = useTreeTournament();
+  const { tournamentTree, initializeTournament, JoinTournament, resetTournament } = useTreeTournament();
   const router = useRouter();
   const socketContext = useSocket();
   const { loggedUserId } = useLoggedUserId();
@@ -35,7 +35,8 @@ export default function JoinTournament() {
 
   // 🔥 Fetch public tournaments on mount
   useEffect(() => {
-
+    initializeTournament();
+    resetTournament();
     console.log("📡 Requesting all public tournaments...");
     socketContext.socket?.emit("get_all_available_public_tournaments");
 

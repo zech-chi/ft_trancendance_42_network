@@ -12,6 +12,7 @@ export class Tournament {
     private finalPlayersSockets : Socket[] = [];
     private isPrivate : boolean;
     private createdBy : number;
+    private winnerId : number | null = null;    
     private creatrionDate : Date = new Date();
     private state: 'pending' | 'ongoing' | 'completed' = 'pending';
     private io: SocketIOServer;
@@ -93,4 +94,13 @@ export class Tournament {
     getFinalPlayersIds(): number[] {
         return this.finalPlayersIds;
     }
+
+    getWinnerId(): number | null {
+        return this.winnerId;
+    }
+
+    setWinnerId(winnerId: number): void {
+        this.winnerId = winnerId;
+    }
+    
 };
