@@ -62,7 +62,7 @@ async function checkOldPassword(reply: FastifyReply, userId: string, oldPassword
       // const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
       // const user = stmt.get(userId);
       // fetch from the db user http://localhost:5000/api/settings/users/${userId}
-      const response = await fetch(`http://localhost:5000/api/settings/users/${userId}`);
+      const response = await fetch(`http://db-service:5000/api/settings/users/${userId}`);
       if (!response.ok) {
         reply.status(400).send({
           status: 'error',
@@ -233,12 +233,12 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
   }
 
   // extract all the fields from the fields object
-  const {fullName ,language, bio, oldPassword, newPassword, confirmPassowrd} = fields;
+  const {fullName ,language, bio, oldPassword, newPassword, confirmPassword} = fields;
   const updates: string[] = [];
   const values: string[] = [];
 
   // Check if passwords are valid
-  if (!checkPasswordsValid(reply, oldPassword, newPassword, confirmPassowrd)) {
+  if (!checkPasswordsValid(reply, oldPassword, newPassword, confirmPassword)) {
     return; // If passwords are not valid, exit the function
   }
 
@@ -272,7 +272,7 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
     values.push(bio);
   }
 
-  if (oldPassword && newPassword && confirmPassowrd) {
+  if (oldPassword && newPassword && confirmPassword) {
     // If old password is provided, we assume the user wants to change the password
     // ! here i should hash the password before storing it using bcrypt or similar library after merging
     if (!await checkOldPassword(reply, id, oldPassword)) {
@@ -330,6 +330,32 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
   // If everything is successful, return a success response
   return reply.status(200).send({ status: 'success', message: 'Settings updated successfully' });
 }
+
+
+// get user info function
+export async function getUserInfo(request: FastifyRequest, reply: FastifyReply) {
+
+  // the userId should get it from the request.user object after authentication
+  const userId = request.params.id;
+  try {
+    const response = await fetch(`http://db-service:5000/api/settings/users/${userId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data from database.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Database error:', error);
+    return reply.status(400).send({
+      status: 'error',
+      message: 'something went wrong while fetching user data.'
+    });
+  }
+}
+
+// exmaple curl to test getUserInfo function
+// curl -X GET http://localhost:5004/api/settings/info/6
 
 
 
