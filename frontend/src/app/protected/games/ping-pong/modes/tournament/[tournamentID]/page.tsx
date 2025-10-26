@@ -114,7 +114,7 @@ export default function Play() {
       setTimeout(() => {
         router.push('/protected/games/ping-pong'); 
         socket.emit("touranment_finished", { tournamentId : tournamentId });
-      }, 2000);
+      }, 5000);
     });
       
     // 🧹 Clean up on unmount
