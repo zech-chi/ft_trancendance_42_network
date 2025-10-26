@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { LoginUserInput } from "./user.schema"
 import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
-import { setRefreshTokenCookie, setTmp2FACookie } from "./utils/auth.utils";
+import { setAccessTokenCookie, setRefreshTokenCookie, setTmp2FACookie } from "./utils/auth.utils";
 import { verifyEmail } from "./user.controller.verifyEmail";
 
 // function to find user by email
@@ -53,10 +53,10 @@ export async function LoginUser(
     const refreshToken = await reply.jwtSign({ id: user.id }, { expiresIn: "7d" });
 
     setRefreshTokenCookie(reply, refreshToken);
+    setAccessTokenCookie(reply, accessToken);
 
     return reply.code(200).send({
       message: "Login successful",
-      accessToken,
       user: { id: user.id, email: user.email },
     });
   } catch (error) {

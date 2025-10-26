@@ -9,6 +9,15 @@ export function setRefreshTokenCookie(reply: FastifyReply, token: string) {
     maxAge: 7 * 24 * 60 * 60, // 7 days
   });
 }
+export function setAccessTokenCookie(reply: FastifyReply, token: string) {
+  reply.setCookie("access_token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/auth/refresh",
+    maxAge: 15 * 60, // 15 minutes
+  });
+}
 
 export function clearRefreshTokenCookie(reply: FastifyReply) {
   reply.clearCookie("refresh_token", { path: "/auth/refresh" });
