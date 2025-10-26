@@ -180,6 +180,11 @@ socket.on("laddies_and_gentlemen_we_have_a_winner", async (obj : WinnerOBJ) => {
 });
 
 
+socket.on("touranment_finished", async (obj : TournamentID) => {
+  console.log("🧹 Cleaning up tournament:", obj.tournamentId);
+  tournamentSystem.removeTournament(obj.tournamentId);
+});
+
 
 
 //   socket.on("join_tournament", (data) => {

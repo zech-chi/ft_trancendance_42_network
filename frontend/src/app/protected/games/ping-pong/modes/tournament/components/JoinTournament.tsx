@@ -73,7 +73,7 @@ export default function JoinTournament() {
         }
     });
 
-  }, [socketContext]);
+  }, [socketContext.socket]);
 
   return (
     <div className="p-6">

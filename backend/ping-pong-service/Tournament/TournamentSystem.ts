@@ -101,4 +101,8 @@ export class TournamentSystem {
             tournament.setWinnerId(playerId);
         }
     }
+
+    removeTournament(tournamentId: string): void {
+        this.tournaments.delete(tournamentId);
+    }
 }

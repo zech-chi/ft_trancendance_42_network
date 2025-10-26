@@ -109,6 +109,12 @@ export default function Play() {
       console.log("🏆 Tournament Winner is --> :", data.winnerId);
       toast.success(`🏆 Tournament Winner is playerId_${data.winnerId}`);
       setTheWinner(makePlayerFromId(data.winnerId));
+
+      // send that tournament if finished to backend to reset
+      setTimeout(() => {
+        router.push('/protected/games/ping-pong'); 
+        socket.emit("touranment_finished", { tournamentId : tournamentId });
+      }, 2000);
     });
       
     // 🧹 Clean up on unmount

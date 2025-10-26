@@ -6,10 +6,15 @@ import React, { use, useState } from "react";
 import { useLoggedUserId } from "@/context/UserIdContext";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import CreateTournament from "./components/CreateTournament";
+import { useSocket } from "../../context/SocketContext";
 import JoinTournament from "./components/JoinTournament";
 
 export default function Tournament() {
+    const socketContext = useSocket();
     const [ isCreating, setIsCreating ] = useState(true); // toggle between create and join tournament
+
+    // rendreing this after each event happend in the socket
+
 
     return (
         <div className="flex flex-col h-screen w-screen bg-cover bg-center overflow-auto justify-center items-center text-white bg-black/50">
