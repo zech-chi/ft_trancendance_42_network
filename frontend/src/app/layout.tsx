@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`relative bg-cover bg-center bg-no-repeat bg-black`}
-        style={{ backgroundImage: `url('${BG_URL}')` }}
+        // style={{ backgroundImage: `url('${BG_URL}')` }}
       >
         {/* auth provider lets make sure that user is authenticated */}
             <LoggedUserNameProvider>
@@ -35,7 +35,7 @@ export default function RootLayout({
               <AuthUserProvider>
 
                 <main className="relative bg-cover bg-center bg-no-repeat bg-black/50"
-                style={{ backgroundImage: `url('${BG_URL}')` }}
+                // style={{ backgroundImage: `url('${BG_URL}')` }}
                 >
                   {children} {/* This renders the content of your page.tsx files */}
                 </main>

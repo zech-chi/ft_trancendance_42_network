@@ -731,12 +731,15 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, t
                 }
                 room.isRunning = false; // Mark game as not running
                 room.gameEnded = true; // Mark as ended due to disconnect
+                const winner = room.players.find(p => p.id !== userId);
 
                 // Notify the OTHER player(s) in the room that the game has ended
                 socket.to(roomId).emit("game_ended", {
+                  winner: winner,
                   reason: "player_disconnected",
                   disconnectedPlayer: socket.data.user.username,
-                  timestamp: Date.now()
+                  timestamp: Date.now(),
+                  ...(room?.tounrnamentId && { tournamentId: room.tounrnamentId }),
                 });
                 console.log(`🛑 Game in room ${roomId} ended due to ${socket.data.user.username} disconnection.`);
                 
@@ -858,12 +861,15 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, t
           }
           room.isRunning = false;
           room.gameEnded = true; // Mark as ended due to leave
+          const winner = room.players.find(p => p.id !== userId);
 
           // Notify the OTHER player(s) in the room
           socket.to(roomId).emit("game_ended", {
+            winner: winner,
             reason: "player_left",
             leftPlayer: socket.data.user.username,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            ...(room?.tounrnamentId && { tournamentId: room.tounrnamentId }),
           });
           console.log(`🚪 User ${socket.data.user.username} explicitly left game room ${roomId}.`);
           

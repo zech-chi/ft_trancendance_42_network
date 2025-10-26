@@ -646,13 +646,13 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
         setWinner(data.winner);
         setEndGameReason(null);
       } else if (data.reason === "player_disconnected" && data.disconnectedPlayer) {
-        setWinner(null); 
+        // setWinner(null); 
         setEndGameReason(`${data.disconnectedPlayer} disconnected. Game Over.`);
       } else if (data.reason === "player_left" && data.leftPlayer) {
-        setWinner(null);
+        // setWinner(null);
         setEndGameReason(`${data.leftPlayer} left the game. Game Over.`);
       } else {
-        setWinner(null);
+        // setWinner(null);
         setEndGameReason("Game ended unexpectedly.");
       }
       
@@ -664,6 +664,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
           router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}?round=2`);
           socket.emit('winner_of_round1', { tournamentId: data.tournamentId, winnerId: data.winner?.id });
         } else {
+          console.log("🚨 Redirecting to /protected/games/ping-pong in 5 seconds...");
           router.push('/protected/games/ping-pong'); 
         }
       }, 5000);
@@ -682,8 +683,9 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       // Immediately redirect without delay since opponent left
       console.log("🚨 Redirecting to /gameMode in 2 seconds...");
       setTimeout(() => {
-        console.log("🚨 Executing redirect to /gameMode");
-        router.push('/gameMode');
+        // console.log("🚨 Executing redirect to /gameMode");
+        router.push('/protected/games/ping-pong'); 
+        // router.push('/gameMode');
       }, 2000); // Shorter delay for force leave
     });
 
@@ -703,7 +705,8 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       setGameStatus('finished');
       setTimeout(() => {
         // setInviteState(prev => ({ ...prev, [userId]: true })); // Removed - using new invitation system
-        router.push('/gameMode');
+        // router.push('/gameMode');
+        router.push('/protected/games/ping-pong'); 
       }, 3000);
     });
 
