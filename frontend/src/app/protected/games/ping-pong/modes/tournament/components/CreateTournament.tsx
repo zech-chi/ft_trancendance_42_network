@@ -11,7 +11,8 @@ import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
 import { useTreeTournament } from "../context/TreeTournamentContext";
 import { Player, Match, TreeTournament } from "../context/TreeTournamentContext";
-
+import { getNameAndAvatarFromId } from "../[tournamentID]/page";
+import { makePlayersFromIds } from "../[tournamentID]/page";
 
 export default function CreateTournament() {
     const { tournamentTree, initializeTournament, JoinTournament, resetTournament } = useTreeTournament();
@@ -23,15 +24,6 @@ export default function CreateTournament() {
     const [ t_name, t_setName ] = useState("");
     const [ t_number_of_players, t_setNumberOfPlayers ] = useState(4);   // default to 4 players ( 4 or 8 )
     const [ t_isPrivate, t_setIsPrivate ] = useState(false); // default to public ( public or private )
-
-    const makePlayersFromIds = (ids: number[]): Player[] => {
-        return ids.map(id => ({
-            id,
-            name: `playerId_${id}`,
-            avatarUrl: 'https://i.pravatar.cc/150?u=' + id,
-            status: "pending",
-        }));
-    }
 
     const handleSubmit = (e: React.FormEvent) => {
 
@@ -56,13 +48,14 @@ export default function CreateTournament() {
             router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
             console.log("Tournament successfully created:", data);
         });
-        socketContext.socket?.on("joined_tournament", (data) => {
+        socketContext.socket?.on("joined_tournament", async (data) => {
             console.log("✅ Join tournament response:", data);
             if (data.message === "Joined successfully") {
                 if (data.newUserJoinedId !== loggedUserId) { 
                     toast.success(data.newUserJoinedId);
-                  }
-                JoinTournament(makePlayersFromIds(data.allPlayersJoinedIds));
+                }
+                const players = await makePlayersFromIds(data.allPlayersJoinedIds);
+                JoinTournament(players);
                 router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
             } else {
                 toast.error(data.message);

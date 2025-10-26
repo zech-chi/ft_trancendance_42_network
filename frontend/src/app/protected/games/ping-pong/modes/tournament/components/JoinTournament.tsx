@@ -9,6 +9,8 @@ import { useSocket } from "../../../context/SocketContext";
 import toast from "react-hot-toast";
 import { useTreeTournament } from "../context/TreeTournamentContext";
 import { Player, Match, TreeTournament } from "../context/TreeTournamentContext";
+import { getNameAndAvatarFromId } from "../[tournamentID]/page";
+import { makePlayersFromIds } from "../[tournamentID]/page";
 
 export default function JoinTournament() {
   const { tournamentTree, initializeTournament, JoinTournament, resetTournament } = useTreeTournament();
@@ -23,15 +25,6 @@ export default function JoinTournament() {
   const [t_isPrivate, t_setIsPrivate] = useState(false);
   const [t_nakeName, t_setNakeName] = useState("");
   const [publicTournaments, setPublicTournaments] = useState<Array<any>>([]);
-
-  const makePlayersFromIds = (ids: number[]): Player[] => {
-    return ids.map(id => ({
-        id,
-        name: `playerId_${id}`,
-        avatarUrl: 'https://i.pravatar.cc/150?u=' + id,
-        status: "pending",
-    }));
-}
 
   // 🔥 Fetch public tournaments on mount
   useEffect(() => {
@@ -60,13 +53,14 @@ export default function JoinTournament() {
 
       
 
-    socketContext.socket?.on("joined_tournament", (data) => {
+    socketContext.socket?.on("joined_tournament", async (data) => {
         console.log("✅ Join tournament response:", data);
         if (data.message === "Joined successfully") {
             if (data.newUserJoinedId !== loggedUserId) { 
               toast.success(data.newUserJoinedId);
             }
-            JoinTournament(makePlayersFromIds(data.allPlayersJoinedIds));
+            const players = await makePlayersFromIds(data.allPlayersJoinedIds);
+            JoinTournament(players);
             router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
         } else {
             toast.error(data.message);
