@@ -57,7 +57,8 @@ export default function SignupPage() {
             }
             const data = await res.json();
             console.log("Registration successful:", data);
-            router.push("/login");
+            // i need method to send the email  entered by user to the verify page
+            router.push(`/verify?email=${encodeURIComponent(email)}`);
             
         } catch (error) {
             console.error("Error during signup:", error);

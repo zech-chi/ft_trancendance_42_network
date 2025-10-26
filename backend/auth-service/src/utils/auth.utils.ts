@@ -1,0 +1,29 @@
+import { FastifyReply } from "fastify";
+
+export function setRefreshTokenCookie(reply: FastifyReply, token: string) {
+  reply.setCookie("refresh_token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/auth/refresh",
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+  });
+}
+
+export function clearRefreshTokenCookie(reply: FastifyReply) {
+  reply.clearCookie("refresh_token", { path: "/auth/refresh" });
+}
+
+export function setTmp2FACookie(reply: FastifyReply, token: string) {
+  reply.setCookie("tmp_2fa", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/auth/verify_2fa",
+    maxAge: 5 * 60, // 5 minutes
+  });
+}
+
+export function clearTmp2FACookie(reply: FastifyReply) {
+  reply.clearCookie("tmp_2fa", { path: "/auth/verify_2fa" });
+}

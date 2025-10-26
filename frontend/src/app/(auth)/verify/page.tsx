@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from "@/context/AuthContext";
+import { useSearchParams } from "next/navigation";
+
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -10,6 +13,11 @@ export default function VerifyEmailPage() {
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const [message, setMessage] = useState('');
+  const { setAccessToken } = useAuth();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+
+
 
   const handleVerify = async () => {
     if (code.trim().length < 6) {
@@ -21,11 +29,11 @@ export default function VerifyEmailPage() {
     setMessage('');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/verify-email`, {
+      const res = await fetch(`http://localhost:5001/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, email }),
       });
 
       if (res.ok) {
@@ -48,7 +56,7 @@ export default function VerifyEmailPage() {
     setMessage('');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resend-code`, {
+      const res = await fetch(`http://localhost:5001/api/auth/resend-code`, {
         method: 'POST',
         credentials: 'include',
       });

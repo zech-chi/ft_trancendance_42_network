@@ -5,6 +5,8 @@ import { LoginUser } from './user.controller.signin';
 import { findUserByEmail } from './user.controller.signin';
 import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
+import { verifyEmail } from './user.controller.verifyEmail';
+import { resendVerificationCode } from './user.controller.resendCode';
 
 interface JwtPayload {
   email: string;
@@ -18,8 +20,36 @@ export async function authRoutes(app: FastifyInstance) {
         res.code(200).send("auth work");
     });
 
+    // verify email
+    app.post(
+        "/verify-email",
+        {
+            schema: {
+            body: $ref("VerifyEmailSchema"),
+            response: {
+                200: $ref("VerifyEmailResponseSchema"),
+            },
+            },
+        },
+        verifyEmail
+    );
+
+    app.post(
+        "/resend-code",
+        {
+            schema: {
+                body: $ref("ResendVerificationCodeSchema"),
+                response: {
+                    200: $ref("ResendVerificationCodeResponseSchema"),
+                },
+            },
+        },
+        resendVerificationCode
+    );
+
     // register
     app.post(
+    
         "/register",
         {
             schema: {
@@ -48,7 +78,14 @@ export async function authRoutes(app: FastifyInstance) {
     
     // logout
     app.delete('/logout', (req: FastifyRequest, res: FastifyReply) => {
-        
+        //lj9: clear the cookie
+        // res.clearCookie('token', {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === 'production',
+        //     sameSite: 'lax',
+        // });
+        // return res.code(200).send({ message: 'Logged out successfully' });
+
     });
 
 

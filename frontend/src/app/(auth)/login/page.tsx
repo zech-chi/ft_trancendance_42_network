@@ -8,12 +8,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useSelectedUserId } from "@/context/SelectedUserId";
+import { useAuth } from "@/context/AuthContext";
+import { apiFetch } from "@/utlis/apiFetch";
+
 
 export async function fetchUser() {
 	try {
-		const response = await fetch('http://localhost:5001/api/auth/session', {
-			credentials: 'include', // include cookies in the request
-		});
+		const response = await apiFetch('http://localhost:5001/api/auth/session');
 		if (response.ok) {
 			const data = await response.json();
 			return data;
@@ -38,7 +39,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true); // new state
+  const { setAccessToken } = useAuth();
 
+  
   // check if already logged in
   useEffect(() => {
     async function checkAuth() {
@@ -75,12 +78,29 @@ export default function LoginPage() {
       console.log("response:", res.status, data);
 
       if (res.ok) {
-        setLoggedUserName(data.userName);
-        setSelectedUserName(data.userName);
-        setSelectedUserId(data.id);
-        setLoggedUserId(data.id);
-        router.push("/");
-      } else {
+    // if 2FA is required, redirect to verify page
+    if (data.message === "2FA required") {
+        router.push("/2FA");
+        return;
+    }
+
+    // store access token in memory
+    if (data.accessToken) {
+        setAccessToken(data.accessToken);
+    }
+
+    // set user info in your contexts
+    setLoggedUserName(data.user.userName);
+    setSelectedUserName(data.user.userName);
+    setSelectedUserId(data.user.id);
+    setLoggedUserId(data.user.id);        
+
+    router.push("/protected"); // or "/"
+} else {
+  if (data && data.verifyEmail === true) {
+        router.push(`/verify?email=${encodeURIComponent(email)}`);
+        return;
+    }
         setError(data.message || "Login failed");
       }
     } catch (err) {

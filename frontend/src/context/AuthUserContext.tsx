@@ -8,6 +8,7 @@ import { useLoggedUserId } from "@/context/UserIdContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 interface AuthUserContextType {
   selectedUserId: number | null;
@@ -25,6 +26,7 @@ export const AuthUserProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const { setLoggedUserId } = useLoggedUserId();
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const { clearAccessToken } = useAuth();
 
   useEffect(() => {
     async function checkAuth() {
@@ -35,6 +37,7 @@ export const AuthUserProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setSelectedUserName(null);
         setLoggedUserName(null);
         setLoggedUserId(0);
+        clearAccessToken();
         router.push("/login");
       } else {
         setLoggedUserName(user.userName);

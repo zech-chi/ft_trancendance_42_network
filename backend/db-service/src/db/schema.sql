@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS Users (
   userName TEXT,
   email TEXT,
   password TEXT,
+  email_verified BOOLEAN DEFAULT FALSE,
+  twofa_enabled BOOLEAN DEFAULT FALSE,
+  twofa_secret TEXT,
   bio TEXT DEFAULT 'Hello! I am new here 👋',
   imageUrl TEXT DEFAULT '/default_avatar.png',
   rank INTEGER DEFAULT 0,
@@ -25,6 +28,16 @@ CREATE TABLE IF NOT EXISTS Users (
   online INTEGER DEFAULT 0,
   online_in_chat BOOLEAN DEFAULT FALSE,
   last_seen_in_chat INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS EmailVerifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId INTEGER NOT NULL,
+    verificationCode TEXT NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expiresAt DATETIME NOT NULL,
+    used INTEGER DEFAULT 0,
+    FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS RadarData (

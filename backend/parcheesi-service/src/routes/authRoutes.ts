@@ -19,8 +19,7 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
       const userId = res.lastInsertRowid;
 
       // generate email verification code (6 digits)
-      const code = (Math.floor(100000 + Math.random() * 900000)).toString();
-      const expiresAt = new Date(Date.now() + 1000 * 60 * 15).toISOString(); // 15 min
+      // 15 min
 
       db.prepare("INSERT INTO email_codes (user_id, email, code, purpose, expires_at) VALUES (?, ?, ?, ?, ?)")
         .run(userId, email, code, "email_verification", expiresAt);
@@ -65,8 +64,12 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
     if (row.email_verified === false) {
       return reply.code(403).send({ error: "email not verified" });
     }
-
-    if (row.twofa_enabled) {
+    if (row.email_verified === null) {
+      
+      // email verification is pending
+      
+    }
+    else if (row.twofa_enabled) {
       // generate temporary 2FA session token (short lived) — we use a JWT claim need2fa:true
       const tempToken = fastify.jwt.sign({ sub: row.id, need2fa: true }, { expiresIn: "5m" });
       // optionally, send email OTP as default fallback:
