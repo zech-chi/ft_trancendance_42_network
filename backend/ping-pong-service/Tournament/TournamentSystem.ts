@@ -105,4 +105,16 @@ export class TournamentSystem {
     removeTournament(tournamentId: string): void {
         this.tournaments.delete(tournamentId);
     }
+
+    isValidTournamentName(name: string): boolean {
+        if (name === undefined || name === null || name === "") return false;
+        // if already exist tournament with the same name
+        for (const tournament of this.tournaments.values()) {
+            if (tournament.getName() === name) {
+                return false;
+            }
+        }
+        return true;    
+    }
+
 }

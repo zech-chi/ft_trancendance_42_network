@@ -44,6 +44,10 @@ export default function CreateTournament() {
             createdBy: loggedUserId,
         });
         socketContext.socket?.on("created_tournament", (data: any) => {
+            if (data.message !== "Tournament created successfully") {
+                toast.error(data.message, { id: data.message });
+                return;
+            }
             toast.success("Tournament created successfully!");
             router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
             console.log("Tournament successfully created:", data);
