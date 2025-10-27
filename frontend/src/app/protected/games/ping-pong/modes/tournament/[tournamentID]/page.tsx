@@ -60,12 +60,12 @@ export default function Play() {
     
     const handleStarted = (data: any) => {
       console.log("✅ Tournament started:", data);
-      toast.success(data.message);
+      toast.success(data.message, { id: data.message });
     };
     
     const handleGameStarting = async (data: any) => {
       console.log("🚀 Tournament game is starting:", data);
-      toast.success("Tournament game is starting!");
+      toast.success("Tournament game is starting!", { id: "tournament_game_starting" });
       const inviterId = data.opponentId === socketContext.currentUser?.id ? data.reciverId : data.opponentId;
       const inviter_name = await getNameAndAvatarFromId(inviterId).then(res => res.name);
       const accepterId = socketContext.currentUser?.id;
@@ -123,7 +123,9 @@ export default function Play() {
 
     socket.on("catch_the_winner", async (data: {message : string ; winnerId: number}) => {
       console.log("🏆 Tournament Winner is --> :", data.winnerId);
-      toast.success(`🏆 Tournament Winner is playerId_${data.winnerId}`);
+      toast.success(`🏆 Tournament Winner is playerId_${data.winnerId}`, {
+        id: `winner-${data.winnerId}`,
+      });      
       const player = await makePlayerFromId(data.winnerId);
       setTheWinner(player);
 

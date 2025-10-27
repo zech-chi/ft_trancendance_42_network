@@ -48,7 +48,7 @@ export default function CreateTournament() {
                 toast.error(data.message, { id: data.message });
                 return;
             }
-            toast.success("Tournament created successfully!");
+            toast.success("Tournament created successfully!", { id: "tournament_created" });
             router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
             console.log("Tournament successfully created:", data);
         });
@@ -56,13 +56,13 @@ export default function CreateTournament() {
             console.log("✅ Join tournament response:", data);
             if (data.message === "Joined successfully") {
                 if (data.newUserJoinedId !== loggedUserId) { 
-                    toast.success(data.newUserJoinedId);
+                    toast.success(data.newUserJoinedId, {id: data.newUserJoinedId} );
                 }
                 const players = await makePlayersFromIds(data.allPlayersJoinedIds);
                 JoinTournament(players);
                 router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}`);
             } else {
-                toast.error(data.message);
+                toast.error(data.message, { id: data.message } );
             }
         });
     }
