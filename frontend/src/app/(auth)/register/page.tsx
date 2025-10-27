@@ -10,11 +10,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FlowGraphConsoleLogBlock } from "@babylonjs/core";
+import { useUserEmail } from "@/context/UserEmailContext";
 
 export default function SignupPage() {
 
     // use router 
     const router = useRouter();
+    const { setUserEmail } = useUserEmail();
     
     const [userName, setUserName] = useState("");
     const [fullName, setFullName] = useState("");
@@ -56,8 +58,9 @@ export default function SignupPage() {
                 throw new Error("Failed to register");
             }
             const data = await res.json();
+            setUserEmail(email); // Save email to context
             console.log("Registration successful:", data);
-            router.push("/login");
+            router.push("/verify");
             
         } catch (error) {
             console.error("Error during signup:", error);

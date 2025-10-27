@@ -52,4 +52,73 @@ export default async function routesAuth(fastify: FastifyInstance) {
         const info = stmt.run(userId);
         return { deleted: info.changes };
     });
+
+
+
+     // add by youssef
+  fastify.post('/saveVerificationCode', async (request: FastifyRequest, reply: FastifyReply) => {
+        const { userId, code, expiresAt } = request.body as { userId: number, code: string, expiresAt: string };
+        const stmt = db.prepare('INSERT INTO EmailVerifications (userId, verificationCode, expiresAt) VALUES (?, ?, ?)');
+        const info = stmt.run(userId, code, expiresAt);
+        return { id: info.lastInsertRowid };
+});
+fastify.post('/getVerificationCode', async (request: FastifyRequest, reply: FastifyReply) => {
+        const { userId } = request.body as { userId: number };
+        const stmt = db.prepare('SELECT * FROM EmailVerifications WHERE userId = ? ORDER BY id DESC LIMIT 1');
+        const row = stmt.get(userId);
+        return row || null;
+    });
+fastify.put("/updateVerificationCode", async (request: FastifyRequest, reply: FastifyReply) => {
+    const { userId, code, expiresAt } = request.body as { userId: number; code: string; expiresAt: string };
+    if (!userId || !code || !expiresAt) {
+        return reply.code(400).send({ message: "Missing required fields" });
+    }
+    const stmt = db.prepare("UPDATE EmailVerifications SET verificationCode = ?, expiresAt = ? WHERE userId = ?");
+    const info = stmt.run(code, expiresAt, userId);
+    return { updated: info.changes };
+}   
+);
+
+fastify.post('/verifyUserEmail', async (request: FastifyRequest, reply: FastifyReply) => {
+        // have to check if email is already verified or not before calling this
+        const { userId } = request.body as { userId: number };
+        const stmt = db.prepare('SELECT email_verified FROM Users WHERE id = ?');
+        const user = stmt.get(userId);
+        if (!user) return reply.code(404).send({ message: "User not found" });
+        if (user.email_verified) return reply.code(400).send({ message: "Email already verified" });
+        const updateStmt = db.prepare('UPDATE Users SET email_verified = 1 WHERE id = ?');
+        updateStmt.run(userId);
+        return { message: "Email verified" };
+    });
+
+fastify.post('/findUserById', async (request: FastifyRequest, reply: FastifyReply) => {
+        const { userId } = request.body as { userId: number };
+        const stmt = db.prepare('SELECT * FROM Users WHERE id = ?');
+        const user = stmt.get(userId);
+        return user || null;
+    }
+);
+fastify.post('/twoFASetup', async (request: FastifyRequest, reply: FastifyReply) => {
+        const { userId, twofa_secret } = request.body as { userId: number, twofa_secret: string };
+        if (!twofa_secret) {
+            return reply.code(400).send({ message: "twofa_secret is required" });
+        }
+        if (!userId) {
+            return reply.code(400).send({ message: "userId is required" });
+        }
+        const stmt = db.prepare('UPDATE Users SET twofa_secret = ? WHERE id = ?');
+        const info = stmt.run(twofa_secret, userId);
+        return { updated: info.changes };
+    }
+);
+
+fastify.post('/twoFAEnable', async (request: FastifyRequest, reply: FastifyReply) => {
+        const { userId } = request.body as { userId: number };
+        const stmt = db.prepare('UPDATE Users SET twofa_enabled = 1 WHERE id = ?');
+        const info = stmt.run(userId);
+        return { updated: info.changes };
+    }
+);
+
+
 }

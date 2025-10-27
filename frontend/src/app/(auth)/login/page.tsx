@@ -8,16 +8,43 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useSelectedUserId } from "@/context/SelectedUserId";
+import { useUserEmail } from "@/context/UserEmailContext";
 
 export async function fetchUser() {
 	try {
-		const response = await fetch('http://localhost:5001/api/auth/session', {
+		let response = await fetch('http://localhost:5001/api/auth/session', {
 			credentials: 'include', // include cookies in the request
 		});
 		if (response.ok) {
 			const data = await response.json();
 			return data;
-		} else {
+		} if (response.status === 401 || response.status === 403) {
+      console.log("Access token expired. Attempting refresh...");
+
+      const refreshRes = await fetch('http://localhost:5001/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!refreshRes.ok) {
+        console.warn("Refresh token invalid or expired.");
+        return null;
+      }
+
+      console.log("Access token refreshed. Retrying session...");
+      // Step 3: Retry getting session after refresh
+      response = await fetch('http://localhost:5001/api/auth/session', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        return await response.json();
+      } else {
+        console.warn("Session fetch failed even after refresh.");
+        return null;
+      }
+    }
+     else {
 			console.log('Failed to fetch user:', response.statusText);
 			return null;
 		}
@@ -38,6 +65,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true); // new state
+  const { setUserEmail } = useUserEmail(); // ✅ Add this line
 
   // check if already logged in
   useEffect(() => {
@@ -75,19 +103,24 @@ export default function LoginPage() {
       console.log("response:", res.status, data);
 
       if (res.ok) {
+        setUserEmail(email); // ✅ Save email to context
         setLoggedUserName(data.userName);
         setSelectedUserName(data.userName);
         setSelectedUserId(data.id);
         setLoggedUserId(data.id);
-        router.push("/");
-      } else {
-        setError(data.message || "Login failed");
-      }
-    } catch (err) {
-      console.error("fetch error:", err);
-      setError("Something went wrong");
-    }
-  };
+        router.push("/protected");
+      }else {
+        if (data && data.verifyEmail === true) {
+              router.push(`/verify`);
+              return;
+          }
+              setError(data.message || "Login failed");
+            }
+          } catch (err) {
+            console.error("fetch error:", err);
+            setError("Something went wrong");
+          }
+        };
 
   if (loading) {
     return (

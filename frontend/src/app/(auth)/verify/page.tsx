@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUserEmail } from '@/context/UserEmailContext';
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -10,6 +11,8 @@ export default function VerifyEmailPage() {
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const [message, setMessage] = useState('');
+  const { userEmail } = useUserEmail();
+
 
   const handleVerify = async () => {
     if (code.trim().length < 6) {
@@ -21,16 +24,16 @@ export default function VerifyEmailPage() {
     setMessage('');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/verify-email`, {
+      const res = await fetch(`http://localhost:5001/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code , email: userEmail }),
       });
 
       if (res.ok) {
         setMessage('Email verified successfully!');
-        setTimeout(() => router.push('/protected/dashboard'), 1500);
+        setTimeout(() => router.push('/protected'),500);
       } else {
         const data = await res.json();
         setError(data.error || 'Invalid code. Try again.');
@@ -48,7 +51,7 @@ export default function VerifyEmailPage() {
     setMessage('');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resend-code`, {
+      const res = await fetch(`http://localhost:5001/api/auth/resend-code`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -67,7 +70,7 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-[90%] sm:w-[400px]">
         <h1 className="text-2xl font-bold text-center mb-4">Verify your email</h1>
         <p className="text-sm text-gray-500 text-center mb-6">

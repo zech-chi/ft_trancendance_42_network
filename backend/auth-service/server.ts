@@ -72,10 +72,6 @@ fastify.register(cors, {
 
 fastify.register(jwt, {
     secret: "zech-chi", // this should be come from env variable
-    cookie: {
-    cookieName: 'token',
-    signed: false
-    }
 });
 
 for (const schema of userSchemas.schemas) {

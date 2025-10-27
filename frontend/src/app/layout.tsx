@@ -6,6 +6,7 @@ import { LoggedUserNameProvider } from '@/context/LoggedUserNameContext';
 import { SelectedUserIdProvider } from '@/context/SelectedUserId';
 import { SelectedUserNameProvider } from '@/context/SelectedUserNameContext';
 import { LoggedUserIdProvider } from '@/context/UserIdContext';
+import { UserEmailProvider } from '@/context/UserEmailContext';
 
 const BG_URL = 'https://images6.alphacoders.com/134/1344450.jpeg';
 
@@ -26,6 +27,7 @@ export default function RootLayout({
         style={{ backgroundImage: `url('${BG_URL}')` }}
       >
         {/* auth provider lets make sure that user is authenticated */}
+        <UserEmailProvider>
             <LoggedUserNameProvider>
 
               <SelectedUserNameProvider>
@@ -48,6 +50,7 @@ export default function RootLayout({
               </SelectedUserNameProvider>
               
           </LoggedUserNameProvider>
+        </UserEmailProvider>
     </body>
   </html>
   );
