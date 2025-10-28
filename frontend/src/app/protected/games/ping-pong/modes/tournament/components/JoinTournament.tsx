@@ -56,8 +56,9 @@ export default function JoinTournament() {
     socketContext.socket?.on("joined_tournament", async (data) => {
         console.log("✅ Join tournament response:", data);
         if (data.message === "Joined successfully") {
-            if (data.newUserJoinedId !== loggedUserId) { 
-              toast.success(data.newUserJoinedId, {id: data.newUserJoinedId} );
+            if (data.newUserJoinedId !== loggedUserId) {
+              const playerInfo = await getNameAndAvatarFromId(data.newUserJoinedId);
+              toast.success(`${playerInfo.name} joined`, {id: data.newUserJoinedId} );
             }
             const players = await makePlayersFromIds(data.allPlayersJoinedIds);
             JoinTournament(players);
