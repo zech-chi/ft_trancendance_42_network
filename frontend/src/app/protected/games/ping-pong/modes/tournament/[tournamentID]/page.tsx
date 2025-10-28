@@ -113,6 +113,11 @@ export default function Play() {
         socket.on("tournament_game_starting", handleGameStarting);
         socket.on("winner_reported_round1", async (data: {message : string ; playerIds: number[]}) => {
           console.log("📢 to the final --> :", data.playerIds);
+          if (data.playerIds.length === 2) {
+            if (data.playerIds[0] === socketContext.currentUser?.id || data.playerIds[1] === socketContext.currentUser?.id) {
+              toast.success("You are in the Final!", { id: "in_final" });
+            }
+          }
           const players = await makePlayersFromIds(data.playerIds); 
           add_players_to_round2(players);
         });
@@ -123,7 +128,8 @@ export default function Play() {
 
     socket.on("catch_the_winner", async (data: {message : string ; winnerId: number}) => {
       console.log("🏆 Tournament Winner is --> :", data.winnerId);
-      toast.success(`🏆 Tournament Winner is playerId_${data.winnerId}`, {
+      const playerInfo = await getNameAndAvatarFromId(data.winnerId);
+      toast.success(`🏆 Tournament Winner is ${playerInfo.name}`, {
         id: `winner-${data.winnerId}`,
       });      
       const player = await makePlayerFromId(data.winnerId);
