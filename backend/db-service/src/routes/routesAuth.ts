@@ -88,6 +88,9 @@ fastify.post('/verifyUserEmail', async (request: FastifyRequest, reply: FastifyR
         if (user.email_verified) return reply.code(400).send({ message: "Email already verified" });
         const updateStmt = db.prepare('UPDATE Users SET email_verified = 1 WHERE id = ?');
         updateStmt.run(userId);
+        // also mark the verification code as used or delete it
+        const deleteStmt = db.prepare('DELETE FROM EmailVerifications WHERE userId = ?');
+        deleteStmt.run(userId);
         return { message: "Email verified" };
     });
 

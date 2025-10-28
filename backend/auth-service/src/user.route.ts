@@ -335,13 +335,13 @@ export async function authRoutes(app: FastifyInstance) {
     
       const fastifyAny = app as any;
       const token = await fastifyAny.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req);
-      const accessToken = token.token.access_token;
+      const googleAccessToken = token.token.access_token;
     
-      console.log('Access Token =======>> ', accessToken);
+      console.log('Access Token =======>> ', googleAccessToken);
     
       // fetch user info
       const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: `Bearer ${accessToken}` }
+        headers: { Authorization: `Bearer ${googleAccessToken}` }
       }).then(res => res.json());
     
       console.log('User info =======>> ', userInfo);
@@ -367,46 +367,55 @@ export async function authRoutes(app: FastifyInstance) {
         // add data
         const radarDataId = await addNewRadarDataRow(user.id);
         const chartsDataId = await addNewChartsDataRows(user.id);
+        const updateRes = await fetch(API_ROUTES.VERIFY_USER_EMAIL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id }),
+        });
     
-        if (!radarDataId || !chartsDataId) {
-            // should I delete the user if this fails?
-            const res = await fetch(API_ROUTES.DELETE_USER_BY_ID, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId: user.id })
-            });
+        if (!radarDataId || !chartsDataId || !updateRes.ok) {
+          // should I delete the user if this fails?
+          const res = await fetch(API_ROUTES.DELETE_USER_BY_ID, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: user.id })
+          });
             if (!res.ok)
                 console.error('Failed to delete user:', await res.text());
             return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
         }
+        
         
       } else {
         console.log("user already exists with this gmail : ", email);
         user = existingUser;
       }
       
-      // JWT and cookie:
-      const JWTtoken = await reply.jwtSign({ id: user.id, email: user.email });
-      // set token in cookie
-      reply.setCookie('token', JWTtoken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax', // for development, use 'strict' in production
-          path: '/',
-          maxAge: 54 * 60 * 60 // 1 day
-      });
-    
-      return reply.redirect('http://localhost:3000/');
+    // Generate access + refresh tokens
+const accessToken = await reply.jwtSign(
+  { id: user.id, email: user.email },
+  { expiresIn: "15m" }
+);
+const refreshToken = await reply.jwtSign(
+  { id: user.id, email: user.email },
+  { expiresIn: "7d" }
+);
+
+// Set cookies
+setAccessTokenCookie(reply, accessToken);
+setRefreshTokenCookie(reply, refreshToken);
+
+console.log("✅ Google login successful. Tokens set.");
+
+// Redirect to frontend
+return reply.redirect('http://localhost:3000/');
       } catch(error) {
         console.log(error);
         return reply.status(400).send({message: "something went wron!"})
       }
     });
-    
-  
-    
     // display that user routes are registered
     app.log.info('user routes registered')
 }
