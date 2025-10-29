@@ -60,12 +60,12 @@ export default function Play() {
     
     const handleStarted = (data: any) => {
       console.log("✅ Tournament started:", data);
-      toast.success(data.message, { id: data.message });
+      // toast.success(data.message, { id: data.message });
     };
     
     const handleGameStarting = async (data: any) => {
       console.log("🚀 Tournament game is starting:", data);
-      toast.success("Tournament game is starting!", { id: "tournament_game_starting" });
+      // toast.success("Tournament game is starting!", { id: "tournament_game_starting" });
       const inviterId = data.opponentId === socketContext.currentUser?.id ? data.reciverId : data.opponentId;
       const inviter_name = await getNameAndAvatarFromId(inviterId).then(res => res.name);
       const accepterId = socketContext.currentUser?.id;
@@ -122,25 +122,25 @@ export default function Play() {
           add_players_to_round2(players);
         });
         setFinalPlayed();
+        socket.on("catch_the_winner", async (data: {message : string ; winnerId: number}) => {
+          console.log("🏆 Tournament Winner is --> :", data.winnerId);
+          const playerInfo = await getNameAndAvatarFromId(data.winnerId);
+          toast.success(`🏆 Tournament Winner is ${playerInfo.name}`, {
+            id: `winner-${data.winnerId}`,
+          });      
+          const player = await makePlayerFromId(data.winnerId);
+          setTheWinner(player);
+    
+          // send that tournament if finished to backend to reset
+          setTimeout(() => {
+            router.push('/protected/games/ping-pong'); 
+            socket.emit("touranment_finished", { tournamentId : tournamentId });
+          }, 5000);
+        });
       } else {
         console.log(" Final already played.");
       }
 
-    socket.on("catch_the_winner", async (data: {message : string ; winnerId: number}) => {
-      console.log("🏆 Tournament Winner is --> :", data.winnerId);
-      const playerInfo = await getNameAndAvatarFromId(data.winnerId);
-      toast.success(`🏆 Tournament Winner is ${playerInfo.name}`, {
-        id: `winner-${data.winnerId}`,
-      });      
-      const player = await makePlayerFromId(data.winnerId);
-      setTheWinner(player);
-
-      // send that tournament if finished to backend to reset
-      setTimeout(() => {
-        router.push('/protected/games/ping-pong'); 
-        socket.emit("touranment_finished", { tournamentId : tournamentId });
-      }, 5000);
-    });
 
     // 🧹 Clean up on unmount
     return () => {
