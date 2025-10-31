@@ -11,6 +11,7 @@ import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useUserEmail } from "@/context/UserEmailContext";
 
 export async function fetchUser() {
+  
 	try {
 		let response = await fetch('http://localhost:5001/api/auth/session', {
 			credentials: 'include', // include cookies in the request
@@ -20,6 +21,8 @@ export async function fetchUser() {
 			return data;
 		} if (response.status === 401 || response.status === 403) {
       console.log("Access token expired. Attempting refresh...");
+      console.log(response.statusText);
+      console.log(await response.text());
 
       const refreshRes = await fetch('http://localhost:5001/api/auth/refresh', {
         method: 'POST',
@@ -71,6 +74,10 @@ export default function LoginPage() {
   useEffect(() => {
     async function checkAuth() {
       const user = await fetchUser();
+      if (user && user.twoFARequired) {
+        router.push("/twofa-verify");
+        return;
+      }
       if (user && user.userName) {
         // alert("Already logged in, redirecting to home page.");
         setLoggedUserName(user.userName);
@@ -87,6 +94,8 @@ export default function LoginPage() {
 
   const handleGoogle = () => {
       window.location.href = "http://localhost:5001/api/auth/login/google";
+
+
   };
   
   const handleLogin = async () => {
@@ -102,13 +111,19 @@ export default function LoginPage() {
       const data = await res.json().catch(() => ({}));
       console.log("response:", res.status, data);
 
+      setUserEmail(email); 
       if (res.ok) {
-        setUserEmail(email); // ✅ Save email to context
         setLoggedUserName(data.userName);
         setSelectedUserName(data.userName);
         setSelectedUserId(data.id);
         setLoggedUserId(data.id);
-        router.push("/protected");
+        if (data.twoFARequired) {
+          router.push("/twofa-verify");
+        }
+        else
+        {
+          router.push("/protected");
+        }
       }else {
         if (data && data.verifyEmail === true) {
               router.push(`/verify`);
@@ -125,7 +140,7 @@ export default function LoginPage() {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
-        Loading... 1
+        Loading...
       </div>
     );
   }

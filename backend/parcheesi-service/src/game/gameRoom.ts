@@ -504,7 +504,14 @@ async handleRollDice() {
     });
     await this.doubleThreeTimes();
     await this.leaveBaseAuto();
-    await this.autoMove();
+    let auto = true;
+
+    while (auto) {
+      auto = await this.autoMove();
+    }
+    if (this.bonusDice > 0 && (!currentPlayer.bonus_moves || currentPlayer.bonus_moves.length === 0)) {
+      this.bonusDice = 0;
+    }
       if ((!currentPlayer.Remain_moves || currentPlayer.Remain_moves.length === 0 ) && (!currentPlayer.bonus_moves || currentPlayer.bonus_moves.length === 0)) {
         // if no available moves left, go to next player
         console.log(`No available moves for player ${currentPlayer.userName}`);

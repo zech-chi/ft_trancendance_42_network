@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node OUTDIR/index.js",
-    "dev": "nodemon --watch server.ts --ext ts --exec ts-node server.ts"
+    "dev": "nodemon --watch src --ext ts,json --exec ts-node server.ts"
   },
   "keywords": [],
   "author": "",

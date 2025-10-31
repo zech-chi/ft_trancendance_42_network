@@ -39,7 +39,10 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         setLoggedUserName(null);
         setLoggedUserId(0);
         router.push("/login");
-      } else {
+      }else if (user && user.twoFARequired) {
+        router.push("/twofa-verify");
+      } 
+      else {
         setLoggedUserName(user.userName);
         setLoggedUserId(user.id);
       }

@@ -36,7 +36,9 @@ export const AuthUserProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setLoggedUserName(null);
         setLoggedUserId(0);
         router.push("/login");
-      } else {
+      }else if (user && user.twoFARequired) {
+        router.push("/twofa-verify");
+      }else { 
         setLoggedUserName(user.userName);
         setSelectedUserName(user.userName);
         setSelectedUserId(user.id);

@@ -46,14 +46,13 @@ export async function LoginUser(
     }
 
     // 4️⃣ Two-factor check
-    console.log("User 2FA status:", user);
     if (user.twofa_enabled) {
       const tmpToken = await reply.jwtSign(
         { id: user.id, need2fa: true },
         { expiresIn: "5m" }
       );
       setTmp2FACookie(reply, tmpToken);
-      return reply.code(200).send({ message: "2FA required" });
+      return reply.code(200).send({ message: "2FA required" , twoFARequired: true});
     }
 
     // 5️⃣ Normal login
@@ -69,10 +68,9 @@ export async function LoginUser(
     // 6️⃣ Set cookies
     setAccessTokenCookie(reply, accessToken);
     setRefreshTokenCookie(reply, refreshToken);
-
     return reply.code(200).send({
       message: "Login successful",
-      user: { id: user.id, email: user.email },
+      user: { id: user.id, email: user.email, userName: user.userName, twoFARequired: false },
     });
   } catch (error) {
     console.error("Login error:", error);

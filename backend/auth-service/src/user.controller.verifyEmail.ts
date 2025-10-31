@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { API_ROUTES } from "./utils/APIrouts";
+import { setAccessTokenCookie, setRefreshTokenCookie } from "./utils/auth.utils";
 
 export async function verifyEmail(
   req: FastifyRequest<{ Body: { email: string; code: string } }>,
@@ -46,6 +47,21 @@ export async function verifyEmail(
 
     if (!updateRes.ok)
       return reply.code(500).send({ message: updateRes.statusText });
+    // Success set access and refresh tokens
+
+     // 5️⃣ Normal login
+     const accessToken = await reply.jwtSign(
+      { id: user.id, email: user.email },
+      { expiresIn: "15m" }
+    );
+    const refreshToken = await reply.jwtSign(
+      { id: user.id},
+      { expiresIn: "7d" }
+    );
+
+    // 6️⃣ Set cookies
+    setAccessTokenCookie(reply, accessToken);
+    setRefreshTokenCookie(reply, refreshToken);
 
     return reply.code(200).send({ message: "Email verified successfully" });
   } catch (err) {

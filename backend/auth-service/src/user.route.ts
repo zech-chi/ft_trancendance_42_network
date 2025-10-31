@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
 import { verifyEmail } from './user.controller.verifyEmail';
 import { resendVerificationCode } from './user.controller.resendCode';
-import { clearTmp2FACookie, setAccessTokenCookie, setRefreshTokenCookie } from './utils/auth.utils';
+import { clearTmp2FACookie, setAccessTokenCookie, setRefreshTokenCookie, setTmp2FACookie } from './utils/auth.utils';
 // import TwoFASetup from './user.controller.TwoFASetup';
 // import TwoFAEnable from './user.controller.TwoFAEnable';
 // import TwoFAVerify from './user.controller.TwoFAVerify';
@@ -118,11 +118,9 @@ export async function authRoutes(app: FastifyInstance) {
     // add get user from session route
     app.get('/session', async (req: FastifyRequest, reply: FastifyReply) => {
       const accessToken = req.cookies.access_token;
-      const refreshToken = req.cookies.refresh_token;
+      const tmp_2fa = req.cookies.tmp_2fa;
     
-      console.log("Access token cookie: ", accessToken);
-
-      if (!accessToken && !refreshToken) {
+      if (!accessToken && !tmp_2fa) {
         return reply.code(401).send({ message: 'No tokens' });
       }
     
@@ -136,6 +134,20 @@ export async function authRoutes(app: FastifyInstance) {
           const userData = { id : user.id, userName: user.userName};
           return reply.send(userData);
         }
+        else if (tmp_2fa) {
+          // try verifying tmp_2fa token
+          const decoded =  app.jwt.verify<{ id: number; need2fa: boolean }>(tmp_2fa);
+          if (!decoded.need2fa) {
+            return reply.code(401).send({ message: 'token dont need twofa' });
+          }
+          const user = await fetch(API_ROUTES.FIND_USER_BY_ID, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: decoded.id }),
+          }).then(res => res.json());
+          if (!user) return reply.code(401).send({ message: 'Invalid token' });
+          return reply.send({ message: "2FA required" , twoFARequired: true});
+        } 
       } catch (err) {
 
         return reply.code(401).send({ message: 'Invalid token' });
@@ -163,9 +175,6 @@ export async function authRoutes(app: FastifyInstance) {
         try {
           // Verify JWT token (from cookie)
           const payload = app.jwt.verify(accessToken) as { id: number; email: string };
-          
-          // Optional: check if payload.id matches userId in body
-          console.log( "Payload ID:", payload.id, "User ID:", userId , "Match:", payload.id === userId);
           if (payload.id !== userId) return reply.code(403).send({ error: "Forbidden" });
       
         } catch (err) {
@@ -173,6 +182,13 @@ export async function authRoutes(app: FastifyInstance) {
         }
     
         if (!userId) return reply.code(400).send({ error: "missing" });
+        // check if 2fa already enabled
+        const row = await fetch(API_ROUTES.FIND_USER_BY_ID, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: userId }),
+        }).then(res => res.json());
+        if (row.twofa_enabled) return reply.code(400).send({ error: "2FA already enabled" });
     
         const secret = generateSecret();
         // Save secret temporarily (optionally store in a 'pending_twofa' column until user verifies)
@@ -389,29 +405,36 @@ export async function authRoutes(app: FastifyInstance) {
         
         
       } else {
-        console.log("user already exists with this gmail : ", email);
+        //before generating tokens, check if 2fa is enabledl);
         user = existingUser;
+        if (user.twofa_enabled) {
+          const tmp_2fa = await reply.jwtSign(
+            { id: user.id, need2fa: true },
+            { expiresIn: "5m" }
+          );
+          setTmp2FACookie(reply, tmp_2fa);
+          // await reply.send({ message: "2FA required" });
+          return reply.redirect('http://localhost:3000/');
+        }  
       }
-      
-    // Generate access + refresh tokens
-const accessToken = await reply.jwtSign(
-  { id: user.id, email: user.email },
-  { expiresIn: "15m" }
-);
-const refreshToken = await reply.jwtSign(
-  { id: user.id, email: user.email },
-  { expiresIn: "7d" }
-);
 
-// Set cookies
-setAccessTokenCookie(reply, accessToken);
-setRefreshTokenCookie(reply, refreshToken);
-
-console.log("✅ Google login successful. Tokens set.");
-
-// Redirect to frontend
-return reply.redirect('http://localhost:3000/');
-      } catch(error) {
+        // Generate access + refresh tokens
+    const accessToken = await reply.jwtSign(
+      { id: user.id, email: user.email },
+      { expiresIn: "15m" }
+    );
+    const refreshToken = await reply.jwtSign(
+      { id: user.id, email: user.email },
+      { expiresIn: "7d" }
+    );
+    // Set cookies
+    setAccessTokenCookie(reply, accessToken);
+    setRefreshTokenCookie(reply, refreshToken);
+    console.log("✅ Google login successful. Tokens set.");
+    // Redirect to frontend
+    return reply.redirect('http://localhost:3000/');
+  
+} catch(error) {
         console.log(error);
         return reply.status(400).send({message: "something went wron!"})
       }

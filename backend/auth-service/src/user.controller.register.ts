@@ -27,7 +27,7 @@ export async function createUser(fullName: string, userName: string, email: stri
         body: JSON.stringify({ fullName, userName, email, password: hashedPassword, imageUrl, email_verified: false, twofa_enabled: false  })
     }).then(res => res.json());
     return user;
-}
+} 
 
 
 export async function addNewRadarDataRow(userId: number): Promise<number> {

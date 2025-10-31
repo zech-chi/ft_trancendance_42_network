@@ -13,7 +13,6 @@ export default function VerifyEmailPage() {
   const [message, setMessage] = useState('');
   const { userEmail } = useUserEmail();
 
-
   const handleVerify = async () => {
     if (code.trim().length < 6) {
       setError('Please enter the 6–8 digit code.');
@@ -27,16 +26,15 @@ export default function VerifyEmailPage() {
       const res = await fetch(`http://localhost:5001/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ code , email: userEmail }),
       });
 
       if (res.ok) {
         setMessage('Email verified successfully!');
-        setTimeout(() => router.push('/protected'),500);
+        setTimeout(() => router.push('/protected'), 500);
       } else {
         const data = await res.json();
-        setError(data.error || 'Invalid code. Try again.');
+        setError(data.error || data.message || 'Verification failed.');
       }
     } catch (err) {
       setError('Server connection error.');
@@ -52,15 +50,16 @@ export default function VerifyEmailPage() {
 
     try {
       const res = await fetch(`http://localhost:5001/api/auth/resend-code`, {
-        method: 'POST',
-        credentials: 'include',
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail }),
       });
 
       if (res.ok) {
         setMessage('New code sent to your email!');
       } else {
         const data = await res.json();
-        setError(data.error || 'Failed to resend the code.');
+        setError(data.error || data.message || 'Resend failed.');
       }
     } catch (err) {
       setError('Server connection error.');

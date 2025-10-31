@@ -173,8 +173,8 @@ export default function Games(): JSX.Element {
         <PopupWinner
           winner={{
             winner: state.winner,
-            color: state.winnerColor || "red",
-            avatar: winnerData?.avatar || "/default-avatar.png",
+            color: state.winnerColor || "",
+            avatar: winnerData?.avatar || "",
           }}
           onClose={handleClosePopup}
         />

@@ -29,11 +29,11 @@ export type LoginUserInput = z.infer<typeof LoginUserSchema>;
 
 // response schema for user login
 const LoginUserResponseSchema = z.object({
-    accessToken: z.string(),
     user: z.object({
         id: z.string(),
         email: z.string(),
         userName: z.string(),
+        twoFARequired : z.boolean(),
     }),
 });
     
