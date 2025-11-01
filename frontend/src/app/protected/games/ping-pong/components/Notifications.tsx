@@ -248,8 +248,8 @@ export default function Notifications() {
       
       // Si l'utilisateur n'est pas déjà sur la page de jeu, le rediriger
       if (window.location.pathname.includes('/game/')) {
-        router.push('/gameMode');
-      }
+        // router.push('/gameMode');
+        router.push('/protected/games/ping-pong');       }
     };
 
     socket.on("force_leave_game", handleForceLeaveGame);

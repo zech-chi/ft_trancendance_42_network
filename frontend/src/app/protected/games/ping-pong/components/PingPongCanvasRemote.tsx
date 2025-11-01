@@ -359,7 +359,8 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       socket.emit("leave_game", { roomId });
     }
     // setInviteState(prev => ({ ...prev, [userId]: true })); // Removed - using new invitation system
-    router.push('/gameMode');
+    // router.push('/gameMode');
+    router.push('/protected/games/ping-pong'); 
   }, [socket, roomId, router]);
 
   const startGameManually = useCallback(() => {
@@ -638,7 +639,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       console.log(`Score updated. Scorer ID: ${data.scorer}`);
     });
 
-    socket.on("game_ended", (data: { winner?: Player; finalScore?: Player[]; reason?: string; disconnectedPlayer?: string; leftPlayer?: string }) => {
+    socket.on("game_ended", (data: { winner?: Player; finalScore?: Player[]; reason?: string; disconnectedPlayer?: string; leftPlayer?: string ; tournamentId?: string }) => {
       console.log("🛑 Game ended event received:", data);
       setGameStatus('finished');
       
@@ -646,19 +647,29 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
         setWinner(data.winner);
         setEndGameReason(null);
       } else if (data.reason === "player_disconnected" && data.disconnectedPlayer) {
-        setWinner(null); 
+        // setWinner(null); 
         setEndGameReason(`${data.disconnectedPlayer} disconnected. Game Over.`);
       } else if (data.reason === "player_left" && data.leftPlayer) {
-        setWinner(null);
+        // setWinner(null);
         setEndGameReason(`${data.leftPlayer} left the game. Game Over.`);
       } else {
-        setWinner(null);
+        // setWinner(null);
         setEndGameReason("Game ended unexpectedly.");
       }
       
       setTimeout(() => {
         // setInviteState(prev => ({ ...prev, [userId]: true })); // Removed - using new invitation system
-        router.push('/protected/games/ping-pong'); 
+        if (data.tournamentId) {
+          socket.emit('laddies_and_gentlemen_we_have_a_winner', { tournamentId: data.tournamentId, winnerId: data.winner?.id });
+          console.log("the winner of round 1 is", data.winner?.id);
+          setTimeout(() => {
+            router.push(`/protected/games/ping-pong/modes/tournament/${data.tournamentId}?round=2`);
+            socket.emit('winner_of_round1', { tournamentId: data.tournamentId, winnerId: data.winner?.id });
+          }, 3000);
+        } else {
+          console.log("🚨 Redirecting to /protected/games/ping-pong in 5 seconds...");
+          router.push('/protected/games/ping-pong'); 
+        }
       }, 5000);
     });
 
@@ -675,8 +686,9 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       // Immediately redirect without delay since opponent left
       console.log("🚨 Redirecting to /gameMode in 2 seconds...");
       setTimeout(() => {
-        console.log("🚨 Executing redirect to /gameMode");
-        router.push('/gameMode');
+        // console.log("🚨 Executing redirect to /gameMode");
+        router.push('/protected/games/ping-pong'); 
+        // router.push('/gameMode');
       }, 2000); // Shorter delay for force leave
     });
 
@@ -696,7 +708,8 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       setGameStatus('finished');
       setTimeout(() => {
         // setInviteState(prev => ({ ...prev, [userId]: true })); // Removed - using new invitation system
-        router.push('/gameMode');
+        // router.push('/gameMode');
+        router.push('/protected/games/ping-pong'); 
       }, 3000);
     });
 
