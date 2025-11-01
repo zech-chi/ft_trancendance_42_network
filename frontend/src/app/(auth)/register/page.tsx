@@ -37,14 +37,14 @@ export default function SignupPage() {
     // }
 
     const handleGoogle = () => {
-      window.location.href = "http://localhost:5001/api/auth/login/google";
+      window.location.href = "http://localhost:5006/api/auth/login/google";
     };
 
 
     const handleSubmit = async () => {
         try {
             console.log("Attempting registration with", { userName, fullName, email, password });
-            const res = await fetch("http://localhost:5001/api/auth/register", {
+            const res = await fetch("http://localhost:5006/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

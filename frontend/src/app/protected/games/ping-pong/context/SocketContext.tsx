@@ -93,7 +93,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    const newSocket = io("http://localhost:5500", {
+    const newSocket = io("http://localhost:5006", {
+      path: "/socket.io/ping-pong",
       withCredentials: true,
        query: { userId: loggedUserId?.toString(), username: loggedUserName },
     });

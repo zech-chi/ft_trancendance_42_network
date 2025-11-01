@@ -11,7 +11,7 @@ import { useSelectedUserId } from "@/context/SelectedUserId";
 
 export async function fetchUser() {
 	try {
-		const response = await fetch('http://localhost:5001/api/auth/session', {
+		const response = await fetch('http://localhost:5006/api/auth/session', {
 			credentials: 'include', // include cookies in the request
 		});
 		if (response.ok) {
@@ -58,13 +58,13 @@ export default function LoginPage() {
   }, []);
 
   const handleGoogle = () => {
-      window.location.href = "http://localhost:5001/api/auth/login/google";
+      window.location.href = "http://localhost:5006/api/auth/login/google";
   };
   
   const handleLogin = async () => {
     try {
       // console.log("Attempting login with", { email, password });
-      const res = await fetch("http://localhost:5001/api/auth/login", {
+      const res = await fetch("http://localhost:5006/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
