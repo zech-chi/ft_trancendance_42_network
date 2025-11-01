@@ -8,7 +8,7 @@ import { z } from 'zod';
 export async function dashboardRoutes(app: FastifyInstance) {
     // for testing
     app.get('/', (req: FastifyRequest, res: FastifyReply) => {
-        res.code(200).send("auth work");
+        res.code(200).send("dashborad work");
     });
 
     // fetch user by userName

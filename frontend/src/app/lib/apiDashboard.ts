@@ -1,5 +1,5 @@
 export const fetchUser = async (userName: string) => {
-  const response = await fetch(`http://localhost:5002/api/dashboard/users/${userName}`);
+  const response = await fetch(`http://localhost:5006/api/dashboard/users/${userName}`);
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }
@@ -8,7 +8,7 @@ export const fetchUser = async (userName: string) => {
 }
 
 export const fetchUserById = async (userId: number) => {
-  const response = await fetch(`http://localhost:5002/api/dashboard/usersId/${userId}`);
+  const response = await fetch(`http://localhost:5006/api/dashboard/usersId/${userId}`);
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }
@@ -16,18 +16,8 @@ export const fetchUserById = async (userId: number) => {
   return data;
 }
 
-export const fetchUsers = async () => {
-  const response = await fetch(`http://localhost:5000/users/`);
-  if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-  }
-  const data = await response.json();
-  console.log(data);
-  return data;
-}
-
 export const fetchFriendshipStatus = async (userId1: number, userId2: number) => {
-const response = await fetch(`http://localhost:5002/api/dashboard/friends/status?userId1=${userId1}&userId2=${userId2}`);
+const response = await fetch(`http://localhost:5006/api/dashboard/friends/status?userId1=${userId1}&userId2=${userId2}`);
 if (!response.ok) {
   throw new Error(`Error: ${response.status}`);
 }
@@ -36,7 +26,7 @@ return data;
 }
 
 export const fetchGames = async (userId: number, gameType: string) => {
-  const response = await fetch(`http://localhost:5002/api/dashboard/Games/${userId}?gameType=${gameType}`);
+  const response = await fetch(`http://localhost:5006/api/dashboard/Games/${userId}?gameType=${gameType}`);
   if (!response.ok) {
     throw new Error('Failed to fetch games');
   }
@@ -45,7 +35,7 @@ export const fetchGames = async (userId: number, gameType: string) => {
 }
 
 export const fetchRankData = async () => {
-const response = await fetch(`http://localhost:5002/api/dashboard/rank`);
+const response = await fetch(`http://localhost:5006/api/dashboard/rank`);
 if (!response.ok) {
   throw new Error(`Error: ${response.status}`);
 }
@@ -65,9 +55,9 @@ if (choice === 'friends') {
 }
 let response ;
 if (status !== '')
-    response = await fetch(`http://localhost:5002/api/dashboard/friends/${userId}?status=${status}`);
+    response = await fetch(`http://localhost:5006/api/dashboard/friends/${userId}?status=${status}`);
 else 
-    response = await fetch(`http://localhost:5002/api/dashboard/friends/sentrequest/${userId}?status=pending`);
+    response = await fetch(`http://localhost:5006/api/dashboard/friends/sentrequest/${userId}?status=pending`);
 if (!response.ok) {
 //   throw new Error('Failed to fetch games');
   console.log("Error");
@@ -79,17 +69,7 @@ return data;
 
 /* radar chart component api */
 export const fetchRadarData = async (userName: string) => {
-const response = await fetch(`http://localhost:5002/api/dashboard/radarData/${userName}`);
-if (!response.ok) {
-  throw new Error(`Error: ${response.status}`);
-}
-const data = await response.json();
-return data;
-}
-
-// Fetch charts data for the dashboard friends and ai
-const fetchChartsData = async (userName: string) => {
-const response = await fetch(`http://localhost:5000/chartsData/${userName}`);
+const response = await fetch(`http://localhost:5006/api/dashboard/radarData/${userName}`);
 if (!response.ok) {
   throw new Error(`Error: ${response.status}`);
 }
