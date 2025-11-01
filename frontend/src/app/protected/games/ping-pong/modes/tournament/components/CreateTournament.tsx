@@ -80,28 +80,6 @@ export default function CreateTournament() {
                         className="ml-2 p-1 rounded bg-white/10 border border-white/20"
                     />
                 </label>
-                <label>
-                    Number of Players:
-                    <select
-                        value={t_number_of_players}
-                        onChange={(e) => t_setNumberOfPlayers(parseInt(e.target.value))}
-                        className="ml-2 p-1 rounded bg-white/10 border border-white/20"
-                    >
-                        <option value={4}>4</option>
-                        <option value={8}>8</option>
-                    </select>
-                </label>
-                <label>
-                    Privacy:
-                    <select
-                        value={t_isPrivate ? "private" : "public"}
-                        onChange={(e) => t_setIsPrivate(e.target.value === "private")}
-                        className="ml-2 p-1 rounded bg-white/10 border border-white/20"
-                    >
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
-                    </select>
-                </label>
                 <button
                     type="submit"
                     className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

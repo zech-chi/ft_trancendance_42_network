@@ -17,7 +17,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
   socket.on("create_tournament", async (obj : CreateTournamentOBJ) => {
     console.log("🏆 Tournament creation requested");
     if (!tournamentSystem.isValidTournamentName(obj.name)) {
-      socket.emit("created_tournament", { message: "Failed to create tournament, name already taken" });
+      socket.emit("created_tournament", { message: "Failed to create tournament, name already taken or empty" });
       return;
     }
     const tournament = tournamentSystem.createTournament(
