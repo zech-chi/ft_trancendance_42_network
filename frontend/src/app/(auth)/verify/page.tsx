@@ -3,6 +3,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUserEmail } from '@/context/UserEmailContext';
+import { useLoggedUserName } from '@/context/LoggedUserNameContext';
+import { useSelectedUserName } from '@/context/SelectedUserNameContext';
+import { useSelectedUserId } from '@/context/SelectedUserId';
+import { useLoggedUserId } from '@/context/UserIdContext';
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -12,6 +16,10 @@ export default function VerifyEmailPage() {
   const [resending, setResending] = useState(false);
   const [message, setMessage] = useState('');
   const { userEmail } = useUserEmail();
+  const { setLoggedUserName } = useLoggedUserName();
+  const { setSelectedUserName } = useSelectedUserName();
+  const { setSelectedUserId } = useSelectedUserId();
+  const { setLoggedUserId } = useLoggedUserId();
 
   const handleVerify = async () => {
     if (code.trim().length < 6) {
@@ -26,14 +34,21 @@ export default function VerifyEmailPage() {
       const res = await fetch(`http://localhost:5001/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ code , email: userEmail }),
       });
 
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.user) {
         setMessage('Email verified successfully!');
-        setTimeout(() => router.push('/protected'), 500);
+        setLoggedUserName(data.user.userName);
+          setSelectedUserName(data.user.userName);
+          setSelectedUserId(data.user.id);
+          setLoggedUserId(data.user.id);
+          router.push("/protected");
+
+        // setTimeout(() => router.push('/login'), 0);
       } else {
-        const data = await res.json();
         setError(data.error || data.message || 'Verification failed.');
       }
     } catch (err) {

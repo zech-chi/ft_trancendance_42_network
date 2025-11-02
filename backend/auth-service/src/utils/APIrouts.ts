@@ -13,4 +13,5 @@ export const API_ROUTES = {
     SAVE_INIT_OTP: 'http://db-service:5000/api/auth/twoFASetup',
     TWOFA_ENABLE: 'http://db-service:5000/api/auth/twoFAEnable',
     TWOFA_VERIFY: 'http://db-service:5000/api/auth/twoFAVerify',
+    TWOFA_DISABLE: 'http://db-service:5000/api/auth/twoFADisable',
 };

@@ -51,6 +51,7 @@ export async function fetchUser() {
 			console.log('Failed to fetch user:', response.statusText);
 			return null;
 		}
+    
 	} catch (error) {
 		console.log('Error fetching user:', error);
 		return null;
@@ -113,15 +114,15 @@ export default function LoginPage() {
 
       setUserEmail(email); 
       if (res.ok) {
-        setLoggedUserName(data.userName);
-        setSelectedUserName(data.userName);
-        setSelectedUserId(data.id);
-        setLoggedUserId(data.id);
         if (data.twoFARequired) {
           router.push("/twofa-verify");
         }
         else
         {
+          setLoggedUserName(data.user.userName);
+          setSelectedUserName(data.user.userName);
+          setSelectedUserId(data.user.id);
+          setLoggedUserId(data.user.id);
           router.push("/protected");
         }
       }else {

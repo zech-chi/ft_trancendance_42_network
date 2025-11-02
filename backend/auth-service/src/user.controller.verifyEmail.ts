@@ -31,8 +31,6 @@ export async function verifyEmail(
 
     const codeData = await codeRes.json();
 
-    // Check code and expiration
-    console.log("codeData:", codeData);
     if (codeData.verificationCode !== code)
       return reply.code(400).send({ message: "Invalid code" });
     if (Date.now() > codeData.expiresAt)
@@ -63,7 +61,7 @@ export async function verifyEmail(
     setAccessTokenCookie(reply, accessToken);
     setRefreshTokenCookie(reply, refreshToken);
 
-    return reply.code(200).send({ message: "Email verified successfully" });
+    return reply.code(200).send({ message: "Email verified successfully", user: { id: user.id, email: user.email, userName: user.userName, twoFARequired: false}});
   } catch (err) {
     console.error("Email verification error:", err);
     return reply.code(500).send({ message: "Something went wrong" });

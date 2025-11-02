@@ -4,7 +4,7 @@ import speakeasy from "speakeasy";
 
 export const generateSecret = () => {
     return speakeasy.generateSecret({
-        length: 36,
+        length: 20,
         name: "FT_transcendence"
     });
 };
@@ -14,6 +14,7 @@ export const verifyToken = (secret: string, token: string) => {
         secret,
         encoding: "base32",
         token,
-        window: 1
+        window: 0,
+        step: 30
     });
 };

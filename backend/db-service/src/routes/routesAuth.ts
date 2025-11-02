@@ -122,6 +122,13 @@ fastify.post('/twoFAEnable', async (request: FastifyRequest, reply: FastifyReply
         return { updated: info.changes };
     }
 );
+fastify.post('/twoFADisable', async (request: FastifyRequest, reply: FastifyReply) => {
+        const { userId } = request.body as { userId: number };
+        const stmt = db.prepare('UPDATE Users SET twofa_enabled = 0, twofa_secret = NULL WHERE id = ?');
+        const info = stmt.run(userId);
+        return { updated: info.changes };
+    }
+);
 
 
 }

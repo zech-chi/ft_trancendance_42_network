@@ -35,6 +35,7 @@ const LoginUserResponseSchema = z.object({
         userName: z.string(),
         twoFARequired : z.boolean(),
     }),
+    message: z.string(),
 });
     
 // verify email schema
@@ -48,6 +49,12 @@ export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>;
 // response schema for email verification
 const VerifyEmailResponseSchema = z.object({
     message: z.string(),
+    user: z.object({
+        id: z.string(),
+        email: z.string(),
+        userName: z.string(),
+        twoFARequired : z.boolean(),
+    }),
 });
 export type VerifyEmailResponse = z.infer<typeof VerifyEmailResponseSchema>;
 
@@ -90,7 +97,24 @@ export type TwoFAVerifyInput = z.infer<typeof TwoFAVerifySchema>;
 const TwoFAVerifyResponseSchema = z.object({
     message: z.string(),
     success: z.boolean(),
+    user : z.object({
+        id: z.string(),
+        email: z.string(),
+        userName: z.string(),
+        twoFARequired : z.boolean(),
+    }),
 });
+export type TwoFAVerifyResponse = z.infer<typeof TwoFAVerifyResponseSchema>;
+
+const TwoFADisableSchema = z.object({
+    userId: z.number(),
+    otp: z.number(),
+});
+export type TwoFADisableInput = z.infer<typeof TwoFADisableSchema>;
+const TwoFADisableResponseSchema = z.object({
+    message: z.string(),
+});
+
 
 // build JSON schemas for Fastify
 const { schemas, $ref } = buildJsonSchemas({
@@ -108,6 +132,8 @@ const { schemas, $ref } = buildJsonSchemas({
     TwoFAEnableResponseSchema,
     TwoFAVerifySchema,
     TwoFAVerifyResponseSchema,
+    TwoFADisableSchema,
+    TwoFADisableResponseSchema,
 });
 
 export const userSchemas = { schemas, $ref };

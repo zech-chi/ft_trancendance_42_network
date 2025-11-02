@@ -90,7 +90,7 @@ export async function authRoutes(app: FastifyInstance) {
     
     // logout
     app.delete('/logout', (req: FastifyRequest, reply: FastifyReply) => {
-      reply.clearCookie('access_token', { path: '/auth/refresh' });
+      reply.clearCookie('access_token', { path: '/' });
       reply.clearCookie('refresh_token', { path: '/auth/refresh' });
       reply.code(200).send({ message: 'Logged out successfully' });
     });
@@ -259,6 +259,60 @@ export async function authRoutes(app: FastifyInstance) {
     }
     reply.send({ message: "2FA enabled" });
   });
+  app.post (
+    "/2fa-disable",   
+    {
+      schema: {
+        body: $ref("TwoFADisableSchema"),
+        response: {
+          200: $ref("TwoFADisableResponseSchema"),
+        },
+      },
+    },
+    async (req: FastifyRequest, reply: FastifyReply) => {
+      const { userId, otp } = req.body as { userId: number; otp: string };
+      const accessToken = req.cookies.access_token;
+  
+      // Check token
+      if (!accessToken) return reply.code(401).send({ error: "unauthorized" });
+      try {
+        // Verify JWT token (from cookie)
+        const payload = app.jwt.verify(accessToken) as { id: number; email: string };
+  
+        // Optional: check if payload.id matches userId in body
+        if (payload.id !== userId) return reply.code(403).send({ error: "Forbidden" });
+      } catch (err) {
+        return reply.code(401).send({ error: "Invalid or expired token" });
+      }
+  
+      // Retrieve user's 2FA secret
+      const row = await fetch(API_ROUTES.FIND_USER_BY_ID, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: userId }),
+      }).then(res => res.json());
+  
+      if (!row || !row.twofa_enabled ) return reply.code(400).send({ error: "no 2fa set" });
+  
+      // Verify the one-time password (OTP)
+      const isValid = verifyToken(row.twofa_secret, otp);
+      if (!isValid) return reply.code(400).send({ error: "invalid token" });
+  
+      // Disable 2FA
+      const res = await fetch(API_ROUTES.TWOFA_DISABLE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: userId }),
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        return reply.code(500).send({ error: "failed to disable 2FA", details: errorData });
+      }
+  
+      reply.send({ message: "2FA disabled" });
+    }
+  );
     app.post(
       '/2fa-verify',
       {
@@ -317,7 +371,7 @@ export async function authRoutes(app: FastifyInstance) {
           clearTmp2FACookie(reply);
 
       
-          return reply.send({ success: true, message: "2FA verified successfully" });
+          return reply.send({ user: { id: row.id, email: row.email, userName: row.userName, twoFARequired: false}, success: true, message: "2FA verified successfully"});
         } catch (err) {
           console.error("2FA verification failed:", err);
           return reply.code(401).send({ error: "Invalid or expired temporary token" });

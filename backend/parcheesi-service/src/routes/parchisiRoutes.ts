@@ -20,11 +20,6 @@ const parchisiRoutes: FastifyPluginAsync = async (fastify, opts) => {
   }
  );
 
-  fastify.get("/player/:id", async (request:any, reply:any) => {
-    const { id } = request.params as { id: string };
-    // this is real application, i have to fetch player data from a database
-    // return { id, name: "Player " + id, photo: "/avatars/default.png" };
-  });
   fastify.get("/users/:username", async (request:any, reply:any) => {
     const { username } = request.params as { username: string };
     //fetch user data from database

@@ -2,11 +2,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLoggedUserId } from "@/context/UserIdContext";
+import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+import { useSelectedUserId } from "@/context/SelectedUserId";
 
 export default function TwoFAVerifyPage() {
   const [otp, setOtp] = useState("");
   const [status, setStatus] = useState("");
   const router = useRouter();
+  const { setLoggedUserName } = useLoggedUserName();
+  const { setSelectedUserName } = useSelectedUserName();
+  const { setSelectedUserId } = useSelectedUserId();
+  const { setLoggedUserId } = useLoggedUserId();
     
 
   const handleVerify = async () => {
@@ -23,7 +30,11 @@ export default function TwoFAVerifyPage() {
       if (!res.ok) throw new Error(data.error || "Invalid OTP");
 
       setStatus("✅ Verified!");
-      setTimeout(() => router.push("/protected"), 500);
+      setLoggedUserName(data.user.userName);
+      setSelectedUserName(data.user.userName);
+      setSelectedUserId(data.user.id);
+      setLoggedUserId(data.user.id);
+      setTimeout(() => router.push("/protected"), 300);
     } catch (err: any) {
       setStatus(err.message);
     }

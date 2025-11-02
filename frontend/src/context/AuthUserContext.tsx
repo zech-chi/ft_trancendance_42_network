@@ -16,6 +16,7 @@ interface AuthUserContextType {
   setSelectedUserName: (name: string | null) => void;
 }
 
+
 const AuthUserContext = createContext<AuthUserContextType | undefined>(undefined);
 
 export const AuthUserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -36,7 +37,7 @@ export const AuthUserProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setLoggedUserName(null);
         setLoggedUserId(0);
         router.push("/login");
-      }else if (user && user.twoFARequired) {
+      }else if (user && user.twoFARequired && !user.userName) {
         router.push("/twofa-verify");
       }else { 
         setLoggedUserName(user.userName);
