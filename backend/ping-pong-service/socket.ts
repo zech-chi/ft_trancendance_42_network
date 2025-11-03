@@ -844,7 +844,7 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, t
     });
 
     // 🔹 Handle a player explicitly leaving a game room
-    socket.on("leave_game", ({ roomId }: { roomId: string }) => {
+    socket.on("leave_game", async ({ roomId }: { roomId: string }) => {
       const userId = socket.data.user?.id;
       if (!userId) return;
 
@@ -862,7 +862,36 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, t
           room.isRunning = false;
           room.gameEnded = true; // Mark as ended due to leave
           const winner = room.players.find(p => p.id !== userId);
-
+          try {
+            const player1 = room.players[0];
+          const player2 = room.players[1];
+          let user1 = 0;
+            if (winner && player1.id === winner.id)
+              user1 = 1;
+          
+        const res = await fetch('http://db-service:5000/api/pong/addwinner', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            player1: player1.id,
+            player2: player2.id,
+            score1: player1.score,
+            score2: player2.score,
+            winner: user1,
+          }),
+        });
+    
+        if (!res.ok) {
+          console.log(`Failed to update online status for user`);
+        }
+        else {
+          console.log('=========> Successfully updated match result in DB');
+        }
+    } catch (error) {
+        console.error('Error updating online status:', error);
+    }
           // Notify the OTHER player(s) in the room
           socket.to(roomId).emit("game_ended", {
             winner: winner,
@@ -906,7 +935,7 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, t
   });
 
   // 🔹 Game state update function (runs periodically for each active game room)
-  function updateGameState(roomId: string, room: GameRoom) {
+  async function updateGameState(roomId: string, room: GameRoom) {
     const { ball, players, width, height, paddleWidth, paddleHeight } = room;
     if (!room.isRunning) return;
 
@@ -1007,6 +1036,42 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, t
         room.interval = undefined;
       }
       room.isRunning = false; // Stop the game loop
+      //STOR THE MATCH RESULT IN DB GAMES TABLE
+      try {
+        const player1 = room.players[0];
+      const player2 = room.players[1];
+      let user1 = 0;
+      if (player1.id === winner.id)
+          user1 = 1;
+      
+    const res = await fetch('http://db-service:5000/api/pong/addwinner', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        player1: player1.id,
+        player2: player2.id,
+        score1: player1.score,
+        score2: player2.score,
+        winner: user1,
+      }),
+    });
+
+    if (!res.ok) {
+      console.log(`Failed to update online status for user`);
+    }
+    else {
+      console.log('=========> Successfully updated match result in DB');
+    }
+} catch (error) {
+    console.error('Error updating online status:', error);
+}
+    
+    
+
+        
+
 
       // this should be handled by the fetch in the db-service
       // Store the match result in the database
@@ -1073,4 +1138,8 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, t
     };
     console.log("🔄 Ball reset:", room.ball);
   }
+}
+
+function getTime() {
+  throw new Error("Function not implemented.");
 }
