@@ -9,6 +9,7 @@ import routesPong from "./routes/routesPong";
 import dotenv from "dotenv";
 import metricsPlugin from "fastify-metrics";
 import routesSettings from "./routes/routesSettings";
+import routesParchisi from "./routes/routesParchisi";
 // import cors from '@fastify/cors';
 
 dotenv.config();
@@ -40,6 +41,8 @@ fastify.register(routesAuth, { prefix: "api/auth" });
 fastify.register(routesDashboard, { prefix: "/api/dashboard" });
 fastify.register(routesPong, { prefix: "/api/pong" });
 fastify.register(routesSettings, { prefix: "/api/settings" });
+fastify.register(routesParchisi, { prefix: "/api/parchisi" });
+
 
 // start server
 const start = async () => {

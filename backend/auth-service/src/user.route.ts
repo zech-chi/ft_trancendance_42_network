@@ -5,18 +5,60 @@ import { LoginUser } from './user.controller.signin';
 import { findUserByEmail } from './user.controller.signin';
 import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
+import { verifyEmail } from './user.controller.verifyEmail';
+import { resendVerificationCode } from './user.controller.resendCode';
+import { clearTmp2FACookie, setAccessTokenCookie, setRefreshTokenCookie, setTmp2FACookie } from './utils/auth.utils';
+// import TwoFASetup from './user.controller.TwoFASetup';
+// import TwoFAEnable from './user.controller.TwoFAEnable';
+// import TwoFAVerify from './user.controller.TwoFAVerify';
+import { generateQRCode } from "./utils/qrcode";
+import { generateSecret, verifyToken } from "./utils/twofa";
 
 interface JwtPayload {
   email: string;
   id: number;
 }
 
-
+async function findUserById(id: number): Promise<any> {
+  const response = await fetch(API_ROUTES.FIND_USER_BY_ID, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId: id }),
+  });
+  return response.json();
+}
 export async function authRoutes(app: FastifyInstance) {
     // for testing
     app.get('/', (req: FastifyRequest, res: FastifyReply) => {
         res.code(200).send("auth work");
     });
+
+     // verify email
+     app.post(
+      "/verify-email",
+      {
+          schema: {
+          body: $ref("VerifyEmailSchema"),
+          response: {
+              200: $ref("VerifyEmailResponseSchema"),
+          },
+          },
+      },
+      verifyEmail
+  );
+
+  app.put(
+      "/resend-code",
+      {
+          schema: {
+              body: $ref("ResendVerificationCodeSchema"),
+              response: {
+                  200: $ref("ResendVerificationCodeResponseSchema"),
+              },
+          },
+      },
+      resendVerificationCode
+  );
 
     // register
     app.post(
@@ -47,28 +89,296 @@ export async function authRoutes(app: FastifyInstance) {
     );
     
     // logout
-    app.delete('/logout', (req: FastifyRequest, res: FastifyReply) => {
-        
+    app.delete('/logout', (req: FastifyRequest, reply: FastifyReply) => {
+      reply.clearCookie('access_token', { path: '/' });
+      reply.clearCookie('refresh_token', { path: '/auth/refresh' });
+      reply.code(200).send({ message: 'Logged out successfully' });
     });
 
+    app.post('/refresh', async (req: FastifyRequest, reply: FastifyReply) => {
+      const refreshToken = req.cookies.refresh_token;
+      console.log("Refresh token cookie: ", refreshToken);
+      if (!refreshToken) return reply.code(401).send({ message: 'No refresh token' });
+    
+      try {
+        const decoded =  app.jwt.verify<JwtPayload>(refreshToken);
+        console.log("Decoded refresh token: ", decoded);
+        const user = await findUserById(decoded.id);
+        if (!user) return reply.code(401).send({ message: 'Invalid refresh token' });
+    
+        const newAccessToken = await reply.jwtSign({ id: user.id, email: user.email }, { expiresIn: '15m' });
+        setAccessTokenCookie(reply, newAccessToken);
+    
+        return reply.send({ message: 'Access token refreshed' });
+      } catch {
+        return reply.code(401).send({ message: 'Invalid refresh token' });
+      }
+    });
 
     // add get user from session route
-    app.get('/session', async (request: FastifyRequest, reply: FastifyReply) => {
-      if (!request.cookies.token) {
-        return reply.code(401).send({ message: 'No token' });
+    app.get('/session', async (req: FastifyRequest, reply: FastifyReply) => {
+      const accessToken = req.cookies.access_token;
+      const tmp_2fa = req.cookies.tmp_2fa;
+    
+      if (!accessToken && !tmp_2fa) {
+        return reply.code(401).send({ message: 'No tokens' });
       }
-
+    
       try {
-        const decoded = await request.jwtVerify<JwtPayload>(); // 👈 typed
-        const user = await findUserByEmail(decoded.email);
-        if (!user) {
-          return reply.code(401).send({ message: 'Invalid token' });
+        // try verifying access token
+        if (accessToken) {
+          const decoded =  app.jwt.verify<JwtPayload>(accessToken);
+          const user = await findUserByEmail(decoded.email);
+          if (!user) return reply.code(401).send({ message: 'Invalid token' });
+          // distract only username , id  and return it 
+          const userData = { id : user.id, userName: user.userName};
+          return reply.send(userData);
         }
-        return reply.send(user);
+        else if (tmp_2fa) {
+          // try verifying tmp_2fa token
+          const decoded =  app.jwt.verify<{ id: number; need2fa: boolean }>(tmp_2fa);
+          if (!decoded.need2fa) {
+            return reply.code(401).send({ message: 'token dont need twofa' });
+          }
+          const user = await fetch(API_ROUTES.FIND_USER_BY_ID, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: decoded.id }),
+          }).then(res => res.json());
+          if (!user) return reply.code(401).send({ message: 'Invalid token' });
+          return reply.send({ message: "2FA required" , twoFARequired: true});
+        } 
       } catch (err) {
+
         return reply.code(401).send({ message: 'Invalid token' });
       }
     });
+    // 2fa routes 
+    app.post (
+      '/2fa-setup',
+      {
+        schema: {
+          body: $ref('TwoFASetupSchema'),
+          response: {
+            200: $ref('TwoFASetupResponseSchema'),
+          },
+        },
+      },
+      async (req: FastifyRequest, reply: FastifyReply) => {
+        const { userId } = req.body as { userId: number };
+        const accessToken =  req.cookies.access_token;
+    
+        //check token
+        if (!accessToken){
+          return reply.code(401).send({ error: "unauthorized" });
+        } 
+        try {
+          // Verify JWT token (from cookie)
+          const payload = app.jwt.verify(accessToken) as { id: number; email: string };
+          if (payload.id !== userId) return reply.code(403).send({ error: "Forbidden" });
+      
+        } catch (err) {
+          return reply.code(401).send({ error: "Invalid or expired token" });
+        }
+    
+        if (!userId) return reply.code(400).send({ error: "missing" });
+        // check if 2fa already enabled
+        const row = await fetch(API_ROUTES.FIND_USER_BY_ID, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: userId }),
+        }).then(res => res.json());
+        if (row.twofa_enabled) return reply.code(400).send({ error: "2FA already enabled" });
+    
+        const secret = generateSecret();
+        // Save secret temporarily (optionally store in a 'pending_twofa' column until user verifies)
+        
+        const rst  = await fetch(`${API_ROUTES.SAVE_INIT_OTP}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, twofa_secret: secret.base32 }),
+        }
+        );
+        if (!rst.ok) {
+          return reply.code(500).send({ error: "failed to save secret" });
+        }
+        const otpAuthUrl = secret.otpauth_url!;
+        const qr = await generateQRCode(otpAuthUrl);
+    
+        // return qr and secret to frontend so user can scan right away (securely)
+        reply.send({ qr});
+      });
+    app.post (
+      '/2fa-enable',
+      {
+        schema: {
+          body: $ref('TwoFAEnableSchema'),
+          response: {
+            200: $ref('TwoFAEnableResponseSchema'),
+          },
+        },
+      },
+      async(req: FastifyRequest, reply: FastifyReply) =>
+ {
+    const { userId, otp } = req.body as { userId: number; otp: string };
+    const accessToken =  req.cookies.access_token;
+
+    //check token
+    if (!accessToken) return reply.code(401).send({ error: "unauthorized" });
+  try {
+      // Verify JWT token (from cookie)
+      const payload = app.jwt.verify(accessToken) as { id: number; email: string };
+      
+      // Optional: check if payload.id matches userId in body
+      if (payload.id !== userId) return reply.code(403).send({ error: "Forbidden" });
+  
+    } catch (err) {
+      return reply.code(401).send({ error: "Invalid or expired token" });
+    }
+    // const row = db.prepare("SELECT twofa_secret FROM users WHERE id = ?").get(userId) as User;
+    const row = await fetch(API_ROUTES.FIND_USER_BY_ID, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: userId }),
+    }).then(res => res.json());
+    if (!row || !row.twofa_secret) return reply.code(400).send({ error: "no secret" });
+
+    if (row.twofa_enabled) return reply.code(400).send({ error: "2FA already enabled" });
+
+    const ok = verifyToken(row.twofa_secret, otp);
+    if (!ok) return reply.code(400).send({ error: "invalid token" });
+
+    const res = await fetch(API_ROUTES.TWOFA_ENABLE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: userId }),
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      return reply.code(500).send({ error: "failed to enable 2FA", details: errorData });
+    }
+    reply.send({ message: "2FA enabled" });
+  });
+  app.post (
+    "/2fa-disable",   
+    {
+      schema: {
+        body: $ref("TwoFADisableSchema"),
+        response: {
+          200: $ref("TwoFADisableResponseSchema"),
+        },
+      },
+    },
+    async (req: FastifyRequest, reply: FastifyReply) => {
+      const { userId, otp } = req.body as { userId: number; otp: string };
+      const accessToken = req.cookies.access_token;
+  
+      // Check token
+      if (!accessToken) return reply.code(401).send({ error: "unauthorized" });
+      try {
+        // Verify JWT token (from cookie)
+        const payload = app.jwt.verify(accessToken) as { id: number; email: string };
+  
+        // Optional: check if payload.id matches userId in body
+        if (payload.id !== userId) return reply.code(403).send({ error: "Forbidden" });
+      } catch (err) {
+        return reply.code(401).send({ error: "Invalid or expired token" });
+      }
+  
+      // Retrieve user's 2FA secret
+      const row = await fetch(API_ROUTES.FIND_USER_BY_ID, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: userId }),
+      }).then(res => res.json());
+  
+      if (!row || !row.twofa_enabled ) return reply.code(400).send({ error: "no 2fa set" });
+  
+      // Verify the one-time password (OTP)
+      const isValid = verifyToken(row.twofa_secret, otp);
+      if (!isValid) return reply.code(400).send({ error: "invalid token" });
+  
+      // Disable 2FA
+      const res = await fetch(API_ROUTES.TWOFA_DISABLE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: userId }),
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        return reply.code(500).send({ error: "failed to disable 2FA", details: errorData });
+      }
+  
+      reply.send({ message: "2FA disabled" });
+    }
+  );
+    app.post(
+      '/2fa-verify',
+      {
+        schema: {
+          body: $ref('TwoFAVerifySchema'),
+          response: {
+            200: $ref('TwoFAVerifyResponseSchema'),
+          },
+        },
+      },
+      async (req: FastifyRequest, reply: FastifyReply) =>{
+        const { otp } = req.body as { otp: string };
+        const tmp_2fa = req.cookies.tmp_2fa;
+      
+        if (!tmp_2fa) {
+          return reply.code(400).send({ error: "Missing temporary 2FA token" });
+        }
+      
+        try {
+          // Verify temporary 2FA token
+          // const payload = await req.jwtVerify<{ id: number; need2fa: boolean }>(tmp_2fa);
+          const payload = app.jwt.verify(tmp_2fa) as { id: number; need2fa: boolean };
+          if (!payload || !payload.need2fa) {
+            return reply.code(400).send({ error: "Invalid or expired temporary token" });
+          }
+      
+          const userId = payload.id;
+      
+          // Retrieve user's 2FA secret
+          const row = await fetch(API_ROUTES.FIND_USER_BY_ID, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: userId }),
+          }).then(res => res.json());
+      
+          if (!row?.twofa_secret) {
+            return reply.code(400).send({ error: "2FA not set up for this account" });
+          }
+          // Verify the one-time password (OTP)
+          const isValid = verifyToken(row.twofa_secret, otp);
+          if (!isValid) {
+            return reply.code(400).send({ error: "Invalid or expired OTP code" });
+          }
+         // Generate access token and refresh token
+          const accessToken = await reply.jwtSign(
+            { id: row.id, email: row.email },
+            { expiresIn: "15m" }
+          );
+          const refreshToken = await reply.jwtSign(
+            { id: row.id, email: row.email },
+            { expiresIn: "7d" }
+          );
+          
+          setAccessTokenCookie(reply, accessToken);
+          setRefreshTokenCookie(reply, refreshToken);
+          clearTmp2FACookie(reply);
+
+      
+          return reply.send({ user: { id: row.id, email: row.email, userName: row.userName, twoFARequired: false}, success: true, message: "2FA verified successfully"});
+        } catch (err) {
+          console.error("2FA verification failed:", err);
+          return reply.code(401).send({ error: "Invalid or expired temporary token" });
+        }
+      }
+      )
+
 
     app.get('/login/google', async (req, reply) => {
       // if already logged in, redirect to profile
@@ -95,13 +405,13 @@ export async function authRoutes(app: FastifyInstance) {
     
       const fastifyAny = app as any;
       const token = await fastifyAny.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req);
-      const accessToken = token.token.access_token;
+      const googleAccessToken = token.token.access_token;
     
-      console.log('Access Token =======>> ', accessToken);
+      console.log('Access Token =======>> ', googleAccessToken);
     
       // fetch user info
       const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: `Bearer ${accessToken}` }
+        headers: { Authorization: `Bearer ${googleAccessToken}` }
       }).then(res => res.json());
     
       console.log('User info =======>> ', userInfo);
@@ -127,44 +437,62 @@ export async function authRoutes(app: FastifyInstance) {
         // add data
         const radarDataId = await addNewRadarDataRow(user.id);
         const chartsDataId = await addNewChartsDataRows(user.id);
+        const updateRes = await fetch(API_ROUTES.VERIFY_USER_EMAIL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id }),
+        });
     
-        if (!radarDataId || !chartsDataId) {
-            // should I delete the user if this fails?
-            const res = await fetch(API_ROUTES.DELETE_USER_BY_ID, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId: user.id })
-            });
+        if (!radarDataId || !chartsDataId || !updateRes.ok) {
+          // should I delete the user if this fails?
+          const res = await fetch(API_ROUTES.DELETE_USER_BY_ID, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: user.id })
+          });
             if (!res.ok)
                 console.error('Failed to delete user:', await res.text());
             return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
         }
         
+        
       } else {
-        console.log("user already exists with this gmail : ", email);
+        //before generating tokens, check if 2fa is enabledl);
         user = existingUser;
+        if (user.twofa_enabled) {
+          const tmp_2fa = await reply.jwtSign(
+            { id: user.id, need2fa: true },
+            { expiresIn: "5m" }
+          );
+          setTmp2FACookie(reply, tmp_2fa);
+          // await reply.send({ message: "2FA required" });
+          return reply.redirect('http://localhost:3000/');
+        }  
       }
-      
-      // JWT and cookie:
-      const JWTtoken = await reply.jwtSign({ id: user.id, email: user.email });
-      // set token in cookie
-      reply.setCookie('token', JWTtoken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax', // for development, use 'strict' in production
-          path: '/',
-          maxAge: 54 * 60 * 60 // 1 day
-      });
-    
-      return reply.redirect('http://localhost:3000/');
-      } catch(error) {
+
+        // Generate access + refresh tokens
+    const accessToken = await reply.jwtSign(
+      { id: user.id, email: user.email },
+      { expiresIn: "15m" }
+    );
+    const refreshToken = await reply.jwtSign(
+      { id: user.id, email: user.email },
+      { expiresIn: "7d" }
+    );
+    // Set cookies
+    setAccessTokenCookie(reply, accessToken);
+    setRefreshTokenCookie(reply, refreshToken);
+    console.log("✅ Google login successful. Tokens set.");
+    // Redirect to frontend
+    return reply.redirect('http://localhost:3000/');
+  
+} catch(error) {
         console.log(error);
         return reply.status(400).send({message: "something went wron!"})
       }
     });
-    
     // display that user routes are registered
     app.log.info('user routes registered')
 }

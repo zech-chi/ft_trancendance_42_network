@@ -11,7 +11,7 @@ import fastifySession from '@fastify/session';
 import crypto from 'crypto';
 
 dotenv.config();
-
+ 
 // prnint the secret from env
 console.log("==========>> DB_SECRET:", process.env.SECRET_KEY);  
 
@@ -22,19 +22,9 @@ const SESSION_SECRET = process.env.SESSION_SECRET && process.env.SESSION_SECRET.
   ? process.env.SESSION_SECRET
   : crypto.randomBytes(64).toString('hex');
 
-// cookie + session
+// cookie + session 
 fastify.register(cookie, {
     secret: "zech-chi"
-});
-
-fastify.register(fastifySession, {
-  secret: SESSION_SECRET,
-  cookie: {
-    secure: false, // true if HTTPS
-    httpOnly: true,
-    sameSite: 'lax', // works fine for localhost
-    maxAge: 24 * 60 * 60 * 1000,
-  },
 });
 
 
@@ -72,10 +62,6 @@ fastify.register(cors, {
 
 fastify.register(jwt, {
     secret: "zech-chi", // this should be come from env variable
-    cookie: {
-    cookieName: 'token',
-    signed: false
-    }
 });
 
 for (const schema of userSchemas.schemas) {

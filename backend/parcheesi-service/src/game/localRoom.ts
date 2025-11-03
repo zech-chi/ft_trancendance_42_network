@@ -417,18 +417,30 @@ async doubleThreeTimes()
           if (blockedPieces.length > 0) {
             // Move the first blocked piece found
             console.log(chalk.yellow(`Player ${currentPlayer.userName} has blocked pieces. Auto-moving one due to double roll.`));
-            const pieceToMove = blockedPieces[0];
-            for (const dieValue of this.currentDice) {
-              const decision = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue);
-              if (decision && decision.allowed) {
-                await this.executeMoveDecision(decision);
+            
+            
+            for (const pieceToMove of blockedPieces) {
+            // const pieceToMove = blockedPieces[0];
+            const dieValue1 = this.currentDice[0];
+            const dieValue2 = this.currentDice[1];
+            const decision1 = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue1);
+            const decision2check = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue2 + dieValue1);
+            console.log(chalk.blue(`Auto-move decision for piece ${pieceToMove.id} with die ${dieValue1}: ${decision1.allowed}`));
+            console.log(chalk.blue(`Auto-move decision for piece ${pieceToMove.id} with combined die ${dieValue1 + dieValue2}: ${decision2check.allowed}`));
+
+              if (decision1 && decision1.allowed && decision2check && decision2check.allowed) {
+                await this.executeMoveDecision(decision1);
+                const decision2 = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue2);
+                console.log(chalk.blue(`Auto-move decision for piece ${pieceToMove.id} with die ${dieValue2}: ${decision2.allowed}`));
+                await this.executeMoveDecision(decision2);
                 console.log(chalk.green(`Auto-moved blocked piece ${pieceToMove.id} for player ${currentPlayer.userName} due to double roll.`));
+                this.currentDice = [];
+                break;
               } else {
                 console.log(chalk.red(`Failed to auto-move blocked piece ${pieceToMove.id} for player ${currentPlayer.userName}.`));
               }
-            }
-            this.currentDice = [];
           }
+        }
         }
 
     else if (this.isDouble === 3)
@@ -497,7 +509,13 @@ async handleRollDice() {
     });
     await this.doubleThreeTimes();
     await this.leaveBaseAuto();
-    await this.autoMove();
+    let auto = true;
+    while (auto) {
+      auto = await this.autoMove();
+    }
+    if (this.bonusDice > 0 && (!currentPlayer.bonus_moves || currentPlayer.bonus_moves.length === 0)) {
+      this.bonusDice = 0;
+    }
       if ((!currentPlayer.Remain_moves || currentPlayer.Remain_moves.length === 0 ) && (!currentPlayer.bonus_moves || currentPlayer.bonus_moves.length === 0)) {
         // if no available moves left, go to next player
         console.log(`No available moves for player ${currentPlayer.userName}`);
@@ -509,6 +527,7 @@ async handleRollDice() {
         this.announceMoveablePieces(currentPlayer, currentPlayer.bonus_moves);
       else
         this.announceMoveablePieces(currentPlayer, currentPlayer.Remain_moves);
+
     }
   }
 
@@ -615,6 +634,9 @@ async handleRollDice() {
 
       while (auto) {
         auto = await this.autoMove();
+      }
+      if (this.bonusDice > 0 && (!player.bonus_moves || player.bonus_moves.length === 0)) {
+        this.bonusDice = 0;
       }
       if (player.bonus_moves && player.bonus_moves.length > 0)
         this.announceMoveablePieces(player, player.bonus_moves);

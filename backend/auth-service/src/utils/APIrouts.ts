@@ -5,4 +5,13 @@ export const API_ROUTES = {
     ADD_NEW_CHARTS_DATA_ROWS: 'http://db-service:5000/api/auth/addNewChartsDataRows',
     DELETE_USER_BY_ID: 'http://db-service:5000/api/auth/deleteUserById',
     FIND_USER_BY_EMAIL: 'http://db-service:5000/api/auth/findUserByEmail',
+    SAVE_VERIFICATION_CODE: 'http://db-service:5000/api/auth/saveVerificationCode',
+    GET_VERIFICATION_CODE : 'http://db-service:5000/api/auth/getVerificationCode',
+    VERIFY_USER_EMAIL : 'http://db-service:5000/api/auth/verifyUserEmail',
+    UPDATE_VERIFICATION_CODE : 'http://db-service:5000/api/auth/updateVerificationCode',
+    FIND_USER_BY_ID: 'http://db-service:5000/api/auth/findUserById',
+    SAVE_INIT_OTP: 'http://db-service:5000/api/auth/twoFASetup',
+    TWOFA_ENABLE: 'http://db-service:5000/api/auth/twoFAEnable',
+    TWOFA_VERIFY: 'http://db-service:5000/api/auth/twoFAVerify',
+    TWOFA_DISABLE: 'http://db-service:5000/api/auth/twoFADisable',
 };
