@@ -4,8 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { createServer } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
-import db from "./DataBase/db"
-import authPlugin from './plugins/authPlugin';
+import PongPlugin from './plugins/pongPlugin';
 import fastifyCookie from "@fastify/cookie";
 import fastifyJwt from '@fastify/jwt';
 import {SocketFunction} from "./socket"
@@ -32,9 +31,8 @@ fastify.register(fastifyJwt, {
 });
 
 // Plugin d'authentification
-fastify.register(authPlugin, {
-  secret: "super-secret-jwt-key-12345",
-  cookieName: "auth-token",
+fastify.register(PongPlugin, {
+  prefix: '/api/pong',
 });
 
 fastify.get('/', async () => {

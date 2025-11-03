@@ -102,7 +102,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     newSocket.on("connect", async () => {
       try {
         setIsConnected(true);
-        const res = await fetch(`http://localhost:5500/get-user/${loggedUserId}`, {
+        const res = await fetch(`http://localhost:5500/api/pong/get-user/${loggedUserId}`, {
           credentials: "include",
         });
         const data = await res.json();

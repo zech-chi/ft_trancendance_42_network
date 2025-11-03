@@ -14,7 +14,7 @@ export default async function routesPong(fastify: FastifyInstance){
         const { userId } = request.params;
     try {
       const stmt = db.prepare(`
-      SELECT u.id, u.fullName, u.userName, f.status
+      SELECT u.id, u.fullName, u.userName, u.imageUrl, f.status
       FROM friends f
       JOIN users u
         ON (u.id = f.receiver_id AND f.sender_id = ?)
@@ -39,7 +39,64 @@ export default async function routesPong(fastify: FastifyInstance){
     }
     });
 
-    fastify.get("/user/:id", async (request, reply) => {
+
+    // add winner to a game
+
+
+    fastify.post("/addwinner", async (request: FastifyRequest, reply: FastifyReply) => {
+      const { player1, player2, score1, score2, winner} = request.body as {
+        player1: number,
+        player2: number,
+        score1: number,
+        score2: number,
+        winner: number,
+      };
+    
+      const stmt = db.prepare(`
+        INSERT INTO Games (user1, user2, user1_score, user2_score, user1_win)
+        VALUES (?, ?, ?, ?, ?)
+      `);
+    
+      const info = stmt.run(player1, player2, score1, score2, winner);
+    
+      if (info.changes === 0) {
+        return reply.status(400).send({ success: false, error: 'Failed to add game result' });
+      }
+
+      console.log(player1, player2, score1, score2, winner, '<<<<<<<<<<');
+      // update  data in ChartsData table
+      // update friendsTotalGames for both players
+      const loserId = player1 === winner ? player2 : player1;
+      const winnerId = player1 === loserId ? player2 : player1;
+      db.prepare(`
+      UPDATE ChartsData 
+      SET friendsTotalGames = friendsTotalGames + 1
+      WHERE userId IN (?, ?)
+      AND game = 'pong'
+      `).run(player1, player2);
+
+      // update winner's friendsWins
+      db.prepare(`
+      UPDATE ChartsData 
+      SET friendsWins = friendsWins + 1
+      WHERE userId = ?
+      AND game = 'pong'
+      `).run(winnerId);
+      // update loser’s friendsLosses
+      
+
+      db.prepare(`
+        UPDATE ChartsData
+        SET friendsLosses = friendsLosses + 1
+        WHERE userId = ?
+        AND game = 'pong'
+      `).run(loserId);
+
+        console.log('===========> Game result added with ID:', info.lastInsertRowid);
+        return { success: true, gameId: info.lastInsertRowid };
+      });
+
+    fastify.get("/user/:id", async (request:FastifyRequest, reply: FastifyReply) => {
     const { id } = request.params as { id: number };
     if (!id) {
       reply.code(400);

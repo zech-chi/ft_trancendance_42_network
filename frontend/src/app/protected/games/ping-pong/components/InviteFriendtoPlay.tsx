@@ -24,6 +24,12 @@ interface TestUserResponse {
   user: User | null; // null if not authenticated
   authenticated: boolean;
 }
+interface Friend {
+  id: number;
+  userName: string;
+  fullName: string;
+  imageUrl: string;
+}
 
 export default function InviteToPlay() {
   const { socket } = useSocket();
@@ -31,7 +37,7 @@ export default function InviteToPlay() {
   const { loggedUserId, setLoggedUserId } = useLoggedUserId();
   const { loggedUserName, setLoggedUserName } = useLoggedUserName();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [friends, setFriends] = useState<any[]>([]);
+  const [friends, setFriends] = useState<Friend[]>([]);
   const { updateInviteStatus, getInviteStatus, setInviteStates } = useInvite();
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -42,7 +48,7 @@ export default function InviteToPlay() {
 
   const listFriends = async (): Promise<void> => {
     try {
-      const response = await fetch(`http://localhost:5500/friends/${loggedUserId}`, {
+      const response = await fetch(`http://localhost:5500/api/pong/friends/${loggedUserId}`, {
         credentials: "include",
       });
 
@@ -256,7 +262,8 @@ export default function InviteToPlay() {
               >
                 <div className="flex items-center ml-4 gap-2">
                   <img
-                    src="/images/tkannane.jpeg"
+                    // src="/images/tkannane.jpeg"
+                    src={friend.imageUrl}
                     className="w-15 h-15 rounded-full border-2"
                     alt="Profile"
                   />
