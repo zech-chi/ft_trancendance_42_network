@@ -6,6 +6,8 @@ import { LoggedUserNameProvider } from '@/context/LoggedUserNameContext';
 import { SelectedUserIdProvider } from '@/context/SelectedUserId';
 import { SelectedUserNameProvider } from '@/context/SelectedUserNameContext';
 import { LoggedUserIdProvider } from '@/context/UserIdContext';
+import { SocketProvider } from "./protected/games/ping-pong/context/SocketContext";
+import { InviteProvider } from "./protected/games/ping-pong/context/InviteContext";
 
 const BG_URL = 'https://images6.alphacoders.com/134/1344450.jpeg';
 
@@ -33,12 +35,14 @@ export default function RootLayout({
                   
                 <LoggedUserIdProvider>
               <AuthUserProvider>
+                <SocketProvider>
 
                 <main className="relative bg-cover bg-center bg-no-repeat bg-black/50"
                 style={{ backgroundImage: `url('${BG_URL}')` }}
                 >
                   {children} {/* This renders the content of your page.tsx files */}
                 </main>
+                </SocketProvider>
 
                 </AuthUserProvider>
               </LoggedUserIdProvider>

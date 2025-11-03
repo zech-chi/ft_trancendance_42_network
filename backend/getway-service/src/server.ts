@@ -3,6 +3,8 @@ import fastifyHttpProxy from "@fastify/http-proxy";
 import * as jwt from "jsonwebtoken";
 // import { SERVICES } from "./config/services";
 
+// ! we should add the cors orginal for this service also to avoid issues when frontend will try to connect
+
 export const  SERVICES = {
   auth_service: "http://auth-service:5001",
   chat_service: "http://chat-service:5003",
@@ -165,3 +167,5 @@ const start = async () => {
 };
 
 start();
+
+// ! we should add the cors orginal for this service also to avoid issues when frontend will try to connect
