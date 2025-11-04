@@ -109,7 +109,7 @@ export default function Statistics() {
             w-[100%]
         '>
             <FriendsStats data={data}/>
-            <AIStats data={data}/>
+            {/* <AIStats data={data}/> */}
         </div>
         <div className='flex flex-col h-full items-center justify-center p-5
             w-[100%]

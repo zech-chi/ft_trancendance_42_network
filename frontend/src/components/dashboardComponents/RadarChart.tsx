@@ -1,5 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from "react";
+import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+import { fetchRadarData } from "@/app/lib/apiDashboard";
 
 const points1 = [
     { x: 0, y: -90 },
@@ -77,13 +79,25 @@ export function RadarChart() {
     const [radarData, setRadarData] = useState<number[] | null>(null);
     const svgRef = useRef<SVGSVGElement>(null);
     const [coords, setCoords] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+    const { selectedUserName, setSelectedUserName } = useSelectedUserName();
     
     const getScaleFactor = (x: number) => 0.2 + (x / 20) * 0.8;
 
     // Demo data
     useEffect(() => {
-        setRadarData([12.4, 19.7, 4.3, 8.6, 17.1, 0.9, 15.5, 6.2, 2.8]);
-    }, []);
+        const fetchData = async () => {
+            try {
+                const data = await fetchRadarData(selectedUserName);
+                const values = Object.values(data);
+                setRadarData(values);
+            } catch (error) {
+                console.error("Failed to fetch radar data:", error);
+            }
+        };
+    
+        fetchData();
+    }, [selectedUserName]);
+    
 
     if (!radarData) {
         return <div className="text-white/10">Loading radarData...</div>;
