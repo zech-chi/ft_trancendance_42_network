@@ -108,13 +108,13 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 				py-2.5
 				`}
 			>
-				<div className="w-full flex flex-row items-center justify-center gap-1 pr-20">
-				<SearchForm />
+				<div className="w-full flex flex-row items-center justify-center gap-1 my-3">
+				{/* <SearchForm /> */}
 				<aside
 						className="
 						bg-black/10 backdrop-blur-md
 						flex flex-row items-center justify-center
-						gap-2 p-2
+						gap-10 p-2
 						rounded-full
 						border border-white/10
 						z-50
