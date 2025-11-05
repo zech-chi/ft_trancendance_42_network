@@ -351,6 +351,7 @@ function SearchForm(): JSX.Element {
                     setSelectedUserId(user.id);
                     setInputValue("");
                     setShowDropdown(false);
+                    // window.location.href = "/protected";
                   }}
                 >
                   <img
