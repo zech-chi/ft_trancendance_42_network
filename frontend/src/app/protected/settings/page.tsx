@@ -5,6 +5,8 @@ import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import { X, Check } from "lucide-react";
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
+import TwoFASetup from "./components/TwoFASetup";
+import { useLoggedUserId } from "@/context/UserIdContext";
 
 type PropsProfileImage = {
   imgSrc: string;
@@ -124,7 +126,7 @@ function ProfileInfo({
 
       <div className="flex flex-col items-center w-full">
         <span className="mb-1 text-white font-bold text-sm md:text-base">
-        Two-factor authentication (2fa)
+          Two-factor authentication (2fa)
         </span>
 
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
@@ -139,14 +141,12 @@ function ProfileInfo({
           >
             <button
               onClick={() => setIs2FAEnabled(!is2FAEnabled)}
-              className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${
-                is2FAEnabled ? "bg-yellow-500" : "bg-gray-500"
-              }`}
+              className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${is2FAEnabled ? "bg-yellow-500" : "bg-gray-500"
+                }`}
             >
               <span
-                className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-                  is2FAEnabled ? "translate-x-7" : "translate-x-1"
-                }`}
+                className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${is2FAEnabled ? "translate-x-7" : "translate-x-1"
+                  }`}
               />
             </button>
 
@@ -595,6 +595,10 @@ function Settings() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [newProfileFile, setNewProfileFile] = useState<File | null>(null); // To store the new file object
   const [imgSrc, setImgSrc] = useState("/zechi.jpg"); // Default profile image
+  const [showTwoFASetup, setShowTwoFASetup] = useState(false);
+
+  // loged user id from context
+  const { loggedUserId } = useLoggedUserId();
 
   // const variable for passowrds when the user will type them
   const [oldPassword, setOldPassword] = useState("");
@@ -702,9 +706,8 @@ function Settings() {
     }
 
     try {
-      const userId = "1"; // Replace with actual user ID from context/auth
       const res = await fetch(
-        `http://localhost:5004/api/settings/update/${userId}`,
+        `http://localhost:5004/api/settings/update/${loggedUserId}`,
         {
           method: "PATCH", // Use PATCH for partial updates
           body: formData, // No 'Content-Type' header needed for FormData
@@ -760,7 +763,7 @@ function Settings() {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5004/api/settings/info/1"
+          `http://localhost:5004/api/settings/info/${loggedUserId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
@@ -774,6 +777,7 @@ function Settings() {
         setEmail(data.user.email || "");
         setBioText(data.user.bio || "mkyn walo");
         setImgSrc(data.user.imageUrl); // Set profile image if available
+        setIs2FAEnabled(data.user.twofa_enabled);
 
         initialValues.current = {
           fullName: data.user.fullName || "mkyn walo",
@@ -825,7 +829,7 @@ function Settings() {
                     setFullName={setFullName}
                     userName={userName}
                     is2FAEnabled={is2FAEnabled}
-                    setIs2FAEnabled={setIs2FAEnabled}
+                    setIs2FAEnabled={() => setShowTwoFASetup(true)}
                   />
 
                   {/* form passowrd */}
@@ -869,6 +873,25 @@ function Settings() {
             onClose={() => setShowPopup(false)}
           />
         )}
+
+        {/* // Popup section at the end */}
+        {showTwoFASetup && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm animate-fadeIn flex justify-center items-center z-50">
+              <TwoFASetup
+                is2FAEnabled={is2FAEnabled}
+                onClose={() => setShowTwoFASetup(false)}
+                onEnable={() => {
+                  setIs2FAEnabled(true);
+                  setShowTwoFASetup(false);
+                }}
+                onDisable={() => {
+                  setIs2FAEnabled(false);
+                  setShowTwoFASetup(false);
+                }}
+              />
+          </div>
+        )}
+
       </div>
     </>
   );

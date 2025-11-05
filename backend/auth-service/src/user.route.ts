@@ -259,59 +259,6 @@ export async function authRoutes(app: FastifyInstance) {
     }
     reply.send({ message: "2FA enabled" });
   });
-  // disable 2fa and verfiy before disabling
-
-  app.post(
-    '/2fa-disable-verify',
-    {
-      schema: {
-        body: $ref('TwoFAVerifyDisableSchema'),
-        response: {
-          200: $ref('TwoFAVerifyDisableResponseSchema'),
-        },
-      },
-    },
-    async (req: FastifyRequest, reply: FastifyReply) =>{
-      const { otp } = req.body as { otp: string };
-      const accessToken = req.cookies.access_token;
-    
-      if (!accessToken) {
-        return reply.code(400).send({ error: "Missing temporary 2FA token" });
-      }
-    
-      try {
-        // Verify temporary 2FA token
-        // const payload = await req.jwtVerify<{ id: number; need2fa: boolean }>(tmp_2fa);
-        const payload = app.jwt.verify(accessToken) as { id: number, email: string };
-        if (!payload || !payload.id) {
-          return reply.code(400).send({ error: "Invalid or expired access token" });
-        }
-    
-        const userId = payload.id;
-    
-        // Retrieve user's 2FA secret
-        const row = await fetch(API_ROUTES.FIND_USER_BY_ID, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: userId }),
-        }).then(res => res.json());
-    
-        if (!row?.twofa_secret) {
-          return reply.code(400).send({ error: "2FA not set up for this account" });
-        }
-        // Verify the one-time password (OTP)
-        const isValid = verifyToken(row.twofa_secret, otp);
-        if (!isValid) {
-          return reply.code(400).send({ error: "Invalid or expired OTP code" });
-        }
-    
-        return reply.send({ success: true, message: "2FA disable verifiecation is done successfully"});
-      } catch (err) {
-        console.error("2FA verification failed:", err);
-        return reply.code(401).send({ error: "Invalid or expired temporary token" });
-      }
-    }
-    )
 
   app.post (
     "/2fa-disable",   
