@@ -8,6 +8,7 @@ import { fetchUser } from '@/app/lib/apiDashboard';
 import { useLoggedUserName } from '@/context/LoggedUserNameContext';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserId } from "@/context/UserIdContext";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { useSelectedUserId } from '@/context/SelectedUserId';
 
@@ -241,6 +242,7 @@ function SearchForm(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!inputValue) {
@@ -351,7 +353,7 @@ function SearchForm(): JSX.Element {
                     setSelectedUserId(user.id);
                     setInputValue("");
                     setShowDropdown(false);
-                    // window.location.href = "/protected";
+                    router.push('/protected/');
                   }}
                 >
                   <img
