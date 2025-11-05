@@ -17,6 +17,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 import { fetchUser } from "@/app/(auth)/login/page";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserId } from "@/context/UserIdContext";
 import { useRouter } from "next/navigation";
 
@@ -26,6 +27,7 @@ function Chat() {
 
     const { loggedUserName, setLoggedUserName } = useLoggedUserName();
     const { loggedUserId: userId , setLoggedUserId } = useLoggedUserId();
+    const { selectedUserName, setSelectedUserName } = useSelectedUserName();
     // const [loading, setLoading] = useState(true);
     const router = useRouter();
         
@@ -34,6 +36,7 @@ function Chat() {
     
 
 //   const { userId } = useUser() as { userId: number | null };
+   console.log("selected user name in chat page: ", selectedUserName);
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [selectedChat, setSelectedChat] = useState<Contact | null>(null);
@@ -149,10 +152,17 @@ function Chat() {
       } catch (err) {
         console.error("Error fetching contacts:", err);
       }
+      console.log("Contacts list after fetch attempt:");
     };
   
     fetchContacts();
   }, [userId]);
+
+  useEffect(() => {
+    if (!contactsList.length || !selectedUserName) return;
+    const selected = contactsList.find(c => c.username === selectedUserName);
+    if (selected) setSelectedChat(selected);
+  }, [contactsList, selectedUserName]);
 
 
   // to remove 
