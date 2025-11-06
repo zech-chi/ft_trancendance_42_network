@@ -12,6 +12,12 @@ import { ChatInputProps } from "../types/typesChat";
 import { useAudioRecorder } from "@/app/protected/chat/hooks/useAudioRecorder"; // Import the hook
 // update
 
+import { handleInvite } from "../../games/ping-pong/utils/handleInvite";
+import { useInvite } from "../../games/ping-pong/context/InviteContext";
+import { useSocket } from "../../games/ping-pong/context/SocketContext";
+import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import { useLoggedUserId } from "@/context/UserIdContext";
+
 export default function ChatInput({
   setInputValue,
   inputValue,
@@ -21,8 +27,15 @@ export default function ChatInput({
   error,
   fileInputRef,
   setMessage, // Function to set error messages
+  friendId,
 }: ChatInputProps) {
   const [showPicker, setShowPicker] = useState<boolean>(false);
+    const { updateInviteStatus, getInviteStatus } = useInvite();
+      const { socket } = useSocket();
+      // use the logged userId from the context
+      const { loggedUserId } = useLoggedUserId();
+      const { loggedUserName } = useLoggedUserName();
+  
 
   const {
     isRecording,
@@ -76,6 +89,17 @@ export default function ChatInput({
     }
   }
 
+  const handleInviteClick = (friendId: number) => {
+  handleInvite({
+    socket,
+    loggedUserId,
+    loggedUserName,
+    friendId,
+    getInviteStatus,
+    updateInviteStatus,
+  });
+};
+
   return (
     <div className="relative pt-3">
       {showPicker && (
@@ -120,7 +144,8 @@ export default function ChatInput({
                 </button>
 
                  <button className="p-2" onClick={() => {
-                  alert("Game invite feature coming soon!");
+                  // alert("Game invite feature coming soon!");
+                  handleInviteClick(friendId);
                 }}>
                   <Gamepad2 className="text-white w-5 h-5 md:w-8 md:h-8 hover:text-amber-200 cursor-pointer" />
                 </button>

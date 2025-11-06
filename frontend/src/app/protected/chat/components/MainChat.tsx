@@ -711,6 +711,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           handleFileChange={handleFileChange}
           error={message}
           fileInputRef={fileInputRef}
+          friendId={contact.id}
         />) : (
           <div className="bg-[rgba(0,0,0,0.3)] p-4 text-white rounded-b-[50px]">
             <p className="text-red-500 text-[12px] md:text-[16px] md:font-semibold text-center">
