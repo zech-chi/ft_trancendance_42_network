@@ -32,16 +32,16 @@ export default function RootLayout({
 
 <>
 
-  <Toaster position="top-right" />
+  {/* <Toaster position="top-right" /> */}
   
   <SettingsProvider>
     {/* <SocketProvider> */}
-      <InviteProvider>
-      <Notifications />
+      {/* <InviteProvider> */}
+      {/* <Notifications /> */}
         <TreeTournamentProvider>
               {children}
         </TreeTournamentProvider>
-      </InviteProvider>
+      {/* </InviteProvider> */}
     {/* </SocketProvider> */}
   </SettingsProvider>
   </>

@@ -10,6 +10,7 @@ import { useLoggedUserId } from "@/context/UserIdContext";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { fetchUser } from "@/app/(auth)/login/page";
 import { useRouter } from "next/navigation";
+import { handleInvite } from "../utils/handleInvite";
 
 
 interface User {
@@ -120,33 +121,44 @@ export default function InviteToPlay() {
     setInviteStates({});
   }, [setInviteStates]); // Se déclenche seulement au montage
 
-  const handleInvite = (friendId: number) => {
-    // Vérifier si une invitation est déjà en cours pour cet ami
-    const currentState = getInviteStatus(friendId);
-    console.log(`🎯 Attempting to invite friend ${friendId}, current state:`, currentState.status);
+  // const handleInvite = (friendId: number) => {
+  //   // Vérifier si une invitation est déjà en cours pour cet ami
+  //   const currentState = getInviteStatus(friendId);
+  //   console.log(`🎯 Attempting to invite friend ${friendId}, current state:`, currentState.status);
     
-    if (currentState.status !== 'idle') {
-      console.log(`⚠️ Invitation already in progress for friend ${friendId}:`, currentState.status);
-      return; // Empêcher les clics multiples
-    }
+  //   if (currentState.status !== 'idle') {
+  //     console.log(`⚠️ Invitation already in progress for friend ${friendId}:`, currentState.status);
+  //     return; // Empêcher les clics multiples
+  //   }
     
-    // Marquer comme "sending" immédiatement
-    console.log(`🔄 Setting state to 'sending' for friend ${friendId}`);
-    updateInviteStatus(friendId, 'sending');
+  //   // Marquer comme "sending" immédiatement
+  //   console.log(`🔄 Setting state to 'sending' for friend ${friendId}`);
+  //   updateInviteStatus(friendId, 'sending');
     
-    console.log(`📤 Emitting send_invite event for friend ${friendId}`);
-    socket?.emit("send_invite", {
-      from: loggedUserId,
-      fromName: loggedUserName,
-      to: friendId,
-      game: "Ping Pong",
-    });
+  //   console.log(`📤 Emitting send_invite event for friend ${friendId}`);
+  //   socket?.emit("send_invite", {
+  //     from: loggedUserId,
+  //     fromName: loggedUserName,
+  //     to: friendId,
+  //     game: "Ping Pong",
+  //   });
     
-    toast.success("Invitation sent!", {
-      position: "top-right",
-      duration: 2000,
-    });
-  };
+  //   toast.success("Invitation sent!", {
+  //     position: "top-right",
+  //     duration: 2000,
+  //   });
+  // };
+
+  const handleInviteClick = (friendId: number) => {
+  handleInvite({
+    socket,
+    loggedUserId,
+    loggedUserName,
+    friendId,
+    getInviteStatus,
+    updateInviteStatus,
+  });
+};
 
   const handleCancelInvite = (friendId: number) => {
     const currentState = getInviteStatus(friendId);
@@ -276,7 +288,7 @@ export default function InviteToPlay() {
                   friendId={friend.id}
                   friendName={friend.fullName}
                   inviteState={getInviteStatus(friend.id)}
-                  onInvite={() => handleInvite(friend.id)}
+                  onInvite={() => handleInviteClick(friend.id)}
                   onCancel={() => handleCancelInvite(friend.id)}
                   showDebug={false} // Debug désactivé pour la production
                 />

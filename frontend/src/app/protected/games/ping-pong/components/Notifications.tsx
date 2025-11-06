@@ -22,7 +22,7 @@ export default function Notifications() {
   const resetAllInviteStates = useCallback(() => {
     setInviteStates(prev => {
       const resetStates: { [friendId: number]: InviteState } = {};
-      Object.keys(prev).forEach(friendId => {
+      Object .keys(prev).forEach(friendId => {
         resetStates[Number(friendId)] = { status: 'idle' };
       });
       return resetStates;
@@ -62,7 +62,10 @@ export default function Notifications() {
                   accepter: currentUser,
                   inviteId: inviteId,
                 });
-                toast.dismiss(t.id);
+                // toast.dismiss(t.id);
+                // toast.dismiss();
+                toast.remove();
+
               }}
               className="p-4 font-bold text-green-600 hover:text-green-800 cursor-pointer"
             >
@@ -76,7 +79,9 @@ export default function Notifications() {
                   inviter: from,
                   inviteId: inviteId,
                 });
-                toast.dismiss(t.id);
+                // toast.dismiss(t.id);
+                // toast.dismiss(); 
+                toast.remove();
               }}
               className="p-4 font-bold text-red-600 hover:text-red-800 cursor-pointer"
             >
@@ -104,7 +109,7 @@ export default function Notifications() {
 
     const handleDecline = ({ from, message }: { from: User; message: string }) => {
       console.log(`Decline received from ${from.username}: ${message}`);
-      toast.error(`${message}`, { position: "top-right", duration: 9000 });
+      toast.error(`${message}`, { position: "top-right", duration: 500 });
       updateInviteStatus(from.id, 'declined');
     };
 

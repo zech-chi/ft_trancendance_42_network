@@ -9,6 +9,8 @@ import { LoggedUserIdProvider } from '@/context/UserIdContext';
 import { SocketProvider } from "./protected/games/ping-pong/context/SocketContext";
 import { InviteProvider } from "./protected/games/ping-pong/context/InviteContext";
 import { UserEmailProvider } from '@/context/UserEmailContext';
+import Notifications from './protected/games/ping-pong/components/Notifications';
+import { Toaster } from "react-hot-toast";
 
 const BG_URL = 'https://images6.alphacoders.com/134/1344450.jpeg';
 
@@ -29,6 +31,7 @@ export default function RootLayout({
         style={{ backgroundImage: `url('${BG_URL}')` }}
       >
         {/* auth provider lets make sure that user is authenticated */}
+        <Toaster position="top-right" />
         <UserEmailProvider>
             <LoggedUserNameProvider>
 
@@ -37,13 +40,19 @@ export default function RootLayout({
                   
                 <LoggedUserIdProvider>
               <AuthUserProvider>
+                 
                 <SocketProvider>
+                  <InviteProvider>
+                        
 
+                    <Notifications />
                 <main className="relative bg-cover bg-center bg-no-repeat bg-black/50"
                 style={{ backgroundImage: `url('${BG_URL}')` }}
                 >
                   {children} {/* This renders the content of your page.tsx files */}
                 </main>
+
+                </InviteProvider>
                 </SocketProvider>
 
                 </AuthUserProvider>
