@@ -2,7 +2,7 @@
 "use client";
 import { BiSolidSend } from "react-icons/bi";
 import { SlEmotsmile } from "react-icons/sl";
-import { Paperclip, Mic, StopCircle, Trash2 } from "lucide-react";
+import { Paperclip, Mic, StopCircle, Trash2, Gamepad2 } from "lucide-react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -51,7 +51,7 @@ export default function ChatInput({
 
   // Helper to format the recording time
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60)
+    const minutes = Math.floor(time / 60)Gamepad2
       .toString()
       .padStart(2, "0");
     const seconds = (time % 60).toString().padStart(2, "0");
@@ -117,6 +117,12 @@ export default function ChatInput({
                   onClick={() => setShowPicker(!showPicker)}
                 >
                   <SlEmotsmile className="text-white w-5 h-5 md:w-6 md:h-6 hover:text-amber-200 cursor-pointer" />
+                </button>
+
+                 <button className="p-2" onClick={() => {
+                  alert("Game invite feature coming soon!");
+                }}>
+                  <Gamepad2 className="text-white w-5 h-5 md:w-8 md:h-8 hover:text-amber-200 cursor-pointer" />
                 </button>
               </div>
 
