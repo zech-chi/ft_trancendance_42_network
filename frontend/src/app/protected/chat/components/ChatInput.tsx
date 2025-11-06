@@ -141,7 +141,7 @@ export default function ChatInput({
                 }}
                 minRows={1} // Start as a single line
                 maxRows={4} // Stop growing after 4 lines and show a scrollbar
-                className=" bg-transparent w-full p-2  text-white text-sm md:text-[16px] focus:outline-none resize-none self-center overflow-y-auto scrollbar"
+                className=" bg-transparent w-full p-2  text-white text-[12px] md:text-[16px] focus:outline-none resize-none self-center overflow-y-auto scrollbar"
               />
               <button
                 className={`p-2 md:mr-2 ${
