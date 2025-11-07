@@ -50,9 +50,11 @@ if (players.length < 2) {
   reply.send({ gameId });
 });
 
-fastify.patch("/end/:id", async (request : FastifyRequest<{ Params: { id: number }, Body: { winner: string } }>, reply : FastifyReply) => {
-  const { winner } =request.body; // winner username
+fastify.patch("/end/:id", async (request : FastifyRequest<{ Params: { id: number }, Body: { winner: string , losers:string[]}  }>, reply : FastifyReply) => {
+  const { winner, losers } =request.body; // winner username
+
   const { id } = request.params; // game ID
+  return reply.send({id, winner, losers}); //--- IGNORE ---
   
   // validate game exists
   const game = db.prepare("SELECT * FROM ParchisiGames WHERE id = ?").get(id);

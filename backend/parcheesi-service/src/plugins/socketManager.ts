@@ -172,12 +172,13 @@ export default async function socketManager(io: Server) {
       await room.handleRollDice();
 
       if (room.gameOver) {
-        await room.storeGameEndInDB(room.currentPlayer.userName);
-          room.broadcast("gameOver", {
-              winner: room.currentPlayer.userName,
-              color: room.currentPlayer.color,
-            })
-          const id = room.id;
+        const losers = room.players.filter(p => p.id !== room.currentPlayer.id).map(p => p.userName);
+        await room.storeGameEndInDB(room.currentPlayer.userName, losers);
+        room.broadcast("gameOver", {
+          winner: room.currentPlayer.userName,
+          color: room.currentPlayer.color,
+        });
+        const id = room.id;
           console.log(chalk.red(`Cleaning up game ${id}`));
           room.destroy();
           rooms.delete(id);
@@ -197,7 +198,8 @@ export default async function socketManager(io: Server) {
       await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
 
       if (room.gameOver) {
-        await room.storeGameEndInDB(room.currentPlayer.userName);
+        const losers = room.players.filter(p => p.id !== room.currentPlayer.id).map(p => p.userName);
+        await room.storeGameEndInDB(room.currentPlayer.userName, losers);
         room.broadcast("gameOver", {
             winner: room.currentPlayer.userName,
             color: room.currentPlayer.color,
@@ -273,7 +275,8 @@ export default async function socketManager(io: Server) {
           if (room.players.length === 1 || room.players.length === 0) {
             if (room.players.length === 1 && room.gamestarted){
               
-              await room.storeGameEndInDB(username);
+              const losers = room.players.filter(p => p.id !== room.currentPlayer.id).map(p => p.userName);
+              await room.storeGameEndInDB(username, losers);
               room.gameOver = true;
               room.broadcast("gameOver", {
                 winner: username,

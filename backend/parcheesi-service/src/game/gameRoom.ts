@@ -701,7 +701,7 @@ async handleRollDice() {
       console.error(`❌ Error storing game start: ${(err as Error).message}`);
     }
   }
-async storeGameEndInDB(winnerUsername: string) {
+async storeGameEndInDB(winnerUsername: string, losers: string[]) {
     try {
       if (this.db_gameId === 0) {
         throw new Error("Game ID is not set. Cannot store game end.");
@@ -709,7 +709,7 @@ async storeGameEndInDB(winnerUsername: string) {
       const response = await fetch(`${ApidataBase.SetendGame}/${this.db_gameId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ winner: winnerUsername }),
+        body: JSON.stringify({ winner: winnerUsername, losers }),
       });
 
       if (!response.ok) {
