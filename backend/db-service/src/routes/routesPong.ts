@@ -1,5 +1,63 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
+const skills = [
+  "Quick_Reflexes",
+  "Strategic_Thinking",
+  "Precision_Shots",
+  "Pattern_Recognition",
+  "Anticipating_Moves",
+  "Board_Control",
+  "Adaptive_Playstyle",
+  "Risk_Management",
+  "Mind_Games",
+];
+
+export async function updateRadarData(fastify: FastifyInstance, userId: number, winner: boolean) {
+  const db = fastify.db;
+
+  const skills = [
+    "Quick_Reflexes",
+    "Strategic_Thinking",
+    "Precision_Shots",
+    "Pattern_Recognition",
+    "Anticipating_Moves",
+    "Board_Control",
+    "Adaptive_Playstyle",
+    "Risk_Management",
+    "Mind_Games",
+  ];
+
+  const clamp = (val: number) => Math.max(0, Math.min(20, val));
+
+  // ✅ use prepared statement instead of db.get()
+  const currentStmt = db.prepare("SELECT * FROM RadarData WHERE userId = ?");
+  const current = currentStmt.get(userId);
+  if (!current) {
+    console.warn(`⚠️ No RadarData found for user ${userId}`);
+    return;
+  }
+
+  const updates: Record<string, number> = {};
+  for (const skill of skills) {
+    const change = Math.random() < 0.5 ? 0.1 : 0;
+    const delta = winner ? change : -change;
+    updates[skill] = clamp((current[skill] ?? 0) + delta);
+  }
+
+  const setClause = skills.map((s) => `${s} = ?`).join(", ");
+  const values = [...skills.map((s) => updates[s]), userId];
+
+  console.log(`Updating RadarData for user ${userId}:`, updates);
+
+  // ✅ use prepared UPDATE
+  const updateStmt = db.prepare(`UPDATE RadarData SET ${setClause} WHERE userId = ?`);
+  updateStmt.run(...values);
+
+  console.log(
+    `✅ RadarData updated for user ${userId} (${winner ? "Winner" : "Loser"})`
+  );
+}
+
 export default async function routesPong(fastify: FastifyInstance){
     // get the db instance
     const db = fastify.db;
@@ -91,6 +149,10 @@ export default async function routesPong(fastify: FastifyInstance){
         WHERE userId = ?
         AND game = 'pong'
       `).run(loserId);
+
+      // update radar chart data for both players
+      await updateRadarData(fastify, winnerId, true);
+      await updateRadarData(fastify, loserId, false);
 
         console.log('===========> Game result added with ID:', info.lastInsertRowid);
         return { success: true, gameId: info.lastInsertRowid };
