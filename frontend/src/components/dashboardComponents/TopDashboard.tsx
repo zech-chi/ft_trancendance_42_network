@@ -1,14 +1,13 @@
 'use client';
 import { JSX, use, useState } from "react";
 import { useEffect } from "react";
-import { fetchFriendshipStatus, fetchUser } from "@/app/lib/apiDashboard";
+import { fetchFriendshipStatus, fetchUser, fetchNumberOfPlayers } from "@/app/lib/apiDashboard";
 import { motion } from 'framer-motion';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useLoggedUserId } from "@/context/UserIdContext";
 
-const TOTAL_USERS = 133742;
 
 interface User {
   id: number;
@@ -269,6 +268,7 @@ export function TopDashboard(): JSX.Element {
     const { selectedUserName } = useSelectedUserName();
     const { selectedUserId } = useSelectedUserId();
     const [user, setUser] = useState<User | null> (null);
+    const [numberOfPlayers, setNumberOfPlayers] = useState<number>(0);
     const [ friendshipStatus, setFriendshipStatus ] = useState<friendshipStatusType>({status: "self", blocked_by: null});
 
     useEffect(() => {
@@ -290,6 +290,16 @@ export function TopDashboard(): JSX.Element {
                 };
                 fetchData();
             }, 100);
+
+            // fetch number of players
+            setTimeout(() => {
+              const fetchData = async () => {
+                  const response = await fetchNumberOfPlayers();
+                  setNumberOfPlayers(response.numPlayers);
+              };
+              fetchData();
+          }, 100);
+
         }
     }
     , [selectedUserName]);
@@ -314,7 +324,7 @@ export function TopDashboard(): JSX.Element {
                             level={user.level}
                             progress={user.progress}
                             rank={user.rank} // Assuming rank 1 for demonstration
-                            totalUsers={TOTAL_USERS}
+                            totalUsers={numberOfPlayers}
                             />
                         </div>
                         <div className="flex-1 flex ml-2">

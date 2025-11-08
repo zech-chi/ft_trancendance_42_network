@@ -223,6 +223,11 @@ export const gameHistoryResponse = z.object({
 // export type GameSchmaResponse = z.infer<typeof gameSchmaResponse>;
 
 
+// counter of number of players for rankings response schema
+export const numPlayersResponse = z.object({
+  numPlayers: z.number(),
+});
+
 // build and export the json schemas
 const { schemas, $ref } = buildJsonSchemas({
    fetchUserParams,
@@ -246,6 +251,7 @@ const { schemas, $ref } = buildJsonSchemas({
     gameHistoryParams,
     gameHistoryQuery,
     gameHistoryResponse,
+    numPlayersResponse,
 });
 
 export const dashboardSchemas = { schemas, $ref };

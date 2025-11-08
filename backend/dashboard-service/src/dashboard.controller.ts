@@ -468,4 +468,33 @@ export async function fetchGamesHandler(
       return [];
     }
   }
-  
+
+
+export async function fetchNumPlayersHandler(
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
+    try {
+        const response = await fetch(`http://db-service:5000/api/dashboard/rank/numPlayers`);
+
+        if (!response.ok) {
+            reply.status(404).send({ message: "Number of players not found" });
+            return { numPlayers: 0 };
+        }
+
+        const data = await response.json();
+        console.log("data from db service:", data);
+
+        if (typeof data.numPlayers === "number") {
+            return { numPlayers: data.numPlayers };
+        }
+
+        reply.status(404).send({ message: "Invalid data format" });
+        return { numPlayers: 0 };
+
+    } catch (error) {
+        console.error("Error fetching number of players:", error);
+        reply.status(400).send({ message: "something went wrong!" });
+        return { numPlayers: 0 };
+    }
+}
