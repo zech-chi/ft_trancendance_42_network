@@ -278,9 +278,11 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
     if (!await checkOldPassword(reply, id, oldPassword)) {
       return; // If old password check fails, exit the function
     }
+    // hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
     console.log("Old password is correct, proceeding to update to new password.");
-    updates.push('password_hash = ?');
-    values.push(newPassword); // In a real application, you would hash this password before storing it
+    updates.push('password = ?');
+    values.push(hashedPassword); // In a real application, you would hash this password before storing it
   }
   
   
