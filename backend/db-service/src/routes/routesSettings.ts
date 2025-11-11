@@ -45,7 +45,7 @@ export default async function routesSettings(fastify: FastifyInstance) {
         const { userId } = request.params;
 
         // check if the request body is valid
-        if (!request.body) {
+        if (!request.body || !userId) {
             reply.code(400);
             return { success: false, error: "Invalid request body" };
         }
@@ -53,33 +53,59 @@ export default async function routesSettings(fastify: FastifyInstance) {
         // get the update and values arrays from the request body
         const { updates, values } = request.body;
         
-        if (updates.length === 0 || values.length === 0 || updates.length !== values.length) {
+        if (updates.length === 0 || values.length === 0 || updates.length !== values.length) { 
             reply.code(400);
             return { success: false, error: "Invalid updates or values" };
         }
 
-        console.log("Updates:", updates);
-        console.log("Values:", values);
-        // try {
-        //     const stmt = db.prepare(`UPDATE users SET ${updates.join(", ")} WHERE id = ?`);
-        //     stmt.run([...values, userId]);
-
-        //     // return the updated user
-        //     const getUserStmt = db.prepare("SELECT * FROM users WHERE id = ?");
-        //     const updatedUser = getUserStmt.get(userId);
-
-        //     return {
-        //         success: true,
-        //         user: updatedUser,
-        //     };
-
-        // } catch (err) {
-        //     console.error(err);
+        // Validate that we're not trying to update sensitive fields
+        // const allowedFields = ['fullName', 'userName', 'bio', 'imageUrl', 'password'];
+        // const invalidFields = updates.filter((field: string) => allowedFields.includes(field));
+        
+        // if (invalidFields.length > 0) {
+        //     console.error("=========> Attempt to update invalid fields:", invalidFields);
         //     reply.code(400);
-        //     return { success: false, error: "something went wrong try again later!" };
+        //     return { success: false, error: `Invalid fields: ${invalidFields.join(', ')}. Cannot update other protected fields through this endpoint.` };
         // }
 
-        return { success: true, message: "Update route is working!", updates, values };
+        console.log("Updates:", updates);
+        console.log("Values:", values);
+        console.log("==========> UserID:", userId); 
+        
+        try {
+            // Check if user exists first
+            const checkStmt = db.prepare("SELECT id FROM Users WHERE id = ?");
+            const userExists = checkStmt.get(userId);
+            
+            if (!userExists) {
+                reply.code(404);
+                return { success: false, error: "User not found" };
+            }
+
+            // Build the SET clause for the UPDATE statement
+            const setClause = updates.map((field: string) => `${field}`).join(", ");
+            const stmt = db.prepare(`UPDATE Users SET ${setClause} WHERE id = ?`);
+            stmt.run([...values, userId]);
+
+            // Return the updated user without the password
+            const getUserStmt = db.prepare(`
+                SELECT 
+                    fullName, userName, bio, imageUrl
+                FROM Users 
+                WHERE id = ?
+            `);
+            const updatedUser = getUserStmt.get(userId);
+
+            return {
+                success: true,
+                user: updatedUser,
+            };
+
+        } catch (err) {
+            console.error("Error updating user profile:", err);
+            reply.code(400);
+            return { success: false, error: "Something went wrong, please try again later!" };
+        }
     });
 
 }
