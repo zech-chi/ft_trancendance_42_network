@@ -64,7 +64,6 @@ export function SocketProvider({ children}: { children: ReactNode }) {
 
     socketInstance.on("disconnect", () => {
       console.log("Disconnected from server")
-      alert("Connection lost. Returning to home page.")
       // window.location.href = "/" // Redirect to home on disconnect
       setIsConnected(false)
     })

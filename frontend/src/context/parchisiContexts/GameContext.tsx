@@ -61,7 +61,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     gameId: action.payload.gameId,
   };
 
-
+  
     case "SET_LOBBY":
       return { ...state, 
     lobby: { 
@@ -219,28 +219,34 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   }, [socket, namespace])
 
-  // useEffect(() => {
-  //   if (!socket || namespace != 'local') return
+  useEffect(() => {
+    if (!socket || namespace != 'local') return
 
-  //   state.gametype = 'local';
+    state.gametype = 'local';
 
-  //   // Clear lobby when switching to local
-  //   dispatch({ type: "CLEAR_LOBBY" });
-  //   socket.on ("gameStarted", (data: { gameId: string }) => {
-  //     dispatch({ type: "INIT_LOBBY", payload: { gameId: data.gameId, hostId: socket.id || "" } });
+    // Clear lobby when switching to local
+    dispatch({ type: "CLEAR_LOBBY" });
+    socket.on ("gameStarted", (data: { gameId: string }) => {
+      dispatch({ type: "INIT_LOBBY", payload: { gameId: data.gameId, hostId: socket.id || "" } });
 
-  //   })
-  //   socket.on("error", ({ message }: { message: string }) => {
-  //     console.error("Socket error:", message)
-  //     alert(message)
-  //   })
+    })
+    socket.on("error", ({ message }: { message: string }) => {
+      console.error("Socket error:", message)
+      alert(message)
+    })
+    socket.on("gameOver", (data: {winner: string, color: string}) => {
+      console.log("Game over! Winner:", data.winner);
+      dispatch({type:"SET_WINNER", payload: {winner: data.winner, winnerColor: data.color}});
+    })
     
-  //   return () => {
-  //     dispatch({ type: "CLEAR_LOBBY" })
-  //     socket.off("gameStarted")
-  //     socket.off("error")
-  //   }
-  // }, [socket, namespace])
+    return () => {
+      
+      dispatch({ type: "CLEAR_LOBBY" })
+      socket.off("gameStarted")
+      socket.off("gameOver")
+      socket.off("error")
+    }
+  }, [socket, namespace])
 
   const leaveLobby = (lobbyId: string) => {
     if (!socket) return

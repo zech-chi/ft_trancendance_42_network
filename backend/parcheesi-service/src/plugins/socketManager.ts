@@ -328,15 +328,14 @@ export default async function socketManager(io: Server) {
       }
       await room.handleRollDice();
       if (room.gameOver) {
-        room.broadcast("gameOver", {
-          winner: room.currentPlayer.userName,
-          color: room.currentPlayer.color,
-        });
-        const id = room.id;
-        console.log(chalk.red(`Cleaning up game ${id}`));
-        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
-        room.destroy();
-        rooms.delete(id);
+          room.broadcast("gameOver", {
+              winner: room.currentPlayer.userName,
+              color: room.currentPlayer.color,
+            });
+          const id = room.id;
+          console.log(chalk.red(`Cleaning up game ${id}`));
+          room.destroy();
+          localRooms.delete(id);
       }
 
     });
@@ -357,15 +356,15 @@ export default async function socketManager(io: Server) {
       await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
        
       if (room.gameOver) {
+        console.log("game over detected in moveRequest");
         room.broadcast("gameOver", {
-          winner: room.currentPlayer.userName,
-          color: room.currentPlayer.color,
+            winner: room.currentPlayer.userName,
+            color: room.currentPlayer.color,
         });
-        const id = room.id;
-        console.log(chalk.red(`Cleaning up game ${id}`));
-        // just for now after i hve to redirect to another page of game over and set timer to destroy the room about 45 sec
-        room.destroy();
-        rooms.delete(id);
+          const id = room.id;
+          console.log(chalk.red(`Cleaning up game ${id}`));
+          room.destroy();
+          localRooms.delete(id);
       }
     });
     
