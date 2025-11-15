@@ -72,6 +72,7 @@ import { useLoggedUserId } from "@/context/UserIdContext";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useSelectedUserId } from "@/context/SelectedUserId";
+import Image from 'next/image';
 
 export default function TwoFAVerifyPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -171,11 +172,10 @@ export default function TwoFAVerifyPage() {
       <div className="w-full max-w-sm bg-brown-900/95 backdrop-blur-sm rounded-2xl p-10 shadow-2xl" style={{backgroundColor: 'rgba(00,00,00, 0.70)'}}>
         
         {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
-            mchimicha
-          </h1>
-          <p className="text-white text-2xl font-semibold">Verify 2FA</p>
+        <div className="flex flex-col items-center mb-6">
+          {/* <img src="/PONG.png" alt="Logo" className="w-40 h-auto" /> */}
+          <Image src="/PONG.png" alt="Logo" width={100} height={100} />
+          <h1 className="text-white text-2xl font-bold mt-4">Verify your 2FA</h1>
         </div>
 
         {/* Instructions */}
@@ -228,22 +228,6 @@ export default function TwoFAVerifyPage() {
           {isVerifying ? "Verifying..." : "Verify"}
         </button>
 
-        {/* Divider */}
-        {/* <div className="flex items-center my-6">
-          <div className="flex-1 border-t border-brown-700/50" style={{borderColor: 'rgba(90, 50, 30, 0.5)'}}></div>
-          <span className="px-4 text-gray-400 text-sm">or</span>
-          <div className="flex-1 border-t border-brown-700/50" style={{borderColor: 'rgba(90, 50, 30, 0.5)'}}></div>
-        </div> */}
-
-        {/* Back to login link */}
-        {/* <div className="text-center">
-          <button
-            onClick={() => router.push("/login")}
-            className="text-pink-400 text-sm hover:underline"
-          >
-            Back to Sign in
-          </button>
-        </div> */}
       </div>
     </div>
   );
