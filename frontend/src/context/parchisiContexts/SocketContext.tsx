@@ -45,11 +45,25 @@ export function SocketProvider({ children}: { children: ReactNode }) {
       alert(`[SocketProvider] Invalid namespace: ${currentNamespace}`);
       return;
     }
-   if (socketMap[currentNamespace]) {
-    setSocket(socketMap[currentNamespace]);
-    setIsConnected(socketMap[currentNamespace]?.connected || false);
-    return;
-  }
+
+    Object.entries(socketMap).forEach(([ns, s]) => {
+      if (ns !== currentNamespace && s) {
+        console.log(`===> Closing previous socket for namespace: ${ns}`);
+        s.disconnect();
+        socketMap[ns as "online" | "local"] = null; // Cast ns to the appropriate type
+      }
+    });
+
+    if (socketMap[currentNamespace]) {
+      if (!socketMap[currentNamespace]?.connected) {
+        socketMap[currentNamespace]?.connect();
+      }
+    
+      setSocket(socketMap[currentNamespace]);
+      setIsConnected(socketMap[currentNamespace]?.connected || false);
+      return;
+    }
+
 
     // Initialize socket connection
 
@@ -66,13 +80,17 @@ export function SocketProvider({ children}: { children: ReactNode }) {
     socketInstance.on("disconnect", () => {
       console.log("Disconnected from server")
       // window.location.href = "/" // Redirect to home on disconnect
+
       setIsConnected(false)
     })
     socketMap[currentNamespace] = socketInstance; // Save socket for reuse
     setSocket(socketInstance);
 
     return () => {
-      // socketInstance.disconnect()
+      console.log("Cleaning up socket connection")
+      socketInstance.disconnect();
+      socketMap[currentNamespace] = null;
+      setIsConnected(false);
     }
   }, [currentNamespace])
 

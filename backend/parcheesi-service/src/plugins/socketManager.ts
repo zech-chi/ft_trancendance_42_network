@@ -22,12 +22,20 @@ export default async function socketManager(io: Server) {
      * When a player creates a new game
      */
     socket.on("createGame", (data: { username: string }) => {
+      
+      const usernameExists = Array.from(rooms.values()).some(room =>
+        room.players.some(player => player.userName === data.username)
+      );
+    
+      if (usernameExists) {
+        socket.emit("error", { message: "User already in a room" });
+        return; 
+      }    
       const gameId = randomUUID(); // generate unique game id
       const room = new GameRoom(gameId, remote);
       rooms.set(gameId, room); // remove old room if there is only one player or game over or host leave or all players leave
       //check if the player name is already in this game or other games
-      rooms.forEach((r) => {r.players.forEach((p) => {p.userName === data.username && socket.emit("error", { message: "Username already in room" });});});
-
+      
       console.log(chalk.blue(`Game created with ID: ${gameId} by ${data.username} --> remote game`));
       // Join creator into room
       socket.join(room.id);
@@ -66,12 +74,14 @@ export default async function socketManager(io: Server) {
         socket.emit("roomFull", { message: "Room is full" });
         return;
       }
-      if (room.players.find(p => p.userName === data.username)) {
-        socket.emit("error", { message: "Username already taken in this room" });
-        return;
-      }
-
-      rooms.forEach((r) => {r.players.forEach((p) => {p.userName === data.username && socket.emit("error", { message: "Username already in other room" });});});
+      const usernameExists = Array.from(rooms.values()).some(room =>
+        room.players.some(player => player.userName === data.username)
+      );
+    
+      if (usernameExists) {
+        socket.emit("error", { message: "User already in a room" });
+        return; 
+      } 
       socket.join(room.id);
 
       const player: Player = room.newPlayer(data.username);
@@ -272,12 +282,13 @@ export default async function socketManager(io: Server) {
           // cleanup if room empty
           if (room.players.length === 1 || room.players.length === 0) {
             if (room.players.length === 1 && room.gamestarted){
+              const winneruser = room.players[0].userName;
               
-              await room.storeGameEndInDB(username);
+              await room.storeGameEndInDB(winneruser);
               room.gameOver = true;
               room.broadcast("gameOver", {
-                winner: username,
-                color: room.currentPlayer.color,
+                winner: winneruser,
+                color: room.players[0].color,
               });
                 room.destroy();
                 rooms.delete(id);

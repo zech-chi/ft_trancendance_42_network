@@ -4,6 +4,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useSocket } from "../ping-pong/context/SocketContext";
 
 
 type BoxProps = {
@@ -44,9 +45,9 @@ function Box({ label, className, isHovered, isOtherHovered, onHover, onLeave, on
         }
       }}
     >
-      <h1 className="truncate text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 font-bold text-2xl sm:text-2xl md:text-4xl">
+      <h3 className="truncate text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 font-bold text-2xl sm:text-2xl md:text-4xl">
         {label}
-      </h1>
+      </h3>
     </div>
   )
 }
@@ -64,7 +65,7 @@ export default function HomePage() {
       description: "Play with friends on the same device",
       pageLink: "/protected/games/parchisi/local",
       className:
-        "bg-[url('https://images.sftcdn.net/images/t_app-cover-s,f_auto/p/aa16f627-43da-4c63-9ff1-b305f96ae03d/1816037850/parchisi-star-online-3.webp')]",
+      "bg-[url('/parchisi_src/local.png')]",
         disable : false
     },
     {
@@ -73,7 +74,7 @@ export default function HomePage() {
       description: "Play with players around the world",
       pageLink: "/protected/games/parchisi/online",
       className:
-        "bg-[url('https://images.sftcdn.net/images/t_app-cover-s,f_auto/p/aa16f627-43da-4c63-9ff1-b305f96ae03d/1816037850/parchisi-star-online-3.webp')]",
+      "bg-[url('/parchisi_src/online.png')]",
     
       disable: false
       },
@@ -83,7 +84,7 @@ export default function HomePage() {
       description: "Challenge computer opponents",
       pageLink: "/protected/games/parchisi/ai",
       className:
-        "bg-[url('https://images.sftcdn.net/images/t_app-cover-s,f_auto/p/aa16f627-43da-4c63-9ff1-b305f96ae03d/1816037850/parchisi-star-online-3.webp')]",
+      "bg-[url('/parchisi_src/ia.png')]",
        disable: true 
       },
     {
@@ -92,10 +93,13 @@ export default function HomePage() {
       description: "Compete in a series of matches",
       pageLink: "/protected/games/parchisi/tournament",
       className:
-        "bg-[url('https://images.sftcdn.net/images/t_app-cover-s,f_auto/p/aa16f627-43da-4c63-9ff1-b305f96ae03d/1816037850/parchisi-star-online-3.webp')]",
+      "bg-[url('/parchisi_src/tournament.png')]",
         disable: true
       },
   ]
+
+
+  // if there is any socket connection i want to disconnect it when entering this page
 
 
   return (
