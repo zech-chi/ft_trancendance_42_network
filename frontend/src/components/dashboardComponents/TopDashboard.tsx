@@ -1,14 +1,14 @@
 'use client';
 import { JSX, use, useState } from "react";
 import { useEffect } from "react";
-import { fetchFriendshipStatus, fetchUser } from "@/app/lib/apiDashboard";
+import { fetchFriendshipStatus, fetchUser, fetchNumberOfPlayers } from "@/app/lib/apiDashboard";
 import { motion } from 'framer-motion';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useLoggedUserId } from "@/context/UserIdContext";
+import {React } from "react";
 
-const TOTAL_USERS = 133742;
 
 interface User {
   id: number;
@@ -94,7 +94,7 @@ function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
     );
 }
 
-function ProfileInfo({ user, friendshipStatus }: {user : User, friendshipStatus: friendshipStatusType}): JSX.Element {
+function ProfileInfo({ user, friendshipStatus, setFriendshipStatus }: {user : User, friendshipStatus: friendshipStatusType, setFriendshipStatus: React.Dispatch<React.SetStateAction<friendshipStatusType>>}): JSX.Element {
   const { loggedUserId } = useLoggedUserId();
   // const { friendshipStatus, setFriendshipStatus } = useState<string>("self");
 
@@ -103,6 +103,10 @@ function ProfileInfo({ user, friendshipStatus }: {user : User, friendshipStatus:
   //     const fetchFriendshipStatus = async () => {
         
   //   }
+
+//   useEffect(() => {
+//     console.log("Friendship status updated:", friendshipStatus);
+//  }, [friendshipStatus]);
 
 
   const handleSentRequestFriend = () => {
@@ -125,6 +129,7 @@ function ProfileInfo({ user, friendshipStatus }: {user : User, friendshipStatus:
                 throw new Error(`Error: ${response.status}`);
             }
             const data = await response.json();
+            setFriendshipStatus({status: "pending", blocked_by: null});
             console.log(data);
         } catch (error) {
             console.error("Error sending friend request:", error);
@@ -269,6 +274,7 @@ export function TopDashboard(): JSX.Element {
     const { selectedUserName } = useSelectedUserName();
     const { selectedUserId } = useSelectedUserId();
     const [user, setUser] = useState<User | null> (null);
+    const [numberOfPlayers, setNumberOfPlayers] = useState<number>(0);
     const [ friendshipStatus, setFriendshipStatus ] = useState<friendshipStatusType>({status: "self", blocked_by: null});
 
     useEffect(() => {
@@ -290,6 +296,16 @@ export function TopDashboard(): JSX.Element {
                 };
                 fetchData();
             }, 100);
+
+            // fetch number of players
+            setTimeout(() => {
+              const fetchData = async () => {
+                  const response = await fetchNumberOfPlayers();
+                  setNumberOfPlayers(response.numPlayers);
+              };
+              fetchData();
+          }, 100);
+
         }
     }
     , [selectedUserName]);
@@ -309,12 +325,12 @@ export function TopDashboard(): JSX.Element {
                     <ProfileImage imageUrl={user.imageUrl} online={user.online}/>
                     <div className="flex flex-col h-full gap-2 flex-1">
                         <div className="flex justify-between ml-2">
-                            <ProfileInfo user = {user} friendshipStatus= {friendshipStatus}/>
+                            <ProfileInfo user = {user} friendshipStatus= {friendshipStatus} setFriendshipStatus={setFriendshipStatus}/>
                             <DisplayRank
                             level={user.level}
                             progress={user.progress}
                             rank={user.rank} // Assuming rank 1 for demonstration
-                            totalUsers={TOTAL_USERS}
+                            totalUsers={numberOfPlayers}
                             />
                         </div>
                         <div className="flex-1 flex ml-2">

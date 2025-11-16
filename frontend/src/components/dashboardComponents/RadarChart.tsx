@@ -88,7 +88,10 @@ export function RadarChart() {
         const fetchData = async () => {
             try {
                 const data = await fetchRadarData(selectedUserName);
-                const values = Object.values(data);
+                const values : number[] = Object.values(data);
+                for (let i = 0; i < values.length; i++) {
+                    values[i] = Number(values[i].toFixed(2));
+                }
                 setRadarData(values);
             } catch (error) {
                 console.error("Failed to fetch radar data:", error);

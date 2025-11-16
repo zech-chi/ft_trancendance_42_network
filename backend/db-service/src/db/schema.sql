@@ -224,25 +224,25 @@ CREATE TABLE IF NOT EXISTS messages (
 -- VALUES ((SELECT id FROM users WHERE username = 'zelabbas'),
 --         (SELECT id FROM users WHERE username = 'iezzam'));
 
-INSERT OR IGNORE INTO Users (id, fullName, userName, email, password, bio, imageUrl, rank, last_seen, level, progress, online)
-VALUES
-(1, 'Zakaria Echifaouy', 'zelabbas', 'zakaria@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://cdn.intra.42.fr/users/520fcec86c5c997878e60f48d447f0a1/zelabbas.jpg', 1, strftime('%s','now') - 120, 5, 0.75, 1),
+-- INSERT OR IGNORE INTO Users (id, fullName, userName, email, password, bio, imageUrl, rank, last_seen, level, progress, online)
+-- VALUES
+-- (1, 'Zakaria Echifaouy', 'zelabbas', 'zakaria@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://cdn.intra.42.fr/users/520fcec86c5c997878e60f48d447f0a1/zelabbas.jpg', 1, strftime('%s','now') - 120, 5, 0.75, 1),
 
-(2, 'Mohamed Karim', 'mkarim', 'mkarim@example.com', 'hash12345', 'Excited to join 🚀', 'https://cdn.intra.42.fr/users/db4a3023c112e0d3d3bcf65d84609d6f/mkarim.jpg', 2, strftime('%s','now') - 300, 3, 0.45, 1),
+-- (2, 'Mohamed Karim', 'mkarim', 'mkarim@example.com', 'hash12345', 'Excited to join 🚀', 'https://cdn.intra.42.fr/users/db4a3023c112e0d3d3bcf65d84609d6f/mkarim.jpg', 2, strftime('%s','now') - 300, 3, 0.45, 1),
 
-(3, 'Zechechafoui', 'zechi', 'zechi@example.com', 'hash12345', 'Let’s play!', 'https://cdn.intra.42.fr/users/d450751394f7288bce91b5b7123585d4/zech-chi.jpg', 0, strftime('%s','now') - 600, 2, 0.2, 0),
+-- (3, 'Zechechafoui', 'zechi', 'zechi@example.com', 'hash12345', 'Let’s play!', 'https://cdn.intra.42.fr/users/d450751394f7288bce91b5b7123585d4/zech-chi.jpg', 0, strftime('%s','now') - 600, 2, 0.2, 0),
 
-(4, 'Taha Kannane', 'tkannane', 'taha@example.com', 'hash12345', 'Love challenges ⚡', 'https://cdn.intra.42.fr/users/48278b81919442a7e864dd8fc9810d81/tkannane.jpg', 3, strftime('%s','now') - 900, 4, 0.6, 1),
+-- (4, 'Taha Kannane', 'tkannane', 'taha@example.com', 'hash12345', 'Love challenges ⚡', 'https://cdn.intra.42.fr/users/48278b81919442a7e864dd8fc9810d81/tkannane.jpg', 3, strftime('%s','now') - 900, 4, 0.6, 1),
 
-(5, 'Mohamed Takrayout', 'mohtakara', 'mohtakara@example.com', 'hash12345', 'Chess & Pong addict 🏓', 'https://cdn.intra.42.fr/users/999ab4136febfd6fb81fb7d0aaea002a/mohtakra.jpg', 1, strftime('%s','now') - 1800, 1, 0.1, 0);
+-- (5, 'Mohamed Takrayout', 'mohtakara', 'mohtakara@example.com', 'hash12345', 'Chess & Pong addict 🏓', 'https://cdn.intra.42.fr/users/999ab4136febfd6fb81fb7d0aaea002a/mohtakra.jpg', 1, strftime('%s','now') - 1800, 1, 0.1, 0);
 
 
-INSERT OR IGNORE INTO Friends (sender_id, receiver_id, status)
-VALUES
-(1, 2, 'accepted'),
-(1, 3, 'accepted'),
-(1, 4, 'pending'),
-(2, 5, 'blocked');
+-- INSERT OR IGNORE INTO Friends (sender_id, receiver_id, status)
+-- VALUES
+-- (1, 2, 'accepted'),
+-- (1, 3, 'accepted'),
+-- (1, 4, 'pending'),
+-- (2, 5, 'blocked');
 -- (6, 7, 'accepted');
 
 
@@ -258,48 +258,48 @@ VALUES
 
 
 
-INSERT OR REPLACE INTO RadarData 
-(userId, Quick_Reflexes, Strategic_Thinking, Precision_Shots, Pattern_Recognition, Anticipating_Moves, Board_Control, Adaptive_Playstyle, Risk_Management, Mind_Games)
-VALUES
-(1, 17, 14, 18, 12, 15, 16, 14, 13, 12),
-(2, 12, 17, 14, 16, 13, 14, 15, 12, 11),
-(3, 8, 10, 11, 9, 12, 10, 8, 7, 6),
-(4, 18, 18, 19, 17, 16, 17, 18, 17, 18),
-(5, 10, 12, 11, 13, 12, 12, 11, 11, 10);
+-- INSERT OR REPLACE INTO RadarData 
+-- (userId, Quick_Reflexes, Strategic_Thinking, Precision_Shots, Pattern_Recognition, Anticipating_Moves, Board_Control, Adaptive_Playstyle, Risk_Management, Mind_Games)
+-- VALUES
+-- (1, 17, 14, 18, 12, 15, 16, 14, 13, 12),
+-- (2, 12, 17, 14, 16, 13, 14, 15, 12, 11),
+-- (3, 8, 10, 11, 9, 12, 10, 8, 7, 6),
+-- (4, 18, 18, 19, 17, 16, 17, 18, 17, 18),
+-- (5, 10, 12, 11, 13, 12, 12, 11, 11, 10);
 
 
-INSERT OR IGNORE INTO ChartsData (userId, game, totalGamesWithAi, gamesWithAiEasy, gamesWithAiMedium, gamesWithAiHard, totalWins, easyWins, mediumWins, hardWins, friendsWins, friendsLosses, friendsTotalGames)
-VALUES
-(1, 'pong', 50, 20, 20, 10, 30, 10, 12, 8, 5, 3, 8),
-(2, 'parcheesi', 40, 15, 15, 10, 18, 8, 6, 4, 7, 6, 13),
-(3, 'pong', 10, 5, 3, 2, 3, 1, 1, 1, 2, 5, 7),
-(4, 'pong', 100, 40, 35, 25, 60, 20, 25, 15, 30, 20, 50),
-(5, 'parcheesi', 25, 10, 10, 5, 12, 6, 4, 2, 4, 7, 11);
+-- INSERT OR IGNORE INTO ChartsData (userId, game, totalGamesWithAi, gamesWithAiEasy, gamesWithAiMedium, gamesWithAiHard, totalWins, easyWins, mediumWins, hardWins, friendsWins, friendsLosses, friendsTotalGames)
+-- VALUES
+-- (1, 'pong', 50, 20, 20, 10, 30, 10, 12, 8, 5, 3, 8),
+-- (2, 'parcheesi', 40, 15, 15, 10, 18, 8, 6, 4, 7, 6, 13),
+-- (3, 'pong', 10, 5, 3, 2, 3, 1, 1, 1, 2, 5, 7),
+-- (4, 'pong', 100, 40, 35, 25, 60, 20, 25, 15, 30, 20, 50),
+-- (5, 'parcheesi', 25, 10, 10, 5, 12, 6, 4, 2, 4, 7, 11);
 
-INSERT OR IGNORE INTO YearlyStats (userId, year, totalGames, totalActiveDays, maxStreak)
-VALUES
-(1, 2025, 120, 90, 15),
-(2, 2025, 85, 60, 10),
-(3, 2025, 20, 15, 3),
-(4, 2025, 200, 150, 30),
-(5, 2025, 45, 30, 6);
+-- INSERT OR IGNORE INTO YearlyStats (userId, year, totalGames, totalActiveDays, maxStreak)
+-- VALUES
+-- (1, 2025, 120, 90, 15),
+-- (2, 2025, 85, 60, 10),
+-- (3, 2025, 20, 15, 3),
+-- (4, 2025, 200, 150, 30),
+-- (5, 2025, 45, 30, 6);
 
-INSERT OR IGNORE INTO DailyActivity (yearlyStatsId, year, day, activity)
-VALUES
-(1, 2025, 250, 5.0),
-(1, 2025, 251, 6.5),
-(2, 2025, 250, 3.2),
-(3, 2025, 250, 1.0),
-(4, 2025, 250, 7.8),
-(5, 2025, 250, 2.5);
+-- INSERT OR IGNORE INTO DailyActivity (yearlyStatsId, year, day, activity)
+-- VALUES
+-- (1, 2025, 250, 5.0),
+-- (1, 2025, 251, 6.5),
+-- (2, 2025, 250, 3.2),
+-- (3, 2025, 250, 1.0),
+-- (4, 2025, 250, 7.8),
+-- (5, 2025, 250, 2.5);
 
 
-INSERT OR IGNORE INTO Games (user1, user2, user1_score, user2_score, user1_win, game_type)
-VALUES
-(1, 2, 21, 18, 1, 'pong'),
-(2, 3, 20, 22, 0, 'pong'),
-(1, 4, 30, 25, 1, 'parcheesi'),
-(5, 1, 15, 10, 0, 'pong');
+-- INSERT OR IGNORE INTO Games (user1, user2, user1_score, user2_score, user1_win, game_type)
+-- VALUES
+-- (1, 2, 21, 18, 1, 'pong'),
+-- (2, 3, 20, 22, 0, 'pong'),
+-- (1, 4, 30, 25, 1, 'parcheesi'),
+-- (5, 1, 15, 10, 0, 'pong');
 
 -- while db is running and already created lets add Games data
 -- INSERT OR IGNORE INTO Games (user1, user2, user1_score, user2_score, user1_win, game_type)

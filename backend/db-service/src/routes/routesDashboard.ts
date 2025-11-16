@@ -350,4 +350,12 @@ export default async function routesDashboard(fastify: FastifyInstance) {
             return reply.code(500).send({ error: '❌ Error running query' });
         }
     });
+
+    // get total users count for ranking
+    fastify.get('/rank/numPlayers', async (request: FastifyRequest, reply: FastifyReply) => {
+        const stmt = db.prepare("SELECT COUNT(*) as count FROM Users");
+        const result = stmt.get();
+        return { numPlayers: result.count };
+    });
+
 }

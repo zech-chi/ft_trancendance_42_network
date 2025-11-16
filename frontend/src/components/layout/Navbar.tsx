@@ -7,40 +7,137 @@ import Image from "next/image";
 import { fetchUser } from '@/app/lib/apiDashboard';
 import { useLoggedUserName } from '@/context/LoggedUserNameContext';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
-
+import { useLoggedUserId } from "@/context/UserIdContext";
 import { useRef } from "react";
 import { useSelectedUserId } from '@/context/SelectedUserId';
 
-function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
-	const [ userProfile, setUserProfile ] = useState<string | null>(null);
-	const [ err, setErr ] = useState<string | null>(null);
+// function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
+// 	const [ userProfile, setUserProfile ] = useState<string | null>(null);
+// 	const [ err, setErr ] = useState<string | null>(null);
 
-	useEffect(() => {
-		const fetchProfile = async () => {
-			try {
-				const user = await fetchUser(loggedUserName);
-				setUserProfile(user.imageUrl);
-			} catch (error) {
-				setErr("Failed to fetch profile image.");
+// 	useEffect(() => {
+// 		const fetchProfile = async () => {
+// 			try {
+// 				const user = await fetchUser(loggedUserName);
+// 				setUserProfile(user.imageUrl);
+// 			} catch (error) {
+// 				setErr("Failed to fetch profile image.");
+//         console.log(error);
+// 			}
+// 		};
+
+// 		fetchProfile();
+// 	} , [loggedUserName]);
+// 	if (err) {
+// 		return <div className="text-red-500">{err}</div>;
+// 	}
+// 	if (!userProfile) {
+// 		return <div className="text-gray-500">Loading profile image...</div>;
+// 	}
+// 	return <img src={userProfile}
+//               alt="User Profile"
+//               className="rounded-full w-9 h-9 xl:w-12 xl:h-12 2xl:w-15 2xl:h-15
+//               border-2 border-black/50
+//               xl:border-3 2xl:border-4
+//               object-cover ml-5"
+//           />;
+// }
+
+function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element {
+  const [userProfile, setUserProfile] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const {SelectedUserId, setSelectedUserId} = useSelectedUserId();
+  const { selectedUserName, setSelectedUserName } = useSelectedUserName();
+  const { loggedUserId, setLoggedUserId } = useLoggedUserId();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const user = await fetchUser(loggedUserName);
+        setUserProfile(user.imageUrl);
+      } catch (error) {
+        setErr("Failed to fetch profile image.");
         console.log(error);
-			}
-		};
+      }
+    };
+    fetchProfile();
+  }, [loggedUserName]);
 
-		fetchProfile();
-	} , [loggedUserName]);
-	if (err) {
-		return <div className="text-red-500">{err}</div>;
-	}
-	if (!userProfile) {
-		return <div className="text-gray-500">Loading profile image...</div>;
-	}
-	return <img src={userProfile}
-              alt="User Profile"
-              className="rounded-full w-9 h-9 xl:w-12 xl:h-12 2xl:w-15 2xl:h-15
-              border-2 border-black/50
-              xl:border-3 2xl:border-4
-              object-cover ml-5"
-          />;
+  // 🔹 Close the dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  if (err) {
+    return <div className="text-red-500">{err}</div>;
+  }
+
+  if (!userProfile) {
+    return <div className="text-gray-500">Loading profile image...</div>;
+  }
+
+  return (
+    <div className="relative inline-block" ref={menuRef}>
+      <img
+        src={userProfile}
+        alt="User Profile"
+        className="rounded-full w-9 h-9 xl:w-12 xl:h-12 2xl:w-15 2xl:h-15
+                  border-2 border-black/50
+                  xl:border-3 2xl:border-4
+                  object-cover ml-5 cursor-pointer"
+        onClick={() => setMenuOpen(!menuOpen)}
+      />
+
+      {/* Dropdown Menu */}
+      {menuOpen && (
+        <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-300 rounded-xl shadow-lg z-50">
+          <button
+            className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-t-xl"
+            onClick={() => {
+              setMenuOpen(false);
+              setSelectedUserId(loggedUserId);
+              setSelectedUserName(loggedUserName);
+              console.log("View profile clicked");
+              // navigate("/profile");
+            }}
+          >
+            View Profile
+          </button>
+          <button
+            className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-b-xl"
+            onClick={async () => {
+              setMenuOpen(false);
+              console.log("Logout clicked");
+              let response = await fetch("http://localhost:5001/api/auth/logout", {
+                method: "DELETE",
+                credentials: "include",
+              });
+              if (response.ok) {
+                setLoggedUserId(0);
+                setSelectedUserId(0);
+                setSelectedUserName("");
+                // navigate to login page or homepage
+                window.location.href = "/login";
+              }
+              // logout logic here
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function Logo(): JSX.Element {
@@ -254,6 +351,7 @@ function SearchForm(): JSX.Element {
                     setSelectedUserId(user.id);
                     setInputValue("");
                     setShowDropdown(false);
+                    // window.location.href = "/protected";
                   }}
                 >
                   <img

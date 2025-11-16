@@ -89,9 +89,27 @@ export async function authRoutes(app: FastifyInstance) {
     );
     
     // logout
+    // app.delete('/logout', (req: FastifyRequest, reply: FastifyReply) => {
+    //   reply.clearCookie('access_token', { path: '/' });
+    //   reply.clearCookie('refresh_token', { path: '/auth/refresh' });
+    //   reply.code(200).send({ message: 'Logged out successfully' });
+    // });
+
     app.delete('/logout', (req: FastifyRequest, reply: FastifyReply) => {
-      reply.clearCookie('access_token', { path: '/' });
-      reply.clearCookie('refresh_token', { path: '/auth/refresh' });
+      reply.clearCookie('access_token', {
+        path: '/',          // must match cookie creation path
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: false       // true if HTTPS
+      });
+    
+      reply.clearCookie('refresh_token', {
+        path: '/api/auth/refresh', // match your refresh endpoint
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: false
+      });
+    
       reply.code(200).send({ message: 'Logged out successfully' });
     });
 
@@ -259,7 +277,6 @@ export async function authRoutes(app: FastifyInstance) {
     }
     reply.send({ message: "2FA enabled" });
   });
-
   app.post (
     "/2fa-disable",   
     {
@@ -314,7 +331,7 @@ export async function authRoutes(app: FastifyInstance) {
       reply.send({ message: "2FA disabled" });
     }
   );
-  app.post(
+    app.post(
       '/2fa-verify',
       {
         schema: {
@@ -379,7 +396,6 @@ export async function authRoutes(app: FastifyInstance) {
         }
       }
       )
-
 
 
     app.get('/login/google', async (req, reply) => {

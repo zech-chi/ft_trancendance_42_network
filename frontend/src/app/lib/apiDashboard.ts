@@ -76,3 +76,14 @@ if (!response.ok) {
 const data = await response.json();
 return data;
 }
+
+/* number of Players */
+export const fetchNumberOfPlayers = async () => {
+  const response = await fetch(`http://localhost:5006/api/dashboard/rank/numPlayers`);
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+}

@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref, gameHistoryResponse } from "./dashboard.schema"
-import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler, fetchGamesHandler } from './dashboard.controller';
+import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler, fetchGamesHandler, fetchNumPlayersHandler } from './dashboard.controller';
 import { fetchFriendshipStatusHandler, fetchRankDataHandler } from './dashboard.controller';
 import { z } from 'zod';
 
@@ -203,5 +203,18 @@ export async function dashboardRoutes(app: FastifyInstance) {
         },
         fetchGamesHandler
       );
+
+    // number of players for rankings
+    app.get(
+        '/rank/numPlayers',
+        {
+            schema: {
+                response: {
+                    200: $ref('numPlayersResponse'),
+                },
+            },
+        },
+        fetchNumPlayersHandler
+    )
 }
 
