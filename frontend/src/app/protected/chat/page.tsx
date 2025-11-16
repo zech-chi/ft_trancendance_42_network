@@ -17,6 +17,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 import { fetchUser } from "@/app/(auth)/login/page";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserId } from "@/context/UserIdContext";
 import { useRouter } from "next/navigation";
 
@@ -26,7 +27,8 @@ function Chat() {
 
     const { loggedUserName, setLoggedUserName } = useLoggedUserName();
     const { loggedUserId: userId , setLoggedUserId } = useLoggedUserId();
-    const [loading, setLoading] = useState(true);
+    const { selectedUserName, setSelectedUserName } = useSelectedUserName();
+    // const [loading, setLoading] = useState(true);
     const router = useRouter();
         
     // alert the userid 
@@ -34,6 +36,7 @@ function Chat() {
     
 
 //   const { userId } = useUser() as { userId: number | null };
+   console.log("selected user name in chat page: ", selectedUserName);
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [selectedChat, setSelectedChat] = useState<Contact | null>(null);
@@ -57,22 +60,22 @@ function Chat() {
 
 
 
-  useEffect(() => {
-    async function checkAuth() {
-        const user = await fetchUser();
-        console.log("Fetched user:", user);
-        if (!user || !user.userName) {
-            setLoggedUserName(null);
-            setLoggedUserId(0);
-            router.push("/login");
-        } else {
-            setLoggedUserName(user.userName);
-            setLoggedUserId(user.id);
-        }
-        setLoading(false);
-      }
-      checkAuth();
-}, []);
+//   useEffect(() => {
+//     async function checkAuth() {
+//         const user = await fetchUser();
+//         console.log("Fetched user:", user);
+//         if (!user || !user.userName) {
+//             setLoggedUserName(null);
+//             setLoggedUserId(0);
+//             router.push("/login");
+//         } else {
+//             setLoggedUserName(user.userName);
+//             setLoggedUserId(user.id);
+//         }
+//         setLoading(false);
+//       }
+//       checkAuth();
+// }, []);
         
        
   
@@ -149,10 +152,17 @@ function Chat() {
       } catch (err) {
         console.error("Error fetching contacts:", err);
       }
+      console.log("Contacts list after fetch attempt:");
     };
   
     fetchContacts();
   }, [userId]);
+
+  useEffect(() => {
+    if (!contactsList.length || !selectedUserName) return;
+    const selected = contactsList.find(c => c.username === selectedUserName);
+    if (selected) setSelectedChat(selected);
+  }, [contactsList, selectedUserName]);
 
 
   // to remove 
@@ -182,13 +192,13 @@ function Chat() {
     });
   };
 
-   if (loading) {
-            return (
-                <div className="h-screen flex items-center justify-center text-white">
-                    Loading... 2
-                </div>
-            );
-        }
+  //  if (loading) {
+  //           return (
+  //               <div className="h-screen flex items-center justify-center text-white">
+  //                   Loading... 2
+  //               </div>
+  //           );
+  //       }
 
   return (
 
@@ -205,12 +215,12 @@ function Chat() {
                             2xl:mt-[67px] xl:mt-[60px] overflow-y-hidden
                         ">
         {/* h-[calc(100vh-60px)] */}
-      <div className="w-full h-[90vh]">
-      <div className="flex items-center justify-center h-full p-2 py-0"> 
+      {/* <div className="w-full h-[90vh]"> */}
+      <div className="flex items-center justify-center h-full p-2 py-0 w-full"> 
         {/* i should change the max-h because i add it for the textearea input message */}
-        <div className="relative w-full md:w-[90%] h-[88%] md:h-[100%] overflow-hidden rounded-[50px] flex flex-row gap-2 p-4 flex-1">
+        <div className="relative w-full md:w-[90%] h-full overflow-hidden rounded-[50px] flex flex-row gap-2 p-4 flex-1">
           {/* background layers */}
-          <div className="absolute inset-0 settings-bg bg-cover bg-center"></div>
+          <div className="absolute inset-0 settings-profile-bg bg-cover bg-center"></div>
           <div className="absolute inset-0 bg-[rgba(9,0,0,0.5)]"></div>
 
            {/* --- Render Call-Related UI Conditionally --- */}
@@ -278,7 +288,7 @@ function Chat() {
           {/* </AudioPlayerProvider> */}
         </div>
       </div>
-    </div>
+    {/* </div> */}
         
     
                         </main>

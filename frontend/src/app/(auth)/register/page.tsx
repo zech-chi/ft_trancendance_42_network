@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FlowGraphConsoleLogBlock } from "@babylonjs/core";
 
 export default function SignupPage() {
 
@@ -19,6 +20,26 @@ export default function SignupPage() {
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+
+    // const handleGoogle = async () => {
+    //   try {
+    //       console.log("log with google");
+    //       const res = await fetch("http://localhost:5001/api/auth/login/google")
+
+    //        if (!res.ok) {
+    //             throw new Error("Failed to register");
+    //         }
+    //         // const data = await res.json();
+    //   }catch(error) {
+    //     console.log("something went wrong");
+    //   }
+    // }
+
+    const handleGoogle = () => {
+      window.location.href = "http://localhost:5001/api/auth/login/google";
+    };
+
 
     const handleSubmit = async () => {
         try {
@@ -35,7 +56,6 @@ export default function SignupPage() {
                 throw new Error("Failed to register");
             }
             const data = await res.json();
-            console.log("Registration successful:", data);
             router.push("/login");
             
         } catch (error) {
@@ -108,7 +128,9 @@ export default function SignupPage() {
         </div>
 
         {/* Social Logins */}
-        <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#FEDF7F]/50 transition mb-2">
+        <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#FEDF7F]/50 transition mb-2"
+            onClick={handleGoogle}
+        >
           {/* <Image src="/google-icon.png" alt="Google" width={20} height={20} /> */}
           Continue with Google
         </button>
@@ -129,3 +151,9 @@ export default function SignupPage() {
     </div>
   );
 }
+
+// if (!data.user.isVerified) {
+//   router.push('/verify');
+// } else {
+//   router.push('/protected/dashboard');
+// }

@@ -6,6 +6,11 @@ import { LoggedUserNameProvider } from '@/context/LoggedUserNameContext';
 import { SelectedUserIdProvider } from '@/context/SelectedUserId';
 import { SelectedUserNameProvider } from '@/context/SelectedUserNameContext';
 import { LoggedUserIdProvider } from '@/context/UserIdContext';
+import { SocketProvider } from "./protected/games/ping-pong/context/SocketContext";
+import { InviteProvider } from "./protected/games/ping-pong/context/InviteContext";
+import { UserEmailProvider } from '@/context/UserEmailContext';
+import Notifications from './protected/games/ping-pong/components/Notifications';
+import { Toaster } from "react-hot-toast";
 
 const BG_URL = 'https://images6.alphacoders.com/134/1344450.jpeg';
 
@@ -22,31 +27,43 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`relative bg-cover bg-center bg-no-repeat`}
+        className={`relative bg-cover bg-center bg-no-repeat bg-black`}
         style={{ backgroundImage: `url('${BG_URL}')` }}
       >
-        <LoggedUserNameProvider>
+        {/* auth provider lets make sure that user is authenticated */}
+        <Toaster position="top-right" />
+        <UserEmailProvider>
+            <LoggedUserNameProvider>
 
-          <SelectedUserNameProvider>
-            <SelectedUserIdProvider>
+              <SelectedUserNameProvider>
+                <SelectedUserIdProvider>
+                  
+                <LoggedUserIdProvider>
+              <AuthUserProvider>
+                 
+                <SocketProvider>
+                  <InviteProvider>
+                        
+
+                    <Notifications />
+                <main className="relative bg-cover bg-center bg-no-repeat bg-black/50"
+                style={{ backgroundImage: `url('${BG_URL}')` }}
+                >
+                  {children} {/* This renders the content of your page.tsx files */}
+                </main>
+
+                </InviteProvider>
+                </SocketProvider>
+
+                </AuthUserProvider>
+              </LoggedUserIdProvider>
+
+                </SelectedUserIdProvider>
+
+              </SelectedUserNameProvider>
               
-            <LoggedUserIdProvider>
-        {/* <AuthUserProvider> */}
-
-            <main className="relative bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url('${BG_URL}')` }}
-            >
-              {children} {/* This renders the content of your page.tsx files */}
-            </main>
-
-        {/* </AuthUserProvider> */}
-          </LoggedUserIdProvider>
-
-            </SelectedUserIdProvider>
-
-          </SelectedUserNameProvider>
-          
-      </LoggedUserNameProvider>
+          </LoggedUserNameProvider>
+        </UserEmailProvider>
     </body>
   </html>
   );

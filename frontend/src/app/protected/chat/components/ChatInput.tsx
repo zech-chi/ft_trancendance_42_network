@@ -2,7 +2,7 @@
 "use client";
 import { BiSolidSend } from "react-icons/bi";
 import { SlEmotsmile } from "react-icons/sl";
-import { Paperclip, Mic, StopCircle, Trash2 } from "lucide-react";
+import { Paperclip, Mic, StopCircle, Trash2, Gamepad2 } from "lucide-react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -11,6 +11,12 @@ import { ChatInputProps } from "../types/typesChat";
 // update
 import { useAudioRecorder } from "@/app/protected/chat/hooks/useAudioRecorder"; // Import the hook
 // update
+
+import { handleInvite } from "../../games/ping-pong/utils/handleInvite";
+import { useInvite } from "../../games/ping-pong/context/InviteContext";
+import { useSocket } from "../../games/ping-pong/context/SocketContext";
+import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import { useLoggedUserId } from "@/context/UserIdContext";
 
 export default function ChatInput({
   setInputValue,
@@ -21,8 +27,15 @@ export default function ChatInput({
   error,
   fileInputRef,
   setMessage, // Function to set error messages
+  friendId,
 }: ChatInputProps) {
   const [showPicker, setShowPicker] = useState<boolean>(false);
+    const { updateInviteStatus, getInviteStatus } = useInvite();
+      const { socket } = useSocket();
+      // use the logged userId from the context
+      const { loggedUserId } = useLoggedUserId();
+      const { loggedUserName } = useLoggedUserName();
+  
 
   const {
     isRecording,
@@ -51,7 +64,7 @@ export default function ChatInput({
 
   // Helper to format the recording time
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60)
+    const minutes = Math.floor(time / 60)Gamepad2
       .toString()
       .padStart(2, "0");
     const seconds = (time % 60).toString().padStart(2, "0");
@@ -75,6 +88,17 @@ export default function ChatInput({
       setInputValue(value); // Update the input value
     }
   }
+
+  const handleInviteClick = (friendId: number) => {
+  handleInvite({
+    socket,
+    loggedUserId,
+    loggedUserName,
+    friendId,
+    getInviteStatus,
+    updateInviteStatus,
+  });
+};
 
   return (
     <div className="relative pt-3">
@@ -118,6 +142,13 @@ export default function ChatInput({
                 >
                   <SlEmotsmile className="text-white w-5 h-5 md:w-6 md:h-6 hover:text-amber-200 cursor-pointer" />
                 </button>
+
+                 <button className="p-2" onClick={() => {
+                  // alert("Game invite feature coming soon!");
+                  handleInviteClick(friendId);
+                }}>
+                  <Gamepad2 className="text-white w-5 h-5 md:w-8 md:h-8 hover:text-amber-200 cursor-pointer" />
+                </button>
               </div>
 
               <TextareaAutosize
@@ -135,7 +166,7 @@ export default function ChatInput({
                 }}
                 minRows={1} // Start as a single line
                 maxRows={4} // Stop growing after 4 lines and show a scrollbar
-                className=" bg-transparent w-full p-2  text-white text-sm md:text-[16px] focus:outline-none resize-none self-center overflow-y-auto scrollbar"
+                className=" bg-transparent w-full p-2  text-white text-[12px] md:text-[16px] focus:outline-none resize-none self-center overflow-y-auto scrollbar"
               />
               <button
                 className={`p-2 md:mr-2 ${

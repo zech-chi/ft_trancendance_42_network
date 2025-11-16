@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import db from "../db/connectiondb";
+// import db from "../db/connectiondb";
 import { MessageRequestBody, MessageRow, Message } from "../types/message";
 import {
   showAllUsers,
@@ -177,7 +177,8 @@ export async function addMessage(request: FastifyRequest, reply: FastifyReply) {
         reply,
         from,
         to,
-        "You can only send messages to friends."
+        "You can only send messages to friends.",
+        true
       ))
     ) {
       return; // If the users are not friends, exit the function
@@ -207,7 +208,9 @@ export async function addMessage(request: FastifyRequest, reply: FastifyReply) {
     // if (info.changes === 0) {
     //     return reply.status(500).send({ status: 'error', message: 'Failed to add message AWEDi 1.' });
     // }
-
+  
+    // send to the sender all sessions that the message was sent successfully
+  sendMessageToUser(from.toString(), messageData); 
   // send the message via socket io 
   messageData.sent = false; // Mark the message as sent
   sendMessageToUser(to.toString(), messageData);
@@ -281,7 +284,8 @@ export async function getMessages(
         reply,
         from,
         to,
-        "You can only fetch messages with friends."
+        "You can only fetch messages with friends.",
+        false
       ))
     ) {
       return; // If the users are not friends, exit the function
@@ -368,7 +372,7 @@ export async function blockUser(request: FastifyRequest, reply: FastifyReply) {
     //     return reply.status(403).send({ status: 'error', message: 'You can only block friends.' });
     // }
 
-    if (!checkFriendship(reply, from, to, "You can only block friends.")) {
+    if (!(await checkFriendship(reply, from, to, "You can only block friends.", true))) {
       return; // If the users are not friends, exit the function
     }
 
@@ -453,7 +457,7 @@ export async function unblockUser(request: FastifyRequest, reply: FastifyReply) 
     //     return reply.status(403).send({ status: 'error', message: 'You can only unblock friends.' });
     // }
 
-    if (!(await checkFriendship(reply, from, to, "You can only unblock friends."))) {
+    if (!(await checkFriendship(reply, from, to, "You can only unblock friends.", false))) {
       return; // If the users are not friends, exit the function
     }
 
@@ -529,7 +533,7 @@ export async function deleteMessage(request: FastifyRequest, reply: FastifyReply
       return; // If the user does not exist, exit the function
     }
 
-    if (!(await checkFriendship(reply, from, to, "You can only delete messages with friends."))) {
+    if (!(await checkFriendship(reply, from, to, "You can only delete messages with friends.", false))) {
       return; // If the users are not friends, exit the function
     }
 
@@ -584,7 +588,7 @@ export async function editMessage(request: FastifyRequest, reply: FastifyReply) 
       return; // If the user does not exist, exit the function
     }
 
-    if (!(await checkFriendship(reply, from, to, "You can only edit messages with friends."))) {
+    if (!(await checkFriendship(reply, from, to, "You can only edit messages with friends.", false))) {
       return; // If the users are not friends, exit the function
     }
 

@@ -39,16 +39,25 @@ export default async function routesChat(fastify: FastifyInstance) {
 
     // route check if the users are friends
     fastify.post("/arefriends", async (request: FastifyRequest, reply: FastifyReply) => {
-        const { userId1, userId2 } = request.body as { userId1: string, userId2: string };
+        const { userId1, userId2, checkAccepted } = request.body as { userId1: string, userId2: string, checkAccepted: boolean };
          // that the correct way to check friendship
     // SELECT * FROM friends
     // WHERE
     //     ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?))
     //     AND status = 'accepted'
-        const stmt =  db.prepare(`
-            SELECT * FROM friends
-            WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND ( status = 'accepted' OR status = 'blocked')
-        `);
+        let stmt;
+        if (checkAccepted) {
+            stmt =  db.prepare(`
+                SELECT * FROM friends
+                WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND ( status = 'accepted')
+            `);
+        }else {
+            stmt =  db.prepare(`
+                SELECT * FROM friends
+                WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND ( status = 'accepted' OR status = 'blocked')
+            `);
+        }
+        
 
         const friendship = stmt.get(userId1, userId2, userId2, userId1);
         if (friendship) {
@@ -233,8 +242,8 @@ export default async function routesChat(fastify: FastifyInstance) {
           u.fullName,
           u.userName,
           u.imageUrl,
-          u.online,
-          u.last_seen AS lastSeen,
+          u.online_in_chat,
+          u.last_seen_in_chat AS lastSeen,
           ur.status,
           ur.blocked_by AS blockedBy,
           lm.message AS lastMessageContent,
@@ -293,4 +302,32 @@ export default async function routesChat(fastify: FastifyInstance) {
         return { success: true, messageId: info.lastInsertRowid };
     });
 
+    // type for the body of the request to update online status
+    type OnlineStatusBody = {
+        userId: string;
+        status: boolean;
+        updateLastSeen: boolean;
+        time: string;
+    };
+
+    // update online status route
+    fastify.post("/setOnlineStatus", async (request: FastifyRequest, reply: FastifyReply) => {
+        const { userId, status, updateLastSeen, time } = request.body as OnlineStatusBody;
+        let stmt;
+        let result;
+        if (updateLastSeen) { 
+            stmt = db.prepare(`UPDATE users SET online_in_chat = ?, last_seen_in_chat = ? WHERE id = ?`);
+            result = stmt.run(status ? 1 : 0, time, userId);
+        } else {
+            stmt = db.prepare(`UPDATE users SET online_in_chat = ? WHERE id = ?`);
+            result = stmt.run(status ? 1 : 0, userId);
+        }
+
+        if (result.changes === 0) {
+            reply.status(400).send({ success: false , message: `Failed to update online_in_chat status for user ${userId}` });
+            return;
+        } else {
+            return { success: true, message: `User ${userId} online_in_chat status updated to ${status}` };
+        }
+    });
 }

@@ -211,6 +211,31 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         }
     });
 
+    // get status of friendship between two users
+     fastify.get('/friends/status', async (request: FastifyRequest<{ Querystring: { userId1: string; userId2: string } }>, reply: FastifyReply) => {
+        const { userId1, userId2 } = request.query;
+        if (!userId1 || !userId2) {
+            return reply.code(400).send({ error: 'Missing userId1 or userId2' });
+        }
+        try {
+            if (userId1 === userId2) {
+                return reply.send({ status: 'self' });
+            }
+            const stmt = db.prepare(`
+                SELECT status, blocked_by FROM Friends
+                WHERE (sender_id = ? AND receiver_id = ?)
+                   OR (sender_id = ? AND receiver_id = ?);
+            `);
+            const friendship = stmt.get(userId1, userId2, userId2, userId1);
+            if (!friendship) {
+                return reply.send({ status: 'no_relationship' });
+            }
+            return reply.send(friendship);
+        } catch (err) {
+            return reply.code(400).send({ error: '❌ Error running query' });
+        }
+    }
+    );
 
     // same logic to unblock a user
     fastify.put('/friends/unblock', async (request: FastifyRequest<{ Body: { sender_id: string; receiver_id: string } }>, reply: FastifyReply) => {
@@ -286,4 +311,43 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         return { status: "ok", stats: stats };
     });
 
+    // get rank data for all users
+    fastify.get('/rank', async (request: FastifyRequest, reply: FastifyReply) => {
+        const stmt = db.prepare(`
+            SELECT id, userName, fullName, imageUrl, level, progress, rank, progress, online
+            FROM Users
+            ORDER BY level DESC, progress DESC
+        `);
+        const users = stmt.all();
+        return users;
+    });
+
+    // get games history by userName and a query param gameType
+    fastify.get('/Games/:userId', async (request: FastifyRequest<{ Params: { userId: number }; Querystring: { gameType: string } }>, reply: FastifyReply) => {
+        const { userId } = request.params;
+        const { gameType } = request.query;
+        if (!userId || !gameType) {
+            return reply.code(400).send({ error: 'Missing userId or gameType' });
+        }
+        try {
+            const stmt = db.prepare(`
+                SELECT * FROM Games
+                WHERE user1 = ? OR user2 = ?
+                AND game_type = ?
+                ORDER BY date_played DESC
+            `);
+            const allGames = stmt.all(userId, userId, gameType);
+            let filteredGames;
+            if (gameType === 'all') {
+                filteredGames = allGames;
+            } else if (gameType === 'pong' || gameType === 'parcheesi') {
+                filteredGames = allGames.filter((game: any) => game.game_type === gameType);
+            } else {
+                return reply.code(400).send({ error: 'Invalid gameType. Must be "all", "ranked", or "unranked"' });
+            }
+            return reply.send(filteredGames);
+        } catch (err) {
+            return reply.code(500).send({ error: '❌ Error running query' });
+        }
+    });
 }

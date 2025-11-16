@@ -1,14 +1,14 @@
 // Import the framework and instantiate it
 import Fastify, { fastify, FastifyInstance } from 'fastify';
 import { chatRoutes } from './routes/chatRoutes';
-import fastifyMultipart from '@fastify/multipart';
+import multipart from '@fastify/multipart';
 import { MAX_FILE_SIZE_IN_BYTES } from './utils/constants';
 import cors from '@fastify/cors';
 import { ProfileRoutes } from './routes/settingsRoutes';
 import { setupSocket } from './socket/socket';
 import { Server as HttpServer } from 'http';
 import { ApidataBase } from './utils/ApiDataBase';
-
+import metricsPlugin from "fastify-metrics";
 // Create a server instance
 const fastifyServer: FastifyInstance = Fastify({
   logger: {
@@ -19,14 +19,20 @@ const fastifyServer: FastifyInstance = Fastify({
   //   cert: './certs/cert.pem' // Path to your SSL certificate file
   // }
 });
-
+fastifyServer.register(metricsPlugin, { endpoint: "/metrics" });
 // Register the multipart plugin for handling file uploads
-fastifyServer.register(fastifyMultipart, {
-  throwFileSizeLimit: true, // Throw an error if the file size exceeds the limit
+// fastifyServer.register(fastifyMultipart, {
+//   throwFileSizeLimit: true, // Throw an error if the file size exceeds the limit
+//   limits: {
+//      fileSize: MAX_FILE_SIZE_IN_BYTES, // Set a limit of 150 MB for file uploads
+//      files: 1, // Limit to 1 file per request
+//   },
+// });
+
+fastifyServer.register(multipart, {
   limits: {
-     fileSize: MAX_FILE_SIZE_IN_BYTES, // Set a limit of 150 MB for file uploads
-     files: 1, // Limit to 1 file per request
-  },
+    fileSize: MAX_FILE_SIZE_IN_BYTES // 100MB max per file 
+  }
 });
 
 
@@ -72,7 +78,7 @@ fastifyServer.register(cors, {
 });
 
 // Define a basic route
-fastifyServer.register(ProfileRoutes, {prefix: 'api/settings'});
+// fastifyServer.register(ProfileRoutes, {prefix: 'api/settings'});
 fastifyServer.register(chatRoutes, {prefix: 'api/chat'});
 
 // fastifyServer.get('/users', async (request, reply) => {

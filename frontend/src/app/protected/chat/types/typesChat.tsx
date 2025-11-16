@@ -76,6 +76,7 @@ export type ChatInputProps = {
   handleSendMessage: () => void; // Function to handle sending messages
   handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   setMessage: React.Dispatch<React.SetStateAction<string>>; // Function to set error messages
+  friendId: number; // Optional friend ID for context
 };
 
 
