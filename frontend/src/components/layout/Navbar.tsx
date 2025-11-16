@@ -144,7 +144,7 @@ function Logo(): JSX.Element {
   return (
     <div className="mr-5">
       {/* <Image
-        src="/PONG.png"
+        src="/logo.png"
         alt="Logo"
         width={150}
         height={150}
@@ -152,7 +152,7 @@ function Logo(): JSX.Element {
         priority
       /> */}
       <Image
-          src="/PONG.png"
+          src="/logo.png"
           alt="Logo"
           width={150}
           height={150}

@@ -50,7 +50,7 @@ body {
 body {
   /* background: var(--background);
   color: var(--foreground); */
-  background-image: url('/assets/bg.jpg');
+  /* background-image: url('/assets/bg.jpg'); */
   font-family: Arial, Helvetica, sans-serif;
   background-size: cover;
   background-repeat: no-repeat;

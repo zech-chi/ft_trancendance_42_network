@@ -71,7 +71,7 @@ export default function SignupPage() {
       <div className="bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md">
         {/* Logo */}
         <div className="flex flex-col items-center mb-6">
-          <img src="/PONG.png" alt="Logo" className="w-40 h-auto" />
+          <img src="/logo.png" alt="Logo" className="w-40 h-auto" />
           <h1 className="text-white text-2xl font-bold mt-4">Sign up</h1>
         </div>
 
