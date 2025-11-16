@@ -96,15 +96,13 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
 
   if (!state.lobby) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black/40 backdrop-blur-md p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen w-full flex items-center justify-center bg-black/40 backdrop-blur-md p-4">
           <div className="flex items-center justify-center p-8">
             <div className="text-center space-y-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ffb86b] mx-auto"></div>
               <p className="text-[#ffb86b]/80">Loading lobby...</p>
             </div>
           </div>
-        </Card>
       </div>
     )
   }
@@ -215,7 +213,7 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
                   ? "▶ Start Game"
                   : `Waiting ${state.lobby.players.length < 2
                     ? "for more players"
-                    : readyCount + " more players to be ready"
+                    : (state.lobby.players.length - readyCount ) + " more players to be ready"
                   }`}
               </Button>
             )}

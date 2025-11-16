@@ -118,6 +118,7 @@ export default class localRoom {
   console.log(`current player index is : ${this.currentPlayerIndex}, and the player  is : ${this.currentPlayer.color}`);
     // set first player turn
     setTimeout(() => {
+      if (!this || this.gameOver) return;
       this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });
     }, 5000);
   }
