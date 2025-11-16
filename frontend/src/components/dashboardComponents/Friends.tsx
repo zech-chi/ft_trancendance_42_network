@@ -8,6 +8,8 @@ import Cookies from 'js-cookie';
 import {useLoggedUserName} from '@/context/LoggedUserNameContext';
 import { useLoggedUserId } from '@/context/UserIdContext';
 import { send } from 'process';
+import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+import { useRouter } from 'next/navigation';
 
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
@@ -166,9 +168,11 @@ type Friends = {
 function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
     const { loggedUserName } = useLoggedUserName();
     const { loggedUserId } = useLoggedUserId();
+    const { selectedUserName, setSelectedUserName } = useSelectedUserName();
     const [friend, setFriend] = useState<any | null>(null);
     const [hoveredChat, setHoveredChat] = useState(false);
     const [hoveredGames, setHoveredGames] = useState(false);
+    const router = useRouter();
     
 
     useEffect(() => {
@@ -258,8 +262,18 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
                     src={hoveredChat ? '/CHAT2.png' : '/CHAT.png'}
                     alt="chat"
                     className="w-auto h-[10px] md:h-[12px] xl:h-[17px] transition-transform duration-500"
-                    onMouseEnter={() => setHoveredChat(true)}
+                    onMouseEnter={
+                        () => {
+                            setHoveredChat(true);
+                            console.log('Hovered Chat');
+                        }
+                    }
                     onMouseLeave={() => setHoveredChat(false)}
+                    onClick={() => {
+                        console.log('Clicked Chat with ', friend.userName);
+                        setSelectedUserName(friend.userName);
+                        router.push('/protected/chat');
+                    }}
                 />
                 <img
                     src={hoveredGames ? '/GAMES2.png' : '/GAMES.png'}
