@@ -16,13 +16,27 @@ CREATE TABLE IF NOT EXISTS Users (
   userName TEXT,
   email TEXT,
   password TEXT,
+  email_verified BOOLEAN DEFAULT FALSE,
+  twofa_enabled BOOLEAN DEFAULT FALSE,
+  twofa_secret TEXT,
   bio TEXT DEFAULT 'Hello! I am new here 👋',
   imageUrl TEXT DEFAULT '/default_avatar.png',
   rank INTEGER DEFAULT 0,
   last_seen INTEGER,
   level INTEGER DEFAULT 0,
   progress REAL DEFAULT 0,
-  online INTEGER DEFAULT 0
+  online INTEGER DEFAULT 0,
+  online_in_chat BOOLEAN DEFAULT FALSE,
+  last_seen_in_chat INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS EmailVerifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId INTEGER NOT NULL,
+    verificationCode TEXT NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expiresAt DATETIME NOT NULL,
+    FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS RadarData (
@@ -89,6 +103,28 @@ CREATE TABLE IF NOT EXISTS Games (
     game_type TEXT NOT NULL DEFAULT 'pong' CHECK (game_type IN ('pong', 'parcheesi')),
     FOREIGN KEY (user1) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (user2) REFERENCES Users(id) ON DELETE CASCADE
+);
+
+-- add by youssef: ParchisiGame game table
+CREATE TABLE IF NOT EXISTS ParchisiGames (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,        -- game ID
+  started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  ended_at DATETIME,
+  
+  player1_id INTEGER NOT NULL,
+  player2_id INTEGER NOT NULL,
+  player3_id INTEGER,
+  player4_id INTEGER,
+  
+  winner_id INTEGER,                           -- who won
+  status TEXT DEFAULT 'playing' CHECK (status IN ('finished', 'playing')),
+
+  
+  FOREIGN KEY (player1_id) REFERENCES Users(id) ON DELETE CASCADE,
+  FOREIGN KEY (player2_id) REFERENCES Users(id) ON DELETE CASCADE,
+  FOREIGN KEY (player3_id) REFERENCES Users(id) ON DELETE CASCADE,
+  FOREIGN KEY (player4_id) REFERENCES Users(id) ON DELETE CASCADE,
+  FOREIGN KEY (winner_id) REFERENCES Users(id) ON DELETE SET NULL
 );
 
 -- CREATE TABLE IF NOT EXISTS friends (
@@ -265,4 +301,14 @@ VALUES
 (1, 4, 30, 25, 1, 'parcheesi'),
 (5, 1, 15, 10, 0, 'pong');
 
-
+-- while db is running and already created lets add Games data
+-- INSERT OR IGNORE INTO Games (user1, user2, user1_score, user2_score, user1_win, game_type)
+-- VALUES
+-- (3, 4, 18, 21, 0, 'pong'),
+-- (2, 5, 25, 20, 1, 'parcheesi'),
+-- (4, 5, 22, 22, 0, 'pong'),
+-- (11, 18, 19, 17, 1, 'pong'),
+-- (11, 1, 19, 17, 1, 'pong'),
+-- (11, 2, 19, 17, 1, 'pong'),
+-- (11, 3,  19, 17, 1, 'pong'),
+-- (11, 4, 19, 17, 1, 'parcheesi');

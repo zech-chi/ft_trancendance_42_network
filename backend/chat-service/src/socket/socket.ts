@@ -25,7 +25,7 @@ export function setupSocket(server: HttpServer) {
 
     ioInstance = io;  // ✅ save for later global access
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     console.log("A user connected:", socket.id);
 
     // add the new user to the online users map
@@ -40,7 +40,7 @@ export function setupSocket(server: HttpServer) {
       console.log(`User ${userId} connected on socket ${socket.id}`);
 
       // Set the online status in the database
-      setOnlineTodb(userId, true, false);
+      await setOnlineTodb(userId, true, false);
     }
 
     console.log("Online users:", onlineUsers);
@@ -56,7 +56,7 @@ export function setupSocket(server: HttpServer) {
     });
 
     // Handle disconnection
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log("A user disconnected:", socket.id);
      // Remove socket from all users
       for (const [uid, sockets] of onlineUsers) {
@@ -69,7 +69,7 @@ export function setupSocket(server: HttpServer) {
       // Emit the updated list of online users to all clients
       io.emit("onlineUsers", Array.from(onlineUsers.keys()));
       // Set the online status in the database
-      setOnlineTodb(userId, false, true);
+      await setOnlineTodb(userId, false, true);
 
       console.log(`keys of onlineUsers after disconnection:`, Array.from(onlineUsers.keys()));
       console.log("Online users after disconnection:", onlineUsers);
@@ -166,48 +166,108 @@ export function sendMessageToUser(userId: string, message: any) {
 }
 
 // send the event block or unblock user to the specific user
+// export function sendBlockEventToUser(userId: string, event: string, friendId: string) {
+//   const sockets = onlineUsers.get(friendId); 
+//   console.log("=====> sockets:", sockets);
+//   console.log("onlineUsers:", onlineUsers);
+//   console.log(`Sending ${event} event to user ${friendId} for contact ${userId}`);
+//   if (sockets) {
+//     sockets.forEach((socketId) => {
+//       ioInstance?.to(socketId).emit(event, {
+//         userId, // the user who blocked or unblocked
+//         friendId, // the user who is blocked or unblocked
+//       }); // !to change to friendId
+//     });
+//     console.log(`Event ${event} sent to user ${friendId} for contact ${userId}`);
+//   } else {
+//     console.log(`User ${friendId} is not online.`);
+//   }
+// }
+// /backend/controllers/blockUser.ts
+
 export function sendBlockEventToUser(userId: string, event: string, friendId: string) {
-  const sockets = onlineUsers.get(friendId); 
-  console.log("=====> sockets:", sockets);
-  console.log("onlineUsers:", onlineUsers);
-  console.log(`Sending ${event} event to user ${friendId} for contact ${userId}`);
-  if (sockets) {
-    sockets.forEach((socketId) => {
+  const friendSockets = onlineUsers.get(friendId);
+  const userSockets = onlineUsers.get(userId);
+
+  console.log(`[sendBlockEventToUser] Emitting ${event} event`);
+  console.log(`→ To blocker (${userId}) sockets:`, userSockets);
+  console.log(`→ To blocked (${friendId}) sockets:`, friendSockets);
+
+  // Notify the blocked user (userB)
+  if (friendSockets) {
+    friendSockets.forEach((socketId) => {
       ioInstance?.to(socketId).emit(event, {
-        userId, // the user who blocked or unblocked
-        friendId, // the user who is blocked or unblocked
-      }); // !to change to friendId
+        userId,      // who blocked
+        friendId,    // who got blocked
+      });
     });
-    console.log(`Event ${event} sent to user ${friendId} for contact ${userId}`);
   } else {
     console.log(`User ${friendId} is not online.`);
   }
+
+  // 🔥 Also notify the blocker (userA) in all their sessions
+  if (userSockets) {
+    userSockets.forEach((socketId) => {
+      ioInstance?.to(socketId).emit(event, {
+        userId,      // who blocked
+        friendId,    // who got blocked
+      });
+    });
+  } else {
+    console.log(`User ${userId} is not online.`);
+  }
+
+  console.log(`Event ${event} emitted to both users.`);
 }
 
+
 // this function will be used to set the online status of a user in back-end
-export function setOnlineTodb(userId: string, status: boolean, updateLastSeen: boolean) {
+export async function setOnlineTodb(userId: string, status: boolean, updateLastSeen: boolean) {
 
   console.log(`Setting online status for user ${userId} to ${status}`);
-  let stmt;
-  let result;
-  if (updateLastSeen) { 
-      stmt = db.prepare(`UPDATE users SET online = ?, last_seen = ? WHERE id = ?`);
-      result = stmt.run(status ? 1 : 0, getTime(), userId);
-  } else {
-      stmt = db.prepare(`UPDATE users SET online = ? WHERE id = ?`);
-      result = stmt.run(status ? 1 : 0, userId);
+
+  // let stmt;
+  // let result;
+  // if (updateLastSeen) { 
+  //     stmt = db.prepare(`UPDATE users SET online = ?, last_seen = ? WHERE id = ?`);
+  //     result = stmt.run(status ? 1 : 0, getTime(), userId);
+  // } else {
+  //     stmt = db.prepare(`UPDATE users SET online = ? WHERE id = ?`);
+  //     result = stmt.run(status ? 1 : 0, userId);
+  // }
+
+  // if (result.changes === 0) {
+  //   console.log(`Failed to update online status for user ${userId}`);
+  // } else {
+  //   console.log(`User ${userId} online status updated to ${status}`);
+  // }
+
+  try {
+        // send the request to db-service
+      const res = await fetch('http://db-service:5000/api/chat/setOnlineStatus', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, status, updateLastSeen, time: getTime() }),
+      });
+
+      if (!res.ok) {
+        console.log(`Failed to update online status for user ${userId}`);
+      }
+      else {
+        console.log(`User ${userId} online status updated to ${status}`);
+      }
+  } catch (error) {
+      console.error('Error updating online status:', error);
   }
 
-  if (result.changes === 0) {
-    console.log(`Failed to update online status for user ${userId}`);
-  } else {
-    console.log(`User ${userId} online status updated to ${status}`);
-  }
 }
 
 // this function will be used to send the event delete message or update a message to the specific user
 export function sendDeleteOrUpdateMessageEventToUser(userId: string, from: string ,event: string, messageId: string, Updatemessage: string) {
   const sockets = onlineUsers.get(userId);
+  const fromSockets = onlineUsers.get(from);
   console.log(`Sending ${event} event to user ${userId} for message ${messageId}`);
   if (sockets) {
     sockets.forEach((socketId) => {
@@ -221,5 +281,20 @@ export function sendDeleteOrUpdateMessageEventToUser(userId: string, from: strin
     console.log(`Event ${event} sent to user ${userId} for message ${messageId}`);
   } else {
     console.log(`User ${userId} is not online.`);
+  }
+
+  // 🔥 Also notify the sender (from) in all their session
+  if (fromSockets) {
+    fromSockets.forEach((socketId) => {
+      ioInstance?.to(socketId).emit(event, {
+        from, // the user who sent the message
+        userId,
+        messageId,
+        Updatemessage
+      });
+    });
+    console.log(`Event ${event} sent to sender ${from} for message ${messageId}`);
+  } else {
+    console.log(`Sender ${from} is not online.`);
   }
 }

@@ -164,6 +164,63 @@ export const chartsDataResponse = z.object({
 export type Stats = z.infer<typeof StatsSchema>;
 export type ChartsDataResponse = z.infer<typeof chartsDataResponse>;
 
+// friendship qery
+export const friendshipQuery = z.object({
+  userId1: z.string(),
+  userId2: z.string(),
+});
+
+// type friendship query
+export type FriendshipQuery = z.infer<typeof friendshipQuery>;
+
+// friendship response
+export const friendshipResponse = z.object({
+  status: z.enum(['accepted', 'pending', 'blocked', 'self', 'no-friendship']),
+  blocked_by: z.number().nullable(),
+});
+
+// type friendship response
+export type FriendshipResponse = z.infer<typeof friendshipResponse>;
+
+
+// rank response schema
+export const rankResponse = z.object({
+    id: z.number(),
+    fullName: z.string(),
+    userName: z.string(),
+    imageUrl: z.string(),
+    rank: z.number(),
+    level: z.number(),
+    progress: z.number(),
+    online: z.boolean(),
+});
+
+export type RankResponse = z.infer<typeof rankResponse>;
+export const rankListResponse = z.array(rankResponse);
+
+// game schema
+// params schema
+// query schema
+export const gameHistoryParams = z.object({
+  userId: z.number(),
+});
+export const gameHistoryQuery = z.object({
+  gameType: z.enum(['pong', 'parcheesi']),
+});
+export const gameHistoryResponse = z.object({
+  id: z.number(),
+  user1: z.string(),
+  user2: z.string(),
+  user1_score: z.number(),
+  user2_score: z.number(),
+  user1_win: z.boolean(),
+  date_played: z.string(),
+  game_type: z.string(),
+});
+
+// export type GameSchmaRequestParam = z.infer<typeof gameSchmaRequestParam>;
+// export type GameSchmaRequestQuery = z.infer<typeof gameSchmaRequestQuery>;
+// export type GameSchmaResponse = z.infer<typeof gameSchmaResponse>;
 
 
 // build and export the json schemas
@@ -182,6 +239,13 @@ const { schemas, $ref } = buildJsonSchemas({
     chartsDataParams,
     chartsDataQuery,
     chartsDataResponse,
+    friendshipQuery,
+    friendshipResponse,
+    rankResponse,
+    rankListResponse,
+    gameHistoryParams,
+    gameHistoryQuery,
+    gameHistoryResponse,
 });
 
 export const dashboardSchemas = { schemas, $ref };

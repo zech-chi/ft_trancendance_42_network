@@ -8,21 +8,52 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useSelectedUserId } from "@/context/SelectedUserId";
+import { useUserEmail } from "@/context/UserEmailContext";
 
 export async function fetchUser() {
+  
 	try {
-		const response = await fetch('http://localhost:5001/api/auth/session', {
+		let response = await fetch('http://localhost:5001/api/auth/session', {
 			credentials: 'include', // include cookies in the request
 		});
 		if (response.ok) {
 			const data = await response.json();
 			return data;
-		} else {
-			console.error('Failed to fetch user:', response.statusText);
+		} if (response.status === 401 || response.status === 403) {
+      console.log("Access token expired. Attempting refresh...");
+      console.log(response.statusText);
+      console.log(await response.text());
+
+      const refreshRes = await fetch('http://localhost:5001/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!refreshRes.ok) {
+        console.warn("Refresh token invalid or expired.");
+        return null;
+      }
+
+      console.log("Access token refreshed. Retrying session...");
+      // Step 3: Retry getting session after refresh
+      response = await fetch('http://localhost:5001/api/auth/session', {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        return await response.json();
+      } else {
+        console.warn("Session fetch failed even after refresh.");
+        return null;
+      }
+    }
+     else {
+			console.log('Failed to fetch user:', response.statusText);
 			return null;
 		}
+    
 	} catch (error) {
-		console.error('Error fetching user:', error);
+		console.log('Error fetching user:', error);
 		return null;
 	}
 }
@@ -38,24 +69,35 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true); // new state
+  const { setUserEmail } = useUserEmail(); // ✅ Add this line
 
   // check if already logged in
   useEffect(() => {
     async function checkAuth() {
       const user = await fetchUser();
+      if (user && user.twoFARequired) {
+        router.push("/twofa-verify");
+        return;
+      }
       if (user && user.userName) {
         // alert("Already logged in, redirecting to home page.");
         setLoggedUserName(user.userName);
         setSelectedUserName(user.userName);
         setSelectedUserId(user.id);
         setLoggedUserId(user.id);
-        router.push("/");
+        router.push("/protected");
         return; 
       }
       setLoading(false);
     }
     checkAuth();
   }, []);
+
+  const handleGoogle = () => {
+      window.location.href = "http://localhost:5001/api/auth/login/google";
+
+
+  };
   
   const handleLogin = async () => {
     try {
@@ -70,25 +112,36 @@ export default function LoginPage() {
       const data = await res.json().catch(() => ({}));
       console.log("response:", res.status, data);
 
+      setUserEmail(email); 
       if (res.ok) {
-        setLoggedUserName(data.userName);
-        setSelectedUserName(data.userName);
-        setSelectedUserId(data.id);
-        setLoggedUserId(data.id);
-        router.push("/");
-      } else {
-        setError(data.message || "Login failed");
-      }
-    } catch (err) {
-      console.error("fetch error:", err);
-      setError("Something went wrong");
-    }
-  };
+        if (data.twoFARequired) {
+          router.push("/twofa-verify");
+        }
+        else
+        {
+          setLoggedUserName(data.user.userName);
+          setSelectedUserName(data.user.userName);
+          setSelectedUserId(data.user.id);
+          setLoggedUserId(data.user.id);
+          router.push("/protected");
+        }
+      }else {
+        if (data && data.verifyEmail === true) {
+              router.push(`/verify`);
+              return;
+          }
+              setError(data.message || "Login failed");
+            }
+          } catch (err) {
+            console.error("fetch error:", err);
+            setError("Something went wrong");
+          }
+        };
 
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center text-white">
-        Loading... 1
+        Loading...
       </div>
     );
   }
@@ -141,7 +194,9 @@ export default function LoginPage() {
         </div>
 
         {/* Social Logins */}
-        <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#FEDF7F]/50 transition mb-2">
+        <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#FEDF7F]/50 transition mb-2"
+            onClick={handleGoogle}
+        >
           {/* <Image src="/google-icon.png" alt="Google" width={20} height={20} /> */}
           Continue with Google
         </button>

@@ -13,7 +13,7 @@ import { MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES } from "../utils/consta
 import { fromPath } from "pdf2pic"
 import { getTime } from "../utils/getTime";
 import { MessageRequestBody } from "../types/message";
-import { checkIds } from "../utils/utilsControllerChat";
+import { checkFriendship, checkIds, checkRequestBody, checkUserExists } from "../utils/utilsControllerChat";
 import { ALLOWED_MIMETYPES_CHAT } from "../utils/constants";
 import { sendMessageToUser } from "../socket/socket";
 import { ApidataBase } from "../utils/ApiDataBase";
@@ -80,15 +80,17 @@ function checkDataFile(reply: FastifyReply, data: any): boolean {
 // check limit size for the request
 function checkSizeLimit(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
+  data: any
 ): boolean {
   const contentLength = request.headers["content-length"]
     ? parseInt(request.headers["content-length"])
     : 0;
 
+      console.log("==================> Content-Length:", contentLength, MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES, "  " ,getFileType(request.headers["content-type"]) , " ", data.mimetype);
   if (
     contentLength > MAX_FILE_SIZE_IN_BYTES ||
-    (getFileType(request.headers["content-type"] || "") === "audio" &&
+    (getFileType(data.mimetype) === "audio" &&
       contentLength > MAX_AUDIO_SIZE_IN_BYTES)
   ) {
     console.error("File size exceeds limit:", contentLength);
@@ -177,7 +179,7 @@ async function insertIntoDatabase(from: string, to: string, data: any, filename:
     fileName: filename, // Return the filename
     type: getFileType(data.mimetype), // Return the file type
     time: timeSend.slice(11, 16), // Return the time of upload
-    sent: false, // Assuming the file is sent immediately after upload
+    sent: true, // Assuming the file is sent immediately after upload
     from: from, // sender_id
     to: to, // receiver_id
   };
@@ -191,6 +193,7 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
   if (!isMultipart(request, reply)) {
     return; // If the request is not multipart, exit the function
   }
+
 
   // uncomment this when we merge with the authentication system
   // const user = request.user;
@@ -215,7 +218,20 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     //   });
     // }
     if (!checkIds(reply, from, to, "You cannot send a file to yourself.")){
+      console.log("here 2");
       return; // If checkIds returns false, exit the function
+    }
+
+    // check userif exist to send 
+     if (!(await checkUserExists(reply, to))) {
+        console.log("here 3");
+          return; // If the user does not exist, exit the function
+     }
+
+    // check friendship between from and to
+     if (!(await checkFriendship(reply, from, to, "You can only send messages to friends.", true))) {
+        console.log("here 4");
+          return; // If the users are not friends, exit the function
     }
 
     const data = await request.file();
@@ -228,6 +244,12 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     return; // If no file is uploaded, exit the function
   }
 
+  console.log("Checking file size limit...");
+    if (!checkSizeLimit(request, reply, data)) {
+      data.file.resume(); // Consume the stream to prevent hanging
+      return reply; // If size limit is exceeded, exit the function
+    }
+
   console.log("mimetype:", data.mimetype);
   // Check if the file type is allowed
   if (!isAllowedMimeType(reply, data.mimetype)) {
@@ -236,19 +258,21 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
 
   try {
     // check if size limit is exceeded using content-length header
-    if (!checkSizeLimit(request, reply)) {
-      return; // If size limit is exceeded, exit the function
-    }
+    // console.log("Checking file size limit...");
+    // if (!checkSizeLimit(request, reply, data)) {
+    //   data.file.resume(); // Consume the stream to prevent hanging
+    //   return reply; // If size limit is exceeded, exit the function
+    // }
 
     // Sanitize filename to prevent path traversal.
     const filename = path.basename(data.filename);
     const sanitizedFilename = uuid4() + filename;
     const filePath = path.join(uploadDir, sanitizedFilename);
-    const fileUrl = `${request.protocol}://${request.hostname}:5003/api/chat/uploads/${sanitizedFilename}`; // the port should be in env file
+    const fileUrl = `${request.protocol}://localhost:5006/api/chat/uploads/${sanitizedFilename}`; // the port should be in env file
     // const fileUrl = `api/chat/uploads/${sanitizedFilename}`; // this is for nginx when the fron-end on https
 
     // Pipe the stream directly to a file. This is memory-efficient and non-corrupting.
-    await pump(data.file, fs.createWriteStream(filePath));
+    await pump(data.file, fs.createWriteStream(filePath)); 
 
     if (!checkFileTruncated(reply, data, filePath)) {
       return; // If the file was truncated, exit the function
@@ -260,12 +284,18 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
       console.log("File is a PDF, converting to images...");
       thumbnailPath = await ConvertFirstPageToImage(filePath);
       if (thumbnailPath) {
-        thumbnailPath = `${request.protocol}://${request.hostname}:5003/api/chat/uploads/${thumbnailPath}`;
+        thumbnailPath = `${request.protocol}://localhost:5006/api/chat/uploads/${thumbnailPath}`;
+        // thumbnailPath = `/api/chat/uploads/${thumbnailPath}`;
       }
     }
     
     const messageData = await insertIntoDatabase(from, to, data, filename, fileUrl, thumbnailPath);
 
+
+    // emit to the sender    
+    sendMessageToUser(from, messageData);
+
+    messageData.sent = false; // mark as not sent for the receiver
     // Emit the message to the specific user
     sendMessageToUser(to, messageData);
 

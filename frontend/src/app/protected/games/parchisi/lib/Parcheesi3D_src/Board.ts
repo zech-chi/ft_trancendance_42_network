@@ -1,0 +1,1032 @@
+import * as BABYLON from "@babylonjs/core";
+import * as GUI from "@babylonjs/gui";
+import { io, Socket } from "socket.io-client";
+import { BOARD_TILE_SIZE, PADDING, BOARD_HEIGHT } from "./consts";
+import { COLORS_LOW_DARK, COLORS_MEDIUM_DARK, COLORS_VERY_DARK } from "./consts";
+import { PlayerColor, Position, SphereDataType, DiceDataType, JumpDataType, MoveAbleType, MoveDataType } from "./types";
+import { PLAYERS_BOARD_POSITIONS } from "./config/boardConfig";
+import { CYLINDERS } from "./config/CylindersConfig";
+import { PathType } from "./config/pathConfig";
+import { PATH_OF_PLAYERS } from "./config/pathConfig";
+import { TheEndPlace } from "./config/TheEndPlacesConfig";
+import { THE_END_PLACES } from "./config/TheEndPlacesConfig";
+import { SphereType, RED_SPHERES, GREEN_SPHERES, BLUE_SPHERES, YELLOW_SPHERES } from "./config/spheresConfig";
+import { PLAYERS_AVATAR_POSITIONS } from "./config/PlayersConfig";
+import { fetchUser } from "@/app/lib/apiDashboard";
+import { b, th } from "framer-motion/client";
+import { LOCATIONS, Location } from "./config/locationsConfig";
+import { se7enRed, se7enGreen, se7enYellow, se7enBlue } from "./config/locationsConfig";
+import { startRed, startGreen, startYellow, startBlue } from "./config/locationsConfig";
+import { finalRed, finalGreen, finalYellow, finalBlue } from "./config/locationsConfig";
+// import { int } from "babylonjs";
+import { throws } from "assert";
+
+interface User {
+    fullName: string;
+    userName: string;
+    bio: string;
+    imageUrl: string;
+    rank: number;
+    level: number;
+    progress: number;
+    online: boolean;
+}
+
+
+
+export class Board {
+    // socket
+    private socket!: Socket;
+    // gameId;
+    private gameId!: string;
+    // remote or local
+    private isLocal: boolean = false;
+
+    private scene: BABYLON.Scene;
+    private redLabel?: GUI.TextBlock;
+    private greenLabel?: GUI.TextBlock;
+    private blueLabel?: GUI.TextBlock;
+    private yellowLabel?: GUI.TextBlock;
+    /// button for each player
+    private redButton?: GUI.Button;
+    private greenButton?: GUI.Button;
+    private blueButton?: GUI.Button;
+    private yellowButton?: GUI.Button;
+    private clickedSphereColor: PlayerColor = PlayerColor.RED;
+
+    private gui: GUI.AdvancedDynamicTexture;
+    // Dice values for each player 
+    private redDice1: number = 0;
+    private redDice2: number = 0;
+    private greenDice1: number = 0;
+    private greenDice2: number = 0;
+    private yellowDice1: number = 0;
+    private yellowDice2: number = 0;
+    private blueDice1: number = 0;
+    private blueDice2: number = 0;
+    // player turn
+    private playerTurn: PlayerColor = PlayerColor.RED; // default to RED
+    // player userName
+    private playerUserName: string = "";
+    private playerColor!: PlayerColor;
+    private memeGUI3d!: GUI.GUI3DManager;
+    private moveAbleMap = new Map<number, BABYLON.Vector2>();
+    private box1: BABYLON.Mesh | null = null;
+    private box2: BABYLON.Mesh | null = null;
+
+    constructor(scene: BABYLON.Scene, gui: GUI.AdvancedDynamicTexture, loggedUserName: string, socket: Socket, gameId: string, isLocal: boolean = false) {
+        this.scene = scene;
+        this.gui = gui;
+        this.socket = socket;
+        this.gameId = gameId;
+        this.playerUserName = loggedUserName;
+        this.memeGUI3d = new GUI.GUI3DManager(this.scene);
+        this.isLocal = isLocal;
+        // initialize the moveAbleMap with 0, 0 for each ball
+        this.moveAbleMap.set(1, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(2, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(3, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(4, new BABYLON.Vector2(0, 0));
+        console.log("You are playing as :", this.playerUserName);
+        console.log("Socket initialized:", this.socket.id);
+        console.log("Game ID:", this.gameId);
+        console.log("Is Local Game:", this.isLocal);
+    }
+
+    public setMoveAble(data: MoveAbleType) {
+        if (!data) {
+            console.error("Invalid moveAble data:", data);
+            return;
+        }
+        if (!this.isLocal && data.sphere_type !== this.playerColor) {
+            return;
+        }
+        console.log("Moveable data received:", data);
+        this.moveAbleMap.set(data.sphere_id, new BABYLON.Vector2(data.choice1, data.choice2 || 0));
+        console.log("Moveable map updated:", this.moveAbleMap);
+    }
+
+    public async setPlayerTurn(color: PlayerColor) {
+        this.playerTurn = color;
+        // hide all buttons expect the current player's button
+        if (this.redButton) this.redButton.isVisible = false;
+        if (this.greenButton) this.greenButton.isVisible = false;
+        if (this.yellowButton) this.yellowButton.isVisible = false;
+        if (this.blueButton) this.blueButton.isVisible = false;
+
+        // zelabass
+        this.clickedSphereColor = color;
+
+        if (this.isLocal || this.playerColor === color) {
+            switch (color) {
+                case PlayerColor.RED:
+                    if (this.redButton) this.redButton.isVisible = true;
+                    break;
+                case PlayerColor.GREEN:
+                    if (this.greenButton) this.greenButton.isVisible = true;
+                    break;
+                case PlayerColor.YELLOW:
+                    if (this.yellowButton) this.yellowButton.isVisible = true;
+                    break;
+                case PlayerColor.BLUE:
+                    if (this.blueButton) this.blueButton.isVisible = true;
+                    break;
+            }
+        }
+        this.scene.render();
+    }
+
+    private createBoard() {
+        const padding = BABYLON.MeshBuilder.CreateBox("board", 
+            {
+                width: BOARD_TILE_SIZE + PADDING,
+                depth: BOARD_TILE_SIZE + PADDING,
+                height: 0.1
+            }, this.scene
+        );
+
+        const boardMaterial = new BABYLON.StandardMaterial("boardMaterial", this.scene);
+        boardMaterial.diffuseColor = BABYLON.Color3.FromHexString("#000000");
+        padding.material = boardMaterial;
+        padding.position = new BABYLON.Vector3(0, -0.2, 0);
+        const parchisiBoard = BABYLON.MeshBuilder.CreateBox("parchisiBoard", {
+            width: BOARD_TILE_SIZE,      // official length in meters
+            depth: BOARD_TILE_SIZE,     // official width
+            height: BOARD_HEIGHT      // thin surface
+        }, this.scene);
+        const parchisiBoardMaterial = new BABYLON.StandardMaterial("parchisiBoardMaterial", this.scene);
+        parchisiBoardMaterial.diffuseColor = new BABYLON.Color3(0.6, 0.3, 0.1);
+        parchisiBoard.material = parchisiBoardMaterial;
+    }
+
+    private createPlayersBoardBig(type: PlayerColor, position: Position) {
+        const playerBoard = BABYLON.MeshBuilder.CreateBox(`${type}Board_big`,
+            {
+                width: BOARD_TILE_SIZE / 3,
+                depth: BOARD_TILE_SIZE / 3,
+                height: BOARD_HEIGHT
+            }, this.scene
+        );
+
+        const playerBoardMaterial = new BABYLON.StandardMaterial(`${type}BoardMaterial_big`, this.scene);
+        playerBoardMaterial.diffuseColor = BABYLON.Color3.FromHexString(COLORS_LOW_DARK[type]);
+        playerBoard.material = playerBoardMaterial;
+        playerBoard.position = new BABYLON.Vector3(position.x, position.y, position.z);
+    }
+
+    private createPlayersBoardSmall(type: PlayerColor, position: Position) {
+        const playerBoard = BABYLON.MeshBuilder.CreateBox(`${type}Board_small`,
+            {
+                width: BOARD_TILE_SIZE / 3 - PADDING * 20,
+                depth: BOARD_TILE_SIZE / 3 - PADDING * 20,
+                height: BOARD_HEIGHT
+            }, this.scene
+        );
+
+        const playerBoardMaterial = new BABYLON.StandardMaterial(`${type}BoardMaterial_small`, this.scene);
+        playerBoardMaterial.diffuseColor = BABYLON.Color3.FromHexString(COLORS_MEDIUM_DARK[type]);
+        playerBoard.material = playerBoardMaterial;
+        playerBoard.position = new BABYLON.Vector3(position.x, position.y + 0.2, position.z);
+    }
+
+    private createCylinder(type: PlayerColor, position: Position, id: number) {
+        const cylider = BABYLON.MeshBuilder.CreateCylinder(`${type}Cylinder_${id}`, {
+            height: 1.5,
+            diameter: 4
+        });
+
+        const cylinderMaterial = new BABYLON.StandardMaterial(`${type}CylinderMaterial_${id}`, this.scene);
+        cylinderMaterial.diffuseColor = BABYLON.Color3.FromHexString(COLORS_VERY_DARK[type]);
+        cylider.material = cylinderMaterial;
+        cylider.position = new BABYLON.Vector3(position.x, position.y + 0.25, position.z);
+    }
+
+    private createDestination() {
+        const padding = BABYLON.MeshBuilder.CreateBox("padding", 
+            {
+                width: 15 + PADDING,
+                depth: 15 + PADDING,
+                height: 0.1
+            }, this.scene
+        );
+        const paddingMaterial = new BABYLON.StandardMaterial("paddingMaterial", this.scene);
+        paddingMaterial.diffuseColor = BABYLON.Color3.FromHexString("#000000");
+        padding.material = paddingMaterial;
+        padding.position = new BABYLON.Vector3(0, BOARD_HEIGHT - 0.02, 0);
+        const goldBoard = BABYLON.MeshBuilder.CreateBox("goldBoard", 
+            {
+                width: 15 - PADDING,
+                depth: 15 - PADDING,
+                height: 0.1
+            }, this.scene
+        );
+        // goldBoard is the destination for each player
+        const goldBoardMaterial = new BABYLON.StandardMaterial("goldBoardMaterial", this.scene);
+        goldBoardMaterial.diffuseColor = BABYLON.Color3.FromHexString("#000000");
+        goldBoard.material = goldBoardMaterial;
+        goldBoard.position = new BABYLON.Vector3(0, BOARD_HEIGHT, 0);
+    }
+
+    private createPath(pathObj : PathType) {
+        // create black padding like html you know!
+        const padding = BABYLON.MeshBuilder.CreateBox("padding", 
+            {
+                width: pathObj.dimension.width + PADDING,
+                depth: pathObj.dimension.depth + PADDING,
+                height: 0.1
+            }, this.scene
+        );
+
+        const paddingMaterial = new BABYLON.StandardMaterial("paddingMaterial", this.scene);
+        paddingMaterial.diffuseColor = BABYLON.Color3.FromHexString("#000000");
+        padding.material = paddingMaterial;
+        padding.position = new BABYLON.Vector3(
+            pathObj.position.x,
+            pathObj.position.y - 0.02 - 0.25,
+            pathObj.position.z
+        );
+
+        // create the path
+        const path = BABYLON.MeshBuilder.CreateBox(pathObj.id, {
+            width: pathObj.dimension.width - PADDING,
+            depth: pathObj.dimension.depth - PADDING,
+            height: 0.1
+        }, this.scene);
+
+        const pathMaterial = new BABYLON.StandardMaterial(pathObj.id + "Material", this.scene);
+        pathMaterial.diffuseColor = BABYLON.Color3.FromHexString(pathObj.color);
+        path.material = pathMaterial;
+        path.position = new BABYLON.Vector3(pathObj.position.x, pathObj.position.y - 0.25, pathObj.position.z);
+    }
+
+    private createPathText(pathObj: PathType) {
+        // create text:
+        // Create a plane to hold the text
+        const plane = BABYLON.MeshBuilder.CreatePlane("textPlane", { width: 3, height: 1 }, this.scene);
+
+        // Create dynamic texture
+        const dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", { width:512, height:256 }, this.scene, false);
+        dynamicTexture.hasAlpha = true;
+
+
+        let name = pathObj.id;
+        if (!pathObj.drawText) name = "";
+        // Draw text
+        dynamicTexture.drawText(name, null, 150, "bold 150px Arial", "gray", "transparent");
+
+        // Create material
+        const mat = new BABYLON.StandardMaterial("textMat", this.scene);
+        mat.diffuseTexture = dynamicTexture;
+        mat.backFaceCulling = false;
+
+        plane.material = mat;
+
+        // Rotate to make it parallel to Y-axis
+        plane.rotation = new BABYLON.Vector3(Math.PI / 2, Math.PI / 2, 0);
+        if (
+            pathObj.diff_x !== undefined &&
+            pathObj.diff_y !== undefined &&
+            pathObj.diff_z !== undefined
+        )
+            plane.position = new BABYLON.Vector3(pathObj.position.x + pathObj.diff_x, pathObj.position.y + pathObj.diff_y - 0.24, pathObj.position.z + pathObj.diff_z);
+        else
+            plane.position = new BABYLON.Vector3(pathObj.position.x, pathObj.position.y + 0.1, pathObj.position.z);
+    }
+
+    private createTriangle(triangleObj: TheEndPlace) {
+        // 1. Create the 3 points of the triangle
+        const p1 = new BABYLON.Vector3(triangleObj.x1, triangleObj.y1, triangleObj.z1);
+        const p2 = new BABYLON.Vector3(triangleObj.x2, triangleObj.y2, triangleObj.z2);
+        const p3 = new BABYLON.Vector3(triangleObj.x3, triangleObj.y3, triangleObj.z3);
+        
+        // 2. Create custom mesh
+        const triangle = new BABYLON.Mesh("triangle", this.scene);
+
+        // 3. Define vertex data
+        const vertexData = new BABYLON.VertexData();
+
+        // Positions (3 points → 9 numbers)
+        vertexData.positions = [
+            p1.x, p1.y, p1.z,
+            p2.x, p2.y, p2.z,
+            p3.x, p3.y, p3.z,
+        ];
+
+        // Indices (just one face with 3 vertices)
+        vertexData.indices = [triangleObj.i0, triangleObj.i1, triangleObj.i2];
+
+        // Normals (needed for lighting/shading)
+        vertexData.normals = [];
+        BABYLON.VertexData.ComputeNormals(vertexData.positions, vertexData.indices, vertexData.normals);
+
+        // 4. Apply vertex data to mesh
+        vertexData.applyToMesh(triangle);
+        const mat = new BABYLON.StandardMaterial("mat", this.scene);
+        mat.diffuseColor = BABYLON.Color3.FromHexString(triangleObj.color);
+        triangle.material = mat;
+        mat.backFaceCulling = false;
+    }
+
+    private createTextureForBoxWithChice(choice: number) : BABYLON.StandardMaterial {
+        const dynamicTexture = new BABYLON.DynamicTexture("dynamicTexture", 256, this.scene, true);
+        dynamicTexture.drawText(String(choice), null, 150, "bold 120px Arial", COLORS_LOW_DARK[this.clickedSphereColor], COLORS_VERY_DARK[this.clickedSphereColor], true);
+
+        const material = new BABYLON.StandardMaterial("boxMat", this.scene);
+        material.diffuseTexture = dynamicTexture;
+        return material;
+    }
+
+    private createBoxWithChoice(choice: number, position: BABYLON.Vector3) {
+        const box = BABYLON.MeshBuilder.CreateBox("box", { size: 2 }, this.scene);
+        box.position = new BABYLON.Vector3(position.x, position.y + 3, position.z);
+
+        // create a material with the choice number
+        const faceMaterials: BABYLON.Material[] = [];
+        for (let i = 1; i <= 6; i++) {
+            faceMaterials.push(this.createTextureForBoxWithChice(choice));
+        }
+
+        // create a MultiMaterial to apply to the box
+        const multiMat = new BABYLON.MultiMaterial("multiMat", this.scene);
+        multiMat.subMaterials = faceMaterials;
+
+        // apply the MultiMaterial to the box
+        box.material = multiMat;
+
+        return box;
+    }
+
+    private resetMoveAbleMap() {
+        this.moveAbleMap.clear();
+        this.moveAbleMap.set(1, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(2, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(3, new BABYLON.Vector2(0, 0));
+        this.moveAbleMap.set(4, new BABYLON.Vector2(0, 0));
+    }
+
+    private resetBoxes() {
+        if (this.box1) {
+            this.box1.dispose();
+            this.box1 = null;
+        }
+        if (this.box2) {
+            this.box2.dispose();
+            this.box2 = null;
+        }
+    }
+    private async createSphere(sphere: SphereType) {
+        console.log("->sphere" + sphere.type + String(sphere.id));
+        const sphereName = "sphere" + sphere.type + String(sphere.id);
+        const sphereMesh = BABYLON.MeshBuilder.CreateSphere(sphereName, {
+            diameter: sphere.diameter,
+            segments: 32,
+          },  this.scene);
+        const sphereMaterial = new BABYLON.StandardMaterial("sphere", this.scene);
+        sphereMaterial.bumpTexture = new BABYLON.Texture("/media/texture.png", this.scene);
+        // sphereMaterial.diffuseTexture = new BABYLON.Texture("Parcheesi3D_Media/background.png", this.scene);
+        sphereMaterial.diffuseColor =  BABYLON.Color3.FromHexString(sphere.color);
+        sphereMesh.material = sphereMaterial;
+        sphereMesh.position = new BABYLON.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
+
+        // add click event to the sphere if the sphere is the player's color
+        if ((this.isLocal ) || (this.playerColor === sphere.type && this.playerUserName)) {
+            sphereMesh.actionManager = new BABYLON.ActionManager(this.scene);
+            sphereMesh.actionManager.registerAction(
+                new BABYLON.ExecuteCodeAction(
+                    BABYLON.ActionManager.OnPickTrigger,
+                    (evt) => {
+                        this.resetBoxes();~
+                        console.log("Sphere clicked:", sphereMesh.name);
+                        console.log("moveAble : ", this.moveAbleMap.get(Number(sphere.id)));
+                        if (this.clickedSphereColor === sphere.type) {
+                            if (this.moveAbleMap.get(Number(sphere.id))?.x !== 0) {
+                                this.box1 = this.createBoxWithChoice(this.moveAbleMap.get(Number(sphere.id))?.x as number, sphereMesh.position);
+
+                                if (this.moveAbleMap.get(Number(sphere.id))?.y !== 0) {
+                                    this.box1.position.x -= 1.5; // offset the second box to the right
+                                    this.box2 = this.createBoxWithChoice(this.moveAbleMap.get(Number(sphere.id))?.y as number, sphereMesh.position);
+                                    this.box2.position.x += 1.5; // offset the second box to the right
+                                }
+                            }
+                        }
+
+                        // add click event to the boxes
+                        if (this.box1) {
+                            this.box1.actionManager = new BABYLON.ActionManager(this.scene);
+                            this.box1.actionManager.registerAction(
+                                new BABYLON.ExecuteCodeAction(
+                                    BABYLON.ActionManager.OnPickTrigger,
+                                    (evt) => {
+                                        console.log("Box 1 clicked, you choose:", this.moveAbleMap.get(Number(sphere.id))?.x);
+                                        // emit the move request to the server
+                                        if (this.socket.connected) {
+                                            this.socket.emit("moveRequest", {
+                                                gameId: this.gameId,
+                                                sphere_id: Number(sphere.id),
+                                                sphere_type: sphere.type,
+                                                choice: this.moveAbleMap.get(Number(sphere.id))?.x
+                                            });
+                                        } else {
+                                            console.error("Socket not connected!");
+                                        }
+                                        this.resetBoxes();
+                                        this.resetMoveAbleMap();
+                                    }
+                                )
+                            );
+                        }
+                        if (this.box2) {
+                            this.box2.actionManager = new BABYLON.ActionManager(this.scene);
+                            this.box2.actionManager.registerAction(
+                                new BABYLON.ExecuteCodeAction(
+                                    BABYLON.ActionManager.OnPickTrigger,
+                                    (evt) => {
+                                        console.log("Box 2 clicked, you choose:", this.moveAbleMap.get(Number(sphere.id))?.y);
+                                        if (this.socket.connected) {
+                                            this.socket.emit("moveRequest", {
+                                                gameId: this.gameId,
+                                                sphere_id: Number(sphere.id),
+                                                sphere_type: sphere.type,
+                                                choice: this.moveAbleMap.get(Number(sphere.id))?.y
+                                            });
+                                        } else {
+                                            console.error("Socket not connected!");
+                                        }
+                                        this.resetBoxes();
+                                        this.resetMoveAbleMap();
+                                    }
+                                )
+                            );
+                        }
+                    }
+                )
+            );
+        }
+    }
+
+
+    public async createSpheres(type: PlayerColor) {
+        let spheres;
+        switch (type) {
+            case PlayerColor.RED:
+                spheres = RED_SPHERES;
+                break;
+            case PlayerColor.GREEN:
+                spheres = GREEN_SPHERES;
+                break;
+            case PlayerColor.YELLOW:
+                spheres = YELLOW_SPHERES;
+                break;
+            case PlayerColor.BLUE:
+                spheres = BLUE_SPHERES;
+                break;
+            default:
+                return;
+        }
+    
+        for (const sphere of spheres) {
+            await this.createSphere(sphere);
+        }
+    }
+
+    private createButton(type: PlayerColor) {
+        // Create a button
+        const button = GUI.Button.CreateSimpleButton(`${type}Button`, `Roll Dice`);
+        button.width = "150px";
+        button.height = "40px";
+        button.color = COLORS_VERY_DARK[type];
+        button.cornerRadius = 20;
+        button.background = COLORS_LOW_DARK[type];
+        button.zIndex = 10;
+        button.isVisible = false; // initially hidden, will be shown when it's the player's turn
+
+        // Set the position of the button
+        if (type === PlayerColor.RED) {
+            button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        } else if (type === PlayerColor.GREEN) {
+            button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        } else if (type === PlayerColor.YELLOW) {
+            button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        } else if (type === PlayerColor.BLUE) {
+            button.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            button.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        }
+            
+        // Proper hover effects
+        button.onPointerEnterObservable.add(() => {
+            button.background = COLORS_MEDIUM_DARK[type];
+            this.scene.render();
+        });
+        
+        button.onPointerOutObservable.add(() => {
+            button.background = COLORS_LOW_DARK[type];
+            this.scene.render();
+        });
+        
+        button.onPointerDownObservable.add(() => {
+            console.log(`${type} button clicked`);
+            // Emit the roll dice event to the server
+            // this.socket.emit("requestRollDices", { color: type });
+            if (this.socket.connected) {
+                this.socket.emit("requestRollDices", { color: type, gameId: this.gameId });
+                console.log("Dice rolled for color:", type);
+            } else {
+                console.error("Socket not connected!");
+            }
+            // console.log("Dice rolled for color:", type);
+            button.isVisible = false; // hide the button after clicking
+        });
+
+        // store the buttons
+        switch (type) {
+            case PlayerColor.RED:
+                this.redButton = button;
+                break;
+            case PlayerColor.GREEN:
+                this.greenButton = button;
+                break;
+            case PlayerColor.YELLOW:
+                this.yellowButton = button;
+                break;
+            case PlayerColor.BLUE:
+                this.blueButton = button;
+                break;
+        }
+        this.gui.addControl(button);
+    }
+    
+    private async createLabel(type: PlayerColor) {
+        // Create the TextBlock control
+        let label: GUI.TextBlock;
+
+        switch (type) {
+            case PlayerColor.RED:
+                label = new GUI.TextBlock(`${type}Label`, `dice1: ${this.redDice1}, dice2: ${this.redDice2}`);
+                break;
+            case PlayerColor.GREEN:
+                label = new GUI.TextBlock(`${type}Label`, `dice1: ${this.greenDice1}, dice2: ${this.greenDice2}`);
+                break;
+            case PlayerColor.YELLOW:
+                label = new GUI.TextBlock(`${type}Label`, `dice1: ${this.yellowDice1}, dice2: ${this.yellowDice2}`);
+                break;
+            case PlayerColor.BLUE:
+                label = new GUI.TextBlock(`${type}Label`, `dice1: ${this.blueDice1}, dice2: ${this.blueDice2}`);
+                break;
+        }
+
+        label.color = COLORS_LOW_DARK[type];
+        label.fontSize = 24;
+        label.fontFamily = "Arial";
+        label.fontWeight = "bold";
+    
+        label.paddingLeft = "10px";
+        label.paddingRight = "10px";
+        label.paddingTop = "10px";
+        label.paddingBottom = "10px";
+
+        this.createButton(type);
+
+        switch (type) {
+            case PlayerColor.RED:
+                label.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                label.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                label.top = "-40px"; // position above the button
+                this.redLabel = label;
+                break;
+    
+            case PlayerColor.GREEN:
+                label.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                label.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+                label.top = "-40px"; // position above the button
+                this.greenLabel = label;
+                break;
+    
+            case PlayerColor.YELLOW:
+                label.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+                label.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                label.top = "40px"; // position under the button
+                this.yellowLabel = label;
+                break;
+                
+                case PlayerColor.BLUE:
+                    label.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+                    label.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+                    label.top = "40px"; // position under the button
+                    this.blueLabel = label;
+                break;
+        }
+        this.gui.addControl(label);
+        this.scene.render();
+    } 
+
+    public updateLabel(data: DiceDataType) {
+        const labelText = `dice1: ${data.dice1}, dice2: ${data.dice2}`;
+        switch (data.color) {
+            case PlayerColor.RED:
+                this.redDice1 = data.dice1;
+                this.redDice2 = data.dice2;
+                if (this.redLabel) {
+                    this.redLabel.text = labelText;          
+                }
+                break;
+            case PlayerColor.GREEN:
+                this.greenDice1 = data.dice1;
+                this.greenDice2 = data.dice2;
+                if (this.greenLabel) {
+                    this.greenLabel.text = labelText;
+                }
+                break;
+            case PlayerColor.YELLOW:
+                this.yellowDice1 = data.dice1;
+                this.yellowDice2 = data.dice2;
+                if (this.yellowLabel) {
+                    this.yellowLabel.text = labelText;
+                }
+                break;
+            case PlayerColor.BLUE:
+                this.blueDice1 = data.dice1;
+                this.blueDice2 = data.dice2;
+                if (this.blueLabel) {
+                    this.blueLabel.text = labelText;
+                }
+                break;
+        }
+
+        this.scene.render();
+    }
+
+    public async addPlayerAvatar(obj: SphereDataType) {
+        // fetch the avatar image from the server
+        // and create a cylinder with the avatar image as texture
+        if (!obj.userName || !obj.color) {
+            console.error("Invalid player data:", obj);
+            return;
+        }
+
+        if (this.isLocal || this.playerUserName === obj.userName) {
+            this.playerColor = obj.color;
+        }
+
+        console.log(this.playerColor, "   ", this.playerUserName);
+        const user : User =  await fetchUser(obj.userName);
+        
+        var cylinder = BABYLON.MeshBuilder.CreateCylinder(`${obj.color}Cylinder_${obj.userName}`, {
+            height: 0.5,
+            diameter: 10
+        }, this.scene);
+    
+        const cylinderMaterial = new BABYLON.StandardMaterial(`${obj.color}CylinderMaterial_${obj.userName}`, this.scene);
+        cylinderMaterial.diffuseTexture = new BABYLON.Texture(user.imageUrl, this.scene);;
+        cylinder.material = cylinderMaterial;
+        cylinder.position = new BABYLON.Vector3(-BOARD_TILE_SIZE / 2 - 5 , BOARD_HEIGHT, +BOARD_TILE_SIZE / 2 + 5);
+        cylinder.position = new BABYLON.Vector3(
+            PLAYERS_AVATAR_POSITIONS[obj.color].position.x,
+            PLAYERS_AVATAR_POSITIONS[obj.color].position.y,
+            PLAYERS_AVATAR_POSITIONS[obj.color].position.z
+        );
+        cylinder.billboardMode = BABYLON.Mesh.BILLBOARDMODE_Y;
+
+        // for debugging add a label with the user name
+        // this contain the dice values
+        await this.createLabel(obj.color);
+    }
+
+    private moveAnimation(meshName: string, position: Position, speed = 1.0) {
+        return new Promise<void>((resolve) => {
+            const mesh = this.scene.getMeshByName(meshName);
+            if (!mesh) {
+                console.log(`Error in moveMeshWithQueue ${meshName} mesh not found `);
+                resolve();
+                return ;
+            }
+    
+            const startPosition = mesh.position.clone();
+            const endPosition = new BABYLON.Vector3(position.x, position.y, position.z);
+            
+            if (startPosition.equals(endPosition)) {
+                console.log(`Mesh ${meshName} is already at the target position.`);
+                resolve();
+                return;
+            }
+
+            // move animation
+            const animation = new BABYLON.Animation(
+                "moveMesh1Animation", // name of the animation
+                "position", // property to animate
+                60, // frame rate
+                BABYLON.Animation.ANIMATIONTYPE_VECTOR3, // type of animation
+                BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT // loop mode
+            )
+            
+            const keys = [
+                {frame: 0, value: startPosition}, // start position
+                {frame: 60, value: endPosition} // end position
+            ];
+            
+            // rotation staff
+            // calculate movement vector
+            const delta = endPosition.subtract(startPosition);
+            // rotation values
+            const radius = 1;
+            const distance = delta.length();
+            const angle = distance / radius;
+            
+            // Rotation setup
+            const up = new BABYLON.Vector3(0, 1, 0); // up vector for rotation
+            const rotationAxis = BABYLON.Vector3.Cross(up, delta).normalize(); // axis of rotation
+
+            // create quaternion from axis + angle
+            const startQuat = mesh.rotationQuaternion || BABYLON.Quaternion.RotationYawPitchRoll(
+                mesh.rotation.y, mesh.rotation.x, mesh.rotation.z
+            );
+            const deltaQuat = BABYLON.Quaternion.RotationAxis(rotationAxis, angle);
+            const endQuat = deltaQuat.multiply(startQuat);
+
+
+            // rotation animation
+            const rotationQuaternion = new BABYLON.Animation(
+                "rotationMesh1Animation", // name of the animation
+                "rotationQuaternion", // property to animate
+                60, // frame rate
+                BABYLON.Animation.ANIMATIONTYPE_QUATERNION, // type of animation
+                BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT // loop mode
+            );
+
+            const rotationKeys = [
+                {frame: 0, value: startQuat}, // start rotation
+                {frame: 60, value: endQuat} // end rotation
+            ];
+
+            animation.setKeys(keys);
+            rotationQuaternion.setKeys(rotationKeys);
+
+            mesh.animations = [animation, rotationQuaternion];
+            this.scene.beginAnimation(
+                mesh,     // The target mesh to animate
+                0,        // startFrame: the frame where the animation begins
+                60 ,       // endFrame: the frame where the animation ends
+                false,    // loop: whether the animation should loop (true/false)
+                speed,     // speedRatio: 1.0 means normal speed (2.0 = twice as fast)
+                () => {
+                    console.log(`Animation finished for ${meshName} at position:`, position);
+                    resolve();
+                }
+            );
+        });
+    }
+
+    public async move(instruction: MoveDataType) {
+        let placeToMove;
+        if (instruction.se7en) {
+            if (!instruction.where)
+                return; 
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeToMove = se7enRed[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.GREEN:
+                    placeToMove = se7enGreen[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeToMove = se7enYellow[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.BLUE:
+                    placeToMove = se7enBlue[instruction.place][instruction.where];
+                    break;
+            }
+        } else if (instruction.final) {
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeToMove = finalRed[instruction.place];
+                    break;
+                case PlayerColor.GREEN:
+                    placeToMove = finalGreen[instruction.place];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeToMove = finalYellow[instruction.place];
+                    break;
+                case PlayerColor.BLUE:
+                    placeToMove = finalBlue[instruction.place];
+                    break;
+            }
+        } else {
+            if (!instruction.place || !instruction.where) {
+                console.error("Invalid move instruction:", instruction);
+                return;
+            }
+            placeToMove = LOCATIONS[instruction.place][instruction.where];
+        }
+
+        // check if placeToMove is valid
+        if (!placeToMove) {
+            console.error("Invalid place to move:", placeToMove);
+            return;
+        }
+
+        await this.moveAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeToMove, instruction.speed).then(() => {
+            console.log("move animation completed");
+        });
+    }
+
+    // playing
+    private jumpAnimation(meshName: string, positions: Position, speed = 1.0, maxY = 5) {
+        return new Promise<void>((resolve) => {
+            const mesh = this.scene.getMeshByName(meshName);
+            if (!mesh) {
+                console.error(`Error in jumpAnimation: Mesh with name ${meshName} not found.`);
+                resolve();
+                return;
+            }
+    
+            const start = mesh.position.clone();
+            const end = new BABYLON.Vector3(positions.x, positions.y, positions.z);
+            const frameRate = 60;
+            const jumpDuration = 1.0 / speed; // Duration of the jump in seconds
+    
+            // Create a more realistic parabolic jump animation
+            const jumpKeys = [];
+            const numKeys = 30; // More keys for a smoother arc
+    
+            for (let i = 0; i <= numKeys; i++) {
+                const frame = (frameRate * jumpDuration * i) / numKeys;
+                const progress = i / numKeys;
+    
+                // Linear interpolation for X and Z
+                const currentPos = BABYLON.Vector3.Lerp(start, end, progress);
+    
+                // Parabolic curve for Y
+                // Formula: y = -4 * maxY * x^2 + 4 * maxY * x
+                currentPos.y += (-4 * maxY * progress * progress + 4 * maxY * progress);
+    
+                jumpKeys.push({
+                    frame: frame,
+                    value: currentPos
+                });
+            }
+    
+            const positionAnim = new BABYLON.Animation(
+                "jumpPositionAnimation",
+                "position",
+                frameRate,
+                BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+                BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+            );
+            positionAnim.setKeys(jumpKeys);
+    
+            // --- Rotation Animation ---
+            // Make the mesh face the direction of the jump
+            const direction = end.subtract(start);
+            if (direction.length() > 0.01) { // Only rotate if there is movement
+                const targetRotation = BABYLON.Quaternion.FromLookDirectionLH(direction.normalize(), new BABYLON.Vector3(0, 1, 0));
+    
+                const rotationAnim = new BABYLON.Animation(
+                    "jumpRotationAnimation",
+                    "rotationQuaternion",
+                    frameRate,
+                    BABYLON.Animation.ANIMATIONTYPE_QUATERNION,
+                    BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+                );
+    
+                // Use current rotation if it exists, otherwise create a new one
+                const startQuat = mesh.rotationQuaternion ? mesh.rotationQuaternion.clone() : BABYLON.Quaternion.Identity();
+    
+                rotationAnim.setKeys([
+                    { frame: 0, value: startQuat },
+                    { frame: (frameRate * jumpDuration) / 4, value: BABYLON.Quaternion.Slerp(startQuat, targetRotation, 0.5) }, // Start turning early
+                    { frame: frameRate * jumpDuration, value: targetRotation }
+                ]);
+                mesh.animations.push(rotationAnim);
+            }
+            
+            mesh.animations = [positionAnim];
+    
+            const animation = this.scene.beginAnimation(mesh, 0, frameRate * jumpDuration, false, 1.0, () => {
+                // Ensure final state is set correctly
+                mesh.position = end;
+                if (mesh.rotationQuaternion) {
+                    const direction = end.subtract(start);
+                    if (direction.length() > 0.01) {
+                        mesh.rotationQuaternion = BABYLON.Quaternion.FromLookDirectionLH(direction.normalize(), new BABYLON.Vector3(0, 1, 0));
+                    }
+                }
+                console.log(`Jump animation finished for ${meshName} at position:`, positions);
+                resolve();
+            });
+        });
+    }
+
+    public async jump(instruction: JumpDataType) {
+        if (instruction.toStartPosition) {
+            let placeTojump;
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeTojump = startRed[instruction.sphere_id];
+                    break;
+                case PlayerColor.GREEN:
+                    placeTojump = startGreen[instruction.sphere_id];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeTojump = startYellow[instruction.sphere_id];
+                    break;
+                case PlayerColor.BLUE:
+                    placeTojump = startBlue[instruction.sphere_id];
+                    break;
+            }
+            await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
+                console.log("Jump animation completed");
+            });
+            // this.addMeme();
+        } else if (instruction.se7en && instruction.place !== undefined && instruction.where !== undefined) {
+            let placeTojump;
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeTojump = se7enRed[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.GREEN:
+                    placeTojump = se7enGreen[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeTojump = se7enYellow[instruction.place][instruction.where];
+                    break;
+                case PlayerColor.BLUE:
+                    placeTojump = se7enBlue[instruction.place][instruction.where];
+                    break;
+            }
+            await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
+                console.log("Jump animation completed");
+            });
+        }  else if (instruction.final && instruction.place !== undefined) {
+            let placeTojump;
+            switch (instruction.sphere_type) {
+                case PlayerColor.RED:
+                    placeTojump = finalRed[instruction.place];
+                    break;
+                case PlayerColor.GREEN:
+                    placeTojump = finalGreen[instruction.place];
+                    break;
+                case PlayerColor.YELLOW:
+                    placeTojump = finalYellow[instruction.place];
+                    break;
+                case PlayerColor.BLUE:
+                    placeTojump = finalBlue[instruction.place];
+                    break;
+            }
+            await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
+                console.log("Jump animation completed");
+            });
+        } else {
+            if (!instruction.place || !instruction.where) {
+                console.error("Invalid jump instruction:", instruction);
+                return;
+            }
+            await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, LOCATIONS[instruction.place][instruction.where], instruction.speed, instruction.maxHeight).then(() => {
+                console.log("Jump animation completed");
+            });
+        }
+    }
+
+    public addMeme() {
+        const meme = new GUI.HolographicSlate("meme");
+        meme.minDimensions = new BABYLON.Vector2(35, 35);
+        meme.dimensions = new BABYLON.Vector2(35, 35);
+        meme.titleBarHeight = 4; // height of the title bar
+        meme.title = "ntal3oha 3lk chwiya 😂😂";
+        this.memeGUI3d?.addControl(meme);
+        meme.position = new BABYLON.Vector3(20, 10, -8);
+        meme.content = new GUI.Image("cat","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSn77rBF7rM9V4Ej8MsVzL5piUjFzQicxMPUw&s");
+    }
+
+    public initialize() {
+        // Create the main board
+        this.createBoard();
+        // Create the destination area 
+        this.createDestination();
+        // Create the players boards
+        Object.entries(PLAYERS_BOARD_POSITIONS).forEach(([type, position]) => {
+            this.createPlayersBoardBig(type as PlayerColor, position);
+            this.createPlayersBoardSmall(type as PlayerColor, position);
+        });
+
+        // Create the cylinders for each player
+        for (const playerColor of Object.keys(CYLINDERS)) {
+            const cylinders = CYLINDERS[playerColor as PlayerColor];
+            for (const [id, position] of Object.entries(cylinders)) {
+                this.createCylinder(playerColor as PlayerColor, position as Position, parseInt(id));
+            }
+        }
+
+        // Create paths
+        for (const path of PATH_OF_PLAYERS) {
+            this.createPath(path);
+            this.createPathText(path);
+        }
+
+        // create the triangles for the end places
+        for (const triangle of THE_END_PLACES) {
+            this.createTriangle(triangle);
+        }
+    }
+}
