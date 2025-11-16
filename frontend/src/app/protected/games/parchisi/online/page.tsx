@@ -28,9 +28,7 @@ function OnlinePageContent() {
   const { state, createGame, joinLobby } = useGame();
 
   useEffect(() => {
-    alert("🚧 Online mode is under development. Some features may not work as expected.");
     setNamespace("online");
-    console.log("Socket namespace set to", namespace, "Socket:", isConnected ? "Connected" : "Not Connected"); 
   }, []);
 
   // Fetch rooms
@@ -168,7 +166,7 @@ function OnlinePageContent() {
                   {rooms.map((room) => (
                     <li
                       key={room.id}
-                      className="flex items-center justify-between p-3 border border-[#ffb86b]/20 rounded-xl hover:bg-[#ffb86b]/10"
+                      className="flex items-center justify-between p-3 border border-[#ffb86b]/20 rounded-xl hover:bg-[#ffb86b]/10 gap-3.5"
                     >
                       <div>
                         <p className="font-medium text-[#ffb86b]">Room {room.id}</p>
@@ -177,7 +175,7 @@ function OnlinePageContent() {
                       <Button
                         onClick={() => handleJoinRoom(room.id)}
                         disabled={room.status !== "waiting"}
-                        className="bg-green-500/80 hover:bg-green-500 text-white"
+
                       >
                         Join
                       </Button>

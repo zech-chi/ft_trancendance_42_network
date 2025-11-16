@@ -34,7 +34,7 @@ export function SocketProvider({ children}: { children: ReactNode }) {
      if (!currentNamespace) {
     // Disconnect any existing socket if namespace is null
     if (socket) {
-      console.log("==========> Disconnecting socket because namespace is null or change to the orther value");
+      console.log("Disconnecting socket because namespace is null or change to the orther value");
       socket.disconnect();
       setSocket(null);
       setIsConnected(false);
@@ -45,11 +45,25 @@ export function SocketProvider({ children}: { children: ReactNode }) {
       alert(`[SocketProvider] Invalid namespace: ${currentNamespace}`);
       return;
     }
-   if (socketMap[currentNamespace]) {
-    setSocket(socketMap[currentNamespace]);
-    setIsConnected(socketMap[currentNamespace]?.connected || false);
-    return;
-  }
+
+    Object.entries(socketMap).forEach(([ns, s]) => {
+      if (ns !== currentNamespace && s) {
+        console.log(`===> Closing previous socket for namespace: ${ns}`);
+        s.disconnect();
+        socketMap[ns as "online" | "local"] = null; // Cast ns to the appropriate type
+      }
+    });
+
+    if (socketMap[currentNamespace]) {
+      if (!socketMap[currentNamespace]?.connected) {
+        socketMap[currentNamespace]?.connect();
+      }
+    
+      setSocket(socketMap[currentNamespace]);
+      setIsConnected(socketMap[currentNamespace]?.connected || false);
+      return;
+    }
+
 
     // Initialize socket connection
 
@@ -73,12 +87,14 @@ export function SocketProvider({ children}: { children: ReactNode }) {
     setSocket(socketInstance);
 
     return () => {
-      // socketInstance.disconnect()
+      console.log("Cleaning up socket connection")
+      socketInstance.disconnect();
+      socketMap[currentNamespace] = null;
+      setIsConnected(false);
     }
   }, [currentNamespace])
 
   const setNamespace = (ns: "online" | "local" | null) => {
-    alert(`[SocketProvider] Setting namespace to: ${ns}`);
     setCurrentNamespace(ns);
   };
 
