@@ -20,50 +20,48 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
   const { id: gameId } = React.use(params)
   const [copied, setCopied] = useState(false)
   const [animatingPlayers, setAnimatingPlayers] = useState<Set<string>>(new Set())
+  const joinedRef = useRef(false);
+  const { loggedUserName } = useLoggedUserName();
 
-  const joinedRef = useRef(false); // to track if user has joined the lobby
-  const {loggedUserName, setLoggedUserName} = useLoggedUserName();
   useEffect(() => {
-    // mark as joined when lobby state is ready
     if (state.lobby && state.lobby.gameId === gameId) {
       joinedRef.current = true;
     }
   }, [state.lobby, gameId]);
-  
+
   useEffect(() => {
-    
-    
-    // leave lobby on unmount / page navigation
     return () => {
       const currentPath = window.location.pathname;
-      // // only leave if navigating away from this lobby AND not going to the game
-      if (joinedRef.current && currentPath !== `/protected/games/parchisi/online/lobby/${gameId}` && !currentPath.startsWith(`/protected/games/parchisi/game/${gameId}`)) {
+      if (
+        joinedRef.current &&
+        currentPath !== `/protected/games/parchisi/online/lobby/${gameId}` &&
+        !currentPath.startsWith(`/protected/games/parchisi/game/${gameId}`)
+      ) {
         leaveLobby(gameId);
       }
-      joinedRef.current = false; // reset joined status
+      joinedRef.current = false;
     };
-}, [gameId, leaveLobby]);
+  }, [gameId, leaveLobby]);
 
-useEffect(() => {
-  if (state.lobby === null) {
-    router.push("/protected/games/parchisi/")
-  }
-}, [state.lobby])
+  useEffect(() => {
+    if (state.lobby === null) {
+      router.push("/protected/games/parchisi/")
+    }
+  }, [state.lobby])
 
-useEffect(() => {
-  if (state.gameStarted && state.lobby) {
-    router.push(`/protected/games/parchisi/game/${state.lobby.gameId}`);
-  }
-}, [state.gameStarted, state.lobby, router]);
-
+  useEffect(() => {
+    if (state.gameStarted && state.lobby) {
+      router.push(`/protected/games/parchisi/game/${state.lobby.gameId}`);
+    }
+  }, [state.gameStarted, state.lobby, router]);
 
 
   const handleReady = () => {
     if (!state.lobby || !socket) return
-    const currentPlayer = state.lobby.players.find((p) =>p.id === socket.id)
-  if (!currentPlayer || currentPlayer.isReady) return  
-    setAnimatingPlayers((prev) => new Set(prev).add(currentPlayer.id))
+    const currentPlayer = state.lobby.players.find((p) => p.id === socket.id)
+    if (!currentPlayer || currentPlayer.isReady) return  
 
+    setAnimatingPlayers((prev) => new Set(prev).add(currentPlayer.id))
     setTimeout(() => {
       setAnimatingPlayers((prev) => {
         const newSet = new Set(prev)
@@ -76,24 +74,14 @@ useEffect(() => {
   }
 
   const handleStartGame = () => {
-    if (!state.lobby) return
-    if (!state.lobby.gameId)
-    {
-      alert("not ready to start")
-      return
-    }
+    if (!state.lobby?.gameId) return alert("Not ready to start")
     startGame(state.lobby.gameId)
   }
 
   const handleLeave = () => {
     if (!state.lobby) return
     leaveLobby(state.lobby.gameId)
-    //need to notify user if they are host and leaving
-    //nedd to remove lobby from game state and backend
-
-
     router.push("/protected/games/parchisi/online")
-    
   }
 
   const handleCopyGameId = async () => {
@@ -108,15 +96,13 @@ useEffect(() => {
 
   if (!state.lobby) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen w-full flex items-center justify-center bg-black/40 backdrop-blur-md p-4">
           <div className="flex items-center justify-center p-8">
             <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="text-gray-600">Loading lobby...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ffb86b] mx-auto"></div>
+              <p className="text-[#ffb86b]/80">Loading lobby...</p>
             </div>
           </div>
-        </Card>
       </div>
     )
   }
@@ -124,54 +110,49 @@ useEffect(() => {
   const isHost = state.lobby.hostId === socket?.id
   const allReady = state.lobby.players.every((p) => p.isReady)
   const readyCount = state.lobby.players.filter((p) => p.isReady).length
-  console.log("isHost:", isHost);
+
   return (
-    <div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto">
-<Sidebar />
-<Navbar />
-<main
-  className="flex flex-row items-center justify-center relative overflow-x-hidden
-                    xl:pl-20 2xl:pl-24 w-full
-                    h-[calc(100%-130px)]
-                    xl:h-[calc(100%-75px)]
-                    2xl:h-[calc(100%-85px)]
-                    2xl:mt-[67px] xl:mt-[60px]
-                "
->
-<div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl space-y-6">
-        <Card title="Game Lobby" className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Users className="h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold">Game Lobby</h1>
-          </div>
-          <div className="flex items-center justify-center gap-4 text-gray-600">
-            <div className="flex items-center gap-2">
-              <span className="text-sm">Game ID:</span>
+    <div className="h-screen flex flex-col xl:flex-row items-center justify-center w-full 
+    bg-black/40 backdrop-blur-md overflow-x-hidden p-4">
+
+      <Sidebar />
+      <Navbar />
+
+      <main className="w-full max-w-3xl flex flex-col gap-6 p-4
+        bg-gradient-to-b from-[rgba(65,7,33,0.85)] to-[rgba(22,4,18,0.9)]
+        border border-[#ffb86b]/30 rounded-3xl shadow-[0_0_40px_rgba(255,160,90,0.45)]">
+
+        {/* HEADER */}
+        {/* <Card title="Game Lobby" className="text-center"> */}
+          <div className="items-center justify-center gap-4">
+            <div className="flex items-center gap-2 justify-center">
+              <Users className="h-6 w-6 text-[#ffb86b]" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#ffb86b]">Game Lobby</h1>
+            </div>
+
+            <div className="flex items-center gap-2 m-8 justify-center">
               <button
                 onClick={handleCopyGameId}
-                className="flex items-center gap-1 font-mono text-lg bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md transition-colors cursor-pointer"
-                title="Click to copy Game ID"
+                className="flex items-center gap-1 font-mono bg-black/25 text-white border border-[#ffb86b]/40 hover:bg-black/40 px-3 py-1 rounded-lg"
               >
                 {gameId}
                 <Copy className="h-4 w-4" />
               </button>
-              {copied && <span className="text-green-600 text-sm font-medium">Copied!</span>}
+              {copied && <span className="text-green-400 text-sm">Copied!</span>}
             </div>
-            <span className="bg-gray-200 px-3 py-1 rounded-full text-sm">
-              {state.lobby.players.length} {state.lobby.players.length === 1 ? "Player" : "Players"}
+
+            <span className="bg-[#ffb86b]/20 text-[#ffb86b] px-3 py-1 rounded-full text-sm">
+              {state.lobby.players.length} Players
             </span>
           </div>
-        </Card>
+        {/* </Card> */}
 
+        {/* PLAYERS LIST */}
         <Card
           title="Connected Players"
           actions={
-            <span
-              className={`px-3 py-1 rounded-full text-sm transition-all duration-300 ${
-                allReady ? "bg-green-100 text-green-800" : "bg-gray-200 text-gray-700"
-              }`}
-            >
+            <span className={`px-3 py-1 text-sm rounded-full
+              ${allReady ? "bg-green-600/20 text-green-400" : "bg-[#ffb86b]/20 text-[#ffb86b]"}`}>
               {readyCount}/{state.lobby.players.length} Ready
             </span>
           }
@@ -180,98 +161,67 @@ useEffect(() => {
             {state.lobby.players.map((player) => (
               <div
                 key={player.id}
-                className={`flex items-center justify-between p-3 rounded-lg border bg-white hover:bg-gray-50 transition-all duration-300 ${
-                  animatingPlayers.has(player.id) ? "scale-105 shadow-lg" : ""
-                }`}
+                className={`flex items-center justify-between p-3 rounded-xl
+                  bg-black/20 border border-[#ffb86b]/30
+                  transition-all duration-300 ${
+                    animatingPlayers.has(player.id) ? "scale-105 shadow-lg" : ""
+                  }`}
               >
                 <div className="flex items-center gap-3">
-                  <div
-                    className={`h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center transition-all duration-300 ${
-                      player.isReady ? "bg-green-100" : "bg-blue-100"
-                    }`}
-                  >
-                    <span
-                      className={`font-semibold transition-colors duration-300 ${
-                        player.isReady ? "text-green-600" : "text-blue-600"
-                      }`}
-                    >
+                  <div className={`h-10 w-10 rounded-full flex items-center justify-center
+                    ${player.isReady ? "bg-green-600/20" : "bg-[#ffb86b]/20"}`}>
+                    <span className={`${player.isReady ? "text-green-400" : "text-[#ffb86b]"}`}>
                       {player.userName.charAt(0).toUpperCase()}
                     </span>
                   </div>
-                  <div className="flex flex-col">
+
+                  <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{player.userName}</span>
-                      {state.lobby && player.id === state.lobby.hostId && <Crown className="h-4 w-4 text-yellow-500" />}
+                      <span className="font-medium text-white">{player.userName}</span>
+                      {player.id === state.lobby.hostId && <Crown className="h-4 w-4 text-yellow-500" />}
                     </div>
-                    {state.lobby && player.id === state.lobby.hostId && <span className="text-xs text-gray-500">Host</span>}
+                    {player.id === state.lobby.hostId && (
+                      <span className="text-xs text-[#ffb86b]/50">Host</span>
+                    )}
                   </div>
                 </div>
-                <span
-                  className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 transition-all duration-500 transform ${
-                    player.isReady ? "bg-green-100 text-green-800 scale-110" : "bg-gray-200 text-gray-700"
-                  } ${animatingPlayers.has(player.id) ? "animate-pulse" : ""}`}
-                >
-                  {player.isReady ? (
-                    <>
-                      <Check className="h-3 w-3 animate-bounce" />
-                      Ready
-                    </>
-                  ) : (
-                    <>
-                      <Clock className="h-3 w-3" />
-                      Waiting
-                    </>
-                  )}
+
+                <span className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm
+                  ${player.isReady ? "bg-green-600/20 text-green-400" : "bg-[#ffb86b]/20 text-[#ffb86b]"}`}>
+                  {player.isReady ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                  {player.isReady ? "Ready" : "Waiting"}
                 </span>
               </div>
             ))}
           </div>
         </Card>
 
+        {/* ACTIONS */}
         <Card>
-          <div className="space-y-3">
-            <div className="w-full">
-              <Button onClick={handleReady} > { state.lobby.players.find((p) => p.id === socket?.id)?.isReady ? "✓ You are Ready!" : "Mark as Ready" }</Button>
-            </div>
+          <div className="flex flex-col gap-3">
+            <Button onClick={handleReady}>
+              {state.lobby.players.find((p) => p.id === socket?.id)?.isReady
+                ? "✓ You are Ready!"
+                : "Mark as Ready"}
+            </Button>
 
             {isHost && (
-  <div className="w-full">
-    <Button onClick={allReady && state.lobby.players.length >= 2 ? handleStartGame : undefined} >
-      {
-        allReady && state.lobby.players.length >= 2
-          ? "▶ Start Game"
-          : `Waiting for ${
-              state.lobby.players.length < 2
-                ? "at least 2 players"
-                : state.lobby.players.length - readyCount + " more players"
-            }`
-      } </Button>
-  </div>
-)}
+              <Button
+                onClick={allReady && state.lobby.players.length >= 2 ? handleStartGame : undefined}
+              >
+                {allReady && state.lobby.players.length >= 2
+                  ? "▶ Start Game"
+                  : `Waiting ${state.lobby.players.length < 2
+                    ? "for more players"
+                    : (state.lobby.players.length - readyCount ) + " more players to be ready"
+                  }`}
+              </Button>
+            )}
 
-
-            <div className="w-full">
-              <Button onClick={handleLeave} > ← Leave Lobby</Button>
-            </div>
+            <Button onClick={handleLeave}>← Leave Lobby</Button>
           </div>
         </Card>
-
-        {!allReady && (
-          <Card className="border-dashed border-2 border-gray-300 transition-all duration-300">
-            <div className="text-center">
-              <p className="text-gray-600 text-sm">
-                {isHost
-                  ? "Waiting for all players to be ready before you can start the game"
-                  : "Mark yourself as ready when you're prepared to play"}
-              </p>
-            </div>
-          </Card>
-        )}
-      </div>
+      </main>
     </div>
-</main>
-</div>
   )
 }
-
-
