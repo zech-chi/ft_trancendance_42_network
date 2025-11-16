@@ -12,7 +12,7 @@ export default function Games(): JSX.Element {
 
   const pathname = usePathname();
   const router = useRouter();
-  const { namespace, setNamespace } = useSocket();
+  const { namespace, setNamespace, isConnected } = useSocket();
   const { state } = useGame();
 
   const [showWinner, setShowWinner] = useState(false);
@@ -23,7 +23,6 @@ export default function Games(): JSX.Element {
     const fetchWinner = async () => {
       if (state.winner) {
         try {
-          // ✅ Fixed URL — removed extra "/"
           const response = await fetch(`http://localhost:5555/games/parchisi/users/${state.winner}`);
 
           if (!response.ok) throw new Error("Failed to fetch winner data");
@@ -47,7 +46,7 @@ export default function Games(): JSX.Element {
     if (!pathname.startsWith("/protected/games/parchisi/game/")) {
       if (namespace !== null) setNamespace(null);
     }
-  }, [pathname, namespace, setNamespace]);
+  }, [pathname, namespace]);
 
   // ✅ Redirect if lobby no longer exists
   useEffect(() => {
@@ -56,9 +55,11 @@ export default function Games(): JSX.Element {
     }
   }, [state.lobby, router]);
 
-  // ✅ Handle closing the popup
   const handleClosePopup = () => {
     setShowWinner(false);
+    setNamespace(null);
+    //log the status of the socker
+    console.log("Socket is : ", isConnected ? "connected" : "disconnected");
     router.push("/protected/games/parchisi/")
   };
 
