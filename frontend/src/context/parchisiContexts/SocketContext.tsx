@@ -34,7 +34,7 @@ export function SocketProvider({ children}: { children: ReactNode }) {
      if (!currentNamespace) {
     // Disconnect any existing socket if namespace is null
     if (socket) {
-      console.log("Disconnecting socket because namespace is null or change to the orther value");
+      console.log("==========> Disconnecting socket because namespace is null or change to the orther value");
       socket.disconnect();
       setSocket(null);
       setIsConnected(false);
@@ -66,6 +66,7 @@ export function SocketProvider({ children}: { children: ReactNode }) {
     socketInstance.on("disconnect", () => {
       console.log("Disconnected from server")
       // window.location.href = "/" // Redirect to home on disconnect
+
       setIsConnected(false)
     })
     socketMap[currentNamespace] = socketInstance; // Save socket for reuse
@@ -77,6 +78,7 @@ export function SocketProvider({ children}: { children: ReactNode }) {
   }, [currentNamespace])
 
   const setNamespace = (ns: "online" | "local" | null) => {
+    alert(`[SocketProvider] Setting namespace to: ${ns}`);
     setCurrentNamespace(ns);
   };
 

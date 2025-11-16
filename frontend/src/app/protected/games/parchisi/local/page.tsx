@@ -6,29 +6,21 @@ import { useSocket } from '@/context/parchisiContexts/SocketContext';
 import { useGame } from '@/context/parchisiContexts/GameContext';
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
+import Button from '@/components/ui/Button';
 
 export default function LocalGamePage() {
   const [players, setPlayers] = useState(2);
   const router = useRouter();
   const { setNamespace } = useSocket();
-  const { createGame, state } = useGame();
+  const { createGame } = useGame();
 
-  // Set namespace to local when entering the page
- useEffect(() => {
-  setNamespace("local");
-}, []);
-
-  // If lobby (game) is created → redirect automatically
-  // useEffect(() => {
-  //   if (state?.lobby?.gameId) {
-  //     router.push(`/game/${state.lobby.gameId}`);
-  //   }
-  // }, [state?.lobby?.gameId, router]);
+  useEffect(() => {
+    setNamespace("local");
+  }, []);
 
   const handleStartGame = async () => {
     try {
       const gameId = await createGame(players);
-      console.log("Redirecting to game:", gameId);
       router.push(`/protected/games/parchisi/game/${gameId}`);
     } catch (err) {
       console.error(err);
@@ -37,73 +29,52 @@ export default function LocalGamePage() {
   };
 
   return (
-    // <div className="flex items-center justify-center h-[calc(100vh-75px)]">
-    //   <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-    //         <h2 className="text-4xl font-bold mb-4 text-center">Local Multiplayer</h2>
-    //         <div className="mb-4">
-    //           <label className="block mb-2 text-gray-700">Number of Players:</label>
-    //           <select
-    //             value={players}
-    //             onChange={(e) => setPlayers(parseInt(e.target.value))}
-    //             className="w-full p-2 border rounded"
-    //           >
-    //             {[2, 3, 4].map((num) => (
-    //               <option key={num} value={num}>
-    //                 {num}
-    //               </option>
-    //             ))}
-    //           </select>
-    //         </div>
-    //         <button
-    //           onClick={handleStartGame}
-    //           className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors"
-    //         >
-    //           Start Game
-    //         </button>
-    //       </div>
-    //     </div>
+    <div className="h-screen flex flex-col xl:flex-row items-center justify-center min-w-[200px] w-full overflow-x-auto bg-black/40 backdrop-blur-md p-4">
+      <Sidebar />
+      <Navbar />
 
-        <div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto">
-<Sidebar />
-<Navbar />
-<main
-  className="flex flex-row items-center justify-center relative overflow-x-hidden
-                    xl:pl-20 2xl:pl-24 w-full
-                    h-[calc(100%-130px)]
-                    xl:h-[calc(100%-75px)]
-                    2xl:h-[calc(100%-85px)]
-                    2xl:mt-[67px] xl:mt-[60px] overflow-y-hidden
-                "
->
-<div className="flex items-center justify-center h-[calc(100vh-75px)]">
-  <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-4xl font-bold mb-4 text-center">Local Multiplayer</h2>
-        <div className="mb-4">
-          <label className="block mb-2 text-gray-700">Number of Players:</label>
+      <main className="flex flex-col items-center justify-center w-full max-w-md xl:max-w-lg p-6 rounded-3xl
+          border border-[#ffb86b]/30
+          shadow-[0_0_40px_rgba(255,160,90,0.45)]
+          bg-gradient-to-b from-[rgba(65,7,33,0.85)] to-[rgba(22,4,18,0.9)]
+          gap-6">
+
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#ffb86b] mb-2">Local Multiplayer</h2>
+          <p className="text-[#ffb86b]/80 text-sm sm:text-base">Play with up to 4 players on the same device</p>
+        </div>
+
+        {/* Players Selection */}
+        <div className="flex flex-col sm:flex-row gap-4 w-full items-center justify-center">
+          <label className="text-[#ffb86b]/80 font-medium text-sm sm:text-base whitespace-nowrap">
+            Number of Players:
+          </label>
+
           <select
             value={players}
             onChange={(e) => setPlayers(parseInt(e.target.value))}
-            className="w-full p-2 border rounded"
+            className="w-40 sm:w-32 p-3 sm:p-4 bg-black/25 text-white border border-[#ffb86b]/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ffb86b] text-center"
           >
             {[2, 3, 4].map((num) => (
-              <option key={num} value={num}>
-                {num}
-              </option>
+              <option key={num} value={num}>{num}</option>
             ))}
           </select>
-        </div>
-        <button
-          onClick={handleStartGame}
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors"
-        >
-          Start Game
-        </button>
-      </div>
-    </div>
-</main>
-</div>
 
-    
+          <button
+            onClick={handleStartGame}
+            className="w-full sm:w-auto mt-4 sm:mt-0 py-2 sm:py-4 px-4 rounded-3xl font-semibold
+            bg-red-500 hover:opacity-90 text-white transition"
+          >
+            Start Game
+          </button>
+        </div>
+
+        {/* Placeholder */}
+        <div className="mt-6 text-center text-sm sm:text-base text-[#ffb86b]/70">
+          🚧 More features coming soon...
+        </div>
+      </main>
+    </div>
   );
 }
-

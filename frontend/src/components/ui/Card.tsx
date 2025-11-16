@@ -9,10 +9,10 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ children, className = "", title, actions }) => {
   return (
-    <div className={`bg-white rounded-lg shadow-md overflow-hidden ${className}`}>
+    <div className={`rounded-lg shadow-md overflow-hidden ${className}`}>
       {(title || actions) && (
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          {title && <h3 className="text-lg font-medium text-gray-900">{title}</h3>}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-900">
+          {title && <h3 className="text-lg font-medium  text-[#ffb86b]">{title}</h3>}
           {actions && <div>{actions}</div>}
         </div>
       )}

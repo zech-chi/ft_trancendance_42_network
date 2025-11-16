@@ -1,70 +1,65 @@
-// app/online/page.tsx
 'use client';
 
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/context/parchisiContexts/SocketContext';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import {useGame } from "@/context/parchisiContexts/GameContext";
+import { useGame } from "@/context/parchisiContexts/GameContext";
 import Sidebar from '@/components/layout/Sidebar';
 import Navbar from '@/components/layout/Navbar';
-
+import { X } from 'lucide-react';
+import { name } from '@babylonjs/gui';
 
 export default function OnlineGamePage() {
-  return (
-  
-            <OnlinePageContent  />
-  )
+  return <OnlinePageContent />;
 }
 
 function OnlinePageContent() {
-  const [activeTab, setActiveTab] = useState<'existing' |'join' | 'create'>('join');
+  const [activeTab, setActiveTab] = useState<'existing' | 'join' | 'create'>('join');
   const [gameCode, setGameCode] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
-  const [rooms, setRooms] = useState<{id:string; players:number; status:string}[]>([]);
+  const [rooms, setRooms] = useState<{ id: string; players: number; status: string }[]>([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(true);
   const router = useRouter();
-  const { socket, setNamespace, isConnected } = useSocket();
-  const { state , createGame, joinLobby } = useGame();
+  const { socket, setNamespace, isConnected, namespace } = useSocket();
+  const { state, createGame, joinLobby } = useGame();
 
-useEffect(() => {
-  setNamespace("online");
-}, []);
-
-  /* EXISTING ROOMS  */
-    // Fetch rooms every 5 seconds
   useEffect(() => {
-  async function fetchRooms() {
-    try {
-      const res = await fetch("http://localhost:5555/api/parchisi/online/rooms");
-      const data = await res.json();
-      setRooms(data);
-    } catch (err) {
-      console.error("Failed to load rooms", err);
-    } finally {
-      setIsLoadingRooms(false);
+    alert("🚧 Online mode is under development. Some features may not work as expected.");
+    setNamespace("online");
+    console.log("Socket namespace set to", namespace, "Socket:", isConnected ? "Connected" : "Not Connected"); 
+  }, []);
+
+  // Fetch rooms
+  useEffect(() => {
+    async function fetchRooms() {
+      try {
+        const res = await fetch("http://localhost:5555/api/parchisi/online/rooms");
+        const data = await res.json();
+        setRooms(data);
+      } catch (err) {
+        console.error("Failed to load rooms", err);
+      } finally {
+        setIsLoadingRooms(false);
+      }
     }
-  }
-  fetchRooms();
-  const interval = setInterval(fetchRooms, 5000);
-  return () => clearInterval(interval);
-}, []);
+    fetchRooms();
+    const interval = setInterval(fetchRooms, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-
-const handleJoinRoom = async(roomId: string) => {
+  const handleJoinRoom = async (roomId: string) => {
     setGameCode(roomId);
-    await handleJoinGame(roomId); // reuse your existing join logic
-};
+    await handleJoinGame(roomId);
+  };
 
-  /** CREATE GAME */
   const handleCreateGame = async () => {
-    if (isCreating) return; // Prevent double click
+    if (isCreating) return;
     setIsCreating(true);
     try {
-      setIsCreating(true);
       const gameId = await createGame();
       router.push(`/protected/games/parchisi/online/lobby/${gameId}?role=host`);
     } catch (err) {
@@ -74,13 +69,11 @@ const handleJoinRoom = async(roomId: string) => {
     }
   };
 
-  /** JOIN GAME */
-   const handleJoinGame = async (roomId?: string) => {
-    if (isJoining) return; // Prevent double click
+  const handleJoinGame = async (roomId?: string) => {
+    if (isJoining) return;
     setIsJoining(true);
     try {
-      setIsJoining(true);
-      const code  = roomId || gameCode
+      const code = roomId || gameCode;
       await joinLobby(code);
       router.push(`/protected/games/parchisi/online/lobby/${code}?role=guest`);
     } catch (err) {
@@ -91,156 +84,115 @@ const handleJoinRoom = async(roomId: string) => {
   };
 
   return (
-    <div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto">
-<Sidebar />
-<Navbar />
-<main
-  className="flex flex-row items-center justify-center relative overflow-x-hidden
-                    xl:pl-20 2xl:pl-24 w-full
-                    h-[calc(100%-130px)]
-                    xl:h-[calc(100%-75px)]
-                    2xl:h-[calc(100%-85px)]
-                    2xl:mt-[67px] xl:mt-[60px]
-                "
->
-    <div className="min-h-screen from-purple-900 to-indigo-800 p-4  flex-1 flex items-center justify-center">
-      <div className="max-w-md mx-auto">
+    <div className="h-screen flex items-center justify-center min-w-[200px] w-full overflow-x-auto bg-black/40 backdrop-blur-md">
+      <Sidebar />
+      <Navbar />
+      <main className="flex flex-col items-center justify-center w-full max-w-3xl p-6 rounded-3xl
+          border border-[#ffb86b]/30
+          shadow-[0_0_40px_rgba(255,160,90,0.45)]
+          bg-gradient-to-b from-[rgba(65,7,33,0.85)] to-[rgba(22,4,18,0.9)]">
+
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Parcheesi</h1>
-          <p className="text-purple-200">Play Parcheesi online with friends</p>
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-[#ffb86b] mb-2">Parcheesi Online</h1>
+          <p className="text-[#ffb86b]/80">Play Parcheesi with friends in real-time</p>
         </div>
 
-        {/* Connection Status */}
-        <div
-          className={`flex items-center justify-center mb-6 ${
-            isConnected ? 'text-green-400' : 'text-yellow-400'
-          }`}
-        >
-          <div
-            className={`w-3 h-3 rounded-full mr-2 ${
-              isConnected ? 'bg-green-400' : 'bg-yellow-400'
-            }`}
-          ></div>
+        {/* Connection Status remove after */}
+        <div className={`flex items-center justify-center mb-6 text-sm font-medium ${
+          isConnected ? 'text-green-400' : 'text-yellow-400'
+        }`}>
+          <div className={`w-3 h-3 rounded-full mr-2 ${isConnected ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
           <span>{isConnected ? 'Connected' : 'Connecting...'}</span>
         </div>
 
         {/* Tabs */}
-        <div className="flex bg-indigo-700 rounded-lg p-1 mb-6">
-          <button
-            onClick={() => setActiveTab('join')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-              activeTab === 'join'
-                ? 'bg-white text-indigo-800'
-                : 'text-indigo-200 hover:text-white'
-            }`}
-          >
-            Join Game
-          </button>
-          <button
-            onClick={() => setActiveTab('create')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-              activeTab === 'create'
-                ? 'bg-white text-indigo-800'
-                : 'text-indigo-200 hover:text-white'
-            }`}
-          >
-            Create Game
-          </button>
-          <button
-  onClick={() => setActiveTab('existing')}
-  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-    activeTab === 'existing'
-      ? 'bg-white text-indigo-800'
-      : 'text-indigo-200 hover:text-white'
-  }`}
->
-  Join Existing Games
-</button>
+        <div className="flex mb-6 bg-[#1e0d24]/80 rounded-xl p-1 border border-[#ffb86b]/30">
+          {['join', 'create', 'existing'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as any)}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === tab
+                  ? 'bg-[#ffb86b] text-black'
+                  : 'text-[#ffb86b]/70 hover:text-white'
+              }`}
+            >
+              {tab === 'join' ? 'Join Game' : tab === 'create' ? 'Create Game' : 'Join Existing'}
+            </button>
+          ))}
         </div>
-        {/* Content */}
-        <Card className="bg-white overflow-auto">
+
+        {/* Content Card */}
+        <Card className="rounded-2xl overflow-auto p-6">
           {activeTab === 'join' && (
-            <div className="p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Join a Game</h2>
-              <div className="space-y-4">
-                <Input
-                  type="text"
-                  placeholder="Enter game code"
-                  value={gameCode}
-                  onChange={(e) => setGameCode(e.target.value)}
-                  className="w-full text-center break-all" // ✅ allows UUID
-                />
-                <Button
-                  onClick={() => handleJoinGame()}
-                  disabled={!gameCode || gameCode.length < 4}
-                  loading={isJoining}
-                  className="w-full"
-                >
-                  Join Game
-                </Button>
-              </div>
+            <div className="flex flex-col items-center gap-4">
+              <Input
+                type="text"
+                placeholder="Enter game code"
+                value={gameCode}
+                onChange={(e) => setGameCode(e.target.value)}
+                className="w-full text-center text-white bg-black/25 border border-[#ffb86b]/40 focus:ring-[#ffb86b]"
+              />
+              <Button
+                onClick={() => handleJoinGame()}
+                disabled={!gameCode || gameCode.length < 4}
+                loading={isJoining}
+                className="w-full bg-gradient-to-r from-[#ff6f91] to-[#ff9671] hover:opacity-90 text-white"
+              >
+                Join Game
+              </Button>
             </div>
           )}
 
           {activeTab === 'create' && (
-            <div className="p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Create a Game</h2>
-              <p className="text-gray-600 mb-6">
-                Start a new game and invite friends to your room.
-              </p>
+            <div className="flex flex-col items-center gap-4">
               <Button
                 onClick={handleCreateGame}
                 loading={isCreating}
-                className="w-full"
+                className="w-full bg-gradient-to-r from-[#ff6f91] to-[#ff9671] hover:opacity-90 text-white"
               >
                 Create New Game
               </Button>
             </div>
           )}
-        {activeTab === 'existing' && (
-  <div className="p-6">
-    <h2 className="text-xl font-bold text-gray-800 mb-4">Available Rooms</h2>
-    {isLoadingRooms ? (
-      <p className="text-gray-500">Loading rooms...</p>
-    ) : rooms.length === 0 ? (
-      <p className="text-gray-500">No rooms available. Try creating one!</p>
-    ) : (
-      <ul className="space-y-3">
-        {rooms.map((room) => (
-          <li
-            key={room.id}
-            className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
-          >
-            <div>
-              <p className="font-medium text-gray-800">
-                Room {room.id}
-              </p>
-              <p className="text-sm text-gray-500">
-                {room.players} players · {room.status}
-              </p>
+
+          {activeTab === 'existing' && (
+            <div className="flex flex-col gap-4">
+              {isLoadingRooms ? (
+                <p className="text-[#ffb86b]/80 text-center">Loading rooms...</p>
+              ) : rooms.length === 0 ? (
+                <p className="text-[#ffb86b]/80 text-center">No rooms available. Try creating one!</p>
+              ) : (
+                <ul className="space-y-3 max-h-64 overflow-y-auto">
+                  {rooms.map((room) => (
+                    <li
+                      key={room.id}
+                      className="flex items-center justify-between p-3 border border-[#ffb86b]/20 rounded-xl hover:bg-[#ffb86b]/10"
+                    >
+                      <div>
+                        <p className="font-medium text-[#ffb86b]">Room {room.id}</p>
+                        <p className="text-sm text-[#ffb86b]/70">{room.players} players · {room.status}</p>
+                      </div>
+                      <Button
+                        onClick={() => handleJoinRoom(room.id)}
+                        disabled={room.status !== "waiting"}
+                        className="bg-green-500/80 hover:bg-green-500 text-white"
+                      >
+                        Join
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-            <Button
-              onClick={() => handleJoinRoom(room.id)}
-              disabled={room.status !== "waiting"}
-            >
-              Join
-            </Button>
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
-)}  
+          )}
         </Card>
 
-        {/* Invite Friends placeholder */}
-        <div className="mt-6 text-center text-sm text-purple-200">
+        <div className="mt-6 text-center text-sm text-[#ffb86b]/70">
           🚧 Invite Friends feature coming soon...
         </div>
-      </div>
+      </main>
     </div>
-</main>
-</div>
   );
 }
