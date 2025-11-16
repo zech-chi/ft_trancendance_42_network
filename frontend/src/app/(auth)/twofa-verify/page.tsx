@@ -173,7 +173,6 @@ export default function TwoFAVerifyPage() {
         
         {/* Logo */}
         <div className="flex flex-col items-center mb-6">
-          {/* <img src="/PONG.png" alt="Logo" className="w-40 h-auto" /> */}
           <Image src="/PONG.png" alt="Logo" width={100} height={100} />
           <h1 className="text-white text-2xl font-bold mt-4">Verify your 2FA</h1>
         </div>
