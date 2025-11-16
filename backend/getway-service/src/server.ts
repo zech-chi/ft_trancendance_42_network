@@ -144,7 +144,7 @@ fastify.register(fastifyHttpProxy, {
 // parcheesi service WebSocket proxy
 fastify.register(fastifyHttpProxy, {
   upstream: SERVICES.parcheesi_service,
-  prefix: "/api/parcheesi",
+  prefix: "/socket.io/parcheesi",
   rewritePrefix: "/socket.io",
   websocket: true,
   replyOptions: {
