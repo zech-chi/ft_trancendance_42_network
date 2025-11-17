@@ -105,11 +105,16 @@ export default async function socketManager(io: Server) {
     socket.on("readyToPlayX", async (data: { gameId: string; userName: string }) => {
       const room = rooms.get(data.gameId);
       if (!room) return;
-      
-      console.log((`Player ${data.userName} is ready to x ${data.gameId}`));
       const player = room.players.find(p => p.userName === data.userName);
       if (!player)
         return;
+      if (room.players.length < 2)
+      {
+        room.destroy();
+        rooms.delete(data.gameId);
+        socket.emit("error", { message: "Not enough players to start the game" });
+        return;
+      }
       room.readyPlayers++;
       if (room.readyPlayers === room.players.length)
         {
@@ -125,8 +130,7 @@ export default async function socketManager(io: Server) {
     socket.on("readyToPlay", (data: { gameId: string; username: string }) => {
       const room = rooms.get(data.gameId);
       if (!room) return;
-      
-  
+        
       const player = room.players.find(p => p.userName === data.username);
       if (player) {
         player.isReady = true;

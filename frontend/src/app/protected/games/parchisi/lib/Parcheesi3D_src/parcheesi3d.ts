@@ -1,6 +1,8 @@
 import * as BABYLON from "@babylonjs/core";
 import { AxesViewer } from "@babylonjs/core/Debug/axesViewer";
 import * as GUI from "@babylonjs/gui";
+import { text } from "stream/consumers";
+import { CustomizationType } from "@/types/game";
 
 export class Parcheesi3D {
     /* the canvas element where the 3D scene will be rendered */
@@ -13,18 +15,23 @@ export class Parcheesi3D {
     private camera!: BABYLON.ArcRotateCamera | BABYLON.FreeCamera | BABYLON.UniversalCamera;
     private light!: BABYLON.HemisphericLight;
     public gui: GUI.AdvancedDynamicTexture;
+    private costumization: CustomizationType;
 
-
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(canvas: HTMLCanvasElement, conf: CustomizationType) {
         this.canvas = canvas;
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.scene = new BABYLON.Scene(this.engine);
+        this.costumization = conf;
 
         // background color of the scene black
         // this.scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
         this.setupCamera();
         this.setupLights();
-        this.setupSky();
+        if (this.costumization.istextureonline) {
+            this.setupSky_babylong();
+        }else{
+            this.setupSky_local();
+        }
         this.addAxes(); // for debugging
         this.gui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this.scene);
     }
@@ -42,10 +49,10 @@ export class Parcheesi3D {
         this.camera.attachControl(this.canvas, true); // make camera moveAble
         // beta controls the vertical rotation angle (how far the camera is from the horizontal plane).
         // restricts how high the camera can tilt upward.
-        // this.camera.upperBetaLimit = Math.PI / 2 - Math.PI / 13;
+        this.camera.upperBetaLimit = Math.PI / 2 - Math.PI / 24;
         // control the minimum and maximum distance from the target.
-        // this.camera.lowerRadiusLimit = 5;
-        // this.camera.upperRadiusLimit = 130;
+        this.camera.lowerRadiusLimit = 5;
+        this.camera.upperRadiusLimit = 130;
     }
 
     private setupLights() {
@@ -66,7 +73,45 @@ export class Parcheesi3D {
         new AxesViewer(this.scene, 2);
     }
 
-    private setupSky() {
+    // addSky(scene) {
+    //     var skydome = BABYLON.Mesh.CreteSphere('dome', 64, 700, scene);
+    //     skydome.scaling = new BABYLON.Vector3(1.5, .5, 1.5);
+    //     skydome.position.y = -30;
+    //     var env_mat = new BABYLON.StandardMaterial("domemat", scene);
+    //     // var envtext = new BABYLON.Texture("https://cdn.eso.org/images/large/mmb-coatn-tank-pano2.jpg", scene);
+    //     var envtext = new BABYLON.Texture('./1337.jpg', scene);
+    //     env_mat.diffuseTexture = envtext;
+    //     env_mat.diffuseTexture.vScale = -1;
+    //     env_mat.emissiveTexture = envtext;
+    //     env_mat.emissiveColor = new BABYLON.Color3(1,1,1);
+    //     env_mat.backFaceCulling = false;
+    //     skydome.material = env_mat;
+    // }
+
+    private setupSky_local() {
+        const skydome = BABYLON.MeshBuilder.CreateSphere("SkyDome", {
+            segments: 64,
+            diameter: 1000
+        }, this.scene);
+        skydome.scaling = new BABYLON.Vector3(1.5, .5, 1.5);
+    
+        skydome.position.y = -30;
+    
+        const skyMaterial = new BABYLON.StandardMaterial("skyMaterial", this.scene);
+    
+        const panoTexture = new BABYLON.Texture(this.costumization.textureimage, this.scene);
+        panoTexture.vScale = -1; // flip vertical to fix inversion
+    
+        skyMaterial.diffuseTexture = panoTexture;
+        skyMaterial.emissiveTexture = panoTexture;
+        skyMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);
+        skyMaterial.backFaceCulling = false;
+    
+        skydome.material = skyMaterial;
+    }
+    
+    
+    private setupSky_babylong() {
         const skybox = BABYLON.MeshBuilder.CreateBox("BackgroundSkybox", {
             size: 500,
             sideOrientation: BABYLON.Mesh.BACKSIDE
@@ -74,8 +119,8 @@ export class Parcheesi3D {
     
         const backgroundMaterial = new BABYLON.BackgroundMaterial("backgroundMaterial", this.scene);
         // backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/TropicalSunnyDay", this.scene);
-        backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/skybox2", this.scene);
-        // backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/environment.env", this.scene);
+        // backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("https://playground.babylonjs.com/textures/SpecularHDR.dds", this.scene);
+        backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture(this.costumization.textureimage, this.scene);
         backgroundMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
     
         skybox.material = backgroundMaterial;

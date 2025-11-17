@@ -88,7 +88,7 @@ function OnlinePageContent() {
       <main className="flex flex-col items-center justify-center w-full max-w-3xl p-6 rounded-3xl
           border border-[#ffb86b]/30
           shadow-[0_0_40px_rgba(255,160,90,0.45)]
-          bg-gradient-to-b from-[rgba(65,7,33,0.85)] to-[rgba(22,4,18,0.9)]">
+          bg-gradient-to-b from-[rgba(5,47,74,1)] to-[rgba(0,166,244,1)]">
 
         {/* Header */}
         <div className="text-center mb-6">

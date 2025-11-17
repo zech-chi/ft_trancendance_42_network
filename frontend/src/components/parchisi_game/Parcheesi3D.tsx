@@ -11,8 +11,7 @@ import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import {MoveDataType} from "@/app/protected/games/parchisi/lib/Parcheesi3D_src/types";
 import { useSocket } from "@/context/parchisiContexts/SocketContext"
 import {useGame } from "@/context/parchisiContexts/GameContext";
-// import stat of socket
-
+import { CustomizationType } from "@/types/game";
 
 
 export function Parcheesi3DComponent() {
@@ -48,7 +47,7 @@ export function Parcheesi3DComponent() {
             
             console.log(chalk.green("Initializing Parcheesi3D..."));
             // Initialize the Parcheesi3D game with the canvas
-            if (canvasRef.current) gameRef.current = new Parcheesi3D(canvasRef.current);
+            if (canvasRef.current) gameRef.current = new Parcheesi3D(canvasRef.current, state.theme as CustomizationType);
             // Start the render loop
             gameRef.current?.runRenderLoop();
             if (gameRef.current) {

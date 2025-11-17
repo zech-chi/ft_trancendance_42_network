@@ -7,18 +7,24 @@ import { useGame } from '@/context/parchisiContexts/GameContext';
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 import Button from '@/components/ui/Button';
+import ThemePopup from '@/components/parchisi_game/ThemePopup';
+import { AiOutlineSkin } from 'react-icons/ai'; 
 
 export default function LocalGamePage() {
   const [players, setPlayers] = useState(2);
   const router = useRouter();
   const { setNamespace } = useSocket();
   const { createGame } = useGame();
+  const [isCreating, setIsCreating] = useState(false);
+  const [showThemePopup, setShowThemePopup] = useState(false);
 
   useEffect(() => {
     setNamespace("local");
   }, []);
 
   const handleStartGame = async () => {
+    if (isCreating) return;
+    setIsCreating(true);
     try {
       const gameId = await createGame(players);
       router.push(`/protected/games/parchisi/game/${gameId}`);
@@ -33,11 +39,20 @@ export default function LocalGamePage() {
       <Sidebar />
       <Navbar />
 
-      <main className="flex flex-col items-center justify-center w-full max-w-md xl:max-w-lg p-6 rounded-3xl
+      <main className="relative flex flex-col items-center justify-center w-full max-w-md xl:max-w-lg p-6 rounded-3xl
           border border-[#ffb86b]/30
           shadow-[0_0_40px_rgba(255,160,90,0.45)]
           bg-gradient-to-b from-[rgba(65,7,33,0.85)] to-[rgba(22,4,18,0.9)]
           gap-6">
+
+        {/* Customize Icon */}
+        <button
+          onClick={() => setShowThemePopup(true)}
+          className="absolute top-4 right-4 text-[#ffb86b]/90 hover:text-[#ffb86b] text-2xl"
+          title="Customize"
+        >
+          <AiOutlineSkin />
+        </button>
 
         {/* Header */}
         <div className="text-center mb-6">
@@ -69,12 +84,9 @@ export default function LocalGamePage() {
             Start Game
           </button>
         </div>
-
-        {/* Placeholder */}
-        <div className="mt-6 text-center text-sm sm:text-base text-[#ffb86b]/70">
-          🚧 More features coming soon...
-        </div>
       </main>
+
+      {showThemePopup && <ThemePopup onClose={() => setShowThemePopup(false)} />}
     </div>
   );
 }

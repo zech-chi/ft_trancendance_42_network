@@ -19,16 +19,6 @@ export async function buildApp()
         credentials: true});
         
         app.register(parchisiPlugin);
-        // app.register(auth2FaPlugin,{prefix: "/auth"} );
-        // app.register(fastifyJwt,{
-        //         secret: process.env.SECRET_KEY || "super_code"});
-        // app.decorate('auth', async (request: any, reply: any) => {
-        //     try {
-        //         await request.jwtVerify();
-        //     } catch (error) {
-        //         reply.send(error);
-        //     }
-        // });
 
     return app;
 }

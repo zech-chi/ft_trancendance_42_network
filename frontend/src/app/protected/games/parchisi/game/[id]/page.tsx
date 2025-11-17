@@ -13,7 +13,7 @@ export default function Games(): JSX.Element {
   const pathname = usePathname();
   const router = useRouter();
   const { namespace, setNamespace, isConnected } = useSocket();
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
 
   const [showWinner, setShowWinner] = useState(false);
   const [winnerData, setWinnerData] = useState<any>(null);
@@ -23,7 +23,7 @@ export default function Games(): JSX.Element {
     const fetchWinner = async () => {
       if (state.winner) {
         try {
-          const response = await fetch(`http://localhost:5555/games/parchisi/users/${state.winner}`);
+          const response = await fetch(`http://localhost:5555/api/parchisi/users/${state.winner}`);
 
           if (!response.ok) throw new Error("Failed to fetch winner data");
 
@@ -58,10 +58,10 @@ export default function Games(): JSX.Element {
   const handleClosePopup = () => {
     setShowWinner(false);
     setNamespace(null);
-    //log the status of the socker
-    console.log("Socket is : ", isConnected ? "connected" : "disconnected");
+    dispatch({ type: "CLEAR_LOBBY" });
     router.push("/protected/games/parchisi/")
   };
+
 
   return (
     <>
