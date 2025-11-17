@@ -1,8 +1,10 @@
 'use client'
 
-import { JSX } from "react";
+import { JSX, use } from "react";
 import { useState } from "react";
 import { useEffect, useMemo } from "react";
+import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+import { fetchCalendarData } from "@/app/lib/apiDashboard";
 
 
 type YearData = {
@@ -34,44 +36,54 @@ function isPrime(n: number): boolean {
 }
 
 export default function CalendarDashboard(): JSX.Element {
-    const calendarData: { [year: number]: YearData } = {
-        2022: {
-            totalGames: 31,
-            totalActiveDays: 90,
-            maxStreak: 21,
-            DaysData: (() => {
-            const days: { [key: number]: number } = {};
-            for (let i = 1; i <= 365; i++) {
-                days[i] = Math.random() > 0.7 ? Math.random() : 0;
+    const { selectedUserName } = useSelectedUserName();
+    const [ calendarData, setCalendarData ] = useState<{ [year: number]: YearData }>({});
+
+    // get calendarData of selectedUserName from backend API
+    useEffect(() => {
+        // fetch calendar data from backend API
+        // setCalendarData(fetchedData);
+        async function fetchData() {
+            if (!selectedUserName) return;
+            try {
+                console.log("~~~~~~~~~~~~~~~~Fetching calendar data for:", selectedUserName);
+                const data = await fetchCalendarData(selectedUserName);
+                console.log("~~~~~~~~~~~~~~~~", data);
+                setCalendarData(data);
+            } catch (error) {
+                console.error("Failed to fetch calendar data:", error);
             }
-            return days;
-            })(),
-        },
-        2023: {
-            totalGames: 300,
-            totalActiveDays: 100,
-            maxStreak: 27,
-            DaysData: (() => {
-            const days: { [key: number]: number } = {};
-            for (let i = 1; i <= 365; i++) {
-                days[i] = Math.random() > 0.65 ? Math.random() : 0;
-            }
-            return days;
-            })(),
-        },
-        2024: {
-            totalGames: 317,
-            totalActiveDays: 103,
-            maxStreak: 30,
-            DaysData: (() => {
-            const days: { [key: number]: number } = {};
-            for (let i = 1; i <= 366; i++) {
-                days[i] = Math.random() > 0.6 ? Math.random() : 0;
-            }
-            return days;
-            })(),
-        },
-    };
+        }
+        fetchData();
+    }
+    , [selectedUserName]);
+
+    // const calendarData: { [year: number]: YearData } = {
+    //     2024: {
+    //         totalGames: 300,
+    //         totalActiveDays: 100,
+    //         maxStreak: 27,
+    //         DaysData: (() => {
+    //         const days: { [key: number]: number } = {};
+    //         for (let i = 1; i <= 365; i++) {
+    //             days[i] = Math.random() > 0.65 ? Math.random() : 0;
+    //         }
+    //         return days;
+    //         })(),
+    //     },
+    //     2025: {
+    //         totalGames: 317,
+    //         totalActiveDays: 103,
+    //         maxStreak: 30,
+    //         DaysData: (() => {
+    //         const days: { [key: number]: number } = {};
+    //         for (let i = 1; i <= 366; i++) {
+    //             days[i] = Math.random() > 0.6 ? Math.random() : 0;
+    //         }
+    //         return days;
+    //         })(),
+    //     },
+    // };
 
     const years = useMemo(() => {
         return Object.keys(calendarData).map(Number).sort((a, b) => b - a);
@@ -115,7 +127,7 @@ export default function CalendarDashboard(): JSX.Element {
         
         if (totalDays in activeDays && activeDays[totalDays] > 0) {
             let opacity = 0.2;
-            if (activeDays[totalDays] == 1) opacity = 1;
+            if (activeDays[totalDays] >= 1) opacity = 1;
             else if (activeDays[totalDays] >= 0.75) opacity = 0.8;
             else if (activeDays[totalDays] >= 0.5) opacity = 0.6;
             else if (activeDays[totalDays] >= 0.25) opacity = 0.4;

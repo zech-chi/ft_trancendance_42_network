@@ -228,6 +228,21 @@ export const numPlayersResponse = z.object({
   numPlayers: z.number(),
 });
 
+// single year stats schema
+const YearStatsSchema = z.object({
+  totalGames: z.number().int(),
+  totalActiveDays: z.number().int(),
+  maxStreak: z.number().int(),
+  DaysData: z.record(z.number()) // key: day as string, value: activity number
+});
+
+// calendar/dashboard response schema
+const calendarResponse = z.record(YearStatsSchema);
+
+// TS type inference
+export type CalendarResponse = z.infer<typeof calendarResponse>;
+
+
 // build and export the json schemas
 const { schemas, $ref } = buildJsonSchemas({
    fetchUserParams,
@@ -252,6 +267,7 @@ const { schemas, $ref } = buildJsonSchemas({
     gameHistoryQuery,
     gameHistoryResponse,
     numPlayersResponse,
+    calendarResponse,
 });
 
 export const dashboardSchemas = { schemas, $ref };

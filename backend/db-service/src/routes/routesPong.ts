@@ -12,6 +12,33 @@ const skills = [
   "Mind_Games",
 ];
 
+export async function updateCalendarData(fastify: FastifyInstance, userId: number) {
+  const db = fastify.db;
+
+  // add 0.1 to the current day in current year 
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  // day from 1 to 366
+  const day = Math.floor(
+    (currentDate.getTime() - new Date(year, 0, 0).getTime()) / 1000 / 60 / 60 / 24
+  );
+
+  console.log(`✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅Updating Calendar for user ${userId} on ${year}-${day}`);
+  // if day and year already exist, update the activity += 0.1 else insert new row with activity 0.1
+  try {
+    const existing = db.prepare("SELECT * FROM Calendar WHERE userId = ? AND year = ? AND day = ?").get(userId, year, day);
+    if (existing) {
+      db.prepare("UPDATE Calendar SET activity = activity + 0.1 WHERE userId = ? AND year = ? AND day = ?").run(userId, year, day);
+      console.log(`✅ Calendar updated for user ${userId} on ${year}-${day}`);
+    } else {
+      db.prepare("INSERT INTO Calendar (userId, year, day, activity) VALUES (?, ?, ?, ?)").run(userId, year, day, 0.1);
+      console.log(`✅ Calendar inserted for user ${userId} on ${year}-${day}`);
+    }
+  } catch (err) {
+    console.error("❌ Error updating calendar:", err);
+  }
+}
+
 export async function updateRadarData(fastify: FastifyInstance, userId: number, winner: boolean) {
   const db = fastify.db;
 
@@ -153,6 +180,8 @@ export default async function routesPong(fastify: FastifyInstance){
       // update radar chart data for both players
       await updateRadarData(fastify, winnerId, true);
       await updateRadarData(fastify, loserId, false);
+      await updateCalendarData(fastify, winnerId);
+      await updateCalendarData(fastify, loserId);
 
         console.log('===========> Game result added with ID:', info.lastInsertRowid);
         return { success: true, gameId: info.lastInsertRowid };
