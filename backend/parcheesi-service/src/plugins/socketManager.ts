@@ -13,6 +13,9 @@ import { rooms, localRooms  } from "../game/GameManager";
 // Store multiple rooms
 export default async function socketManager(io: Server) {
   
+  io.on("connection", (socket: Socket) => {
+    console.log(chalk.green(`Client connected to main namespace: ${socket.id}`));
+  });
   
   const remote = io.of("/games/parchisi/online");
   const local = io.of("/games/parchisi/local");

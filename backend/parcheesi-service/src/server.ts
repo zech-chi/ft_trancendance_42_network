@@ -18,7 +18,7 @@ async function start()
   }
 
   const io = new Server(app.server, {
-    cors: { origin: ["http://localhost:3000", "http://10.13.1.16:3000"],
+    cors: { origin: ["http://localhost:3000", "https://localhost:3000" ,"http://10.13.1.16:3000"],
       methods: ['GET', 'POST'],
      },
   });

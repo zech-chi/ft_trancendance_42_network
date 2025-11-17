@@ -16,7 +16,7 @@ fastify.register(metricsPlugin, { endpoint: "/metrics" });
 
 
 fastify.register(cors, {
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:3000", "https://localhost:3000"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

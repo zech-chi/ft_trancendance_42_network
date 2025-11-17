@@ -13,7 +13,7 @@ import { useUserEmail } from "@/context/UserEmailContext";
 export async function fetchUser() {
   
 	try {
-		let response = await fetch('http://localhost:5001/api/auth/session', {
+		let response = await fetch('/api/auth/session', {
 			credentials: 'include', // include cookies in the request
 		});
 		if (response.ok) {
@@ -24,7 +24,7 @@ export async function fetchUser() {
       console.log(response.statusText);
       console.log(await response.text());
 
-      const refreshRes = await fetch('http://localhost:5001/api/auth/refresh', {
+      const refreshRes = await fetch('/api/auth/refresh', {
         method: 'POST',
         credentials: 'include',
       });
@@ -36,7 +36,7 @@ export async function fetchUser() {
 
       console.log("Access token refreshed. Retrying session...");
       // Step 3: Retry getting session after refresh
-      response = await fetch('http://localhost:5001/api/auth/session', {
+      response = await fetch('/api/auth/session', {
         credentials: 'include',
       });
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
   }, []);
 
   const handleGoogle = () => {
-      window.location.href = "http://localhost:5001/api/auth/login/google";
+      window.location.href = "/api/auth/login/google";
 
 
   };
@@ -102,7 +102,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       // console.log("Attempting login with", { email, password });
-      const res = await fetch("http://localhost:5001/api/auth/login", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

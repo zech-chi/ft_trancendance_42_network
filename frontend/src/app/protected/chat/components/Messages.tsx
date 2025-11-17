@@ -53,7 +53,7 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
       console.log("Confirmed deletion for message ID:", deletingMessageId);
       
       // fetch request to delete the message
-      const result = await fetch(`http://localhost:5003/api/chat/deletemsg/${deletingMessageId}`, {
+      const result = await fetch(`/api/chat/deletemsg/${deletingMessageId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +99,7 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
       
       try {
           // // --- API Call to update the message ---
-          const res = await fetch(`http://localhost:5003/api/chat/editmsg/${editingMessage.id}`, {
+          const res = await fetch(`/api/chat/editmsg/${editingMessage.id}`, {
               method: 'POST', // Or PUT
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ from: currentUserId, to: contact?.id, message: newText }),

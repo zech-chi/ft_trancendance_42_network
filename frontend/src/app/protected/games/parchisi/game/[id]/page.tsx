@@ -23,7 +23,7 @@ export default function Games(): JSX.Element {
     const fetchWinner = async () => {
       if (state.winner) {
         try {
-          const response = await fetch(`http://localhost:5555/api/parchisi/users/${state.winner}`);
+          const response = await fetch(`/api/parchisi/users/${state.winner}`);
 
           if (!response.ok) throw new Error("Failed to fetch winner data");
 

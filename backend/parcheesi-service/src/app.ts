@@ -14,7 +14,7 @@ export async function buildApp()
     const app = fastify();
 
     app.register( fastifyCors,{
-        origin: ["http://localhost:3000", "http://10.13.1.16:3000"],
+        origin: ["http://localhost:3000", "http://10.13.1.16:3000", "https://localhost:3000"],
         methods: ['GET', 'POST'],
         credentials: true});
         

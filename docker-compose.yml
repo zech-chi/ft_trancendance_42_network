@@ -327,8 +327,8 @@ services:
   frontend:
     build: ./frontend
     container_name: frontend
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"
     depends_on:
       - auth-service
       - chat-service
@@ -345,6 +345,27 @@ services:
     logging:
       driver: json-file
 
+   # Nginx Reverse Proxy
+  nginx:
+    build: ./nginx       
+    container_name: nginx
+    ports:
+      - "443:443"         # HTTPS
+      - "80:80"           # HTTP
+    networks:
+      - monitoring
+    depends_on:
+      - frontend
+      - auth-service
+      - chat-service
+      - dashboard-service
+      - db-service
+      - ping-pong-service
+      - parcheesi-service
+      - gateway-service
+      - user-service
+    logging:
+      driver: json-file
   # ---------------------------
   # Backend Services
   auth-service:
@@ -411,9 +432,9 @@ services:
     logging:
       driver: json-file
 
-  getway-service:
-    build: backend/getway-service
-    container_name: getway-service
+  gateway-service:
+    build: backend/gateway-service
+    container_name: gateway
     ports:
       - "5006:5006"
     networks:
@@ -421,7 +442,7 @@ services:
     logging:
       driver: json-file
     volumes:
-      - ./backend/getway-service:/app          # 👈 Mount your local source code
+      - ./backend/gateway-service:/app          # 👈 Mount your local source code
       - /app/node_modules
 
   user-service:

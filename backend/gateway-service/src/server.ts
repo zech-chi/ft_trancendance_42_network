@@ -83,6 +83,8 @@ fastify.register(fastifyHttpProxy, {
   }
 });
 
+//
+
 // chat service proxy
 fastify.register(fastifyHttpProxy, {
   upstream: SERVICES.chat_service,
@@ -114,8 +116,26 @@ fastify.register(fastifyHttpProxy, {
 });
 
 
-// ping-pong service later
-// parcheesi service later
+// ping-pong service
+fastify.register(fastifyHttpProxy, {
+  upstream: SERVICES.ping_pong_service,
+  prefix: "api/pong",
+  rewritePrefix: "api/pong",
+  replyOptions: {
+    onError: proxyErrorHandler("pong service unavailable")
+  }
+});
+
+// parcheesi service
+fastify.register(fastifyHttpProxy, {
+  upstream: SERVICES.parcheesi_service,
+  prefix: "api/parchisi",
+  rewritePrefix: "api/parchisi",
+  replyOptions: {
+    onError: proxyErrorHandler("user service unavailable")
+  }
+});
+
 
 // START WebSockets (Socket.IO) proxy
 
@@ -141,10 +161,18 @@ fastify.register(fastifyHttpProxy, {
   }
 });
 
+
 // parcheesi service WebSocket proxy
 fastify.register(fastifyHttpProxy, {
+  preHandler: (request, reply, done) => {
+    // rewrite the prefix for parcheesi namespaces
+    const namespace = request.url.split("/")[3]; // e.g., "online" or "local"
+    console.log("Parcheesi namespace requested:", namespace);
+    console.log("Original URL:", request.url);
+    done();
+  },
   upstream: SERVICES.parcheesi_service,
-  prefix: "/socket.io/parcheesi",
+  prefix: "/socket.io/parchisi",
   rewritePrefix: "/socket.io",
   websocket: true,
   replyOptions: {

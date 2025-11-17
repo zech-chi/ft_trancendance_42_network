@@ -201,7 +201,7 @@ export default function VerifyEmailPage() {
     setMessage('');
 
     try {
-      const res = await fetch(`http://localhost:5001/api/auth/verify-email`, {
+      const res = await fetch(`/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -236,7 +236,7 @@ export default function VerifyEmailPage() {
     setMessage('');
 
     try {
-      const res = await fetch(`http://localhost:5001/api/auth/resend-code`, {
+      const res = await fetch(`/api/auth/resend-code`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail }),
