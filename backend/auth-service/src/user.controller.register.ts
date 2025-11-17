@@ -70,7 +70,7 @@ export async function RegisterUser(
 
         // hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
-        const imageUrl = `https://api.dicebear.com/9.x/notionists/svg?seed=${userName}`;
+        const imageUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${userName}`;
     
         // create new user
         // add the code_sent_to _email as parameter and add comn to db for 2FA 

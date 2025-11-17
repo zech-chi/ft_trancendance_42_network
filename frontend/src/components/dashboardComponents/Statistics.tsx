@@ -82,7 +82,10 @@ export default function Statistics() {
                     throw new Error('Network response was not ok');
                 }
 
+                console.log("@@@@@@@@@@@@@@@@@@@@@@@", response);
+
                 const result = await response.json();
+                console.log("%%%%%%%%%%%%%%%%%%%%%", result);
                 setData(result.stats); // assuming the response has a 'stats' field
             } catch (error) {
                 console.error('Error fetching data:', error);
