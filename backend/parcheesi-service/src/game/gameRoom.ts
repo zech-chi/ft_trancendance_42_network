@@ -424,18 +424,45 @@ async doubleThreeTimes()
           if (blockedPieces.length > 0) {
             // Move the first blocked piece found
             console.log(chalk.yellow(`Player ${currentPlayer.userName} has blocked pieces. Auto-moving one due to double roll.`));
-            const pieceToMove = blockedPieces[0];
-            for (const dieValue of this.currentDice) {
-              const decision = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue);
-              if (decision && decision.allowed) {
-                await this.executeMoveDecision(decision);
+            
+            
+            for (const pieceToMove of blockedPieces) {
+            // const pieceToMove = blockedPieces[0];
+            const dieValue1 = this.currentDice[0];
+            const dieValue2 = this.currentDice[1];
+            const decision1 = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue1);
+            const decision2check = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue2 + dieValue1);
+            //get the other piece that is on that tile 
+            const otherPieces = this.board.getTileoccupants(pieceToMove.position as number, currentPlayer.id).filter(p => p.id !== pieceToMove.id);
+            const oldpos = pieceToMove.position;
+              if (decision1 && decision1.allowed && decision2check && decision2check.allowed) {
+                const rs1 = await this.executeMoveDecision(decision1);
+                if (!rs1) {
+                  console.log(chalk.red(`Failed to auto-move blocked piece ${pieceToMove.id} for player ${currentPlayer.userName} on first die.`));
+                  continue;
+                }
+                const decision2 = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue2);
+                console.log(chalk.blue(`Auto-move decision for piece ${pieceToMove.id} with die ${dieValue2}: ${decision2.allowed}`));
+                const rt2 = await this.executeMoveDecision(decision2);
+                if (!rt2) {
+                  console.log(chalk.red(`Failed to auto-move blocked piece ${pieceToMove.id} for player ${currentPlayer.userName} on second die.`));
+                  this.removeOneDieValue(this.currentDice, dieValue1); // rollback first move
+                  return;
+                }
+                
+                
                 console.log(chalk.green(`Auto-moved blocked piece ${pieceToMove.id} for player ${currentPlayer.userName} due to double roll.`));
+                // if both moves succeeded
+                this.currentDice = [];
+                //consume both dice and return the other opponent to center;
+                if (otherPieces && otherPieces.length === 1)
+                  await this.emitMoveEvent(otherPieces[0], currentPlayer.color, oldpos , 'center', 1);
+                break;
               } else {
                 console.log(chalk.red(`Failed to auto-move blocked piece ${pieceToMove.id} for player ${currentPlayer.userName}.`));
               }
-            }
-            this.currentDice = [];
           }
+        }
         }
 
     else if (this.isDouble === 3)
