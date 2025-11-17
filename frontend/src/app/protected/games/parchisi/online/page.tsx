@@ -63,7 +63,7 @@ function OnlinePageContent() {
     } catch (err) {
       alert(err);
     } finally {
-      setTimeout(() => setIsCreating(false), 1500);
+      setTimeout(() => setIsCreating(false), 500);
     }
   };
 
@@ -77,7 +77,7 @@ function OnlinePageContent() {
     } catch (err) {
       alert(err);
     } finally {
-      setTimeout(() => setIsJoining(false), 1500);
+      setTimeout(() => setIsJoining(false), 500);
     }
   };
 

@@ -31,13 +31,13 @@ export async function resendVerificationCode(
     });
 
     if (!storeRes.ok)
-      return reply.code(500).send({ message: "Failed to store verification code" });
+      return reply.code(400).send({ message: "Failed to store verification code" });
     // Send email
     await sendEmail(email, "Verify your email", `<p>Your verification code: <b>${code}</b></p>`);
     
     return reply.code(200).send({ message: "Verification code resent" });
   } catch (err) {
     console.error("Resend verification code error:", err);
-    return reply.code(500).send({ message: "Something went wrong" });
+    return reply.code(400).send({ message: "Something went wrong" });
   }
 }  

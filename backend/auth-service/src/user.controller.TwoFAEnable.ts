@@ -40,7 +40,7 @@ export default async function TwoFAEnable  (req: FastifyRequest, reply: FastifyR
     });
     if (!res.ok) {
       const errorData = await res.json();
-      return reply.code(500).send({ error: "failed to enable 2FA", details: errorData });
+      return reply.code(400).send({ error: "failed to enable 2FA", details: errorData });
     }
     reply.send({ message: "2FA enabled" });
   };
