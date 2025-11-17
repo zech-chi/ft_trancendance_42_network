@@ -34,7 +34,7 @@ export default async function TwoFASetup  (req: FastifyRequest, reply: FastifyRe
     }
     );
     if (!rst.ok) {
-      return reply.code(500).send({ error: "failed to save secret" });
+      return reply.code(400).send({ error: "failed to save secret" });
     }
     const otpAuthUrl = secret.otpauth_url!;
     const qr = await generateQRCode(otpAuthUrl);

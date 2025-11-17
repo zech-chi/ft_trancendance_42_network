@@ -44,7 +44,7 @@ export async function verifyEmail(
     });
 
     if (!updateRes.ok)
-      return reply.code(500).send({ message: updateRes.statusText });
+      return reply.code(400).send({ message: updateRes.statusText });
     // Success set access and refresh tokens
 
      // 5️⃣ Normal login
@@ -64,6 +64,6 @@ export async function verifyEmail(
     return reply.code(200).send({ message: "Email verified successfully", user: { id: user.id, email: user.email, userName: user.userName, twoFARequired: false}});
   } catch (err) {
     console.error("Email verification error:", err);
-    return reply.code(500).send({ message: "Something went wrong" });
+    return reply.code(400).send({ message: "Something went wrong" });
   }
 }

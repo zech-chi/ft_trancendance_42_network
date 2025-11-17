@@ -74,6 +74,6 @@ export async function LoginUser(
     });
   } catch (error) {
     console.error("Login error:", error);
-    return reply.code(500).send({ message: "Something went wrong" });
+    return reply.code(400).send({ message: "Something went wrong" });
   }
 }

@@ -218,7 +218,7 @@ export async function authRoutes(app: FastifyInstance) {
         }
         );
         if (!rst.ok) {
-          return reply.code(500).send({ error: "failed to save secret" });
+          return reply.code(400).send({ error: "failed to save secret" });
         }
         const otpAuthUrl = secret.otpauth_url!;
         const qr = await generateQRCode(otpAuthUrl);
@@ -273,7 +273,7 @@ export async function authRoutes(app: FastifyInstance) {
     });
     if (!res.ok) {
       const errorData = await res.json();
-      return reply.code(500).send({ error: "failed to enable 2FA", details: errorData });
+      return reply.code(400).send({ error: "failed to enable 2FA", details: errorData });
     }
     reply.send({ message: "2FA enabled" });
   });
@@ -325,7 +325,7 @@ export async function authRoutes(app: FastifyInstance) {
   
       if (!res.ok) {
         const errorData = await res.json();
-        return reply.code(500).send({ error: "failed to disable 2FA", details: errorData });
+        return reply.code(400).send({ error: "failed to disable 2FA", details: errorData });
       }
   
       reply.send({ message: "2FA disabled" });
