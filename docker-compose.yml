@@ -324,26 +324,26 @@
 services:
   # ---------------------------
   # Frontend
-  # frontend:
-  #   build: ./frontend
-  #   container_name: frontend
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - auth-service
-  #     - chat-service
-  #     - dashboard-service
-  #     - db-service
-  #     - ping-pong-service
-  #     - parcheesi-service
-  #     - user-service
-  #   networks:
-  #     - monitoring
-  #   volumes:
-  #     - ./frontend:/app          # 👈 Mount your local source code
-  #     - /app/node_modules
-  #   logging:
-  #     driver: json-file
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - chat-service
+      - dashboard-service
+      - db-service
+      - ping-pong-service
+      - parcheesi-service
+      - user-service
+    networks:
+      - monitoring
+    volumes:
+      - ./frontend:/app          # 👈 Mount your local source code
+      - /app/node_modules
+    logging:
+      driver: json-file
 
   # ---------------------------
   # Backend Services

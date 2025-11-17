@@ -43,7 +43,7 @@ export default function Sidebar(): JSX.Element {
         <aside 
             className={`
                 fixed z-10
-                bg-black/40 backdrop-blur p-2.5 xl:p1.5
+                bg-white/5 backdrop-blur-2xl p-8 rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)] border border-white/30
                 w-full xl:w-[65px] 2xl:w-[80px]
                 xl:rounded-full
                 flex flex-col
@@ -67,7 +67,7 @@ export default function Sidebar(): JSX.Element {
                             ${selected === '/protected' && link.href === '/protected' 
                                 ? 'bg-black/50' 
                                 : selected !== '/protected' && selected.startsWith(link.href) && link.href !== '/protected'
-                                    ? 'bg-black/50' 
+                                    ? 'bg-black/30' 
                                     : 'bg-black/30 hover:bg-black/70'}`}
                         onClick={() => handleClick(link.href)}
                     >
