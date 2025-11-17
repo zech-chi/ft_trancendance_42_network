@@ -498,3 +498,65 @@ export async function fetchNumPlayersHandler(
         return { numPlayers: 0 };
     }
 }
+
+// fetch calendar data handler
+export async function fetchCalendarDataHandler(
+    request: FastifyRequest<{ Params: FetchUserParams }>,
+    reply: FastifyReply
+) {
+    const { userName } = request.params;
+
+    try {
+        const response = await fetch(`http://db-service:5000/api/dashboard/Calendar/${userName}`);
+
+        if (!response.ok) {
+            reply.status(404).send({ message: "Calendar data not found" });
+            return null;
+        }
+
+        const data = await response.json();
+        console.log("data from db service: ", data);
+
+        if (data.status === "ko") {
+            reply.status(404).send({ message: "Calendar data not found" });
+            return null;
+        }
+
+        return data || null;
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return null;
+    }
+}
+
+// fetchMakePlayerOnlineHandler
+export async function fetchMakePlayerOnlineHandler(
+    request: FastifyRequest<{ Params: { userId: number }; Body: { online: boolean } }>,
+    reply: FastifyReply
+) {
+    const { userId } = request.params;
+    const { online } = request.body;
+
+    try {
+        const response = await fetch(`http://db-service:5000/api/dashboard/players/${userId}/online`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ online }),
+        });
+
+        if (!response.ok) {
+            reply.status(400).send({ message: "Failed to update online status" });
+            return { success: "ko" };
+        }
+
+        const data = await response.json();
+        return data || { success: "ok" };
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return { success: "ko" };
+    }
+}
