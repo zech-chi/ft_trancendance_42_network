@@ -1,4 +1,5 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { updateRadarData } from "./routesPong";
 // import { get } from "https";
 
 type UserRow = {
@@ -50,8 +51,8 @@ if (players.length < 2) {
   reply.send({ gameId });
 });
 
-fastify.patch("/end/:id", async (request : FastifyRequest<{ Params: { id: number }, Body: { winner: string } }>, reply : FastifyReply) => {
-  const { winner } =request.body; // winner username
+fastify.patch("/end/:id", async (request : FastifyRequest<{ Params: { id: number }, Body: { winner: string}  }>, reply : FastifyReply) => {
+  const { winner } = request.body; // winner username
   const { id } = request.params; // game ID
   
   // validate game exists
@@ -62,6 +63,54 @@ fastify.patch("/end/:id", async (request : FastifyRequest<{ Params: { id: number
   const winnerId = (db.prepare("SELECT id FROM Users WHERE userName = ?").get(winner) as UserRow | undefined)?.id;
   if (!winnerId) return reply.code(404).send({ error: "Winner not found" });
 
+  const loserIds = [
+    game.player1_id,
+    game.player2_id,
+    game.player3_id,
+    game.player4_id,
+  ].filter((pid): pid is number => pid != null && pid !== winnerId);
+
+  // update ChartsData for winner and losers
+  db.prepare(`
+    UPDATE ChartsData 
+    SET friendsTotalGames = friendsTotalGames + 1,
+        friendsWins = friendsWins + 1
+    WHERE userId = ?
+    AND game = 'parcheesi'
+  `).run(winnerId);
+
+  for (const loserId of loserIds) {
+    db.prepare(`
+      UPDATE ChartsData 
+      SET friendsTotalGames = friendsTotalGames + 1,
+          friendsLosses = friendsLosses + 1
+      WHERE userId = ?
+      AND game = 'parcheesi'
+    `).run(loserId);
+  }
+
+  // update Games table
+  if (loserIds.length === 1)
+  {
+    // 1 vs 1
+      const stmt = db.prepare(`
+      INSERT INTO Games (user1, user2, user1_score, user2_score, user1_win, game_type)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+    const info = stmt.run(winnerId, loserIds[0], 1, 0, 1, 'parcheesi');
+        
+    if (info.changes === 0) {
+      return reply.status(400).send({ success: false, error: 'Failed to add game result' });
+    }
+  }
+
+  // update radar chart data for winner and losers
+  await updateRadarData(fastify, winnerId, true);
+  for (const loserId of loserIds) {
+    await updateRadarData(fastify, loserId, false);
+  }
+
+  // update ParchisiGames table
   db.prepare(`
     UPDATE ParchisiGames
     SET winner_id = ?, ended_at = datetime('now'), status = 'finished'

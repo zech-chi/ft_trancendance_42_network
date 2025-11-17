@@ -440,7 +440,7 @@ export async function authRoutes(app: FastifyInstance) {
       const userName = email.split('@')[0];
     
       if (!imageUrl || imageUrl === "") {
-        imageUrl = `https://api.dicebear.com/9.x/notionists/svg?seed=${userName}`;
+        imageUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${userName}`;
       }
     
       const existingUser = await findUserIfExists(userName, email);
