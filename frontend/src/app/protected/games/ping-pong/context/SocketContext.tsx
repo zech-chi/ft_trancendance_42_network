@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { fetchUser } from "@/app/(auth)/login/page";
 import { useRouter } from "next/navigation";
+import { fetchMakePlayerOnline } from "@/app/lib/apiDashboard";
 
 interface User {
   id: number;
@@ -101,6 +102,9 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
     newSocket.on("connect", async () => {
       try {
+        // make player Online in the database
+        await fetchMakePlayerOnline(loggedUserId, true);
+
         setIsConnected(true);
         const res = await fetch(`http://localhost:5500/api/pong/get-user/${loggedUserId}`, {
           credentials: "include",
@@ -125,6 +129,9 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     newSocket.on("disconnect", () => {
+      // make player Offline in the database
+      fetchMakePlayerOnline(loggedUserId, false);
+
       setIsConnected(false);
       console.log("Disconnected from server");
     });

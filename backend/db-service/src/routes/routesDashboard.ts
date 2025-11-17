@@ -449,6 +449,29 @@ export default async function routesDashboard(fastify: FastifyInstance) {
             }
         }
     );
+
+    // make player online or offline
+    fastify.put('/players/:userId/online', async (request: FastifyRequest<{ Params: { userId: string }; Body: { online: boolean } }>, reply: FastifyReply) => {
+        const { userId } = request.params;
+        const { online } = request.body;
+        if (typeof online !== 'boolean') {
+            return reply.code(400).send({ error: 'Missing or invalid online status' });
+        }
+        try {
+            const stmt = db.prepare(`
+                UPDATE Users
+                SET online = ?
+                WHERE id = ?;
+            `);
+            const result = stmt.run(online ? 1 : 0, userId);
+            if (result.changes === 0) {
+                return reply.code(404).send({ error: 'User not found' });
+            }
+            return reply.send({ message: 'User online status updated successfully' });
+        } catch (err) {
+            return reply.code(400).send({ error: '❌ Error running query' });
+        }
+    });
     
     
 }
