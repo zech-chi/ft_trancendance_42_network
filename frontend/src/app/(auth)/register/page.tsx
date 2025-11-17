@@ -135,10 +135,6 @@ export default function SignupPage() {
           Continue with Google
         </button>
 
-        <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#FEDF7F]/50 transition">
-          {/* <Image src="/google-icon.png" alt="42" width={20} height={20} /> */}
-          Continue with 42 Intra
-        </button>
 
         {/* Sign in link */}
         <p className="text-center text-gray-400 text-sm mt-4">

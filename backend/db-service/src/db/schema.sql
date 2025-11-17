@@ -224,9 +224,9 @@ CREATE TABLE IF NOT EXISTS messages (
 -- VALUES ((SELECT id FROM users WHERE username = 'zelabbas'),
 --         (SELECT id FROM users WHERE username = 'iezzam'));
 
--- INSERT OR IGNORE INTO Users (id, fullName, userName, email, password, bio, imageUrl, rank, last_seen, level, progress, online)
--- VALUES
--- (1, 'Zakaria Echifaouy', 'zelabbas', 'zakaria@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://cdn.intra.42.fr/users/520fcec86c5c997878e60f48d447f0a1/zelabbas.jpg', 1, strftime('%s','now') - 120, 5, 0.75, 1),
+INSERT OR IGNORE INTO Users (id, fullName, userName, email, password, bio, imageUrl, rank, last_seen, level, progress, online)
+VALUES
+(1, 'boot', 'boot', 'example@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://api.dicebear.com/9.x/identicon/svg?seed=700', 0, strftime('%s','now') - 120, 5, 0.75, 1);
 
 -- (2, 'Mohamed Karim', 'mkarim', 'mkarim@example.com', 'hash12345', 'Excited to join 🚀', 'https://cdn.intra.42.fr/users/db4a3023c112e0d3d3bcf65d84609d6f/mkarim.jpg', 2, strftime('%s','now') - 300, 3, 0.45, 1),
 
