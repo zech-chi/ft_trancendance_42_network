@@ -4,6 +4,7 @@ import { createContext, useContext, useReducer, type ReactNode, useEffect, use }
 import { useSocket } from "./SocketContext"
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { data } from "framer-motion/client";
+import { CustomizationType } from "@/types/game";
 
 
 
@@ -28,6 +29,7 @@ interface GameState {
   gametype?: string;
   winner?: string | null;
   winnerColor?: string | null;
+  theme: CustomizationType;
 }
 
 type GameAction =
@@ -39,7 +41,8 @@ type GameAction =
   | { type: "SET_CURRENT_PLAYER"; payload: Player }
   | { type: "GAME_STARTED"; payload: { gameId: string;players: Player[]; board: object; currentPlayer: Player } }
   | { type: "INIT_LOBBY"; payload: { gameId: string, hostId:string } }
-  | { type: "SET_WINNER"; payload: {winner: string, winnerColor: string} };
+  | { type: "SET_WINNER"; payload: {winner: string, winnerColor: string} }
+  | { type: "SET_THEME"; payload: CustomizationType }
 
 const initialState: GameState = {
   lobby: null,
@@ -48,6 +51,12 @@ const initialState: GameState = {
   gameId: null,
   winner: null,
   winnerColor: null,
+  theme: {
+    theme_ds: 'default',
+    textureimage: '/parchisi_src/1337.jpg',
+    istextureonline: false,
+    showpic: '/parchisi_src/1337.jpg'
+  }
 }
 
 function gameReducer(state: GameState, action: GameAction): GameState {
@@ -71,7 +80,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     gameId: action.payload.gameId
   }
     case "CLEAR_LOBBY":
-      return { ...state, lobby: null }
+      return { ...state, lobby: null, currentPlayer: null, gameStarted: false, gameId: null, winner: null, winnerColor: null }
     case "UPDATE_PLAYER_READY":
       if (!state.lobby) return state
       return {
@@ -134,6 +143,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         winner: action.payload.winner,
         winnerColor: action.payload.winnerColor
       }
+    case "SET_THEME":
+        return {
+          ...state,
+          theme: action.payload
+        }
     default:
       return state
   }
@@ -146,6 +160,8 @@ interface GameContextType {
   toggleReady: (gameId: string, username: string) => void
   startGame: (gameId: string) => void
   createGame: (playernumber?: number) => Promise<string>
+  setTheme: (theme: CustomizationType) => void;
+  dispatch: React.Dispatch<GameAction>
 }
 
 const GameContext = createContext<GameContextType | null>(null)
@@ -313,6 +329,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       });
     });
   };
+  
+  const setTheme = (theme: CustomizationType) => {
+    dispatch({ type: "SET_THEME", payload: theme });
+  };
 
   return (
     <GameContext.Provider
@@ -323,6 +343,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
         toggleReady,
         startGame,
         createGame,
+        setTheme,
+        dispatch,
       }}
     >
       {children}

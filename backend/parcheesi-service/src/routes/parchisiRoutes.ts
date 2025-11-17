@@ -22,11 +22,10 @@ const parchisiRoutes: FastifyPluginAsync = async (fastify, opts) => {
 
   fastify.get("/users/:username", async (request:any, reply:any) => {
     const { username } = request.params as { username: string };
-    //fetch user data from database
     const resp = await fetch(ApidataBase.getuserdata+username);
     
     if (!resp.ok) {
-      reply.status(404).send({ error: 'User not found 2 l' });
+      reply.status(404).send({ error: 'User not found at all' });
       return;
     }
     const userData = await resp.json();
