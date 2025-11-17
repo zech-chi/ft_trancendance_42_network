@@ -358,4 +358,97 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         return { numPlayers: result.count };
     });
 
+
+    fastify.get(
+        "/Calendar/:userName",
+        async (
+            request: FastifyRequest<{ Params: { userName: string } }>,
+            reply: FastifyReply
+        ) => {
+            const { userName } = request.params;
+
+            // Get userId from userName
+            const user = db.prepare("SELECT id FROM Users WHERE userName = ?").get(userName);
+            const userId = user ? user.id : null;
+    
+            if (!userId) {
+                return reply.code(400).send({ error: "Missing userId" });
+            }
+    
+            try {
+                // Fetch all rows for user (all years)
+                const rows = db.prepare(`
+                    SELECT year, day, activity
+                    FROM Calendar
+                    WHERE userId = ?
+                    ORDER BY year DESC, day ASC
+                `).all(userId);
+    
+                // If no data → return current year with all zeros
+                if (rows.length === 0) {
+                    const year = new Date().getFullYear();
+                    return reply.send({
+                        [year]: {
+                            totalGames: 0,
+                            totalActiveDays: 0,
+                            maxStreak: 0,
+                            DaysData: {}
+                        }
+                    });
+                }
+    
+                const response: any = {};
+    
+                // Build year structure
+                for (const r of rows) {
+                    if (!response[r.year]) {
+                        response[r.year] = {
+                            totalGames: 0,
+                            totalActiveDays: 0,
+                            maxStreak: 0,
+                            DaysData: {}
+                        };
+                    }
+    
+                    const yearObj = response[r.year];
+                    const activity = r.activity || 0;
+    
+                    // Save day value
+                    yearObj.DaysData[r.day] = activity;
+    
+                    // Stats
+                    yearObj.totalGames += Number(activity / 0.1);
+                    if (activity > 0) yearObj.totalActiveDays++;
+                }
+    
+                // Compute streaks
+                for (const year of Object.keys(response)) {
+                    const yearObj = response[year];
+                    const days = yearObj.DaysData;
+    
+                    let streak = 0;
+                    let maxStreak = 0;
+    
+                    for (let d = 1; d <= 366; d++) {
+                        if (days[d] > 0) {
+                            streak++;
+                            maxStreak = Math.max(maxStreak, streak);
+                        } else {
+                            streak = 0;
+                        }
+                    }
+    
+                    yearObj.maxStreak = maxStreak;
+                }
+    
+                return reply.send(response);
+    
+            } catch (err) {
+                console.error(err);
+                return reply.code(400).send({ error: "❌ Error fetching calendar data" });
+            }
+        }
+    );
+    
+    
 }

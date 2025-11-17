@@ -498,3 +498,34 @@ export async function fetchNumPlayersHandler(
         return { numPlayers: 0 };
     }
 }
+
+// fetch calendar data handler
+export async function fetchCalendarDataHandler(
+    request: FastifyRequest<{ Params: FetchUserParams }>,
+    reply: FastifyReply
+) {
+    const { userName } = request.params;
+
+    try {
+        const response = await fetch(`http://db-service:5000/api/dashboard/Calendar/${userName}`);
+
+        if (!response.ok) {
+            reply.status(404).send({ message: "Calendar data not found" });
+            return null;
+        }
+
+        const data = await response.json();
+        console.log("data from db service: ", data);
+
+        if (data.status === "ko") {
+            reply.status(404).send({ message: "Calendar data not found" });
+            return null;
+        }
+
+        return data || null;
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return null;
+    }
+}
