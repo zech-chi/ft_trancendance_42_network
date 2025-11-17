@@ -529,3 +529,34 @@ export async function fetchCalendarDataHandler(
         return null;
     }
 }
+
+// fetchMakePlayerOnlineHandler
+export async function fetchMakePlayerOnlineHandler(
+    request: FastifyRequest<{ Params: { userId: number }; Body: { online: boolean } }>,
+    reply: FastifyReply
+) {
+    const { userId } = request.params;
+    const { online } = request.body;
+
+    try {
+        const response = await fetch(`http://db-service:5000/api/dashboard/players/${userId}/online`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ online }),
+        });
+
+        if (!response.ok) {
+            reply.status(400).send({ message: "Failed to update online status" });
+            return { success: "ko" };
+        }
+
+        const data = await response.json();
+        return data || { success: "ok" };
+
+    } catch (error) {
+        reply.status(400).send({ message: "something went wrong!" });
+        return { success: "ko" };
+    }
+}

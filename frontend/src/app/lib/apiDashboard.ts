@@ -99,3 +99,20 @@ export const fetchCalendarData = async (userName: string) => {
   console.log("~~~~~~~~~~~~~~~~, ", data);
   return data;
 }
+
+export const fetchMakePlayerOnline = async (userId: number, online: boolean) => {
+  const response = await fetch(`http://localhost:5006/api/dashboard/players/${userId}/online`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ online }),
+    }
+  );
+  if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}

@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { $ref, gameHistoryResponse } from "./dashboard.schema"
-import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler, fetchGamesHandler, fetchNumPlayersHandler, fetchCalendarDataHandler } from './dashboard.controller';
+import { fetchRadarDataHandler, fetchSearchUserHandler, fetchUserHandler , fetchFriendsByStatusHandler, fetchUserByIdHandler, friendRejectHandler, friendAcceptHandler, friendUnblockHandler, fetchFriendsBySentHandler, friendRequestHandler, fetchChartsDataHandler, fetchGamesHandler, fetchNumPlayersHandler, fetchCalendarDataHandler, fetchMakePlayerOnlineHandler } from './dashboard.controller';
 import { fetchFriendshipStatusHandler, fetchRankDataHandler } from './dashboard.controller';
 import { z } from 'zod';
 
@@ -229,6 +229,18 @@ export async function dashboardRoutes(app: FastifyInstance) {
             },
         },
         fetchCalendarDataHandler
+    );
+
+    // make player online or offline
+    app.put(
+        '/players/:userId/online',
+        {
+            schema: {
+                params: $ref('playerOnlineParams'),
+                body: $ref('playerOnlineBody'),
+            },
+        },
+        fetchMakePlayerOnlineHandler
     );
 }
 
