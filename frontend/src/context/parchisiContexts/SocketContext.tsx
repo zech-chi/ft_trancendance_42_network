@@ -67,10 +67,10 @@ export function SocketProvider({ children}: { children: ReactNode }) {
 
     // Initialize socket connection
 
-    const socketInstance = io(`${process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5006"}/games/parchisi/${currentNamespace}`,
+    const socketInstance = io(`/games/parchisi/${currentNamespace}`,
       {
         transports: ["websocket"],
-        path: "/socket.io/parcheesi",
+        path: `/socket.io/parchisi`,
       })
     socketInstance.on("connect", () => {
       console.log("Connected to server")

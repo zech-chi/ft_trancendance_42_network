@@ -93,7 +93,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    const newSocket = io("http://localhost:5006", {
+    const newSocket = io({
       path: "/socket.io/ping-pong",
       withCredentials: true,
        query: { userId: loggedUserId?.toString(), username: loggedUserName },
@@ -102,7 +102,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     newSocket.on("connect", async () => {
       try {
         setIsConnected(true);
-        const res = await fetch(`http://localhost:5500/api/pong/get-user/${loggedUserId}`, {
+        const res = await fetch(`/api/pong/get-user/${loggedUserId}`, {
           credentials: "include",
         });
         const data = await res.json();

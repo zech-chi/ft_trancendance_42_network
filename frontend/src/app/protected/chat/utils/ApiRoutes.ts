@@ -5,12 +5,12 @@ export const host = `http://${hostIp}:5006`;
 export const ApiRoutes = {
 
   // routes chat service
-  ListFriends: `${host}/api/chat/friends`,
-  sendMessage: `${host}/api/chat/addmsg`,
-  getMessages: `${host}/api/chat/getmsgs`,
-  sendFile: `${host}/api/chat/sendfile`,
-  getFile: `${host}/api/chat/uploads/`,
-  blockUser: `${host}/api/chat/blockuser`,
-  unblockUser: `${host}/api/chat/unblockuser`,
+  ListFriends: `/api/chat/friends`,
+  sendMessage: `/api/chat/addmsg`,
+  getMessages: `/api/chat/getmsgs`,
+  sendFile: `/api/chat/sendfile`,
+  getFile: `/api/chat/uploads/`,
+  blockUser: `/api/chat/blockuser`,
+  unblockUser: `/api/chat/unblockuser`,
   // end routes chat service
 };

@@ -19,7 +19,7 @@ fastify.register(metricsPlugin, { endpoint: "/metrics" });
 fastify.register(dashboardRoutes, { prefix: "/api/dashboard" });
 
 fastify.register(cors, {
-  origin: ['http://localhost:3000', 'http://0.0.0.0:3000'], // allow your frontend's origin
+  origin: ['http://localhost:3000', "https://localhost:3000" ,'http://0.0.0.0:3000'], // allow your frontend's origin
   credentials: true,               // <— important!
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ✅ important
 });
