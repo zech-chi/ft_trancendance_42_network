@@ -1,5 +1,5 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { updateRadarData } from "./routesPong";
+import { updateCalendarData, updateRadarData } from "./routesPong";
 // import { get } from "https";
 
 type UserRow = {
@@ -105,10 +105,14 @@ fastify.patch("/end/:id", async (request : FastifyRequest<{ Params: { id: number
   }
 
   // update radar chart data for winner and losers
+  // update calendar data for winner and losers
   await updateRadarData(fastify, winnerId, true);
+  await updateCalendarData(fastify, winnerId);
   for (const loserId of loserIds) {
     await updateRadarData(fastify, loserId, false);
+    await updateCalendarData(fastify, loserId);
   }
+
 
   // update ParchisiGames table
   db.prepare(`

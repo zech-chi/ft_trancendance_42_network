@@ -87,6 +87,7 @@ export function RadarChart() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                if (!selectedUserName) return;
                 const data = await fetchRadarData(selectedUserName);
                 const values : number[] = Object.values(data);
                 for (let i = 0; i < values.length; i++) {

@@ -72,25 +72,16 @@ CREATE TABLE IF NOT EXISTS ChartsData (
     FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS YearlyStats (
+CREATE TABLE IF NOT EXISTS Calendar (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     userId INTEGER NOT NULL,
     year INTEGER NOT NULL,
-    totalGames INTEGER DEFAULT 0,
-    totalActiveDays INTEGER DEFAULT 0,
-    maxStreak INTEGER DEFAULT 0,
-    FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT unique_user_year UNIQUE(userId, year)
+    day INTEGER NOT NULL CHECK(day >= 1 AND day <= 366),
+    activity REAL,
+    UNIQUE(userId, year, day),
+    FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS DailyActivity (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    yearlyStatsId      INTEGER NOT NULL,
-    year               INTEGER NOT NULL,
-    day                INTEGER NOT NULL CHECK(day >= 1 AND day <= 366),
-    activity           REAL,
-    FOREIGN KEY (yearlyStatsId) REFERENCES YearlyStats(id) ON DELETE CASCADE ON UPDATE CASCADE
-);
 
 CREATE TABLE IF NOT EXISTS Games (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -276,22 +267,6 @@ VALUES
 -- (4, 'pong', 100, 40, 35, 25, 60, 20, 25, 15, 30, 20, 50),
 -- (5, 'parcheesi', 25, 10, 10, 5, 12, 6, 4, 2, 4, 7, 11);
 
--- INSERT OR IGNORE INTO YearlyStats (userId, year, totalGames, totalActiveDays, maxStreak)
--- VALUES
--- (1, 2025, 120, 90, 15),
--- (2, 2025, 85, 60, 10),
--- (3, 2025, 20, 15, 3),
--- (4, 2025, 200, 150, 30),
--- (5, 2025, 45, 30, 6);
-
--- INSERT OR IGNORE INTO DailyActivity (yearlyStatsId, year, day, activity)
--- VALUES
--- (1, 2025, 250, 5.0),
--- (1, 2025, 251, 6.5),
--- (2, 2025, 250, 3.2),
--- (3, 2025, 250, 1.0),
--- (4, 2025, 250, 7.8),
--- (5, 2025, 250, 2.5);
 
 
 -- INSERT OR IGNORE INTO Games (user1, user2, user1_score, user2_score, user1_win, game_type)
@@ -312,3 +287,30 @@ VALUES
 -- (11, 2, 19, 17, 1, 'pong'),
 -- (11, 3,  19, 17, 1, 'pong'),
 -- (11, 4, 19, 17, 1, 'parcheesi');
+
+
+-- for testing Calendar table
+
+-- INSERT INTO Users (id, fullName, userName, email, password)
+-- VALUES (7, 'Some User2', 'hello2', 'user82@example.com', 'hash12345');
+
+-- INSERT INTO Users (id, fullName, userName, email, password)
+-- VALUES (8, 'Some User', 'hello', 'user8@example.com', 'hash12345');
+
+-- INSERT INTO Calendar (userId, year, day, activity) VALUES
+-- (8, 2024, 1, 0.1),
+-- (8, 2024, 2, 1.5),
+-- (8, 2024, 4, 0.4);
+
+-- INSERT INTO Calendar (userId, year, day, activity) VALUES
+-- (8, 2025, 1, 1.0),
+-- (8, 2025, 2, 1),
+-- (8, 2025, 3, 1),
+-- (8, 2025, 4, 1),
+-- (8, 2025, 5, 1),
+-- (8, 2025, 6, 1),
+-- (8, 2025, 7, 1),
+-- (8, 2025, 8, 1),
+-- (8, 2025, 9, 1),
+-- (8, 2025, 10, 1),
+-- (8, 2025, 11, 1);
