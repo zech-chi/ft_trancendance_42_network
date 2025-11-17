@@ -272,7 +272,7 @@ audio::-webkit-media-controls-mute-button{
 }
 .costum-path {
   position: relative;
-  background-image: url("../../public/images/play_locale.png");
+  background-image: url("../../public/local.jpeg");
   background-position: center;
   background-size: cover;
   transition: transform 0.3s ease;

@@ -63,3 +63,5 @@ restart-%:
 stop:
 	$(DOCKER_COMPOSE)  stop
 # 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) stop $*
+prune:
+	docker system prune -a

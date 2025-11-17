@@ -142,7 +142,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
 
 function Logo(): JSX.Element {
   return (
-    <div className="mr-5">
+    <div className="mr-5 mt-8">
       {/* <Image
         src="/logo.png"
         alt="Logo"
@@ -154,8 +154,8 @@ function Logo(): JSX.Element {
       <Image
           src="/logo.png"
           alt="Logo"
-          width={150}
-          height={150}
+          width={100}
+          height={100}
           className="w-[75px] h-auto xl:w-[125px] 2xl:w-[150px]"
           priority
       />
@@ -303,7 +303,7 @@ function SearchForm(): JSX.Element {
           onKeyDown={handleKeyDown}
           onFocus={() => inputValue && setShowDropdown(true)}
           className="
-            backdrop-blur w-full
+          bg-white/5 backdrop-blur-2xl p-8 rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)] border border-white/30  w-full
             px-4 py-1 text-sm
             xl:px-6 xl:py-2 xl:text-base
             2xl:px-8 2xl:py-3 2xl:text-lg
@@ -314,7 +314,7 @@ function SearchForm(): JSX.Element {
           "
           style={{
             background:
-              "linear-gradient(to right, rgba(47,25,37,0.7) 0%, rgba(72,28,43,0.7) 50%, rgba(100,33,52,0.7) 100%)",
+              "",
           }}
         />
 
@@ -330,21 +330,21 @@ function SearchForm(): JSX.Element {
         />
 
         {showDropdown && (
-          <ul className="absolute top-full mt-4 left-0 w-full rounded shadow-lg z-[999] max-h-60 overflow-y-auto"
+          <ul className="absolute top-full mt-4 left-0 w-full rounded shadow-lg z-[999] max-h-60 overflow-y-auto border border-white/50"
             style={{
-              background: "linear-gradient(to right, rgba(47,25,37,0.9) 0%, rgba(72,28,43,0.9) 50%, rgba(100,33,52,0.9) 100%)",
+              background: "bg-white/5 backdrop-blur-2xl p-8 rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)] border border-white/50  w-full",
               borderRadius: "15px",
               padding: "8px 0"
             }}>
             {isLoading ? (
-              <li className="px-4 py-2 text-sm" style={{ color: "#D7D7D7" }}>Loading...5</li>
+              <li className="px-4 py-2 text-sm" style={{ color: "#D7D7" }}>Loading...5</li>
             ) : filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <li
                   key={user.userName}
                   className="flex items-center gap-2 px-4 py-2 cursor-pointer"
-                  style={{ color: "#D7D7D7", transition: "background-color 0.2s ease" }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(100,33,52,0.7)"}
+                  style={{ color: "#ffffff", transition: "background-color 0.2s ease" }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(14, 85, 152, 0.353)"}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                   onClick={() => {
                     setSelectedUserName(user.userName);
