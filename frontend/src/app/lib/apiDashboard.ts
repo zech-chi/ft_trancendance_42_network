@@ -90,7 +90,7 @@ export const fetchNumberOfPlayers = async () => {
 
 /* calendar data */
 export const fetchCalendarData = async (userName: string) => {
-  const response = await fetch(`http://localhost:5006/api/dashboard/Calendar/${userName}`);
+  const response = await fetch(`/api/dashboard/Calendar/${userName}`);
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }
@@ -101,7 +101,7 @@ export const fetchCalendarData = async (userName: string) => {
 }
 
 export const fetchMakePlayerOnline = async (userId: number, online: boolean) => {
-  const response = await fetch(`http://localhost:5006/api/dashboard/players/${userId}/online`,
+  const response = await fetch(`/api/dashboard/players/${userId}/online`,
     {
       method: 'PUT',
       headers: {

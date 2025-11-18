@@ -71,7 +71,7 @@ export default function Statistics() {
         async function fetchData() {
             try {
                 if (!selectedUserId) return;
-                const response = await fetch(`http://localhost:5002/api/dashboard/chartsdata/${selectedUserId}?game=${game}`, {
+                const response = await fetch(`/api/dashboard/chartsdata/${selectedUserId}?game=${game}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

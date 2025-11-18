@@ -115,7 +115,7 @@ function ProfileInfo({ user, friendshipStatus, setFriendshipStatus }: {user : Us
 
     const sendFriendRequest = async () => {
         try {
-           const response = await fetch(`http://localhost:5002/api/dashboard/friends/requestfriend`, {
+           const response = await fetch(`/api/dashboard/friends/requestfriend`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

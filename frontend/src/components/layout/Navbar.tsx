@@ -118,7 +118,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
             onClick={async () => {
               setMenuOpen(false);
               console.log("Logout clicked");
-              let response = await fetch("http://localhost:5001/api/auth/logout", {
+              let response = await fetch("/api/auth/logout", {
                 method: "DELETE",
                 credentials: "include",
               });
@@ -254,7 +254,7 @@ function SearchForm(): JSX.Element {
       setShowDropdown(true);
       try {
         const res = await fetch(
-          `http://localhost:5002/api/dashboard/search\?prefix\=${encodeURIComponent(
+          `/api/dashboard/search\?prefix\=${encodeURIComponent(
             inputValue
           )}`
         );
