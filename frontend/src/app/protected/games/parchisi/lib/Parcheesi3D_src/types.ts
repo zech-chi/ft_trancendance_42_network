@@ -36,6 +36,8 @@ export type JumpDataType = {
     speed?: number;
     maxHeight?: number;
     toStartPosition: boolean;
+    se7en?: boolean;
+    final?: boolean;
 }
 
 export type MoveDataType = {

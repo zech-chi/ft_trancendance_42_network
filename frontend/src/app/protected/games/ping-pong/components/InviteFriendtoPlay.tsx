@@ -49,7 +49,7 @@ export default function InviteToPlay() {
 
   const listFriends = async (): Promise<void> => {
     try {
-      const response = await fetch(`http://localhost:5500/api/pong/friends/${loggedUserId}`, {
+      const response = await fetch(`/api/pong/friends/${loggedUserId}`, {
         credentials: "include",
       });
 
@@ -150,15 +150,19 @@ export default function InviteToPlay() {
   // };
 
   const handleInviteClick = (friendId: number) => {
-  handleInvite({
-    socket,
-    loggedUserId,
-    loggedUserName,
-    friendId,
-    getInviteStatus,
-    updateInviteStatus,
-  });
-};
+    if (loggedUserId !== null) {
+      handleInvite({
+        socket,
+        loggedUserId,
+        loggedUserName,
+        friendId,
+        getInviteStatus,
+        updateInviteStatus,
+      });
+    } else {
+      console.error("loggedUserId is null, cannot send invite.");
+    }
+  };
 
   const handleCancelInvite = (friendId: number) => {
     const currentState = getInviteStatus(friendId);

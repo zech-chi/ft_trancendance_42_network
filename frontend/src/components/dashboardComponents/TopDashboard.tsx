@@ -7,8 +7,7 @@ import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useLoggedUserId } from "@/context/UserIdContext";
-import {React } from "react";
-
+import React from "react";
 
 interface User {
   id: number;

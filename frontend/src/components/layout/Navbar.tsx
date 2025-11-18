@@ -48,8 +48,8 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
   const [err, setErr] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const {SelectedUserId, setSelectedUserId} = useSelectedUserId();
-  const { selectedUserName, setSelectedUserName } = useSelectedUserName();
+  const {setSelectedUserId} = useSelectedUserId();
+  const { setSelectedUserName } = useSelectedUserName();
   const { loggedUserId, setLoggedUserId } = useLoggedUserId();
 
   useEffect(() => {
