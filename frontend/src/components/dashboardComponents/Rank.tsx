@@ -24,7 +24,7 @@ function DisplayData({user, rank} : {user: User, rank: number}): JSX.Element {
         <div className="w-full flex items-center justify-center  h-[70px] md:h=[90px]  xl:h-[100px]
         rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
           <div className="flex justify-center items-center h-full">
-            <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
           </div>
         </div>
       )
@@ -38,7 +38,7 @@ function DisplayData({user, rank} : {user: User, rank: number}): JSX.Element {
             w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
             ">
             <div className={`w-full h-full rounded-full border-[7px] xl:border-10
-                border-[#FEDF7F]/0
+                border-[#1CBABA]/0
                 border-l-transparent border-b-transparent 
                 flex items-center justify-center overflow-hidden rotate-225`}>
                 <img
@@ -70,7 +70,7 @@ function DisplayData({user, rank} : {user: User, rank: number}): JSX.Element {
             font-bold">
                 {user.fullName}
             </div>
-            <div className="text-[#FEDF7F]/70 
+            <div className="text-[#1CBABA]/70 
             text-[8px] md:text-[10px] l:text-[12px] xl:text-[13px]">
                 {user.userName}
             </div>
@@ -117,7 +117,7 @@ export function Rank(): JSX.Element {
             <DisplayData key={user.id} user={user} rank={index + 1} />
           ))
         ) : (
-          <div className="text-center font-bold text-[#FEDF7F]/50">
+          <div className="text-center font-bold text-[#1CBABA]/50">
             No Users found
           </div>
         )}

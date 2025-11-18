@@ -109,7 +109,7 @@ export default function CalendarDashboard(): JSX.Element {
     let nextMonth = false;
     let stop = false;
     let totalDays = 1;
-    const color1 = '#FEDF7F';
+    const color1 = '#1CBABA';
     const color = color1;
 
     const activeDays = calendarData[selectedYear].DaysData;

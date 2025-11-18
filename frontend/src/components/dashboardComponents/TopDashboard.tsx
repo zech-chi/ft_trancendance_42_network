@@ -63,7 +63,7 @@ function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
             w-[80px] h-[80px] md:w-[100px] md:h-[100px]  xl:w-[140px] xl:h-[140px]
             ">
             <div className={`w-full h-full rounded-full border-[7px] xl:border-10
-                border-[#FEDF7F]/0
+                border-[#1CBABA]/0
                 border-l-transparent border-b-transparent 
                 flex items-center justify-center overflow-hidden rotate-225`}>
                 <img
@@ -249,16 +249,16 @@ function DisplayRank({ level, progress, rank, totalUsers }: RankInfoProps): JSX.
         {rank}
         <span className="text-[8px] md:text-[10px] xl:text-[12px] text-base text-white/60 ml-1 mr-1">/ {totalUsers}</span>
         </h2>
-        <h2 className="text-[8px] md:text-[12px] xl:text-[16px] font-bold text-[#FEDF7F]">Level {level} - {progress * 100} %</h2>
+        <h2 className="text-[8px] md:text-[12px] xl:text-[16px] font-bold text-[#1CBABA]">Level {level} - {progress * 100} %</h2>
       </div>
     );
   }
 
 function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
     return (
-      <div className="relative bg-white/10 w-full h-2 md:h-2.5 xl:h-3 mr-10 rounded-4xl border-1 md:border-1.5 xl:border-2  border-[#F9545B]/30 mt-0 md:mt-0.5 xl:mt-2 mb-2.5">
+      <div className="relative bg-white/10 w-full h-2 md:h-2.5 xl:h-3 mr-10 rounded-4xl border-1 md:border-1.5 xl:border-2  border-[#1CBABA]/30 mt-0 md:mt-0.5 xl:mt-2 mb-2.5">
         <motion.div
-          className="absolute top-0 left-0 h-full rounded-4xl bg-[#FEDF7F] border-1 md:border-1.5 xl:border-2  border-white/40" 
+          className="absolute top-0 left-0 h-full rounded-4xl bg-[#1CBABA] border-1 md:border-1.5 xl:border-2  border-white/40" 
           animate={{ width: `${progress * 100}%` }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         />
@@ -314,12 +314,9 @@ export function TopDashboard(): JSX.Element {
     }
 
     return (
-        <div className="w-full text-white"
-        style={{
-            background:
-              'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0)), linear-gradient(to left, rgba(42, 21, 34, 1), rgba(96, 31, 48, 1 ) 100%)',
-            backgroundBlendMode: 'overlay',
-          }}>
+        <div className=" text-white m-2.5 rounded-2xl
+        bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20
+        ">
                   <div className="flex flex-row h-full">
                     <ProfileImage imageUrl={user.imageUrl} online={user.online}/>
                     <div className="flex flex-col h-full gap-2 flex-1">

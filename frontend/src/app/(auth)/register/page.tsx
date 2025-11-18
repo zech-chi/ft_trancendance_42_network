@@ -128,7 +128,7 @@ export default function SignupPage() {
         </div>
 
         {/* Social Logins */}
-        <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#FEDF7F]/50 transition mb-2"
+        <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#1CBABA]/50 transition mb-2"
             onClick={handleGoogle}
         >
           {/* <Image src="/google-icon.png" alt="Google" width={20} height={20} /> */}

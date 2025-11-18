@@ -79,7 +79,7 @@ export function AIStats({ data }: {data: GameStats}) {
                                 cx="100"
                                 cy="100"
                                 r="90"
-                                className="stroke-[#F63737] stroke-[10] fill-none"
+                                className="stroke-[#FFB700] stroke-[10] fill-none"
                                 animate={{ strokeDasharray: `${hardAngle} ${circumFerence}` }}
                                 initial={{ strokeDasharray: `0 ${circumFerence}` }}
                                 transition={{ duration: 0.8, ease: "easeOut" }}
@@ -166,7 +166,7 @@ export function AIStats({ data }: {data: GameStats}) {
                     <div className="flex flex-col items-center justify-center bg-white/10 
                         px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-2 lg:px-8 lg:py-2
                         rounded-xl sm:rounded-2xl flex-1 md:flex-none">
-                        <h3 className="text-[#F63737] font-bold text-xs sm:text-sm md:text-base">Hard</h3>
+                        <h3 className="text-[#FFB700] font-bold text-xs sm:text-sm md:text-base">Hard</h3>
                         <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/75">
                             {hardWins} / {gamesWithAiHard}
                         </p>

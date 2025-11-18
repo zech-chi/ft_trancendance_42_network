@@ -41,7 +41,7 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
         <div className="w-full flex items-center justify-center  h-[70px] md:h=[90px]  xl:h-[100px]
         rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
           <div className="flex justify-center items-center h-full">
-            <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
           </div>
         </div>
       )
@@ -55,7 +55,7 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
             w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
             ">
             <div className={`w-full h-full rounded-full border-[7px] xl:border-10
-                border-[#FEDF7F]/0
+                border-[#1CBABA]/0
                 border-l-transparent border-b-transparent 
                 flex items-center justify-center overflow-hidden rotate-225`}>
                 <img
@@ -96,7 +96,7 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
             font-bold">
                 {userCur.fullName}
             </div>
-            <div className="text-[#FEDF7F]/70 
+            <div className="text-[#1CBABA]/70 
             text-[8px] md:text-[10px] l:text-[12px] xl:text-[13px]">
                 {userCur.userName}
             </div>
@@ -139,7 +139,7 @@ export function SelectedChoiceFriends({ choice, setChoice }: { choice: FriendsCh
                             bg-black/30 rounded-full "
                             onClick={() => setChoice(tab.id as FriendsChoice)}
                         >
-                            <p className={`py-2 cursor-pointer ${choice === tab.id ? 'text-[#F9545B]' : ''}`}>
+                            <p className={`py-2 cursor-pointer ${choice === tab.id ? 'text-[#1CBABA]' : ''}`}>
                             {tab.label}
                             </p>
                         </div>
@@ -197,7 +197,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
             <div className="w-full flex items-center justify-center  h-[60px] md:h=[90px]  xl:h-[100px]
             rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
               <div className="flex justify-center items-center h-full">
-                <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
               </div>
             </div>
         )
@@ -210,7 +210,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
                 w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
                 ">
                 <div className={`w-full h-full rounded-full border-[7px] xl:border-10
-                    border-[#FEDF7F]/0
+                    border-[#1CBABA]/0
                     border-l-transparent border-b-transparent 
                     flex items-center justify-center overflow-hidden rotate-225`}>
                     <img
@@ -251,7 +251,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
                 font-bold">
                     {friend.fullName}
                 </div>
-                <div className="text-[#FEDF7F]/70 
+                <div className="text-[#1CBABA]/70 
                 text-[8px] md:text-[10px] l:text-[12px] xl:text-[13px]">
                     {friend.userName}
                 </div>
@@ -315,7 +315,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
             <div className="w-full flex items-center justify-center  h-[60px] md:h=[90px]  xl:h-[100px]
             rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
               <div className="flex justify-center items-center h-full">
-                <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
               </div>
             </div>
         )
@@ -328,7 +328,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                 w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
                 ">
                 <div className={`w-full h-full rounded-full border-[7px] xl:border-10
-                    border-[#FEDF7F]/0
+                    border-[#1CBABA]/0
                     border-l-transparent border-b-transparent 
                     flex items-center justify-center overflow-hidden rotate-225`}>
                     <img
@@ -369,14 +369,14 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                 font-bold">
                     {friend.fullName}
                 </div>
-                <div className="text-[#FEDF7F]/70 
+                <div className="text-[#1CBABA]/70 
                 text-[8px] md:text-[10px] l:text-[12px] xl:text-[13px]">
                     {friend.userName}
                 </div>
                 </div>
             </div>
             <div className="flex gap-2  mx-5 lg:mx-7 lg:gap-3">
-                <button className="bg-[#F63737] rounded-full hover:border-white/50 hover:border-[1px] transition-all duration-100 ease-in-out cursor-pointer"
+                <button className="bg-[#FFB700] rounded-full hover:border-white/50 hover:border-[1px] transition-all duration-100 ease-in-out cursor-pointer"
                     onClick = {
                     async () => {
                         try {
@@ -415,7 +415,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     xl:text-[12px] xl:px-4 xl:py-2.5
                     ">Refuse</p>
                 </button>
-                <button className="bg-[#56BA1C] rounded-full hover:border-white/50 hover:border-[1px] transition-all duration-100 ease-in-out cursor-pointer"
+                <button className="bg-[#1CBABA] rounded-full hover:border-white/50 hover:border-[1px] transition-all duration-100 ease-in-out cursor-pointer"
                     onClick = {
                     async () => {
                         try {
@@ -485,7 +485,7 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
             <div className="w-full flex items-center justify-center  h-[60px] md:h=[90px]  xl:h-[100px]
             rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
               <div className="flex justify-center items-center h-full">
-                <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
               </div>
             </div>
         )
@@ -498,7 +498,7 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                 w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
                 ">
                 <div className={`w-full h-full rounded-full border-[7px] xl:border-10
-                    border-[#FEDF7F]/0
+                    border-[#1CBABA]/0
                     border-l-transparent border-b-transparent 
                     flex items-center justify-center overflow-hidden rotate-225`}>
                     <img
@@ -539,14 +539,14 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                 font-bold">
                     {friend.fullName}
                 </div>
-                <div className="text-[#FEDF7F]/70 
+                <div className="text-[#1CBABA]/70 
                 text-[8px] md:text-[10px] l:text-[12px] xl:text-[13px]">
                     {friend.userName}
                 </div>
                 </div>
             </div>
             <div className="flex gap-2  mx-5 lg:mx-7 lg:gap-3">
-                <button className="bg-[#F63737] rounded-full hover:border-white/50 hover:border-[1px] transition-all duration-100 ease-in-out cursor-pointer"
+                <button className="bg-[#FFB700] rounded-full hover:border-white/50 hover:border-[1px] transition-all duration-100 ease-in-out cursor-pointer"
                     onClick = {
                         async () => {
                             try {
@@ -618,7 +618,7 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
             <div className="w-full flex items-center justify-center  h-[60px] md:h=[90px]  xl:h-[100px]
             rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
               <div className="flex justify-center items-center h-full">
-                <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
               </div>
             </div>
         )
@@ -631,7 +631,7 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                 w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
                 ">
                 <div className={`w-full h-full rounded-full border-[7px] xl:border-10
-                    border-[#FEDF7F]/0
+                    border-[#1CBABA]/0
                     border-l-transparent border-b-transparent 
                     flex items-center justify-center overflow-hidden rotate-225`}>
                     <img
@@ -672,14 +672,14 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                 font-bold">
                     {friend.fullName}
                 </div>
-                <div className="text-[#FEDF7F]/70 
+                <div className="text-[#1CBABA]/70 
                 text-[8px] md:text-[10px] l:text-[12px] xl:text-[13px]">
                     {friend.userName}
                 </div>
                 </div>
             </div>
             <div className="flex gap-2  mx-5 lg:mx-7 lg:gap-3">
-                <button className="bg-[#56BA1C] rounded-full hover:border-white/50 hover:border-[1px] transition-all duration-100 ease-in-out cursor-pointer"
+                <button className="bg-[#1CBABA] rounded-full hover:border-white/50 hover:border-[1px] transition-all duration-100 ease-in-out cursor-pointer"
                     onClick = {
                         async () => {
                             try {
@@ -759,7 +759,7 @@ export function Friends({ choice }: { choice: FriendsChoice }): JSX.Element {
                     )
                     )
                 ) : (
-                    <div className="text-center font-bold text-[#FEDF7F]/50">No {choice} found</div>
+                    <div className="text-center font-bold text-[#1CBABA]/50">No {choice} found</div>
                 )}
           </div>
     );
@@ -772,6 +772,6 @@ export function Friends({ choice }: { choice: FriendsChoice }): JSX.Element {
       <DisplayData userName={user.userName} />
     ))
   ) : (
-    <div className="text-center font-bold text-[#FEDF7F]/50">No Users found</div>
+    <div className="text-center font-bold text-[#1CBABA]/50">No Users found</div>
   )}
 </div> */}

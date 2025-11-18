@@ -219,6 +219,17 @@ INSERT OR IGNORE INTO Users (id, fullName, userName, email, password, bio, image
 VALUES
 (1, 'boot', 'boot', 'example@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://api.dicebear.com/9.x/identicon/svg?seed=700', 0, strftime('%s','now') - 120, 5, 0.75, 1);
 
+
+INSERT OR REPLACE INTO RadarData 
+(userId, Quick_Reflexes, Strategic_Thinking, Precision_Shots, Pattern_Recognition, Anticipating_Moves, Board_Control, Adaptive_Playstyle, Risk_Management, Mind_Games)
+VALUES
+(1, 17, 14, 18, 12, 15, 16, 14, 13, 12);
+
+INSERT OR IGNORE INTO ChartsData (userId, game, totalGamesWithAi, gamesWithAiEasy, gamesWithAiMedium, gamesWithAiHard, totalWins, easyWins, mediumWins, hardWins, friendsWins, friendsLosses, friendsTotalGames)
+VALUES
+(1, 'pong', 50, 20, 20, 10, 30, 10, 12, 8, 5, 3, 8),
+(1, 'parcheesi', 40, 15, 15, 10, 18, 8, 6, 4, 7, 6, 13);
+
 -- (2, 'Mohamed Karim', 'mkarim', 'mkarim@example.com', 'hash12345', 'Excited to join 🚀', 'https://cdn.intra.42.fr/users/db4a3023c112e0d3d3bcf65d84609d6f/mkarim.jpg', 2, strftime('%s','now') - 300, 3, 0.45, 1),
 
 -- (3, 'Zechechafoui', 'zechi', 'zechi@example.com', 'hash12345', 'Let’s play!', 'https://cdn.intra.42.fr/users/d450751394f7288bce91b5b7123585d4/zech-chi.jpg', 0, strftime('%s','now') - 600, 2, 0.2, 0),
