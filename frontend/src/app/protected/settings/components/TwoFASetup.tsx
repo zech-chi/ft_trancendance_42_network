@@ -55,7 +55,7 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
     const handleSetup2FA = async () => {
       setStatus("Generating QR...");
       try {
-        const res = await fetch("http://localhost:5006/api/auth/2fa-setup", {
+        const res = await fetch("/api/auth/2fa-setup", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -77,7 +77,7 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
       if (!isCodeComplete) return;
       setStatus("Verifying...");
       try {
-        const res = await fetch("http://localhost:5006/api/auth/2fa-enable", {
+        const res = await fetch("/api/auth/2fa-enable", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -98,7 +98,7 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
       if (!isCodeComplete) return;
       setStatus("Verifying...");
       try {
-        const res = await fetch("http://localhost:5006/api/auth/2fa-disable", {
+        const res = await fetch("/api/auth/2fa-disable", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },

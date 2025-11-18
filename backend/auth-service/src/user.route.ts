@@ -486,7 +486,7 @@ export async function authRoutes(app: FastifyInstance) {
           );
           setTmp2FACookie(reply, tmp_2fa);
           // await reply.send({ message: "2FA required" });
-          return reply.redirect('http://localhost:3000/');
+          return reply.redirect('http://localhost');
         }  
       }
 
@@ -504,7 +504,7 @@ export async function authRoutes(app: FastifyInstance) {
     setRefreshTokenCookie(reply, refreshToken);
     console.log("✅ Google login successful. Tokens set.");
     // Redirect to frontend
-    return reply.redirect('http://localhost:3000/');
+    return reply.redirect('http://localhost');
   
 } catch(error) {
         console.log(error);

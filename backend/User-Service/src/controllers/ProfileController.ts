@@ -246,7 +246,7 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
   if (profileImagePath) {
     // the url should store it as http://localhost:5003/api/settings/profileImage/filename
     updates.push('imageUrl = ?');
-    values.push(`http://localhost:5004/api/settings/profileImage/${path.basename(profileImagePath)}`);
+    values.push(`/api/settings/profileImage/${path.basename(profileImagePath)}`);
   }
 
   if (fullName) {

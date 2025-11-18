@@ -707,7 +707,7 @@ function Settings() {
 
     try {
       const res = await fetch(
-        `http://localhost:5004/api/settings/update/${loggedUserId}`,
+        `/api/settings/update/${loggedUserId}`,
         {
           method: "PATCH", // Use PATCH for partial updates
           body: formData, // No 'Content-Type' header needed for FormData
@@ -763,7 +763,7 @@ function Settings() {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5004/api/settings/info/${loggedUserId}`
+          `/api/settings/info/${loggedUserId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
