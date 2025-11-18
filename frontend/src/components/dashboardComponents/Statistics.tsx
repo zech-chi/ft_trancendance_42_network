@@ -29,7 +29,8 @@ export interface GameStats {
 function ChooseGame({game, setGame}: ChooseGameProps) {
     return (
         <div className="m-1.5 flex justify-center">
-        <div className="inline-flex bg-black/30 gap-1 rounded-4xl">
+        <div className="inline-flex bg-black/30 gap-1 rounded-4xl
+        ">
             <div className="bg-black/50 rounded-full mx-2 my-1.5 hover:bg-black/70" onClick={() => setGame('pong')}>
                 <img
                 src={game === 'pong' ? '/pong_pink.png' : '/pong_white.png'}
@@ -100,12 +101,9 @@ export default function Statistics() {
     }
 
     return (
-    <div className="flex flex-col items-center justify-center h-full m-2.5 rounded-2xl"
-    style={{
-        background:
-        'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
-        backgroundBlendMode: 'overlay',
-    }}>
+<div className="flex flex-col items-center justify-center h-full m-2.5 rounded-2xl
+    bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20
+">
       <ChooseGame game={game} setGame={setGame}/>
       <div className="flex flex-col xl:flex-row w-full h-full items-center justify-center ">
         <div className='flex flex-col lg:flex-row xl:flex-col  h-full tems-center justify-center  p-5

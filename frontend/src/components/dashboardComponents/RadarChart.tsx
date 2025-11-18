@@ -210,37 +210,37 @@ export function RadarChart() {
                 }
                 <polygon
                     points={points1.map(p => `${p.x},${p.y}`).join(' ')}
-                    className="fill-[#FEDF7F]/20 stroke-white/15 stroke-2"
+                    className="fill-[#1CBABA]/10 stroke-white/15 stroke-2"
                 />
                 <polygon
                     points={points2.map(p => `${p.x},${p.y}`).join(' ')}
-                    className="fill-[#FEDF7F]/30 stroke-white/15 stroke-2"
+                    className="fill-[#1CBABA]/15 stroke-white/15 stroke-2"
                 />
                 <polygon
                     points={points3.map(p => `${p.x},${p.y}`).join(' ')}
-                    className="fill-[#FEDF7F]/40 stroke-white/15 stroke-2"
+                    className="fill-[#1CBABA]/20 stroke-white/15 stroke-2"
                 />
                 <polygon
                     points={points4.map(p => `${p.x},${p.y}`).join(' ')}
-                    className="fill-[#FEDF7F]/50 stroke-white/15 stroke-2"
+                    className="fill-[#1CBABA]/25 stroke-white/15 stroke-2"
                 />
                 <polygon
                     points={points5.map(p => `${p.x},${p.y}`).join(' ')}
-                    className="fill-[#FEDF7F]/60 stroke-white/15 stroke-2"
+                    className="fill-[#1CBABA]/50 stroke-white/15 stroke-2"
                 />
                 <circle cx="0" cy="0" r="7.5" className="fill-black" />
 
                 <defs>
                     <linearGradient id="myGradient">
-                    <stop offset="0%" stopColor="#FE9734" stopOpacity="0.7"/>
-                    <stop offset="50%" stopColor="#ED66B7" stopOpacity="0.7"/>
-                    <stop offset="100%" stopColor="#5360CB" stopOpacity="0.7"/>
+                    <stop offset="0%" stopColor="#1CBABA" stopOpacity="0.6"/>
+                    {/* <stop offset="50%" stopColor="#1CBABA" stopOpacity="0.7"/> */}
+                    <stop offset="100%" stopColor="#FFB700" stopOpacity="0.6"/>
                     </linearGradient>
                 </defs>
 
                 <polygon
                     points={scaledPoints.map(p => `${p.x},${p.y}`).join(' ')}
-                    className="stroke-[#531E2E]/75 stroke-2"
+                    className="stroke-[#1CBABA]/70 stroke-2"
                     fill="url(#myGradient)"
                 />
 
@@ -251,14 +251,14 @@ export function RadarChart() {
                             cx={point.x}
                             cy={point.y}
                             r={hoveredIndex === index ? 3.3 : 2.3}
-                            className={hoveredIndex === index ? "fill-[#632133]" : "fill-[#632133]"}
+                            className={hoveredIndex === index ? "fill-[#FFB700]/70" : "fill-[#FFB700]/70"}
                             onMouseEnter={() => setHoveredIndex(index)}
                         />
                     ))
                 }
 
                 <circle cx={coords.x} cy={coords.y} r="2"
-                    className={(coords.x === 0 && coords.y === 0) ? "fill-transparent" : "fill-[#632133]"}
+                    className={(coords.x === 0 && coords.y === 0) ? "fill-transparent" : "fill-[#FFB700]/70"}
                 />
             </svg>
             {hoveredIndex !== -1 && (
@@ -270,12 +270,12 @@ export function RadarChart() {
                     }}>
                     <div className="bg-gradient-to-br from-black/95 to-black/90 backdrop-blur-sm
                         px-3 py-2 sm:px-4 sm:py-2.5 
-                        rounded-xl border border-[#FEDF7F]/30 shadow-2xl
+                        rounded-xl border border-[#1CBABA]/30 shadow-2xl
                         min-w-[140px] sm:min-w-[160px]
                         animate-in fade-in slide-in-from-bottom-2 duration-200">
                         <div className="flex flex-col items-center gap-1">
                             <h3 className="text-[10px] sm:text-xs md:text-sm 
-                                text-[#FEDF7F] font-bold text-center leading-tight">
+                                text-[#1CBABA] font-bold text-center leading-tight">
                                 {skills[hoveredIndex]}
                             </h3>
                             <div className="flex items-baseline gap-1">
@@ -291,7 +291,7 @@ export function RadarChart() {
                         </div>
                         <div className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 
                             w-3 h-3 bg-gradient-to-br from-black/95 to-black/90 
-                            border-r border-b border-[#FEDF7F]/30 rotate-45" />
+                            border-r border-b border-[#1CBABA]/30 rotate-45" />
                     </div>
                 </div>
             )}

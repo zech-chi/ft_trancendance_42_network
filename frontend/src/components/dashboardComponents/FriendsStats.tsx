@@ -34,7 +34,7 @@ export function FriendsStats({ data }: {data: GameStats}) {
                                 cx="100"
                                 cy="100"
                                 r="90"
-                                className="stroke-[#56BA1C] stroke-[10] fill-none"
+                                className="stroke-[#1CBABA] stroke-[10] fill-none"
                                 strokeLinecap="round"
                                 style={{
                                     strokeDasharray: `${90 * (angleWins * Math.PI) / 180} ${2 * Math.PI * 90}`,
@@ -47,7 +47,7 @@ export function FriendsStats({ data }: {data: GameStats}) {
                                 cx="100"
                                 cy="100"
                                 r="90"
-                                className="stroke-[#F63737] stroke-[10] fill-none"
+                                className="stroke-[#FFB700] stroke-[10] fill-none"
                                 strokeLinecap="round"
                                 style={{
                                     strokeDasharray: `${90 * (angleLosses * Math.PI) / 180} ${circumference}`,
@@ -75,7 +75,7 @@ export function FriendsStats({ data }: {data: GameStats}) {
                     <div className="flex flex-col items-center justify-center bg-white/10 
                         px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-2 lg:px-8 lg:py-2
                         rounded-xl sm:rounded-2xl flex-1 md:flex-none">
-                        <h3 className="text-[#56BA1C] font-bold text-xs sm:text-sm md:text-base">Win</h3>
+                        <h3 className="text-[#1CBABA] font-bold text-xs sm:text-sm md:text-base">Win</h3>
                         <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/75">
                             {wins}
                         </p>
@@ -83,7 +83,7 @@ export function FriendsStats({ data }: {data: GameStats}) {
                     <div className="flex flex-col items-center justify-center bg-white/10 
                         px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-2 lg:px-8 lg:py-2
                         rounded-xl sm:rounded-2xl flex-1 md:flex-none">
-                        <h3 className="text-[#F63737] font-bold text-xs sm:text-sm md:text-base">Loss</h3>
+                        <h3 className="text-[#FFB700] font-bold text-xs sm:text-sm md:text-base">Loss</h3>
                         <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/75">
                             {losses}
                         </p>

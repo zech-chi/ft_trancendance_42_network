@@ -59,19 +59,16 @@ function LeftComponent(): JSX.Element {
 			w-[calc(100%-20px)] xl:w-full
 			ml-2.5 xl:ml-0
 			mr-2.5
-			bg-black/50 backdrop-blur
+			bg-gray/10 backdrop-blur-2xl rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]  border border-white/30
 			rounded-[25px]
 			text-white
 			overflow-y-auto custom-scrollbar 
 		">
 			<div className="flex flex-col w-full gap-1">
 				<TopDashboard />
-				<div className="p-2.5 m-2.5 rounded-2xl justify-center items-center flex"
-				style={{
-					background:
-					'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.1)), linear-gradient(to top, rgba(42, 21, 34, .8), rgba(96, 31, 48, .8) 100%)',
-					backgroundBlendMode: 'overlay',
-				}}
+				<div className="p-2.5 m-2.5 rounded-2xl justify-center items-center flex
+					    bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20
+				"
 				>
 					<CalendarDashboard/>
 				</div>
@@ -94,7 +91,7 @@ function RightComponent({ show }: { show: boolean }): JSX.Element {
 				className={`
 				flex flex-col items-center space-x-4 h-full
 				transition-all duration-300 ease-in-out
-				bg-black/60
+				bg-gray/10 backdrop-blur-2xl p-8 rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]  border border-white/30
 				rounded-[25px]
 				backdrop-blur
 				mr-2.5

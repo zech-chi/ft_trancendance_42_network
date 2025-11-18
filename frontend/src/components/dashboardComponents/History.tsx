@@ -81,7 +81,7 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
         <div className="w-full flex items-center justify-center  h-[70px] md:h=[90px]  xl:h-[100px]
         rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
           <div className="flex justify-center items-center h-full">
-            <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#FEDF7F] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
           </div>
         </div>
       )
@@ -95,10 +95,10 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
         w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
         ">
           <div className={`w-full h-full rounded-full border-[7px] xl:border-10
-            ${opponentWon ? 'border-[#56BA1C]' : 'border-[#F63737]'} 
+            ${opponentWon ? 'border-[#1CBABA]' : 'border-[#FFB700]'} 
             border-l-transparent border-b-transparent 
-            border-t-${opponentWon ? '[#56BA1C]' : '[#F63737]'} 
-            border-r-${opponentWon ? '[#56BA1C]' : '[#F63737]'} 
+            border-t-${opponentWon ? '[#1CBABA]' : '[#FFB700]'} 
+            border-r-${opponentWon ? '[#1CBABA]' : '[#FFB700]'} 
             flex items-center justify-center overflow-hidden rotate-225`}>
             <img
               src={userOther.imageUrl}
@@ -147,7 +147,7 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
               </>
             )}
           </div>
-          <div className="text-[#FEDF7F]/70 
+          <div className="text-[#1CBABA]/70 
           text-[10px] md:text-sm xl:text-l 2xl:text-l mt-2">
             {game.date_played.slice(0, 16)}
           </div>
@@ -158,10 +158,10 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
         w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px] 
         ">
           <div className={`w-full h-full rounded-full border-[7px] xl:border-10 
-            ${currentUserWon ? 'border-[#56BA1C]' : 'border-[#F63737]'} 
+            ${currentUserWon ? 'border-[#1CBABA]' : 'border-[#FFB700]'} 
             border-r-transparent border-b-transparent 
-            border-t-${currentUserWon ? '[#56BA1C]' : '[#F63737]'} 
-            border-l-${currentUserWon ? '[#56BA1C]' : '[#F63737]'} 
+            border-t-${currentUserWon ? '[#1CBABA]' : '[#FFB700]'} 
+            border-l-${currentUserWon ? '[#1CBABA]' : '[#FFB700]'} 
             flex items-center justify-center overflow-hidden -rotate-225`}>
             <img
               src={userCur.imageUrl}
@@ -203,7 +203,7 @@ export function History({ game, setGame }: HistoryProps): JSX.Element {
                 <DisplayData game={game} key={game.id}/>
               ))
             ) : (
-              <div className="text-center font-bold text-[#FEDF7F]/50">No games found</div>
+              <div className="text-center font-bold text-[#1CBABA]/50">No games found</div>
             )}
           </div>
     );
