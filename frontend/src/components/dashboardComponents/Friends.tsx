@@ -380,7 +380,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     onClick = {
                     async () => {
                         try {
-                            const response = await fetch(`http://localhost:5002/api/dashboard/friends/reject`, {
+                            const response = await fetch(`/api/dashboard/friends/reject`, {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -419,7 +419,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     onClick = {
                     async () => {
                         try {
-                            const response = await fetch(`http://localhost:5002/api/dashboard/friends/accept`, {
+                            const response = await fetch(`/api/dashboard/friends/accept`, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -550,7 +550,7 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                     onClick = {
                         async () => {
                             try {
-                                const response = await fetch(`http://localhost:5002/api/dashboard/friends/reject`, {
+                                const response = await fetch(`/api/dashboard/friends/reject`, {
                                     method: 'DELETE',
                                     headers: {
                                         'Content-Type': 'application/json',
@@ -683,7 +683,7 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                     onClick = {
                         async () => {
                             try {
-                                const response = await fetch(`http://localhost:5002/api/dashboard/friends/unblock`, {
+                                const response = await fetch(`/api/dashboard/friends/unblock`, {
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json',
