@@ -687,8 +687,20 @@ async handleRollDice() {
     this.bonusDice = 0;
     this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });
   }
+  currentturn() {
+    if (this.playerfinish()) {
+      this.gameOver = true;
+      console.log(chalk.red(`Player ${this.currentPlayer.userName} has won the game!`));    
+      return;
+    }
+    this.currentDice = [];
+    this.bonusDice = 0;
+    this.broadcast("setPlayerTurn", { color: this.currentPlayer.color });
+  }
 
   get currentPlayer(): Player {
+    if (this.currentPlayerIndex >= this.players.length)
+      this.currentPlayerIndex %= this.players.length;
     return this.players[this.currentPlayerIndex];
   }
   get playerCount(): number {
