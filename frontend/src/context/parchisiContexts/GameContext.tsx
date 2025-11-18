@@ -26,7 +26,7 @@ interface GameState {
   currentPlayer: Player | null
   gameStarted: boolean
   gameId: string | null;
-  gametype?: string;
+  gametype?: string | null;
   winner?: string | null;
   winnerColor?: string | null;
   theme: CustomizationType;

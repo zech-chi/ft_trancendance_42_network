@@ -1,6 +1,6 @@
 // confirmation block component
 
-import { Contact } from "@/app/chat/types/typesChat";
+import { Contact } from "@/app/protected/chat/types/typesChat";
 
 type ConfirmationBlockProps = {
   onCancel: () => void;

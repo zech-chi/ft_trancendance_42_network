@@ -45,7 +45,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
   userId
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(0); // Provide initial value of 0
   const { socket } = useSocket();
   const { updateInviteStatus } = useInvite();
   const router = useRouter();

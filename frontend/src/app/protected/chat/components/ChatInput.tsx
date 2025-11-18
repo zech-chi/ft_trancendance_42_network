@@ -64,7 +64,7 @@ export default function ChatInput({
 
   // Helper to format the recording time
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60)Gamepad2
+    const minutes = Math.floor(time / 60)
       .toString()
       .padStart(2, "0");
     const seconds = (time % 60).toString().padStart(2, "0");
@@ -89,16 +89,20 @@ export default function ChatInput({
     }
   }
 
-  const handleInviteClick = (friendId: number) => {
-  handleInvite({
-    socket,
-    loggedUserId,
-    loggedUserName,
-    friendId,
-    getInviteStatus,
-    updateInviteStatus,
-  });
-};
+    const handleInviteClick = (friendId: number) => {
+      if (loggedUserId !== null) {
+        handleInvite({
+          socket,
+          loggedUserId,
+          loggedUserName,
+          friendId,
+          getInviteStatus,
+          updateInviteStatus,
+        });
+      } else {
+        console.error("User ID is null. Cannot send invite.");
+      }
+  };
 
   return (
     <div className="relative pt-3">

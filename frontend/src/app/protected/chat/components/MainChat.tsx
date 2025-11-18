@@ -2,7 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { messages } from "../../../data/data"; // Import messages from your data file
+// import { messages } from "../../../data/data"; // Import messages from your data file
 import { Message, MainChatProps } from "../types/typesChat"; // Import types
 import { ApiRoutes } from "../utils/ApiRoutes";
 import { ImageLightbox } from "./ImageLightbox";
@@ -34,7 +34,7 @@ function NoContactSelected({ setShowSidebar }: { setShowSidebar: (show: boolean)
 
 function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, currentUserId, setContactsList, setSelectedChat, startCall, incomingCall, isCallActive, setUpdateMessage }: MainChatProps) {
   const [inputValue, setInputValue] = useState<string>("");
-  const [messagesList, setMessagesList] = useState<Message[]>(messages); // Initialize with imported messages
+  const [messagesList, setMessagesList] = useState<Message[]>([]); // Initialize with imported messages
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string>("");

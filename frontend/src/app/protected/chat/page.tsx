@@ -3,7 +3,7 @@
 
 // import contacts && messages from the store
 import { useEffect, useState } from "react";
-import { contacts } from "../../data/data";
+// import { contacts } from "../../data/data";
 import ListFriends from "./components/ListFriends";
 import MainChat from "./components/MainChat";
 import { Contact, UpdateMessage } from "@/app/protected/chat/types/typesChat";
@@ -40,7 +40,7 @@ function Chat() {
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [selectedChat, setSelectedChat] = useState<Contact | null>(null);
-  const [contactsList, setContactsList] = useState<Contact[]>(contacts);
+  const [contactsList, setContactsList] = useState<Contact[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [callPartner, setCallPartner] = useState<Contact | null>(null);
   const [updateMessage, setUpdateMessage] = useState<UpdateMessage>({ deleted: false, edited: false, id: -1});

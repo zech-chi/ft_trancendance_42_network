@@ -272,13 +272,13 @@ export default async function socketManager(io: Server) {
       console.log(chalk.red(`Client disconnected: ${socket.id}`));
 
       // find the room this socket belongs to
+      // const username = room.currentPlayer.userName;
       for (const [id, room] of rooms) {
         const playerIndex = room.players.findIndex(
           (p) => room.sockets.get(p.id)?.id === socket.id
         );
         if (playerIndex !== -1) {
           const player = room.players[playerIndex];
-          const username = room.currentPlayer.userName;
           await room.resetPieces(player);
           room.players.splice(playerIndex, 1);
           room.sockets.delete(player.id);
@@ -287,6 +287,7 @@ export default async function socketManager(io: Server) {
           console.log(chalk.red(`Player ${player.userName} removed from game ${id}`));
 
           // cleanup if room empty
+          console.log(chalk.red(`Checking ==> Players left in game ${id}: ${room.players.length}`));
           if (room.players.length === 1 || room.players.length === 0) {
             if (room.players.length === 1 && room.gamestarted){
               const winneruser = room.players[0].userName;
@@ -311,6 +312,77 @@ export default async function socketManager(io: Server) {
         }
       }
     });
+    // socket.on("disconnect", async () => {
+    //   console.log(chalk.red(`Client disconnected: ${socket.id}`));
+    
+    //   for (const [id, room] of rooms) {
+    //     // Try to find the player belonging to this socket
+    //     const playerIndex = room.players.findIndex(
+    //       (p) => room.sockets.get(p.id)?.id === socket.id
+    //     );
+    
+    //     if (playerIndex === -1) continue; // not in this room, move to next
+    
+    //     const player = room.players[playerIndex];
+    
+    //     // Reset pieces safely
+    //     await room.resetPieces(player);
+    
+    //     // Remove player from the room
+    //     room.players.splice(playerIndex, 1);
+    //     room.sockets.delete(player.id);
+    
+    //     room.broadcast("removePlayer", { id: player.id });
+    //     console.log(chalk.red(`Player ${player.userName} removed from game ${id}`));
+    
+    //     console.log(
+    //       chalk.red(
+    //         `Checking ==> Players left in game ${id}: ${room.players.length}`
+    //       )
+    //     );
+    
+    //     // ⚠️ ROOM CLEANUP LOGIC
+    //     const remaining = room.players.length;
+    
+    //     // Case 1: Only 1 player left AND game had started => declare winner
+    //     if (remaining === 1 && room.gamestarted) {
+    //       const winnerPlayer = room.players[0];
+    
+    //       await room.storeGameEndInDB(winnerPlayer.userName);
+    
+    //       room.gameOver = true;
+    
+    //       room.broadcast("gameOver", {
+    //         winner: winnerPlayer.userName,
+    //         color: winnerPlayer.color,
+    //       });
+    
+    //       // room is closing
+    //       room.broadcast("lobbyClosed", { message: "Room closed (winner declared)" });
+    
+    //       room.destroy();
+    //       rooms.delete(id);
+    
+    //       console.log(chalk.red(`Game ${id} deleted (winner declared).`));
+    //       break;
+    //     }
+    
+    //     // Case 2: 0 players OR 1 player but game not started => close the lobby
+    //     if (remaining === 0 || remaining === 1) {
+    //       room.broadcast("lobbyClosed", { message: "Room destroyed (no players left)" });
+    
+    //       room.destroy();
+    //       rooms.delete(id);
+    
+    //       console.log(chalk.red(`Game ${id} deleted (no players left).`));
+    //       break;
+    //     }
+    
+    //     // If room still has 2+ players => nothing else happens
+    //     break;
+    //   }
+    // });
+    
   });
 
 
