@@ -279,7 +279,7 @@ export default async function socketManager(io: Server) {
         const player = room.players[playerIndex];
     
         // Reset pieces safely
-        await room.resetPieces(player);
+        if (room.gamestarted) await room.resetPieces(player);
     
         // Remove player from the room
         room.players.splice(playerIndex, 1);
@@ -319,7 +319,7 @@ export default async function socketManager(io: Server) {
         }
     
         // Case 2: 0 players OR 1 player but game not started => close the lobby
-        if (remaining === 0 || remaining === 1) {
+        if (remaining === 0 ) {
           room.broadcast("lobbyClosed", { message: "Room destroyed (no players left)" });
     
           room.destroy();
