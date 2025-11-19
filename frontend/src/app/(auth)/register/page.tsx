@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FlowGraphConsoleLogBlock } from "@babylonjs/core";
+import {fetchUser} from "@/app/(auth)/login/page"
 
 export default function SignupPage() {
 
@@ -20,6 +21,7 @@ export default function SignupPage() {
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [ isLoading, setIsLoading ] = useState(true);
 
 
     // const handleGoogle = async () => {
@@ -35,6 +37,30 @@ export default function SignupPage() {
     //     console.log("something went wrong");
     //   }
     // }
+
+    // check if already logged in
+    useEffect(() => {
+      async function checkAuth() {
+        const user = await fetchUser();
+        if (user && user.userName) {
+          // alert("Already logged in, redirecting to home page.");
+          router.push("/protected");
+          return; 
+        } else {
+          setIsLoading(false);
+        }
+      }
+      checkAuth();
+    }, []);
+    
+  
+    if (isLoading) {
+      return (
+        <div className="h-screen flex items-center justify-center text-white">
+        Loading...
+        </div>
+      );
+    }
 
     const handleGoogle = () => {
       window.location.href = "/api/auth/login/google";
