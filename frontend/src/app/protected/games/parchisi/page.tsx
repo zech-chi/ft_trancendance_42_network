@@ -4,7 +4,8 @@ import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { useSocket } from "../ping-pong/context/SocketContext";
+import { useSocket } from "@/context/parchisiContexts/SocketContext";
+
 
 
 type BoxProps = {
@@ -57,7 +58,14 @@ function Box({ label, className, isHovered, isOtherHovered, onHover, onLeave, on
 
 export default function HomePage() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  const router = useRouter()
+  const router = useRouter();
+  const { socket, namespace, setNamespace, isConnected } = useSocket();
+  // if there is any socket connection i want to disconnect it when entering this page
+  if (namespace !== null || isConnected || socket) {
+    if (socket) socket.disconnect();
+    setNamespace(null);
+  }
+
   const gameModes = [
     {
       id: 0,

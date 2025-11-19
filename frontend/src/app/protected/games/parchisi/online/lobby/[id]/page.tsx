@@ -24,38 +24,75 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
   const joinedRef = useRef(false);
   const [showThemePopup, setShowThemePopup] = useState(false);
 
+  // useEffect(() => {
+  //   if (state.lobby && state.lobby.gameId === gameId) {
+  //     joinedRef.current = true;
+  //   }
+  // }, [state.lobby, gameId]);
+
+  // useEffect(() => {
+  //   return () => {
+  //     const currentPath = window.location.pathname;
+  //     if (
+  //       joinedRef.current &&
+  //       currentPath !== `/protected/games/parchisi/online/lobby/${gameId}` &&
+  //       !currentPath.startsWith(`/protected/games/parchisi/game/${gameId}`)
+  //     ) {
+  //       leaveLobby(gameId);
+  //     }
+  //     joinedRef.current = false;
+  //   };
+  // }, [gameId, leaveLobby]);
+
+  // useEffect(() => {
+  //   if (state.lobby === null) {
+  //     router.push("/protected/games/parchisi/")
+  //   }
+  // }, [state.lobby])
+
+  // useEffect(() => {
+  //   if (state.gameStarted && state.lobby) {
+  //     router.push(`/protected/games/parchisi/game/${state.lobby.gameId}`);
+  //   }
+  // }, [state.gameStarted, state.lobby, router]);
+
+
   useEffect(() => {
+    // Joined state
     if (state.lobby && state.lobby.gameId === gameId) {
       joinedRef.current = true;
     }
-  }, [state.lobby, gameId]);
-
-  useEffect(() => {
+  
+    // Cleanup (leave lobby on unmount)
     return () => {
       const currentPath = window.location.pathname;
-      if (
+  
+      const leavingLobby =
         joinedRef.current &&
         currentPath !== `/protected/games/parchisi/online/lobby/${gameId}` &&
-        !currentPath.startsWith(`/protected/games/parchisi/game/${gameId}`)
-      ) {
+        !currentPath.startsWith(`/protected/games/parchisi/game/${gameId}`);
+  
+      if (leavingLobby) {
         leaveLobby(gameId);
       }
+  
       joinedRef.current = false;
     };
-  }, [gameId, leaveLobby]);
-
+  }, [state.lobby, gameId, leaveLobby]);
+  
   useEffect(() => {
-    if (state.lobby === null) {
-      router.push("/protected/games/parchisi/")
+    // Lobby deleted → redirect
+    if (state.lobby === null && !state.gameStarted) {
+      router.push("/protected/games/parchisi/");
+      return;
     }
-  }, [state.lobby])
-
-  useEffect(() => {
+  
+    // Game started → navigate to game page
     if (state.gameStarted && state.lobby) {
-      router.push(`/protected/games/parchisi/game/${state.lobby.gameId}`);
+      router.replace(`/protected/games/parchisi/game/${state.lobby.gameId}`);
     }
-  }, [state.gameStarted, state.lobby, router]);
-
+  }, [state.lobby, state.gameStarted, router]);
+  
 
   const handleReady = () => {
     if (!state.lobby || !socket) return
