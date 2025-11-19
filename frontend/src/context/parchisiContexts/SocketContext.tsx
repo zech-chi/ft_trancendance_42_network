@@ -48,7 +48,6 @@ export function SocketProvider({ children}: { children: ReactNode }) {
 
     Object.entries(socketMap).forEach(([ns, s]) => {
       if (ns !== currentNamespace && s) {
-        console.log(`===> Closing previous socket for namespace: ${ns}`);
         s.disconnect();
         socketMap[ns as "online" | "local"] = null; // Cast ns to the appropriate type
       }
@@ -79,7 +78,6 @@ export function SocketProvider({ children}: { children: ReactNode }) {
 
     socketInstance.on("disconnect", () => {
       console.log("Disconnected from server")
-      // window.location.href = "/" // Redirect to home on disconnect
 
       setIsConnected(false)
     })

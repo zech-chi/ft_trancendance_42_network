@@ -119,7 +119,7 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
   const handleLeave = () => {
     if (!state.lobby) return
     leaveLobby(state.lobby.gameId)
-    router.push("/protected/games/parchisi/online")
+    router.push("/protected/games/parchisi")
   }
 
   const handleCopyGameId = async () => {

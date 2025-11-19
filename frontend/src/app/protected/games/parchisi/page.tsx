@@ -3,7 +3,7 @@
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSocket } from "@/context/parchisiContexts/SocketContext";
 import { useGame } from "@/context/parchisiContexts/GameContext";
 
@@ -64,11 +64,13 @@ export default function HomePage() {
   const {dispatch } = useGame();
   const { socket, namespace, setNamespace, isConnected } = useSocket();
   // if there is any socket connection i want to disconnect it when entering this page
-  if (namespace !== null || isConnected || socket) {
+ useEffect(() => {
+   if (namespace !== null || isConnected || socket) {
     if (socket) socket.disconnect();
     setNamespace(null);
     dispatch({ type: "CLEAR_LOBBY" });
   }
+}, []);
 
   const gameModes = [
     {
