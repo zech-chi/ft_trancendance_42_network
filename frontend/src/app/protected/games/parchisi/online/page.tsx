@@ -59,7 +59,7 @@ function OnlinePageContent() {
     setIsCreating(true);
     try {
       const gameId = await createGame();
-      router.push(`/protected/games/parchisi/online/lobby/${gameId}?role=host`);
+      router.replace(`/protected/games/parchisi/online/lobby/${gameId}?role=host`);
     } catch (err) {
       alert(err);
     } finally {
@@ -73,7 +73,7 @@ function OnlinePageContent() {
     try {
       const code = roomId || gameCode;
       await joinLobby(code);
-      router.push(`/protected/games/parchisi/online/lobby/${code}?role=guest`);
+      router.replace(`/protected/games/parchisi/online/lobby/${code}?role=guest`);
     } catch (err) {
       alert(err);
     } finally {
