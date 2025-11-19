@@ -10,6 +10,7 @@ import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserId } from "@/context/UserIdContext";
 import { useRef } from "react";
 import { useSelectedUserId } from '@/context/SelectedUserId';
+import { useRouter } from 'next/navigation';
 
 // function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
 // 	const [ userProfile, setUserProfile ] = useState<string | null>(null);
@@ -51,6 +52,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
   const {setSelectedUserId} = useSelectedUserId();
   const { setSelectedUserName } = useSelectedUserName();
   const { loggedUserId, setLoggedUserId } = useLoggedUserId();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -107,8 +109,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
               setMenuOpen(false);
               setSelectedUserId(loggedUserId);
               setSelectedUserName(loggedUserName);
-              console.log("View profile clicked");
-              // navigate("/profile");
+              router.push("/protected");
             }}
           >
             View Profile
@@ -241,6 +242,7 @@ function SearchForm(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const rounter = useRouter();
 
   useEffect(() => {
     if (!inputValue) {
@@ -351,7 +353,7 @@ function SearchForm(): JSX.Element {
                     setSelectedUserId(user.id);
                     setInputValue("");
                     setShowDropdown(false);
-                    // window.location.href = "/protected";
+                    rounter.push("/protected");
                   }}
                 >
                   <img

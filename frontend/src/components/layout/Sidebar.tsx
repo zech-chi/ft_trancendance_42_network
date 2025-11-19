@@ -4,6 +4,12 @@ import Link from 'next/link';
 import { JSX } from 'react';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useLoggedUserName } from "@/context/LoggedUserNameContext";
+import { useSelectedUserName } from "@/context/SelectedUserNameContext";
+import { useLoggedUserId } from "@/context/UserIdContext";
+import { useSelectedUserId } from '@/context/SelectedUserId';
+
 
 const navLinks = [
     { 
@@ -34,9 +40,17 @@ const navLinks = [
 
 export default function Sidebar(): JSX.Element {
     const [selected, setSelected] = useState<string>(usePathname());
+    const { loggedUserName } = useLoggedUserName();
+	const { loggedUserId } = useLoggedUserId();
+	const { setSelectedUserName } = useSelectedUserName();
+	const { setSelectedUserId } = useSelectedUserId();
 
     const handleClick = (link: string): void => {
         setSelected(link);
+        if (link === '/protected') {
+            setSelectedUserName(loggedUserName);
+            setSelectedUserId(loggedUserId);
+        }
     }
 
     return (
