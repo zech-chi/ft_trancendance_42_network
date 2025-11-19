@@ -5,6 +5,8 @@ import Navbar from "@/components/layout/Navbar";
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useSocket } from "@/context/parchisiContexts/SocketContext";
+import { useGame } from "@/context/parchisiContexts/GameContext";
+
 
 
 
@@ -59,11 +61,13 @@ function Box({ label, className, isHovered, isOtherHovered, onHover, onLeave, on
 export default function HomePage() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const router = useRouter();
+  const {dispatch } = useGame();
   const { socket, namespace, setNamespace, isConnected } = useSocket();
   // if there is any socket connection i want to disconnect it when entering this page
   if (namespace !== null || isConnected || socket) {
     if (socket) socket.disconnect();
     setNamespace(null);
+    dispatch({ type: "CLEAR_LOBBY" });
   }
 
   const gameModes = [

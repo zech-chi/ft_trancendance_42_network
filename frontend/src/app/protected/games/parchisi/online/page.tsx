@@ -9,8 +9,6 @@ import Input from '@/components/ui/Input';
 import { useGame } from "@/context/parchisiContexts/GameContext";
 import Sidebar from '@/components/layout/Sidebar';
 import Navbar from '@/components/layout/Navbar';
-import { X } from 'lucide-react';
-import { name } from '@babylonjs/gui';
 
 export default function OnlineGamePage() {
   return <OnlinePageContent />;
