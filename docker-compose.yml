@@ -339,9 +339,9 @@ services:
       - user-service
     networks:
       - monitoring
-    volumes:
-      - ./frontend:/app          # 👈 Mount your local source code
-      - /app/node_modules
+    # volumes:
+    #   - ./frontend:/app          # 👈 Mount your local source code
+    #   - /app/node_modules
     logging:
       driver: json-file
 

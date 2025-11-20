@@ -227,6 +227,7 @@ export default async function socketManager(io: Server) {
     });
     
     socket.on("leaveLobby", (data: { lobbyId: string }) => {
+      console.log(chalk.red(`Player leaving lobby: ${socket.id}`));
       const room = rooms.get(data.lobbyId);
       if (!room) return;
       const playerIndex = room.players.findIndex(
@@ -279,7 +280,7 @@ export default async function socketManager(io: Server) {
         const player = room.players[playerIndex];
     
         // Reset pieces safely
-        await room.resetPieces(player);
+        if (room.gamestarted) await room.resetPieces(player);
     
         // Remove player from the room
         room.players.splice(playerIndex, 1);
@@ -317,15 +318,31 @@ export default async function socketManager(io: Server) {
           console.log(chalk.red(`Game ${id} deleted (winner declared).`));
           break;
         }
-    
+      
+        
         // Case 2: 0 players OR 1 player but game not started => close the lobby
-        if (remaining === 0 || remaining === 1) {
-          room.broadcast("lobbyClosed", { message: "Room destroyed (no players left)" });
+        // Case 3: Host left but there are still players => check if it was the host
+        if (remaining === 0 || (playerIndex === 0 && !room.gamestarted)) {
+          room.broadcast("lobbyClosed", { message: "Room destroyed (no players left or host left)" });
     
           room.destroy();
           rooms.delete(id);
     
-          console.log(chalk.red(`Game ${id} deleted (no players left).`));
+          console.log(chalk.red(`Game ${id} deleted (no players left or host left).`));
+          break;
+        }
+        if (!room.gamestarted)
+        {
+          console.log(chalk.red(`A player has left the lobby. Lobby -1`));
+          room.broadcast("lobbyUpdate", {
+            gameId: room.id,
+            hostId: room.sockets.get(room.players[0].id)?.id, // assume first player is host
+            players: room.players.map(p => ({
+              id: room.sockets.get(p.id)?.id || '',
+              userName: p.userName,
+              isReady: p.isReady,
+            })),
+          });
           break;
         }
         if (room.currentPlayer) room.currentturn();

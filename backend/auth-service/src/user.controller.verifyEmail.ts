@@ -47,14 +47,28 @@ export async function verifyEmail(
       return reply.code(400).send({ message: updateRes.statusText });
     // Success set access and refresh tokens
 
-     // 5️⃣ Normal login
-     const accessToken = await reply.jwtSign(
-      { id: user.id, email: user.email },
-      { expiresIn: "15m" }
+    const accessToken = await reply.jwtSign(
+      {
+        id: user.id,
+        email: user.email,
+        tokenType: "access",
+        jti: crypto.randomUUID(),
+      },
+      {
+        expiresIn: "15m",
+      }
     );
+    
     const refreshToken = await reply.jwtSign(
-      { id: user.id},
-      { expiresIn: "7d" }
+      {
+        id: user.id,
+        email: user.email,
+        tokenType: "refresh",
+        jti: crypto.randomUUID(),
+      },
+      {
+        expiresIn: "7d",
+      }
     );
 
     // 6️⃣ Set cookies
