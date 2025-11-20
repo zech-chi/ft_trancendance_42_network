@@ -52,9 +52,9 @@ const initialState: GameState = {
   winner: null,
   winnerColor: null,
   theme: {
-    theme_ds: 'default',
-    textureimage: '/parchisi_src/1337.jpg',
-    istextureonline: false,
+    theme_ds: 'sky',
+    textureimage: "https://playground.babylonjs.com/"+"textures/skybox",
+    istextureonline: true,
     showpic: '/parchisi_src/1337.jpg'
   }
 }
@@ -70,7 +70,6 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     gameId: action.payload.gameId,
   };
 
-  
     case "SET_LOBBY":
       return { ...state, 
     lobby: { 
@@ -216,7 +215,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "CLEAR_LOBBY" });
 
     // redirect back to /online
-    window.location.href = "/protected/games/parchisi/online";
+    window.location.href = "/protected/games/parchisi";
   });
   socket.on("gameOver", (data: {winner: string, color: string}) => {
     dispatch({type:"SET_WINNER", payload: {winner: data.winner, winnerColor: data.color}});
