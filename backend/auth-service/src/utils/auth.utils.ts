@@ -39,5 +39,5 @@ export function setTmp2FACookie(reply: FastifyReply, token: string) {
 }
 
 export function clearTmp2FACookie(reply: FastifyReply) {
-  reply.clearCookie("tmp_2fa", { path: "/auth/verify_2fa" });
+  reply.clearCookie("tmp_2fa", { path: "/" });
 }

@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { LoginUserInput } from "./user.schema";
 import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
+import { randomUUID } from "crypto";
 import {
   setAccessTokenCookie,
   setRefreshTokenCookie,
@@ -48,8 +49,14 @@ export async function LoginUser(
     // 4️⃣ Two-factor check
     if (user.twofa_enabled) {
       const tmpToken = await reply.jwtSign(
-        { id: user.id, need2fa: true },
-        { expiresIn: "5m" }
+        {
+          id: user.id,
+          need2fa: true,
+          jti: crypto.randomUUID(),
+        },
+        {
+          expiresIn: "5m",
+        }
       );
       setTmp2FACookie(reply, tmpToken);
       return reply.code(200).send({ message: "2FA required" , twoFARequired: true});
@@ -57,12 +64,27 @@ export async function LoginUser(
 
     // 5️⃣ Normal login
     const accessToken = await reply.jwtSign(
-      { id: user.id, email: user.email },
-      { expiresIn: "15m" }
+      {
+        id: user.id,
+        email: user.email,
+        tokenType: "access",
+        jti: crypto.randomUUID(),
+      },
+      {
+        expiresIn: "15m",
+      }
     );
+    
     const refreshToken = await reply.jwtSign(
-      { id: user.id},
-      { expiresIn: "7d" }
+      {
+        id: user.id,
+        email: user.email,
+        tokenType: "refresh",
+        jti: crypto.randomUUID(),
+      },
+      {
+        expiresIn: "7d",
+      }
     );
 
     // 6️⃣ Set cookies
