@@ -47,7 +47,7 @@ export default function HeaderContact({contact, setShowSidebar, showSidebar, isC
       }
 
   return (
-    <div className="bg-[rgba(0,0,0,0.3)] rounded-t-[50px] flex justify-between">
+    <div className="bg-gray-800/100 backdrop-blur-md rounded-t-2xl flex justify-between border-t border-l border-r border-white/20">
           <div className="flex items-center p-2 gap-0.5 md:gap-2 md:p-3">
             <button
               onClick={() => setShowSidebar(!showSidebar)}
@@ -59,7 +59,7 @@ export default function HeaderContact({contact, setShowSidebar, showSidebar, isC
               <img
                 src={contact?.avatar}
                 alt={contact?.name}
-                className="w-12 h-12 md:w-18 md:h-18 rounded-full"
+                className="w-12 h-12 md:w-18 md:h-18 rounded-full border-2 border-white/20"
               />
               <div>
                 <h2 className="text-white text-sm md:text-[18px] font-semibold">{formatLengthNameUser(contact?.name)}</h2>
@@ -80,22 +80,22 @@ export default function HeaderContact({contact, setShowSidebar, showSidebar, isC
             {/* phone call block icons */}
             <div className="flex items-center gap-3 md:gap-8">
               <button
-                className="text-white hover:text-amber-200"
+                className="text-white hover:text-[#1CBABA] cursor-pointer"
                 onClick={handleClickVideoCall}
                 disabled={isCallActive || !!incomingCall}
               >
-                <Video className="w-5 h-5 md:w-9 md:h-9" />
+                <Video className="w-5 h-5 md:w-9 md:h-9"/>
               </button>
 
-              <button className="text-white hover:text-amber-200" 
+              <button className="text-white hover:text-[#1CBABA] cursor-pointer" 
                 onClick={handleClickPhoneCall}
                 disabled={isCallActive || !!incomingCall}>
                 <Phone className="w-5 h-5 md:w-8 md:h-8" />
               </button>
 
-              <button className={`text-white hover:text-amber-200 ${contact?.blocked && contact?.blockedBy != currentUserId ? "hidden" : ""}`}>
+              <button className={`text-white cursor-pointer ${contact?.blocked && contact?.blockedBy != currentUserId ? "hidden" : ""}`}>
                 <RiUserForbidFill
-                  className={`w-5 h-5 md:w-8 md:h-8 ${contact?.blocked ? "text-green-500" : "text-red-500"}`}
+                  className={`w-5 h-5 md:w-8 md:h-8 ${contact?.blocked ? "text-[#1CBABA]" : "text-[#FFB700]"}`}
                   onClick={() => setisClickedBlockIcon(true)} // Open confirmation block
                   title={`${contact?.blocked ? "unblock" : "block"} ${contact?.username}`}
                 />

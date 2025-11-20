@@ -39,7 +39,7 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
     if (!userCur) {
       return (
         <div className="w-full flex items-center justify-center  h-[70px] md:h=[90px]  xl:h-[100px]
-        rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
+        rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
           <div className="flex justify-center items-center h-full">
             <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
           </div>
@@ -48,7 +48,7 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
     }
   
     return (
-      <div className="w-full flex items-center justify-between rounded-full bg-[#612132]/55 text-white border-[1px] border-white/8">
+      <div className="w-full flex items-center justify-between rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
         
         <div className='flex'>
             <div className="relative 
@@ -195,7 +195,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
     if (!friend) {
         return (
             <div className="w-full flex items-center justify-center  h-[60px] md:h=[90px]  xl:h-[100px]
-            rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
+            rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
               <div className="flex justify-center items-center h-full">
                 <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
               </div>
@@ -204,7 +204,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
     }
 
     return (
-        <div className="w-full flex items-center justify-between rounded-full bg-[#612132]/55 text-white border-[1px] border-white/8">
+        <div className="w-full flex items-center justify-between rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
             <div className='flex'>
                 <div className="relative 
                 w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
@@ -313,7 +313,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
     if (!friend) {
         return (
             <div className="w-full flex items-center justify-center  h-[60px] md:h=[90px]  xl:h-[100px]
-            rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
+            rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
               <div className="flex justify-center items-center h-full">
                 <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
               </div>
@@ -322,7 +322,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
     }
 
     return (
-        <div className="w-full flex items-center justify-between rounded-full bg-[#612132]/55 text-white border-[1px] border-white/8">
+        <div className="w-full flex items-center justify-between rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
             <div className='flex'>
                 <div className="relative 
                 w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
@@ -483,7 +483,7 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
     if (!friend) {
         return (
             <div className="w-full flex items-center justify-center  h-[60px] md:h=[90px]  xl:h-[100px]
-            rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
+            rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
               <div className="flex justify-center items-center h-full">
                 <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
               </div>
@@ -492,7 +492,7 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
     }
 
     return (
-        <div className="w-full flex items-center justify-between rounded-full bg-[#612132]/55 text-white border-[1px] border-white/8">
+        <div className="w-full flex items-center justify-between rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
             <div className='flex'>
                 <div className="relative 
                 w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]
@@ -616,7 +616,7 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
     if (!friend) {
         return (
             <div className="w-full flex items-center justify-center  h-[60px] md:h=[90px]  xl:h-[100px]
-            rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
+            rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
               <div className="flex justify-center items-center h-full">
                 <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
               </div>
@@ -625,7 +625,7 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
     }
 
     return (
-        <div className="w-full flex items-center justify-between rounded-full bg-[#612132]/55 text-white border-[1px] border-white/8">
+        <div className="w-full flex items-center justify-between rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
             <div className='flex'>
                 <div className="relative 
                 w-[60px] h-[60px] md:w=[90px] md:h=[90px]  xl:w-[100px] xl:h-[100px]

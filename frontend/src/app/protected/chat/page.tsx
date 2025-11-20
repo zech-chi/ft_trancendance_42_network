@@ -216,12 +216,16 @@ function Chat() {
                         ">
         {/* h-[calc(100vh-60px)] */}
       {/* <div className="w-full h-[90vh]"> */}
-      <div className="flex items-center justify-center h-full p-2 py-0 w-full"> 
+      <div className="flex items-center justify-center h-full p-2 py-0 w-full">
         {/* i should change the max-h because i add it for the textearea input message */}
-        <div className="relative w-full md:w-[90%] h-full overflow-hidden rounded-[50px] flex flex-row gap-2 p-4 flex-1">
+        <div className="relative w-full 
+        md:w-[90%] h-full overflow-hidden rounded-2xl 
+        flex flex-row gap-2 p-4 flex-1
+        bg-gray/10  rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]  border border-white/30
+        ">
           {/* background layers */}
-          <div className="absolute inset-0 settings-profile-bg bg-cover bg-center"></div>
-          <div className="absolute inset-0 bg-[rgba(9,0,0,0.5)]"></div>
+          <div className="absolute inset-0"></div>
+          <div className="absolute inset-0"></div>
 
            {/* --- Render Call-Related UI Conditionally --- */}
         {incomingCall && !isCallActive && (

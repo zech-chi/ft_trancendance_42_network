@@ -79,16 +79,16 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
     if (!userCur || !userOther) {
       return (
         <div className="w-full flex items-center justify-center  h-[70px] md:h=[90px]  xl:h-[100px]
-        rounded-full bg-[#612132]/50 text-white border-[1px] border-white/8">
+        rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
           <div className="flex justify-center items-center h-full">
             <div className="w-2 h-2 md:w-3 md:h-3 xl:w-4 xl:h-4 2xl:w-5 2xl:h-5 border-2 md:border-3 xl:border-4 border-[#1CBABA] border-t-transparent rounded-full animate-spin"></div>
           </div>
         </div>
       )
     }
-  
+
     return (
-      <div className="w-full flex items-center justify-between rounded-full bg-[#612132]/55 text-white border-[1px] border-white/8">
+      <div className="w-full flex items-center justify-between rounded-full bg-gray-800/100 backdrop-blur-md text-white border-[1px] border-white/8">
         
         {/* Left Profile (Opponent) */}
         <div className="relative 

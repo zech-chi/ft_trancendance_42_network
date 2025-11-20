@@ -55,6 +55,7 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  height: 100%;
 }
 
 .settings-profile-bg {
@@ -119,7 +120,7 @@ body {
   width: 0;
   height: 0;
   border-top: 3px solid transparent;
-  border-left: 10px solid #e45f73;
+  border-left: 10px solid #FFB700;
   border-bottom: 7px solid transparent;
 }
 

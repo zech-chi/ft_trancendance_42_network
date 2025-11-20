@@ -654,7 +654,9 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
   };
 
   return (
-    <div className="bg-[rgba(5,0,0,0.6)] m-0 p-0 z-10 flex-1 rounded-[50px] md:max-w-[100%] relative overflow-hidden">
+    <div className="m-0 p-0 z-10 flex-1  md:max-w-[100%] relative overflow-hidden
+    bg-gray-800/40 backdrop-blur-md  shadow-xl border border-white/20 rounded-2xl
+    ">
       <div className="h-full flex flex-col relative">
       {contact == null ? (<NoContactSelected setShowSidebar={setShowSidebar}/>) : ( <>
 
@@ -713,8 +715,8 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           fileInputRef={fileInputRef}
           friendId={contact.id}
         />) : (
-          <div className="bg-[rgba(0,0,0,0.3)] p-4 text-white rounded-b-[50px]">
-            <p className="text-red-500 text-[12px] md:text-[16px] md:font-semibold text-center">
+          <div className="bg-gray-800/100 backdrop-blur-md p-4 text-white rounded-b-2xl">
+            <p className="text-[#FFB700] text-[12px] md:text-[16px] md:font-semibold text-center">
              {` You can't reply to this this conversation anymore!.`}
             </p>
           </div>

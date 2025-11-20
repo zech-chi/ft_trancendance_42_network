@@ -220,7 +220,7 @@ VALUES
 (1, 'boot', 'boot', 'example@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://api.dicebear.com/9.x/identicon/svg?seed=700', 0, strftime('%s','now') - 120, 5, 0.75, 1);
 
 
-INSERT OR REPLACE INTO RadarData 
+INSERT OR IGNORE INTO RadarData 
 (userId, Quick_Reflexes, Strategic_Thinking, Precision_Shots, Pattern_Recognition, Anticipating_Moves, Board_Control, Adaptive_Playstyle, Risk_Management, Mind_Games)
 VALUES
 (1, 17, 14, 18, 12, 15, 16, 14, 13, 12);
@@ -313,7 +313,7 @@ VALUES
 -- (8, 2024, 2, 1.5),
 -- (8, 2024, 4, 0.4);
 
-INSERT INTO Calendar (userId, year, day, activity) VALUES
+INSERT OR IGNORE INTO Calendar (userId, year, day, activity) VALUES
 (1, 2023, 1, 0.3),
 (1, 2023, 2, 0.7),
 (1, 2023, 3, 0.4),
@@ -681,7 +681,7 @@ INSERT INTO Calendar (userId, year, day, activity) VALUES
 (1, 2023, 365, 0.7);
 
 
-INSERT INTO Calendar (userId, year, day, activity) VALUES
+INSERT OR IGNORE INTO Calendar (userId, year, day, activity) VALUES
 (1, 2024, 2, 1.3),
 (1, 2024, 5, 0.7),
 (1, 2024, 7, 1.4),
@@ -778,7 +778,7 @@ INSERT INTO Calendar (userId, year, day, activity) VALUES
 (1, 2024, 234, 1.0),
 (1, 2024, 236, 1.5);
 
-INSERT INTO Calendar (userId, year, day, activity) VALUES
+INSERT OR IGNORE INTO Calendar (userId, year, day, activity) VALUES
 (1, 2025, 3, 1.4),
 (1, 2025, 6, 1.0),
 (1, 2025, 9, 1.1),

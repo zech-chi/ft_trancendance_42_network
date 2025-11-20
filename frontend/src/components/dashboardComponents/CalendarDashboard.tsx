@@ -205,28 +205,28 @@ export default function CalendarDashboard(): JSX.Element {
             {/* Stats Grid - Responsive Layout */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
                 {/* Games Stat */}
-                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 hover:scale-105 border border-white/5">
+                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 border border-white/10">
                     <p className="text-white/50 text-xs sm:text-sm mb-1">Total Games</p>
                     <h2 className="text-white/90 text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-yellow-200 to-yellow-400 bg-clip-text text-transparent">{data.totalGames}</h2>
                     <p className="text-white/40 text-xs mt-1">{selectedYear}</p>
                 </div>
                 
                 {/* Active Days Stat */}
-                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 hover:scale-105 border border-white/5">
+                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 border border-white/10">
                     <p className="text-white/50 text-xs sm:text-sm mb-1">Active Days</p>
                     <h2 className="text-white/90 text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-200 to-green-400 bg-clip-text text-transparent">{data.totalActiveDays}</h2>
                     <p className="text-white/40 text-xs mt-1">{Math.round((data.totalActiveDays / 365) * 100)}% of year</p>
                 </div>
                 
                 {/* Max Streak Stat */}
-                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 hover:scale-105 border border-white/5">
+                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 border border-white/10">
                     <p className="text-white/50 text-xs sm:text-sm mb-1">Max Streak</p>
                     <h2 className="text-white/90 text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-200 to-red-400 bg-clip-text text-transparent">{data.maxStreak}</h2>
                     <p className="text-white/40 text-xs mt-1">days in a row</p>
                 </div>
                 
                 {/* Year Selector */}
-                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm hover:from-black/50 hover:to-black/30 py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 hover:scale-105 border border-white/5 flex flex-col justify-center">
+                <div className="bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm py-3 px-4 sm:py-4 sm:px-5 rounded-2xl sm:rounded-3xl transition-all duration-300 border border-white/10 flex flex-col justify-center">
                     <p className="text-white/50 text-xs sm:text-sm mb-2">Select Year</p>
                     <select
                         value={selectedYear}

@@ -1,70 +1,3 @@
-// import React from "react";
-// interface EditMessageFormProps {
-//   initialText: string;
-//   onSave: (newText: string) => void;
-//   onCancel: () => void;
-// }
-// const EditMessageForm: React.FC<EditMessageFormProps> = ({
-//   initialText,
-//   onSave,
-//   onCancel,
-// }) => {
-//   const [editText, setEditText] = React.useState(initialText);
-//   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
-//   // Automatically focus and select the text when the component mounts
-//   React.useEffect(() => {
-//     if (textareaRef.current) {
-//       textareaRef.current.focus();
-//       textareaRef.current.select();
-//     }
-//   }, []);
-//   const handleSave = () => {
-//     if (editText.trim() && editText.trim() !== initialText) {
-//       onSave(editText.trim());
-//     } else {
-//       onCancel(); // Cancel if text is empty or unchanged
-//     }
-//   };
-//   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-//     if (e.key === "Enter" && !e.shiftKey) {
-//       e.preventDefault();
-//       handleSave();
-//     }
-//     if (e.key === "Escape") {
-//       onCancel();
-//     }
-//   };
-
-//   return (
-//     <div className="flex w-full flex-col gap-2">
-//       <textarea
-//         ref={textareaRef}
-//         value={editText}
-//         onChange={(e) => setEditText(e.target.value)}
-//         onKeyDown={handleKeyDown}
-//         className="w-full rounded-md border bg-[rgba(0,0,0,0.7)] p-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-//         rows={3}
-//       />
-//       <div className="flex justify-end gap-2 text-xs">
-//         <button
-//           onClick={onCancel}
-//           className="font-semibold text-gray-400 hover:underline"
-//         >
-//           Cancel
-//         </button>
-//         <button
-//           onClick={handleSave}
-//           className="rounded-md bg-green-600 px-3 py-1 font-semibold text-white hover:bg-green-700"
-//         >
-//           Save
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EditMessageForm;
-
 import React from "react";
 import { Check, X, RotateCcw } from "lucide-react";
 
@@ -154,7 +87,7 @@ const EditMessageForm: React.FC<EditMessageFormProps> = ({
       {/* Backdrop blur overlay */}
       {/* <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-lg -m-2 bg-green-500"></div> */}
       
-      <div className="relative px-5 flex w-full flex-col gap-3 p-3 bg-gradient-to-br bg-[rgba(0,0,0,0.5)] backdrop-blur-md border border-yellow-500/30 rounded-lg shadow-2xl">
+      <div className="relative px-5 flex w-full flex-col gap-3 p-3 bg-gradient-to-br bg-gray-800/100 border border-white/30 rounded-lg shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
