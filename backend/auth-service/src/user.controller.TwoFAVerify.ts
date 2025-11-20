@@ -43,12 +43,27 @@ export default async function TwoFAVerify(req: FastifyRequest, reply: FastifyRep
 
     // Generate access token and refresh token
     const accessToken = await reply.jwtSign(
-      { id: row.id, email: row.email },
-      { expiresIn: "15m" }
+      {
+        id: row.id,
+        email: row.email,
+        tokenType: "access",
+        jti: crypto.randomUUID(),
+      },
+      {
+        expiresIn: "15m",
+      }
     );
+    
     const refreshToken = await reply.jwtSign(
-      { id: row.id, email: row.email },
-      { expiresIn: "7d" }
+      {
+        id: row.id,
+        email: row.email,
+        tokenType: "refresh",
+        jti: crypto.randomUUID(),
+      },
+      {
+        expiresIn: "7d",
+      }
     );
     
     setAccessTokenCookie(reply, accessToken);
