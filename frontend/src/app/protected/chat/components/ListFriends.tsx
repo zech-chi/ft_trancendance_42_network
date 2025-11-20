@@ -134,8 +134,9 @@ function ListFriends({
   return (
     // sidebar for list friends
     <div
-      className={`bg-[rgba(0,0,0,0.3)] md:max-w-[400px] w-full m-0 p-4 rounded-[50px] transform transition-transform duration-300 ease-in-out 
+      className={`md:max-w-[400px] w-full m-0 p-4 transform transition-transform duration-300 ease-in-out 
         lg:relative lg:translate-x-0 lg:top-0 lg:left-0 overflow-hidden
+        bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20 rounded-2xl
         ${
           showSidebar
             ? "translate-x-0 left-0 top-4 absolute p-2 bg-[rgba(0,0,0,0.8)] backdrop-blur-md z-20"
@@ -213,7 +214,8 @@ function ListFriends({
                   ? "hover:bg-[rgba(255,255,255,0.1)]"
                   : ""
               }
-            `}
+              bg-gray-800/100 backdrop-blur-md
+              `}
           >
             <div className="flex items-center gap-3 relative">
               <div className="relative w-14 h-14 md:w-16 md:h-16">

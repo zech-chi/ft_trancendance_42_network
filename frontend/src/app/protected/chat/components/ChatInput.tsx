@@ -105,7 +105,7 @@ export default function ChatInput({
   };
 
   return (
-    <div className="relative pt-3">
+    <div className="relative pt-3 bg-gray-800/100 backdrop-blur-md rounded-b-2xl border-b border-l border-r border-white/20">
       {showPicker && (
         <div className="absolute bottom-full mb-2 md:left-7 z-50 emoji-theme-wrapper">
           <Picker

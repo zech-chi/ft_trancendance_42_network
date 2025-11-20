@@ -224,8 +224,8 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
 
   return (
     <div   ref={messagesContainerRef}
-          className="flex-1 overflow-y-auto overflow-x-hidden p-4 text-white max-h-[calc(100vh-200px)] 
-          md:max-h-[calc(100vh-250px)] scrollbar relative">
+          className="flex-1 overflow-y-auto overflow-x-hidden p-4 text-white max-h-[calc(100vh-200px)] border-l border-r border-white/20
+          md:max-h-[calc(100vh-250px)] scrollbar relative  bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm">
 
           {/* Error message display */}
           {message && (
@@ -259,11 +259,11 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
               } mb-4`}
             >
               
-              <div
+            <div
                tabIndex={0}
                 className={`group relative  p-2 rounded-lg ${getMaxWidthClass(message.type)} ${
                   message.sent
-                    ? "bg-gradient-to-r from-orange-400 to-pink-500 text-white sent-bubble"
+                    ? "bg-[#1CBABA]/70 text-white sent-bubble"
                     : "bg-[rgba(255,255,255,0.3)] text-white drop-shadow-lg received-bubble"
                 } w-fit outline-none`}
               >
@@ -298,13 +298,13 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
 
                 {/* options */}
                 { message.id == showOptions && 
-                <div className={`absolute overflow-hidden z-10 ${message.sent ? "-left-25" : "-right-25"} top-[-15px] flex flex-col gap-0.5 bg-[rgba(0,0,0,0.5)] border border-yellow-500/30 rounded-md transition-all duration-200`}>
-                    <button onClick={() => handleDeleteMessage(message.id)} className={`text-red-500 px-2 py-0.5 flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-900 ${message.type == "text" ? "" : "py-2"}`}>
+                <div className={`absolute overflow-hidden z-10 ${message.sent ? "-left-25" : "-right-25"} top-[-10px] flex flex-col gap-0.5 bg-gray-800/100 border border-white/20 rounded-md transition-all duration-200`}>
+                    <button onClick={() => handleDeleteMessage(message.id)} className={`text-[#FFB700] px-2 py-0.5 flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-900 ${message.type == "text" ? "" : "py-2"}`}>
                         <Trash2 size={16} className="" />
                          <p>Delete</p>
                     </button>
                     { message.type == "text" && 
-                      <button onClick={() => handleEditClick(message) }  className="text-green-500 px-2 py-0.5 flex flex-row gap-2 items-center  cursor-pointer hover:bg-gray-900">
+                      <button onClick={() => handleEditClick(message) }  className="text-[#1CBABA] px-2 py-0.5 flex flex-row gap-2 items-center  cursor-pointer hover:bg-gray-900">
                           <Pencil size={16} className="" />
                           <p>Edit</p>
                       </button>
