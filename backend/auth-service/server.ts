@@ -4,11 +4,12 @@ import dotenv from "dotenv";
 import { authRoutes } from "./src/user.route";
 import { userSchemas } from './src/user.schema';
 import cookie, { fastifyCookie } from '@fastify/cookie';
-import jwt from '@fastify/jwt';
 import cors from '@fastify/cors';
 import fastifyOauth2 from '@fastify/oauth2';
 import fastifySession from '@fastify/session';
 import crypto from 'crypto';
+import fastifyJwt from "@fastify/jwt";
+// import jwt from '@fastify/jwt';
 
 dotenv.config();
  
@@ -60,8 +61,12 @@ fastify.register(cors, {
 // register session (requires cookie registered first)
 // register the plugin cookie first
 
-fastify.register(jwt, {
-    secret: "zech-chi", // this should be come from env variable
+// fastify.register(jwt, {
+//     secret: "zech-chi", // this should be come from env variable
+// });
+
+fastify.register(fastifyJwt, {
+  secret: process.env.JWT_SECRETS || "super-realy-secret-key"
 });
 
 for (const schema of userSchemas.schemas) {

@@ -124,7 +124,16 @@ export async function authRoutes(app: FastifyInstance) {
         const user = await findUserById(decoded.id);
         if (!user) return reply.code(401).send({ message: 'Invalid refresh token' });
     
-        const newAccessToken = await reply.jwtSign({ id: user.id, email: user.email }, { expiresIn: '15m' });
+        const newAccessToken = await reply.jwtSign({
+          id: user.id,
+          email: user.email,
+          tokenType: "access",
+          jti: crypto.randomUUID(),
+        },
+        {
+          expiresIn: "15m",
+        }
+      );
         setAccessTokenCookie(reply, newAccessToken);
     
         return reply.send({ message: 'Access token refreshed' });
@@ -375,14 +384,29 @@ export async function authRoutes(app: FastifyInstance) {
             return reply.code(400).send({ error: "Invalid or expired OTP code" });
           }
          // Generate access token and refresh token
-          const accessToken = await reply.jwtSign(
-            { id: row.id, email: row.email },
-            { expiresIn: "15m" }
-          );
-          const refreshToken = await reply.jwtSign(
-            { id: row.id, email: row.email },
-            { expiresIn: "7d" }
-          );
+         const accessToken = await reply.jwtSign(
+          {
+            id: row.id,
+            email: row.email,
+            tokenType: "access",
+            jti: crypto.randomUUID(),   // unique ID for this token
+          },
+          {
+            expiresIn: "15m",
+          }
+        );
+        
+        const refreshToken = await reply.jwtSign(
+          {
+            id: row.id,
+            email: row.email,
+            tokenType: "refresh",
+            jti: crypto.randomUUID(),   // unique ID for refresh token
+          },
+          {
+            expiresIn: "7d",
+          }
+        );
           
           setAccessTokenCookie(reply, accessToken);
           setRefreshTokenCookie(reply, refreshToken);
@@ -481,8 +505,14 @@ export async function authRoutes(app: FastifyInstance) {
         user = existingUser;
         if (user.twofa_enabled) {
           const tmp_2fa = await reply.jwtSign(
-            { id: user.id, need2fa: true },
-            { expiresIn: "5m" }
+            {
+              id: user.id,
+              need2fa: true,
+              jti: crypto.randomUUID(),
+            },
+            {
+              expiresIn: "5m",
+            }
           );
           setTmp2FACookie(reply, tmp_2fa);
           // await reply.send({ message: "2FA required" });
@@ -491,14 +521,29 @@ export async function authRoutes(app: FastifyInstance) {
       }
 
         // Generate access + refresh tokens
-    const accessToken = await reply.jwtSign(
-      { id: user.id, email: user.email },
-      { expiresIn: "15m" }
-    );
-    const refreshToken = await reply.jwtSign(
-      { id: user.id, email: user.email },
-      { expiresIn: "7d" }
-    );
+        const accessToken = await reply.jwtSign(
+          {
+            id: user.id,
+            email: user.email,
+            tokenType: "access",
+            jti: crypto.randomUUID(),   // unique ID for this token
+          },
+          {
+            expiresIn: "15m",
+          }
+        );
+        
+        const refreshToken = await reply.jwtSign(
+          {
+            id: user.id,
+            email: user.email,
+            tokenType: "refresh",
+            jti: crypto.randomUUID(),   // unique ID for refresh token
+          },
+          {
+            expiresIn: "7d",
+          }
+        );
     // Set cookies
     setAccessTokenCookie(reply, accessToken);
     setRefreshTokenCookie(reply, refreshToken);
