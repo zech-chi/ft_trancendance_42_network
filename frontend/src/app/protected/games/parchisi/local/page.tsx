@@ -40,15 +40,14 @@ export default function LocalGamePage() {
       <Navbar />
 
       <main className="relative flex flex-col items-center justify-center w-full max-w-md xl:max-w-lg p-6 rounded-3xl
-          border border-[#ffb86b]/30
-          shadow-[0_0_40px_rgba(255,160,90,0.45)]
-          bg-gradient-to-b from-[rgba(65,7,33,0.85)] to-[rgba(22,4,18,0.9)]
+                    shadow-[0_0_40px_rgba(28,186,186,0.45)]
+                    bg-gradient-to-b bg-gray-800/40  p-6  border border-white/20
           gap-6">
 
         {/* Customize Icon */}
         <button
           onClick={() => setShowThemePopup(true)}
-          className="absolute top-4 right-4 text-[#ffb86b]/90 hover:text-[#ffb86b] text-2xl"
+          className="absolute top-4 right-4 text-white/90 hover:text-[#1CBABA] text-2xl"
           title="Customize"
         >
           <AiOutlineSkin />
@@ -56,20 +55,20 @@ export default function LocalGamePage() {
 
         {/* Header */}
         <div className="text-center mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#ffb86b] mb-2">Local Multiplayer</h2>
-          <p className="text-[#ffb86b]/80 text-sm sm:text-base">Play with up to 4 players on the same device</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Local Multiplayer</h2>
+          <p className="text-[#1CBABA]/80 text-sm sm:text-base">Play with up to 4 players on the same device</p>
         </div>
 
         {/* Players Selection */}
         <div className="flex flex-col sm:flex-row gap-4 w-full items-center justify-center">
-          <label className="text-[#ffb86b]/80 font-medium text-sm sm:text-base whitespace-nowrap">
+          <label className="text-white/80 font-medium text-sm sm:text-base whitespace-nowrap">
             Number of Players:
           </label>
 
           <select
             value={players}
             onChange={(e) => setPlayers(parseInt(e.target.value))}
-            className="w-40 sm:w-32 p-3 sm:p-4 bg-black/25 text-white border border-[#ffb86b]/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ffb86b] text-center"
+            className="w-40 sm:w-32 p-3 sm:p-4 bg-black/25 text-white border border-[#1CBABA]/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1CBABA] text-center"
           >
             {[2, 3, 4].map((num) => (
               <option key={num} value={num}>{num}</option>
@@ -79,7 +78,7 @@ export default function LocalGamePage() {
           <button
             onClick={handleStartGame}
             className="w-full sm:w-auto mt-4 sm:mt-0 py-2 sm:py-4 px-4 rounded-3xl font-semibold
-            bg-red-500 hover:opacity-90 text-white transition"
+            bg-[#1CBABA]/70 hover:bg-[#1CBABA]/100 text-white transition"
           >
             Start Game
           </button>

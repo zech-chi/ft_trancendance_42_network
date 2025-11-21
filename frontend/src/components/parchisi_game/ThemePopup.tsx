@@ -34,7 +34,7 @@ export default function ThemePopup({ onClose }: ThemePopupProps) {
               key={index}
               onClick={() => handleSelectTheme(theme)}
               className={`bg-[#1a1a1a] hover:scale-105 transition rounded-xl overflow-hidden border ${
-                state.theme.theme_ds === theme.theme_ds ? "border-yellow-400" : "border-gray-700"
+                state.theme.theme_ds === theme.theme_ds ? "border-[#1CBABA]" : "border-gray-700"
               }`}
             >
               <Image
