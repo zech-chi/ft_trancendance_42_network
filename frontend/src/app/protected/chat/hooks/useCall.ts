@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useSocket } from "../context/SocketContext";
 import { IncomingCall } from "@/app/protected/chat/types/typesChat";
 import { useAudioContext } from "../context/AudioPlayerContext";
+import { FromHalfFloat } from "@babylonjs/core";
 
 const ICE_SERVERS: RTCConfiguration = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
@@ -204,6 +205,7 @@ export function useCall(currentUserId: number | null, currentName: string) {
     };
 
     const handleEndCall = (data: {from: string}) => {
+      console.log("++++++++++=======> Call ended by the other user.", data.from);
       if (activePeerIdRef.current == data.from || activePeerIdRef.current === null) {
           closeCall();
       }
@@ -211,12 +213,20 @@ export function useCall(currentUserId: number | null, currentName: string) {
 
     const handleBeforeUnload = () => {
       // Check if this user is in an active call
+      console.log("=======> Handling beforeunload event.");
       const peerId = activePeerIdRef.current;
       if (peerId) {
         // If so, send a final "end-call" message to the other user.
         // This is a "best effort" attempt.
-        socket.emit("end-call", { to: peerId });
+        socket.emit("end-call", { to: peerId, from: currentUserId });
       }
+    };
+
+    const handleCallAccepted = (data: { from: string, to?: string }) => {
+      // Another session of this user accepted the call — clear incoming UI in this session
+      console.log('call accepted event received', data);
+      setIncomingCall(null);
+      // Do NOT set this session to active — only the answering session should become active
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -225,6 +235,7 @@ export function useCall(currentUserId: number | null, currentName: string) {
     socket.on("answer-made", handleAnswer);
     socket.on("ice-candidate", handleIceCandidate);
     socket.on("call-rejected", handleCallRejected);
+    socket.on("call-accepted", handleCallAccepted);
     socket.on("end-call", handleEndCall);
 
     return () => {
@@ -233,6 +244,7 @@ export function useCall(currentUserId: number | null, currentName: string) {
       socket.off("ice-candidate", handleIceCandidate);
       socket.off("call-rejected", handleCallRejected);
       socket.off("end-call", handleEndCall);
+      socket.off("call-accepted", handleCallAccepted);
       // clearCallTimeout(); // Clear the timeout when the component unmounts
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };

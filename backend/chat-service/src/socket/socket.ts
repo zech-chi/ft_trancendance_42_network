@@ -95,6 +95,7 @@ export function setupSocket(server: HttpServer) {
     socket.on('make-answer', (data) => {
       const { to, answer } = data;
       const targetSockets = onlineUsers.get(to.toString());
+      const answererId = socket.handshake.query.userId as string;
 
       if (targetSockets) {
         targetSockets.forEach(socketId => {
@@ -102,6 +103,15 @@ export function setupSocket(server: HttpServer) {
           io.to(socketId).emit('answer-made', { answer, from: socket.handshake.query.userId });
         });
       }
+
+      const answererSockets = onlineUsers.get(answererId);
+      if (answererSockets) {
+        console.log("==========> Emitting call-accepted to answerer:", answererId);
+        answererSockets.forEach(socketId => {
+          io.to(socketId).emit('call-accepted', { from: answererId, to });
+        });
+      }
+
     });
 
     // A user has generated a network candidate

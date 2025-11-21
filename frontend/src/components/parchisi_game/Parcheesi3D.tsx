@@ -110,6 +110,6 @@ export function Parcheesi3DComponent() {
         }, [canvasRef.current]);
 
     return (
-        <canvas ref={canvasRef} className="w-full h-full" id="renderCanvas"/>
+        <canvas ref={canvasRef} className="w-full h-full rounded-2xl" id="renderCanvas"/>
     );
 }
