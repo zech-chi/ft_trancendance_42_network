@@ -28,6 +28,7 @@ function Box({ label, className, isHovered, isOtherHovered, onHover, onLeave, on
       onClick={!disabled ? onClick : undefined}
       className={`
         w-[80%] h-[80%] flex items-center justify-center rounded-2xl 
+        shadow-xl backdrop-blur-md border border-white/30
         sm:w-[90%] sm:h-[90%] ${className}
         transition duration-300
         ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}
@@ -136,11 +137,10 @@ export default function HomePage() {
   <div className="flex flex-col h-[calc(100%-120px)] w-full  overflow-hidden items-center justify-center">
   {/* Title and Description */}
   <div className="items-center gap-2">
-    <h1 className="text-5xl font-bold text-center mb-2 text-gray-800">Parcheesi</h1>
-    <p className="text-xl text-center mb-4 text-gray-600">The classic Parcheesi-style board game</p>
+    <h1 className="text-5xl font-bold text-center mb-2 text-[#1CBABA] mb-7">Parcheesi</h1>
   </div>
     <div
-      className="bg-[rgba(0,0,0,0.6)] p-6 w-[70%] h-[80%] flex flex-col items-center gap-2 justify-center 
+      className="bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20 p-6 w-[70%] h-[80%] flex flex-col items-center gap-2 justify-center 
                     sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:place-items-center rounded-2xl"
     >
       {gameModes.map(({ id, label, className, pageLink }) => (
