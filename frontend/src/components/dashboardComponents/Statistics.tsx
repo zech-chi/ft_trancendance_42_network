@@ -106,17 +106,17 @@ export default function Statistics() {
 ">
       <ChooseGame game={game} setGame={setGame}/>
       <div className="flex flex-col xl:flex-row w-full h-full items-center justify-center ">
-        <div className='flex flex-col lg:flex-row xl:flex-col  h-full tems-center justify-center  p-5
+        <div className='flex flex-col lg:flex-col xl:flex-row  h-full tems-center justify-center  p-5
             w-[100%]
         '>
             <FriendsStats data={data}/>
             {/* <AIStats data={data}/> */}
-        </div>
-        <div className='flex flex-col h-full items-center justify-center p-5
-            w-[100%]
-        '>
             <RadarChart/>
         </div>
+        {/* <div className='flex flex-col h-full items-center justify-center p-5
+            w-[100%]
+        '>
+        </div> */}
       </div>
     </div>
   );

@@ -80,18 +80,17 @@ function OnlinePageContent() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center min-w-[200px] w-full overflow-x-auto bg-black/40 backdrop-blur-md">
+    <div className="h-screen flex items-center justify-center min-w-[200px] w-full overflow-x-auto  backdrop-blur-md">
       <Sidebar />
       <Navbar />
       <main className="flex flex-col items-center justify-center w-full max-w-3xl p-6 rounded-3xl
-          border border-[#ffb86b]/30
-          shadow-[0_0_40px_rgba(255,160,90,0.45)]
-          bg-gradient-to-b from-[rgba(5,47,74,1)] to-[rgba(0,166,244,1)]">
+          shadow-[0_0_40px_rgba(28,186,186,0.45)]
+          bg-gradient-to-b bg-gray-800/40  p-6  border border-white/20">
 
         {/* Header */}
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-[#ffb86b] mb-2">Parcheesi Online</h1>
-          <p className="text-[#ffb86b]/80">Play Parcheesi with friends in real-time</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Parcheesi Online</h1>
+          <p className="text-[#1CBABA]/80">Play Parcheesi with friends in real-time</p>
         </div>
 
         {/* Connection Status remove after */}
@@ -103,15 +102,15 @@ function OnlinePageContent() {
         </div>
 
         {/* Tabs */}
-        <div className="flex mb-6 bg-[#1e0d24]/80 rounded-xl p-1 border border-[#ffb86b]/30">
+        <div className="flex mb-6rounded-xl p-1 bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm border border-white/10 rounded-2xl">
           {['join', 'create', 'existing'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-colors ${
                 activeTab === tab
-                  ? 'bg-[#ffb86b] text-black'
-                  : 'text-[#ffb86b]/70 hover:text-white'
+                  ? 'bg-[#1CBABA]/70 text-white'
+                  : 'text-white hover:text-[#1CBABA]/80'
               }`}
             >
               {tab === 'join' ? 'Join Game' : tab === 'create' ? 'Create Game' : 'Join Existing'}
@@ -128,7 +127,7 @@ function OnlinePageContent() {
                 placeholder="Enter game code"
                 value={gameCode}
                 onChange={(e) => setGameCode(e.target.value)}
-                className="w-full text-center text-white bg-black/25 border border-[#ffb86b]/40 focus:ring-[#ffb86b]"
+                className="w-full text-center text-white bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm "
               />
               <Button
                 onClick={() => handleJoinGame()}
@@ -184,10 +183,10 @@ function OnlinePageContent() {
             </div>
           )}
         </Card>
-
+{/* 
         <div className="mt-6 text-center text-sm text-[#ffb86b]/70">
           🚧 Invite Friends feature coming soon...
-        </div>
+        </div> */}
       </main>
     </div>
   );
