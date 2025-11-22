@@ -147,10 +147,21 @@ export function setupSocket(server: HttpServer) {
     socket.on('call-rejected', (data) => {
         const { to } = data;
         const targetSockets = onlineUsers.get(to.toString());
+        const rejectorId = socket.handshake.query.userId as string;
+
+
         if(targetSockets) {
             targetSockets.forEach(socketId => {
                 io.to(socketId).emit('call-rejected');
             });
+        }
+
+        // Notify the rejector in all their sessions
+        const rejectorSockets = onlineUsers.get(rejectorId);
+        if (rejectorSockets) {
+          rejectorSockets.forEach(socketId => {
+            io.to(socketId).emit('call-rejected', { from: rejectorId, to });
+          });
         }
     });});
 
