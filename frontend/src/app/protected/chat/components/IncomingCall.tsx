@@ -34,7 +34,7 @@ export const IncomingCall = ({ call, onAccept, onReject }: IncomingCallProps) =>
   }, []);
 
   return (
-    <div className="fixed top-[5%] right-[10%] bg-[rgba(0,0,0,0.4)] border border-yellow-100 text-white p-2 rounded-lg shadow-lg z-50 backdrop-blur-sm">
+    <div className="fixed top-[6.5%] right-[3%] text-white p-2 rounded-2xl z-50 bg-gray-800/40 backdrop-blur-md shadow-xl border border-white/20">
       <p>Incoming {call.type} call from {call.fromName}</p>
       <div className="flex justify-around mt-2">
         <button
@@ -43,7 +43,7 @@ export const IncomingCall = ({ call, onAccept, onReject }: IncomingCallProps) =>
             callSound.currentTime = 0;
             onAccept();
           }}
-          className="bg-green-500 p-2 rounded hover:bg-green-700 transition-colors duration-300"
+          className="bg-[#1CBABA]/80 p-2 rounded hover:bg-[#1CBABA] cursor-pointer transition-colors duration-300 rounded-2xl"
         >
           Accept
         </button>
@@ -53,7 +53,7 @@ export const IncomingCall = ({ call, onAccept, onReject }: IncomingCallProps) =>
             callSound.currentTime = 0;
             onReject();
           }}
-          className="bg-red-500 p-2 rounded hover:bg-red-700"
+          className="bg-[#FFB700]/80 p-2 rounded hover:bg-[#FFB700] cursor-pointer transition-colors duration-300 rounded-2xl"
         >
           Decline
         </button>
@@ -61,14 +61,3 @@ export const IncomingCall = ({ call, onAccept, onReject }: IncomingCallProps) =>
     </div>
   );
 };
-
-// export const IncomingCall = ({ call, onAccept, onReject }: IncomingCallProps) => (
-//   console.log('IncomingCall component rendered with call:', call),
-//   <div className="fixed top-[5%] right-[10%] bg-[rgba(0,0,0,0.4)] border border-yellow-100 text-white p-2 rounded-lg shadow-lg z-50 backdrop-blur-sm">
-//     <p>Incoming {call.type} call from {call.fromName}</p>
-//     <div className="flex justify-around mt-2">
-//       <button onClick={onAccept} className="bg-green-500 p-2 rounded hover:bg-green-700 transition-colors duration-300">Accept</button>
-//       <button onClick={onReject} className="bg-red-500 p-2 rounded hover:bg-red-700">Decline</button>
-//     </div>
-//   </div>
-// );

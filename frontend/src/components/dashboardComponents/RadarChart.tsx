@@ -191,7 +191,7 @@ export function RadarChart() {
         >
             <svg 
                 ref={svgRef} 
-                className="w-[75%] aspect-square" 
+                className="w-[90%] md:w-[50%] lg:w-[75%] aspect-square" 
                 viewBox="-100 -100 200 200" 
                 onMouseMove={handleMouseMove} 
                 onMouseLeave={resetCoords}
