@@ -13,6 +13,16 @@ let ioInstance: SocketIoServer | null = null;
 // this allows us to track which user is connected to which socket
 const onlineUsers = new Map<string, Set<string>>();
 
+// Track call state per user (not per socket). This ensures call state is synchronized
+// across all sessions of the same user.
+// Value: partner user id (string) or null when not in a call
+interface CallSession {
+  partnerId: string;
+  socketId: string; // The specific socket ID handling this call
+}
+
+const userCallState = new Map<string, CallSession>();
+
 // this function sets up the socket.io server
 // it takes an HTTP server as an argument and returns the socket.io server instance
 export function setupSocket(server: HttpServer) {
@@ -60,11 +70,53 @@ export function setupSocket(server: HttpServer) {
       console.log("A user disconnected:", socket.id);
      // Remove socket from all users
       for (const [uid, sockets] of onlineUsers) {
-        sockets.delete(socket.id);
-        if (sockets.size === 0) {
-          // Set the online status in the database
-          await setOnlineTodb(uid, false, true);
-          onlineUsers.delete(uid);
+        // sockets.delete(socket.id);
+        // if (sockets.size === 0) {
+        //   // Set the online status in the database
+        //   await setOnlineTodb(uid, false, true);
+        //   onlineUsers.delete(uid);
+        // }
+        if (sockets.has(socket.id)) {
+          sockets.delete(socket.id);
+          
+          // 1. Check if the User was in a call
+          if (userCallState.has(uid)) {
+            const currentCall = userCallState.get(uid)!;
+
+            //fix Only end the call if the DISCONNECTING socket 
+            // is the one that was actually in the call.
+            // If it's a different tab (different socket ID), ignore it.
+            if (currentCall.socketId === socket.id) {
+              console.log(`Active call socket disconnected for user ${uid}. Ending call.`);
+              
+              const partnerId = currentCall.partnerId;
+              
+              // Remove active user state
+              userCallState.delete(uid);
+
+              // Handle Partner
+              if (partnerId) {
+                // Remove partner state (cleanup)
+                userCallState.delete(partnerId);
+                
+                // Notify partner
+                const partnerSockets = onlineUsers.get(partnerId);
+                if (partnerSockets) {
+                  partnerSockets.forEach(sid => {
+                    io.to(sid).emit('end-call', { to: partnerId, from: uid });
+                  });
+                }
+              }
+            } else {
+               console.log(`User ${uid} disconnected a secondary tab. Call continues on active socket.`);
+            }
+          }
+
+          // 2. Cleanup Online Users if no sockets left
+          if (sockets.size === 0) {
+            onlineUsers.delete(uid);
+            await setOnlineTodb(uid, false, true);
+          }
         }
       }
 
@@ -82,6 +134,20 @@ export function setupSocket(server: HttpServer) {
     socket.on('call-user', (data) => {
       const { to, offer, from, type, fromName } = data;
       const targetSockets = onlineUsers.get(to.toString());
+
+      const callerBusy = userCallState.has(from.toString());
+      const calleeBusy = userCallState.has(to.toString());
+
+      if (callerBusy || calleeBusy) {
+        return; 
+      }
+
+      // FIX : Track the CALLER'S specific socket immediately
+      // This ensures that if the caller refreshes THIS tab, the disconnect logic knows it's the active one.
+      userCallState.set(from.toString(), { 
+        partnerId: to.toString(), 
+        socketId: socket.id 
+      });
       
       if (targetSockets) {
         targetSockets.forEach(socketId => {
@@ -96,6 +162,12 @@ export function setupSocket(server: HttpServer) {
       const { to, answer } = data;
       const targetSockets = onlineUsers.get(to.toString());
       const answererId = socket.handshake.query.userId as string;
+
+      //: Track the ANSWERER'S specific socket
+      userCallState.set(answererId, { 
+        partnerId: to.toString(), 
+        socketId: socket.id 
+      });
 
       if (targetSockets) {
         targetSockets.forEach(socketId => {
@@ -133,6 +205,17 @@ export function setupSocket(server: HttpServer) {
       const { to, from } = data;
       const targetSockets = onlineUsers.get(to.toString());
 
+      // get who is want to end the call from the userCallState map
+      const senderCallState = userCallState.get(from.toString());
+
+       if (!senderCallState || senderCallState.socketId !== socket.id) {
+        console.log(`End-call ignored. Requesting socket ${socket.id} is not the active call socket.`);
+        return;
+      }
+
+      userCallState.delete(to.toString());
+      userCallState.delete(from.toString());
+
       if (targetSockets) {
         targetSockets.forEach(socketId => {
           io.to(socketId).emit('end-call', {to: to, from: from});
@@ -148,6 +231,9 @@ export function setupSocket(server: HttpServer) {
         const { to } = data;
         const targetSockets = onlineUsers.get(to.toString());
         const rejectorId = socket.handshake.query.userId as string;
+
+        //Cleanup: If the call is rejected, we must remove the entry created in 'call-user' for the caller
+        userCallState.delete(to.toString()); // 'to' is the original caller
 
 
         if(targetSockets) {
