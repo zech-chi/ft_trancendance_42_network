@@ -132,7 +132,7 @@ function ProfileInfo({
           >
             <button
               onClick={() => setIs2FAEnabled(!is2FAEnabled)}
-              className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${is2FAEnabled ? "bg-[#1CBABA]" : "bg-gray-500"
+              className={`relative w-14 h-7 cursor-pointer flex items-center rounded-full transition-colors duration-300 ${is2FAEnabled ? "bg-[#1CBABA]" : "bg-gray-500"
                 }`}
             >
               <span
@@ -214,7 +214,7 @@ function ProfilePasswords({
           <button
             type="button"
             onClick={() => setShowOldPassword(!showOldPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1CBABA] z-10"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1CBABA] z-10 cursor-pointer"
           >
             {showOldPassword ? (
               <Eye className="w-5 h-5  md:w-6 md:h-6" />
@@ -252,7 +252,7 @@ function ProfilePasswords({
           <button
             type="button"
             onClick={() => setShowNewPassword(!showNewPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1CBABA] z-10"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1CBABA] z-10 cursor-pointer"
           >
             {showNewPassword ? (
               <Eye className="w-5 h-5  md:w-6 md:h-6" />
@@ -288,7 +288,7 @@ function ProfilePasswords({
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1CBABA] z-10"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1CBABA] z-10 cursor-pointer"
           >
             {showConfirmPassword ? (
               <Eye className="w-5 h-5  md:w-6 md:h-6" />

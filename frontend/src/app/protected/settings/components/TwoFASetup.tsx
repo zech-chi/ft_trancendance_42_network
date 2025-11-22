@@ -1,4 +1,3 @@
-
 'use client';
 import { useLoggedUserId } from "@/context/UserIdContext";
 import { X } from "lucide-react";
@@ -6,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 
 type TwoFASetupProps = {
-    is2FAEnabled: boolean;
+    is2FAEnabled: boolean; 
     onClose: () => void;
     onEnable: () => void;
     onDisable: () => void;
@@ -118,14 +117,16 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
     };
   
     return (
-      <div className="fixed flex justify-center items-center z-50">
+      // RESPONSIVE FIX: Added inset-0, bg-black/50 for overlay, and mx-4 for mobile margins
+      <div className="fixed inset-0 flex justify-center items-center z-50 backdrop-blur-md p-4">
         <div
-          className="relative w-[520px] p-8 rounded-3xl 
+          className="relative w-full max-w-[520px] p-6 md:p-8 rounded-3xl 
           shadow-[0_0_40px_rgba(28,186,186,0.45)] 
-          bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20 rounded-2xl text-white"
+          bg-gray-800/40 backdrop-blur-xl p-6 shadow-xl border border-white/20 rounded-2xl text-white
+          max-h-[90vh] overflow-y-auto"
         >
           <button
-            className="absolute top-4 right-4 hover:text-white transition cursor-pointer"
+            className="absolute top-4 right-4 cursor-pointer hover:text-white transition"
             onClick={onClose}
           >
             <X size={24} />
@@ -138,38 +139,36 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
           {!is2FAEnabled ? (
             !isSetupStarted ? (
               <div className="flex justify-center">
-              <button
-                onClick={handleSetup2FA}
-                className=" w-fit px-3.5 py-3 rounded-xl font-semibold 
-                bg-[#1CBABA]/85
-                hover:opacity-90 transition cursor-pointer"
-              >
-                Enable 2FA
-              </button>
+                <button
+                  onClick={handleSetup2FA}
+                  className="w-fit px-3.5 py-3 rounded-xl font-semibold 
+                  bg-[#1CBABA]/85
+                  hover:opacity-90 transition cursor-pointer"
+                >
+                  Enable 2FA
+                </button>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4">
                 {qr && (
-                  <div className="p-3 rounded-xl border border-[#ffb86b]/40 bg-black/20 shadow-md">
-                    <img src={qr} alt="QR Code" className="rounded-md" />
+                  <div className="p-3 rounded-xl border border-white/30 bg-black/20 shadow-md">
+                    <img src={qr} alt="QR Code" className="rounded-md max-w-full h-auto" />
                   </div>
                 )}
   
-                <div
-                  className="flex gap-2"
-                  onPaste={handlePaste}
-                >
+                <div className="flex gap-2 justify-center w-full" onPaste={handlePaste}>
                   {digits.map((digit, index) => (
                     <input
                       key={index}
                       ref={(el) => { if (el) inputRefs.current[index] = el; }}
                       type="text"
+                      inputMode="numeric" 
                       maxLength={1}
                       value={digit}
                       onChange={(e) => handleDigitChange(e.target.value, index)}
-                      className="w-10 h-12 text-center text-xl font-bold text-[#ffb86b]
-                      rounded-lg bg-black/25 border border-[#ffb86b]/40
-                      focus:outline-none focus:ring-2 focus:ring-[#ffb86b]"
+                      className="w-10 h-12 text-center text-xl font-bold
+                      rounded-lg bg-black/25 border border-white/30
+                      focus:outline-none focus:ring-2 focus:ring-[#1CBABA]"
                     />
                   ))}
                 </div>
@@ -177,43 +176,39 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
                 <button
                   onClick={handleEnable2FA}
                   disabled={!isCodeComplete}
-                  className="w-full py-3 rounded-xl font-semibold
-                  bg-green-500/80 hover:bg-green-500 transition text-white
+                  className="w-full py-3 rounded-xl font-semibold cursor-pointer
+                  bg-[#1CBABA]/80 hover:bg-[#1CBABA] transition
                   disabled:opacity-40"
                 >
                   Verify & Activate
                 </button>
               </div>
             )
-          ) : null}
-  
-          {is2FAEnabled && (
+          ) : (
             <div className="flex flex-col items-center gap-4">
               {!isDisabling ? (
                 <button
                   onClick={() => setIsDisabling(true)}
                   className="w-fit px-3.5 py-3 rounded-xl font-semibold
-                  bg-red-500/80 hover:bg-red-500 transition text-white"
+                  bg-[#FFB700]/80 hover:bg-[#FFB700] transition cursor-pointer"
                 >
                   Disable 2FA
                 </button>
               ) : (
                 <>
-                  <div
-                    className="flex gap-2"
-                    onPaste={handlePaste}
-                  >
+                  <div className="flex gap-2 justify-center w-full" onPaste={handlePaste}>
                     {digits.map((digit, index) => (
                       <input
                         key={index}
                         ref={(el) => { if (el) inputRefs.current[index] = el; }}
                         type="text"
+                        inputMode="numeric"
                         maxLength={1}
                         value={digit}
                         onChange={(e) => handleDigitChange(e.target.value, index)}
-                        className="w-10 h-12 text-center text-xl font-bold text-white
-                        rounded-lg bg-black/25 border border-red-400/60
-                        focus:outline-none"
+                        className="w-10 h-12 text-center text-xl font-bold
+                        rounded-lg bg-black/25 border border-white/30
+                        focus:outline-none focus:ring-2 focus:ring-[#1CBABA]"
                       />
                     ))}
                   </div>
@@ -222,7 +217,7 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
                     onClick={handleDisable2FA}
                     disabled={!isCodeComplete}
                     className="w-fit px-3.5 py-3 rounded-xl font-semibold
-                    bg-red-500 hover:bg-red-600 transition text-white
+                    bg-[#1CBABA]/80 hover:bg-[#1CBABA] transition cursor-pointer
                     disabled:opacity-40"
                   >
                     Confirm Disable
@@ -233,7 +228,9 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
           )}
   
           {status && (
-            <p className="text-center text-sm text-[#ffb86b] mt-4">{status}</p>
+            <p className="text-center text-sm mt-4 break-words">
+              {status}
+            </p>
           )}
         </div>
       </div>
