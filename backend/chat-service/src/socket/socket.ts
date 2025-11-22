@@ -169,10 +169,16 @@ export function setupSocket(server: HttpServer) {
         socketId: socket.id 
       });
 
+      // get the caller's socket(s) to send the answer back to the sepecific tab that initiated the call
+      const callerCallState = userCallState.get(to.toString());
+
       if (targetSockets) {
         targetSockets.forEach(socketId => {
           // Forward the answer back to the original caller
-          io.to(socketId).emit('answer-made', { answer, from: socket.handshake.query.userId });
+          if (callerCallState && callerCallState.socketId === socketId) {
+            console.log("==========> hhhhhhhh  Emitting answer-made to caller:", to);
+            io.to(socketId).emit('answer-made', { answer, from: socket.handshake.query.userId });
+          }
         });
       }
 
