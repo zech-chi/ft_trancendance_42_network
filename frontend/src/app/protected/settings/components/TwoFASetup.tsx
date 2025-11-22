@@ -121,18 +121,17 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
       <div className="fixed flex justify-center items-center z-50">
         <div
           className="relative w-[520px] p-8 rounded-3xl 
-          border border-[#ffb86b]/30 
-          shadow-[0_0_10px_rgba(255,160,90,0.45)]
-          bg-gradient-to-b from-[rgba(65,7,33,0.85)] to-[rgba(22,4,18,0.9)]"
+          shadow-[0_0_40px_rgba(28,186,186,0.45)] 
+          bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20 rounded-2xl text-white"
         >
           <button
-            className="absolute top-4 right-4 text-[#ffb86b] hover:text-white transition"
+            className="absolute top-4 right-4 hover:text-white transition cursor-pointer"
             onClick={onClose}
           >
             <X size={24} />
           </button>
   
-          <h2 className="text-center text-2xl font-bold text-[#ffb86b] tracking-wide mb-6">
+          <h2 className="text-center text-2xl font-bold  tracking-wide mb-6">
             Two-Factor Authentication
           </h2>
   
@@ -142,8 +141,8 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
               <button
                 onClick={handleSetup2FA}
                 className=" w-fit px-3.5 py-3 rounded-xl font-semibold 
-                bg-gradient-to-r from-[#04c00d] to-[#003b0a]
-                hover:opacity-90 transition text-white"
+                bg-[#1CBABA]/85
+                hover:opacity-90 transition cursor-pointer"
               >
                 Enable 2FA
               </button>
