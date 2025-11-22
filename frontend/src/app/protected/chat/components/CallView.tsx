@@ -84,7 +84,7 @@ export const CallView: React.FC<CallViewProps> = ({
       <div className="absolute bottom-20 left-[10%] md:left-[50%] flex items-center justify-center gap-4">
         <button
           onClick={onEndCall}
-          className="bg-red-600 rounded-full p-3 hover:bg-red-700 transition-colors"
+          className="bg-[#FFB700] rounded-full p-3 hover:bg-[#FFB700] transition-colors cursor-pointer"
           title="End Call"
         >
           <PhoneOff size={28} className="text-white" />
@@ -92,11 +92,11 @@ export const CallView: React.FC<CallViewProps> = ({
         {/* You can add Mute/Unmute and Video On/Off buttons here */}
         {/* add the button of mute/umute */}
         <button onClick={toggleMic} title={isMicMuted ? "Unmute" : "Mute"} 
-          className={`border ${isMicMuted ? "border-red-500" : "border-green-500"} rounded-full p-3`}>
+          className={`border cursor-pointer ${isMicMuted ? "border-[#FFB700]" : "border-[#1CBABA]"} rounded-full p-3`}>
           {isMicMuted ? (
-            <MicOff size={28} className="text-red-500" />
+            <MicOff size={28} className="text-[#FFB700]" />
           ) : (
-            <Mic size={28} className="text-green-500" />
+            <Mic size={28} className="text-[#1CBABA]" />
           )}
         </button>
       </div>

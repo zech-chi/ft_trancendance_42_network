@@ -149,14 +149,13 @@ function ListFriends({
           <Search className="absolute top-1/2 -translate-y-1/2 left-3 text-[#B2B2B2] w-5 h-5" />
           <input
             type="text"
-            placeholder="Search friend..."
+            placeholder="Search ..."
             value={searchQuery}
             onChange={handleSearchChange}
             className="w-full pl-10 p-2 rounded-[50px]
              text-[#B2B2B2] placeholder-[#B2B2B2]
-             bg-[url('/bgImg.jpg')] bg-cover bg-center bg-blend-overlay
-             bg-[rgba(7,0,0,0.6)]
-             focus:outline-none focus:ring-2 focus:ring-[#B2B2B2] focus:ring-opacity-20"
+             bg-[rgba(7,0,0,0.6)] border border-white/30
+             focus:outline-none focus:ring-2 focus:ring-[#1CBABA]/80 focus:ring-opacity-20"
           />
         </div>
       </div>

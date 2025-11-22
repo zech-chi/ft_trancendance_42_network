@@ -61,7 +61,7 @@ export function FriendsStats({ data }: {data: GameStats}) {
                             style={{ transform: "translate(-50%, -50%)" }}
                         >
                             <h1 className="text-[9px] xs:text-[10px] sm:text-xs md:text-sm lg:text-base text-white/90 font-bold text-center px-2">
-                                Total games with friends
+                                Total games
                             </h1>
                             <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white/50 font-bold">
                                 {totalGames}
