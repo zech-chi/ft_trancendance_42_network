@@ -34,13 +34,13 @@ export function setupSocket(server: HttpServer) {
      if (userId) {
       if (!onlineUsers.has(userId)) {
         onlineUsers.set(userId, new Set());
+        // Set the online status in the database
+        await setOnlineTodb(userId, true, false);
       }
 
       onlineUsers.get(userId)!.add(socket.id);
       console.log(`User ${userId} connected on socket ${socket.id}`);
-
-      // Set the online status in the database
-      await setOnlineTodb(userId, true, false);
+      
     }
 
     console.log("Online users:", onlineUsers);
@@ -62,14 +62,14 @@ export function setupSocket(server: HttpServer) {
       for (const [uid, sockets] of onlineUsers) {
         sockets.delete(socket.id);
         if (sockets.size === 0) {
+          // Set the online status in the database
+          await setOnlineTodb(uid, false, true);
           onlineUsers.delete(uid);
         }
       }
 
       // Emit the updated list of online users to all clients
       io.emit("onlineUsers", Array.from(onlineUsers.keys()));
-      // Set the online status in the database
-      await setOnlineTodb(userId, false, true);
 
       console.log(`keys of onlineUsers after disconnection:`, Array.from(onlineUsers.keys()));
       console.log("Online users after disconnection:", onlineUsers);
