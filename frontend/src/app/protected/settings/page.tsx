@@ -17,7 +17,7 @@ type PropsProfileImage = {
 function ProfileImage({ imgSrc, handleImageUpload }: PropsProfileImage) {
   return (
     <div className="flex items-center justify-center mt-20">
-      <div className="w-[130px] h-[130px] md:w-[160px] md:h-[160px] rounded-full border-2 border-black flex items-center justify-center relative">
+      <div className="w-[130px] h-[130px] md:w-[160px] md:h-[160px] rounded-full border-2 border-[#1CBABA]/75 flex items-center justify-center relative">
         <img
           src={imgSrc}
           alt="Profile"
@@ -77,17 +77,14 @@ function ProfileInfo({
           Full Name
         </label>
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
-
-          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
           <input
             type="text"
             id="f-name"
             placeholder="Your Full Name"
-            className="relative z-10 w-full h-full p-4 text-yellow-200 font-semibold placeholder:text-yellow-100 text-center  border border-yellow-500/30
+            className="relative z-10 w-full h-full p-4 text-[#1CBABA] font-semibold placeholder:text-yellow-100 text-center  border border-white/30
                   rounded-[20px] bg-transparent
-                  focus:outline-none focus:border-yellow-500 focus:border-2
+                  focus:outline-none focus:border-[#1CBABA] focus:border-2
                   bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
@@ -105,17 +102,14 @@ function ProfileInfo({
         </label>
 
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
-
-          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
           <input
             type="text"
             id="nickname"
             placeholder="Your Username"
-            className="relative z-10 w-full h-full p-4 text-yellow-200 font-semibold placeholder:text-yellow-100 text-center border border-yellow-500/30
+            className="relative z-10 w-full h-full p-4 text-[#1CBABA] font-semibold placeholder:text-yellow-100 text-center border border-white/30
                   rounded-[20px] bg-transparent
-                  focus:outline-none focus:border-yellow-500 focus:border-2
+                  focus:outline-none focus:border-[#1CBABA] focus:border-2
                   bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent hover:cursor-not-allowed"
             value={userName}
             // onChange={(e) => setUserName(e.target.value)}
@@ -130,18 +124,15 @@ function ProfileInfo({
         </span>
 
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
-          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
-
           {/* visible layer */}
           <div
-            className="relative z-10 w-full h-full flex items-center justify-center gap-5 border border-yellow-500/30
+            className="relative z-10 w-full h-full flex items-center justify-center gap-5 border border-white/30
         rounded-[20px] bg-transparent bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent
-        focus-within:border-yellow-500 focus-within:border-2"
+        focus-within:border-[#1CBABA] focus-within:border-2"
           >
             <button
               onClick={() => setIs2FAEnabled(!is2FAEnabled)}
-              className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${is2FAEnabled ? "bg-yellow-500" : "bg-gray-500"
+              className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${is2FAEnabled ? "bg-[#1CBABA]" : "bg-gray-500"
                 }`}
             >
               <span
@@ -204,17 +195,17 @@ function ProfilePasswords({
           Current Password
         </label>
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
+          {/* <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div> */}
 
-          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
+          {/* <div className="absolute inset-0 bg-black opacity-20 z-0"></div> */}
 
           <input
             id="o-password"
             type={showOldPassword ? "text" : "password"}
             placeholder="Enter your current password"
-            className="relative z-10 w-full h-full p-4 pr-[40px] text-yellow-200 font-semibold placeholder:text-yellow-100 text-center border border-yellow-500/30
+            className="relative z-10 w-full h-full p-4 pr-[40px] text-[#1CBABA] font-semibold placeholder:text-[#1CBABA]/75 text-center border border-white/30
                 rounded-[20px] bg-transparent
-                focus:outline-none focus:border-yellow-500 focus:border-2
+                focus:outline-none focus:border-[#1CBABA] focus:border-2
                 bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent"
             value={oldPassword}
             onChange={(e) => setOldPassword(e.target.value)}
@@ -223,7 +214,7 @@ function ProfilePasswords({
           <button
             type="button"
             onClick={() => setShowOldPassword(!showOldPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-200 z-10"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1CBABA] z-10"
           >
             {showOldPassword ? (
               <Eye className="w-5 h-5  md:w-6 md:h-6" />
@@ -242,17 +233,17 @@ function ProfilePasswords({
           New Password
         </label>
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
+          {/* <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div> */}
 
-          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
+          {/* <div className="absolute inset-0 bg-black opacity-20 z-0"></div> */}
 
           <input
             type={showNewPassword ? "text" : "password"}
             id="n-password"
             placeholder="Enter your new password"
-            className="relative z-10 w-full h-full p-4 pr-[40px] text-yellow-200 font-semibold placeholder:text-yellow-100 text-center border border-yellow-500/30
+            className="relative z-10 w-full h-full p-4 pr-[40px] text-[#1CBABA] font-semibold placeholder:text-[#1CBABA]/75 text-center border border-white/30
                 rounded-[20px] bg-transparent
-                focus:outline-none focus:border-yellow-500 focus:border-2
+                focus:outline-none focus:border-[#1CBABA] focus:border-2
                 bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
@@ -261,7 +252,7 @@ function ProfilePasswords({
           <button
             type="button"
             onClick={() => setShowNewPassword(!showNewPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-200 z-10"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1CBABA] z-10"
           >
             {showNewPassword ? (
               <Eye className="w-5 h-5  md:w-6 md:h-6" />
@@ -281,17 +272,14 @@ function ProfilePasswords({
         </label>
 
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
-
-          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
           <input
             type={showConfirmPassword ? "text" : "password"}
             id="c-password"
             placeholder="Confirm your new password"
-            className="relative z-10 w-full h-full p-4 pr-[40px] text-yellow-200 font-semibold placeholder:text-yellow-100 text-center border border-yellow-500/30
+            className="relative z-10 w-full h-full p-4 pr-[40px] text-[#1CBABA] font-semibold placeholder:text-[#1CBABA]/75 text-center border border-white/30
                 rounded-[20px] bg-transparent
-                focus:outline-none focus:border-yellow-500 focus:border-2
+                focus:outline-none focus:border-[#1CBABA] focus:border-2
                 bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -300,7 +288,7 @@ function ProfilePasswords({
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-200 z-10"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1CBABA] z-10"
           >
             {showConfirmPassword ? (
               <Eye className="w-5 h-5  md:w-6 md:h-6" />
@@ -332,8 +320,6 @@ function ProfileBio({ bioText, setBioText, textareaRef }: PropsProfileBio) {
           Bio
         </label>
         <div className="relative w-full rounded-[20px] overflow-hidden flex items-center justify-center">
-          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
-          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
           <textarea
             ref={textareaRef} // ATTACH the ref to the textarea
             id="bio"
@@ -341,14 +327,14 @@ function ProfileBio({ bioText, setBioText, textareaRef }: PropsProfileBio) {
             value={bioText}
             onChange={(e) => setBioText(e.target.value)}
             rows={1}
-            className="relative w-full h-full max-h-[200px] p-4  text-yellow-200 font-semibold placeholder:text-yellow-100 text-center border border-yellow-500/30
+            className="relative w-full h-full max-h-[200px] p-4  text-[#1CBABA] font-semibold placeholder:text-yellow-100 text-center border border-white/30
           rounded-[20px] bg-transparent 
-          focus:outline-none focus:border-yellow-500 focus:border-2
+          focus:outline-none focus:border-[#1CBABA] focus:border-2
           bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent
           scrollbar"
           />
         </div>
-        <div className="text-xs text-right mt-1 text-amber-200/70 self-end">
+        <div className="text-xs text-right mt-1 text-[#1CBABA]/80 self-end">
           {bioText.length}/150 characters max
         </div>
       </div>
@@ -373,17 +359,14 @@ function ProfileLanguageEmail({ email }: PropsProfileLanguageEmail) {
         >
           Language
         </label>
-        <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden border border-yellow-500/30">
-          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
-
-          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
+        <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden border border-white/30">
 
           <div className="relative">
             {/* to change later the default value to current languges */}
             <select
               id="language"
               defaultValue="Select Language"
-              className="w-full appearance-none bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent text-yellow-200
+              className="w-full appearance-none bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent text-[#1CBABA]
            font-bold px-4 py-4 text-center focus:outline-none focus:border-amber-500"
               onChange={(e) => {
                 alert("Selected language:" + e.target.value);
@@ -402,7 +385,7 @@ function ProfileLanguageEmail({ email }: PropsProfileLanguageEmail) {
                 French
               </option>
             </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-amber-500">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#1CBABA]">
               <ChevronDown className="h-6 w-6  md:w-8 md:h-8" />
             </div>
           </div>
@@ -417,17 +400,13 @@ function ProfileLanguageEmail({ email }: PropsProfileLanguageEmail) {
           Email
         </label>
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
-
-          <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
-
           <input
             type="email"
             id="email"
             placeholder="Your email"
-            className="relative z-10 w-full h-full p-4 text-yellow-200 font-semibold placeholder:text-yellow-100 text-center border border-yellow-500/30
+            className="relative z-10 w-full h-full p-4 text-[#1CBABA] font-semibold placeholder:text-yellow-100 text-center border border-white/30
              rounded-[20px] bg-transparent text-sm md:text-base
-             focus:outline-none focus:border-yellow-500 focus:border-2
+             focus:outline-none focus:border-[#1CBABA] focus:border-2
              bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent hover:cursor-not-allowed"
             value={email}
             readOnly
@@ -447,15 +426,14 @@ type PropsProfileSavings = {
 function ProfileSavings({ handleSave }: PropsProfileSavings) {
   return (
     <div className="flex justify-center mt-20">
-      <div className="relative flex justify-center w-full max-w-[140px] h-[56px] rounded-[20px] overflow-hidden border border-yellow-500/30 hover:border-2 hover:border-yellow-500">
-        <div className="absolute inset-0 bg-[url('/bgImg.jpg')] bg-cover bg-center opacity-80 z-0"></div>
-
-        <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
+      <div className="relative flex justify-center w-full max-w-[140px] h-[56px] rounded-[20px] overflow-hidden border border-white/30 hover:border-2 hover:border-[#1CBABA]
+      bg-transparent bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent
+      ">
         <button
           type="button"
           onClick={handleSave}
-          className="bg-transparent w-full h-full text-yellow-200 hover:bg-amber-900/30 rounded[20px] font-bold
-          px-12 py-2 transition-all z-10 bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent"
+          className="bg-transparent w-full h-full text-[#1CBABA] rounded[20px] font-bold cursor-pointer
+          px-12 py-2 transition-all z-10"
         >
           Save
         </button>
@@ -507,7 +485,7 @@ function Popup({ message, type, onClose }: PopupProps) {
     <div className="fixed inset-0 flex items-center justify-center z-50">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fadeIn"
+        className="absolute inset-0  backdrop-blur-md animate-fadeIn"
         onClick={onClose}
       />
 
@@ -515,13 +493,13 @@ function Popup({ message, type, onClose }: PopupProps) {
       <div
         className={`relative p-8  text-white font-semibold 
           transform transition-all duration-300 animate-slideUp
-          bg-[rgba(0,0,0,0.5)] backdrop-blur-md border border-yellow-500/30 rounded-lg shadow-2xl
-          ${isSuccess ? "shadow-green-500/20" : "shadow-red-500/20"}
+          bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20 rounded-2xl
+          ${isSuccess ? "shadow-[#1CBABA]/20" : "shadow-[#FFB700]/20"}
         `}
       >
         {/* Close Button - Added for better UX */}
         <button
-          className="absolute top-3 right-3 text-white/70 hover:text-white transition-colors duration-200"
+          className="absolute top-3 right-3 text-white/70 hover:text-white transition-colors duration-200 cursor-pointer"
           onClick={onClose}
         >
           <X size={20} />
@@ -530,9 +508,9 @@ function Popup({ message, type, onClose }: PopupProps) {
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center text-center">
           {isSuccess ? (
-            <Check size={48} className="text-green-400 mb-4 drop-shadow-lg" />
+            <Check size={48} className="text-[#1CBABA] mb-4 drop-shadow-lg" />
           ) : (
-            <X size={48} className="text-red-400 mb-4 drop-shadow-lg" />
+            <X size={48} className="text-[#FFB700] mb-4 drop-shadow-lg" />
           )}
           <p
             className="mb-6 tracking-wide drop-shadow-md"
@@ -543,8 +521,8 @@ function Popup({ message, type, onClose }: PopupProps) {
           <button
             className={`py-3 px-8 rounded-lg font-bold text-base uppercase tracking-wider
               transition-all duration-200 transform hover:scale-105 active:scale-95
-              bg-gradient-to-r from-[#73ca7d] to-[#1cd663]
-              shadow-lg shadow-[#8a2be2]/30
+              bg-[#1CBABA]/85 cursor-pointer
+              shadow-lg shadow-gray-500/30
             `}
             onClick={onClose}
             style={{ textShadow: "0 0 5px rgba(0,0,0,0.3)" }}
@@ -809,14 +787,15 @@ function Settings() {
                         2xl:mt-[67px] xl:mt-[60px] overflow-y-hidden
                     "
         >
-          <div className="flex items-center justify-center h-[87vh] md:h-[90vh] p-4 w-full flex-1">
-            <div className="relative w-full md:w-[85%] h-[100%] overflow-hidden rounded-[50px] flex items-center justify-center p-4 max-h-[1200px] flex-1">
+          <div className="flex items-center justify-center h-[87vh] md:h-[90vh] p-4 w-full flex-1 v">
+            <div className="relative w-full md:w-[85%] h-[100%] overflow-hidden  flex items-center justify-center p-4 max-h-[1200px] flex-1
+            bg-gray/10 backdrop-blur-2xl rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]  border border-white/30">
               {/* background layers */}
-              <div className="absolute inset-0 settings-profile-bg bg-cover bg-center"></div>
-              <div className="absolute inset-0 bg-[rgba(9,0,0,0.5)]"></div>
+              <div className="absolute inset-0"></div>
+              <div className="absolute inset-0"></div>
 
               {/* content wrapper */}
-              <div className="relative z-10 w-full w[90%] h-[100%] rounded-[50px] bg-[rgba(0,0,0,0.4)] overflow-hidden  text-white pt-6 md:p-4">
+              <div className="relative z-10 w-full w[90%] h-[100%] rounded-2xl bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20 overflow-hidden  text-white pt-6 md:p-4">
                 <div className="h-full overflow-y-auto scrollbar">
                   {/* profile image section */}
                   <ProfileImage
@@ -876,7 +855,7 @@ function Settings() {
 
         {/* // Popup section at the end */}
         {showTwoFASetup && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm animate-fadeIn flex justify-center items-center z-50">
+          <div className="fixed inset-0 backdrop-blur-md animate-fadeIn flex justify-center items-center z-50">
               <TwoFASetup
                 is2FAEnabled={is2FAEnabled}
                 onClose={() => setShowTwoFASetup(false)}
