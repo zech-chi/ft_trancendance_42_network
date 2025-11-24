@@ -24,9 +24,15 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
     const userId = loggedUserId;
   
     const otp = digits.join("");
-  
     const isCodeComplete = otp.length === 6 && digits.every((d) => d !== "");
   
+    const resetInputs = () => {
+      setDigits(["", "", "", "", "", ""]);
+      // Focus back on the first input
+      setTimeout(() => inputRefs.current[0]?.focus(), 10);
+    };
+  
+    // --- LOGIC: Handle Input Change + Auto Submit ---
     const handleDigitChange = (value: string, index: number) => {
       if (!/^\d?$/.test(value)) return;
   
@@ -34,8 +40,21 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
       newDigits[index] = value;
       setDigits(newDigits);
   
+      // Auto-focus next input
       if (value && index < 5) {
         inputRefs.current[index + 1]?.focus();
+      }
+
+      // CHECK: If all digits are filled, auto-submit
+      if (newDigits.every(d => d !== "") && value !== "") {
+        const completeOtp = newDigits.join("");
+        
+        // Determine which action to take based on current mode
+        if (!is2FAEnabled && isSetupStarted) {
+             handleEnable2FA(completeOtp);
+        } else if (is2FAEnabled && isDisabling) {
+             handleDisable2FA(completeOtp);
+        }
       }
     };
   
@@ -46,19 +65,26 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
       const newDigits = pasted.split("").concat(Array(6).fill("")).slice(0, 6);
       setDigits(newDigits);
   
-      if (newDigits.every((d) => d !== "")) inputRefs.current[5]?.focus();
+      // If paste fills everything, submit
+      if (newDigits.every((d) => d !== "")) {
+        inputRefs.current[5]?.focus();
+        const completeOtp = newDigits.join("");
+
+        if (!is2FAEnabled && isSetupStarted) {
+            handleEnable2FA(completeOtp);
+        } else if (is2FAEnabled && isDisabling) {
+            handleDisable2FA(completeOtp);
+        }
+      }
     };
-  
-    const resetInputs = () => setDigits(["", "", "", "", "", ""]);
   
     const handleSetup2FA = async () => {
       setStatus("Generating QR...");
       try {
+        // Ensure no body is sent, and Content-Type is NOT set to json to avoid the 400 error
         const res = await fetch("/api/auth/2fa-setup", {
           method: "POST",
           credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId }),
         });
   
         const data = await res.json();
@@ -72,15 +98,19 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
       }
     };
   
-    const handleEnable2FA = async () => {
-      if (!isCodeComplete) return;
+    // --- LOGIC: Enable + Auto Clear on Error ---
+    // Accepting optional otpValue allows us to pass the code before state updates
+    const handleEnable2FA = async (otpValue?: string) => {
+      const codeToUse = otpValue || otp;
+      if (codeToUse.length !== 6) return;
+
       setStatus("Verifying...");
       try {
         const res = await fetch("/api/auth/2fa-enable", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, otp }),
+          body: JSON.stringify({ otp: codeToUse }),
         });
   
         const data = await res.json();
@@ -89,19 +119,24 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
         setStatus("✅ 2FA enabled!");
         onEnable();
       } catch (err: any) {
-        setStatus(err.message);
+        setStatus(err.message || "Verification failed");
+        // Auto clear inputs on error
+        resetInputs(); 
       }
     };
   
-    const handleDisable2FA = async () => {
-      if (!isCodeComplete) return;
+    // --- LOGIC: Disable + Auto Clear on Error ---
+    const handleDisable2FA = async (otpValue?: string) => {
+      const codeToUse = otpValue || otp;
+      if (codeToUse.length !== 6) return;
+
       setStatus("Verifying...");
       try {
         const res = await fetch("/api/auth/2fa-disable", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, otp }),
+          body: JSON.stringify({otp: codeToUse }),
         });
   
         const data = await res.json();
@@ -112,17 +147,18 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
         setIsDisabling(false);
         onDisable();
       } catch (err: any) {
-        setStatus(err.message);
+        setStatus(err.message || "Verification failed");
+        // Auto clear inputs on error
+        resetInputs();
       }
     };
   
     return (
-      // RESPONSIVE FIX: Added inset-0, bg-black/50 for overlay, and mx-4 for mobile margins
       <div className="fixed inset-0 flex justify-center items-center z-50 backdrop-blur-md p-4">
         <div
           className="relative w-full max-w-[520px] p-6 md:p-8 rounded-3xl 
           shadow-[0_0_40px_rgba(28,186,186,0.45)] 
-          bg-gray-800/40 backdrop-blur-xl p-6 shadow-xl border border-white/20 rounded-2xl text-white
+          bg-gray-800/40 backdrop-blur-xl border border-white/20 text-white
           max-h-[90vh] overflow-y-auto"
         >
           <button
@@ -132,7 +168,7 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
             <X size={24} />
           </button>
   
-          <h2 className="text-center text-2xl font-bold  tracking-wide mb-6">
+          <h2 className="text-center text-2xl font-bold tracking-wide mb-6">
             Two-Factor Authentication
           </h2>
   
@@ -174,7 +210,7 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
                 </div>
   
                 <button
-                  onClick={handleEnable2FA}
+                  onClick={() => handleEnable2FA()} // Pass nothing to use state
                   disabled={!isCodeComplete}
                   className="w-full py-3 rounded-xl font-semibold cursor-pointer
                   bg-[#1CBABA]/80 hover:bg-[#1CBABA] transition
@@ -214,7 +250,7 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
                   </div>
   
                   <button
-                    onClick={handleDisable2FA}
+                    onClick={() => handleDisable2FA()} // Pass nothing to use state
                     disabled={!isCodeComplete}
                     className="w-fit px-3.5 py-3 rounded-xl font-semibold
                     bg-[#1CBABA]/80 hover:bg-[#1CBABA] transition cursor-pointer
@@ -228,7 +264,7 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
           )}
   
           {status && (
-            <p className="text-center text-sm mt-4 break-words">
+            <p className={`text-center text-sm mt-4 break-words ${status.includes("failed") || status.includes("Error") ? "text-red-400" : "text-white"}`}>
               {status}
             </p>
           )}

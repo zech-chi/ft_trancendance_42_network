@@ -292,8 +292,8 @@ export default function VerifyEmailPage() {
               value={digit}
               onChange={e => handleChange(index, e.target.value)}
               onKeyDown={e => handleKeyDown(index, e)}
-              className="w-10 h-14 text-center text-2xl font-bold bg-brown-800/70 border border-brown-700/50 rounded-lg text-white placeholder-gray-500 focus:border-pink-500/50 focus:outline-none transition-all"
-              style={{backgroundColor: 'rgba(0, 0, 5, 0.5)', borderColor: 'rgba(0, 0, 0, 0.9)'}}
+                          className="w-11 h-14 text-center text-2xl font-bold bg-brown-800/70 border border-white/5  rounded-lg text-white placeholder-gray-500 focus:border-[#1CBABA]  focus:outline-none transition-all shadow-[0_0_40px_rgba(28,186,186,0.45)]"
+
               disabled={loading || resending}
             />
           ))}

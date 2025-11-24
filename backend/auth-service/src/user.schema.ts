@@ -71,18 +71,13 @@ const ResendVerificationCodeResponseSchema = z.object({
 });
 export type ResendVerificationCodeResponse = z.infer<typeof ResendVerificationCodeResponseSchema>;
 
-const TwoFASetupSchema = z.object({
-    userId: z.number(),
-});
-export type TwoFASetupInput = z.infer<typeof TwoFASetupSchema>;
 const TwoFASetupResponseSchema = z.object({
     qr: z.string(),
 });
 export type TwoFASetupResponse = z.infer<typeof TwoFASetupResponseSchema>;
 
 const TwoFAEnableSchema = z.object({
-    userId: z.number(),
-    otp: z.number(),
+    otp: z.string(),
 });
 export type TwoFAEnableInput = z.infer<typeof TwoFAEnableSchema>;
 const TwoFAEnableResponseSchema = z.object({
@@ -91,7 +86,7 @@ const TwoFAEnableResponseSchema = z.object({
 export type TwoFAEnableResponse = z.infer<typeof TwoFAEnableResponseSchema>;
 
 const TwoFAVerifySchema = z.object({
-    otp: z.number(),
+    otp: z.string(),
 });
 export type TwoFAVerifyInput = z.infer<typeof TwoFAVerifySchema>;
 const TwoFAVerifyResponseSchema = z.object({
@@ -107,8 +102,7 @@ const TwoFAVerifyResponseSchema = z.object({
 export type TwoFAVerifyResponse = z.infer<typeof TwoFAVerifyResponseSchema>;
 
 const TwoFADisableSchema = z.object({
-    userId: z.number(),
-    otp: z.number(),
+    otp: z.string(),
 });
 export type TwoFADisableInput = z.infer<typeof TwoFADisableSchema>;
 const TwoFADisableResponseSchema = z.object({
@@ -116,16 +110,18 @@ const TwoFADisableResponseSchema = z.object({
 });
 
 export type TwoFADisableResponse = z.infer<typeof TwoFADisableResponseSchema>;
-const TwoFAVerifyDisableSchema = z.object({
-    otp: z.number(),
-});
-export type TwoFAVerifyDisableInput = z.infer<typeof TwoFAVerifyDisableSchema>;
-const TwoFAVerifyDisableResponseSchema = z.object({
-    message: z.string(),
-    success: z.boolean(),
-});
+// const TwoFAVerifyDisableSchema = z.object({
+//     otp: z.string(),
+// });
+// export type TwoFAVerifyDisableInput = z.infer<typeof TwoFAVerifyDisableSchema>;
+// const TwoFAVerifyDisableResponseSchema = z.object({
+//     message: z.string(),
+//     success: z.boolean(),
+// });
 
 // build JSON schemas for Fastify
+
+
 const { schemas, $ref } = buildJsonSchemas({
     RegisterUserSchema,
     RegisterUserResponseSchema,
@@ -135,7 +131,6 @@ const { schemas, $ref } = buildJsonSchemas({
     VerifyEmailResponseSchema,
     ResendVerificationCodeSchema,
     ResendVerificationCodeResponseSchema,
-    TwoFASetupSchema,
     TwoFASetupResponseSchema,
     TwoFAEnableSchema,
     TwoFAEnableResponseSchema,
@@ -143,9 +138,6 @@ const { schemas, $ref } = buildJsonSchemas({
     TwoFAVerifyResponseSchema,
     TwoFADisableSchema,
     TwoFADisableResponseSchema,
-    TwoFAVerifyDisableSchema,
-    TwoFAVerifyDisableResponseSchema,
-
 });
 
 export const userSchemas = { schemas, $ref };
