@@ -87,13 +87,6 @@ export async function authRoutes(app: FastifyInstance) {
         },
         LoginUser
     );
-    
-    // logout
-    // app.delete('/logout', (req: FastifyRequest, reply: FastifyReply) => {
-    //   reply.clearCookie('access_token', { path: '/' });
-    //   reply.clearCookie('refresh_token', { path: '/auth/refresh' });
-    //   reply.code(200).send({ message: 'Logged out successfully' });
-    // });
 
     app.delete('/logout', (req: FastifyRequest, reply: FastifyReply) => {
       reply.clearCookie('access_token', {
@@ -185,24 +178,23 @@ export async function authRoutes(app: FastifyInstance) {
       '/2fa-setup',
       {
         schema: {
-          body: $ref('TwoFASetupSchema'),
           response: {
             200: $ref('TwoFASetupResponseSchema'),
           },
         },
       },
       async (req: FastifyRequest, reply: FastifyReply) => {
-        const { userId } = req.body as { userId: number };
         const accessToken =  req.cookies.access_token;
-    
+
         //check token
         if (!accessToken){
           return reply.code(401).send({ error: "unauthorized" });
         } 
+        let userId: number;
         try {
           // Verify JWT token (from cookie)
           const payload = app.jwt.verify(accessToken) as { id: number; email: string };
-          if (payload.id !== userId) return reply.code(403).send({ error: "Forbidden" });
+          userId = payload.id;
       
         } catch (err) {
           return reply.code(401).send({ error: "Invalid or expired token" });
@@ -216,7 +208,7 @@ export async function authRoutes(app: FastifyInstance) {
           body: JSON.stringify({ userId: userId }),
         }).then(res => res.json());
         if (row.twofa_enabled) return reply.code(400).send({ error: "2FA already enabled" });
-    
+    if (row.twofa_enabled) return reply.code(400).send({ error: "2FA already enabled" });
         const secret = generateSecret();
         // Save secret temporarily (optionally store in a 'pending_twofa' column until user verifies)
         
@@ -247,18 +239,15 @@ export async function authRoutes(app: FastifyInstance) {
       },
       async(req: FastifyRequest, reply: FastifyReply) =>
  {
-    const { userId, otp } = req.body as { userId: number; otp: string };
+    const {otp} = req.body as {otp: string };
     const accessToken =  req.cookies.access_token;
-
+    let userId: number;
     //check token
     if (!accessToken) return reply.code(401).send({ error: "unauthorized" });
   try {
       // Verify JWT token (from cookie)
       const payload = app.jwt.verify(accessToken) as { id: number; email: string };
-      
-      // Optional: check if payload.id matches userId in body
-      if (payload.id !== userId) return reply.code(403).send({ error: "Forbidden" });
-  
+      userId = payload.id;
     } catch (err) {
       return reply.code(401).send({ error: "Invalid or expired token" });
     }
@@ -297,9 +286,9 @@ export async function authRoutes(app: FastifyInstance) {
       },
     },
     async (req: FastifyRequest, reply: FastifyReply) => {
-      const { userId, otp } = req.body as { userId: number; otp: string };
+      const { otp } = req.body as { otp: string };
       const accessToken = req.cookies.access_token;
-  
+      let userId: number;
       // Check token
       if (!accessToken) return reply.code(401).send({ error: "unauthorized" });
       try {
@@ -307,7 +296,7 @@ export async function authRoutes(app: FastifyInstance) {
         const payload = app.jwt.verify(accessToken) as { id: number; email: string };
   
         // Optional: check if payload.id matches userId in body
-        if (payload.id !== userId) return reply.code(403).send({ error: "Forbidden" });
+        userId = payload.id;
       } catch (err) {
         return reply.code(401).send({ error: "Invalid or expired token" });
       }
