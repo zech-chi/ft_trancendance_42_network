@@ -57,7 +57,7 @@ export default function Sidebar(): JSX.Element {
         <aside 
             className={`
                 fixed z-10
-                bg-white/5 backdrop-blur-2xl p-8 rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)] border border-white/30
+                bg-white/5 backdrop-blur-2xl p-2 rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)] xl:border border-white/30
                 w-full xl:w-[65px] 2xl:w-[80px]
                 xl:rounded-full
                 flex flex-col
@@ -77,7 +77,7 @@ export default function Sidebar(): JSX.Element {
                     <Link 
                         key={link.href}
                         href={link.href}
-                        className={`flex items-center justify-center w-10 h-10 xl:w-13 xl:h-13 2xl:w-15 2xl:h-15 rounded-full transition 
+                        className={`flex items-center justify-center w-10 h-10 xl:w-13 xl:h-13 2xl:w-15 2xl:h-15 rounded-full transition border border-white/15
                             ${selected === '/protected' && link.href === '/protected' 
                                 ? 'bg-black/50' 
                                 : selected !== '/protected' && selected.startsWith(link.href) && link.href !== '/protected'

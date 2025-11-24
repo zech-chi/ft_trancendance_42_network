@@ -143,7 +143,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
 
 function Logo(): JSX.Element {
   return (
-    <div className="mr-5 mt-8">
+    <div className="mr-5 mt-1">
       {/* <Image
         src="/logo.png"
         alt="Logo"
@@ -157,7 +157,7 @@ function Logo(): JSX.Element {
           alt="Logo"
           width={100}
           height={100}
-          className="w-[75px] h-auto xl:w-[125px] 2xl:w-[150px]"
+          className="w-[50px] h-auto xl:w-[75px] 2xl:w-[90px]"
           priority
       />
 
