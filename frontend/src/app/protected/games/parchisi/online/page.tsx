@@ -121,19 +121,18 @@ function OnlinePageContent() {
         {/* Content Card */}
         <Card className="rounded-2xl overflow-auto p-6">
           {activeTab === 'join' && (
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-4 ">
               <Input
                 type="text"
                 placeholder="Enter game code"
                 value={gameCode}
                 onChange={(e) => setGameCode(e.target.value)}
-                className="w-full text-center text-white bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm "
+                className="w-full text-center text-white  from-black/40 to-black/20 backdrop-blur-sm rounded-2xl"
               />
               <Button
                 onClick={() => handleJoinGame()}
                 disabled={!gameCode || gameCode.length < 4}
                 loading={isJoining}
-                className="w-full bg-gradient-to-r from-[#ff6f91] to-[#ff9671] hover:opacity-90 text-white"
               >
                 Join Game
               </Button>
@@ -145,7 +144,6 @@ function OnlinePageContent() {
               <Button
                 onClick={handleCreateGame}
                 loading={isCreating}
-                className="w-full bg-gradient-to-r from-[#ff6f91] to-[#ff9671] hover:opacity-90 text-white"
               >
                 Create New Game
               </Button>
@@ -153,7 +151,7 @@ function OnlinePageContent() {
           )}
 
           {activeTab === 'existing' && (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 border border-[#1CBABA]/70 rounded-2xl">
               {isLoadingRooms ? (
                 <p className="text-[#ffb86b]/80 text-center">Loading rooms...</p>
               ) : rooms.length === 0 ? (
@@ -163,11 +161,11 @@ function OnlinePageContent() {
                   {rooms.map((room) => (
                     <li
                       key={room.id}
-                      className="flex items-center justify-between p-3 border border-[#ffb86b]/20 rounded-xl hover:bg-[#ffb86b]/10 gap-3.5"
+                      className="flex items-center justify-between p-3 border border-[#ffb86b]/20 rounded-xl hover:bg-[#000000]/15 gap-3.5"
                     >
                       <div>
-                        <p className="font-medium text-[#ffb86b]">Room {room.id}</p>
-                        <p className="text-sm text-[#ffb86b]/70">{room.players} players · {room.status}</p>
+                        <p className="font-medium text-white">Room {room.id.slice(0, 6)}</p>
+                        <p className="text-sm text-white/70">{room.players} players · {room.status}</p>
                       </div>
                       <Button
                         onClick={() => handleJoinRoom(room.id)}
@@ -183,10 +181,6 @@ function OnlinePageContent() {
             </div>
           )}
         </Card>
-{/* 
-        <div className="mt-6 text-center text-sm text-[#ffb86b]/70">
-          🚧 Invite Friends feature coming soon...
-        </div> */}
       </main>
     </div>
   );
