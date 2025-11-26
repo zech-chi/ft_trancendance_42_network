@@ -3,7 +3,7 @@ DOCKER_COMPOSE = docker-compose
 PROJECT_NAME = fullmerge
 
 # Services
-SERVICES = frontend auth-service chat-service dashboard-service db-service ping-pong-service parcheesi-service user-service
+SERVICES = frontend auth-service chat-service dashboard-service db-service ping-pong-service parcheesi-service user-service gateway-service
 MONITORING = prometheus grafana
 
 # ------------------------
@@ -62,6 +62,6 @@ restart-%:
 ## Stop a specific service (ex: make stop-frontend)
 stop:
 	$(DOCKER_COMPOSE)  stop
-# 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) stop $*
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) stop $*
 prune:
 	docker system prune -a

@@ -1,17 +1,28 @@
 filebeat.inputs:
-  - type: docker
-    containers.ids:
-      - "*" # Lit tous les conteneurs
+  - type: container
+    paths:
+      - /var/lib/docker/containers/*/*.log
     processors:
-      - add_docker_metadata: ~ # Ajoute toutes les métadonnées Docker (container_name, image, etc.)
+      - add_docker_metadata: ~
       - drop_event.when:
           equals:
-            docker.container.image: "docker.elastic.co/beats/filebeat:8.15.0" # ignore Filebeat lui-même
+            container.name: "filebeat" # optional, to ignore filebeat logs itself
 
+# Optional global fields
+fields:
+  environment: dev
+
+# Output to Logstash
 output.logstash:
-  hosts: ["logstash:5044"] # Envoie tous les logs à Logstash
+  hosts: ["logstash:5044"]
 
-# Optional: activer le monitoring Filebeat (port 5066 par défaut)
+# Optional: monitoring
 monitoring:
   enabled: true
-  cluster_uuid: "docker-filebeat"
+  elasticsearch:
+    hosts: ["http://elasticsearch:9200"]
+
+logging.level: info
+logging.to_files: false # disables file logging
+logging.to_syslog: false
+logging.to_console: true

@@ -9,6 +9,7 @@ import fastifyOauth2 from '@fastify/oauth2';
 import fastifySession from '@fastify/session';
 import crypto from 'crypto';
 import fastifyJwt from "@fastify/jwt";
+import metricsPlugin from "fastify-metrics";
 // import jwt from '@fastify/jwt';
 
 dotenv.config();
@@ -17,6 +18,7 @@ dotenv.config();
 console.log("==========>> DB_SECRET:", process.env.SECRET_KEY);  
 
 const fastify = Fastify({ logger: true });
+fastify.register(metricsPlugin, { endpoint: "/metrics" });
 
 // get session secret from env (must be >= 32 chars); if not present, generate one (dev only)
 const SESSION_SECRET = process.env.SESSION_SECRET && process.env.SESSION_SECRET.length >= 32

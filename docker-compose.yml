@@ -1,373 +1,35 @@
-# services:
-#   # ---------------------------
-#   # Frontend
-#   frontend:
-#     build: ./frontend
-#     container_name: frontend
-#     ports:
-#       - "3000:3000"
-#     depends_on:
-#       - auth-service
-#       - chat-service
-#       - dashboard-service
-#       - db-service
-#       - ping-pong-service
-#       - parcheesi-service
-#       - user-service
-#     networks:
-#       - monitoring
+networks:
+  monitoring:
+    driver: bridge
 
-#   # ---------------------------
-#   # Backend Services
-#   auth-service:
-#     build: backend/auth-service
-#     container_name: auth-service
-#     ports:
-#       - "5001:5001"
-#     networks:
-#       - monitoring
-#     environment:
-#       - SECRET_KEY=mysecretkey
-
-#   chat-service:
-#     build: backend/chat-service
-#     container_name: chat-service
-#     ports:
-#       - "5003:5003"
-#     networks:
-#       - monitoring
-
-#   dashboard-service:
-#     build: backend/dashboard-service
-#     container_name: dashboard-service
-#     ports:
-#       - "5002:5002"
-#     networks:
-#       - monitoring
-
-#   db-service:
-#     build: backend/db-service
-#     container_name: db-service
-#     ports:
-#       - "5000:5000"
-#     volumes:
-#       - ./backend/db-service/src/db:/app/src/db   # persistance sqlite
-#     networks:
-#       - monitoring
-
-#   ping-pong-service:
-#     build: backend/ping-pong-service
-#     container_name: ping-pong-service
-#     ports:
-#       - "5500:5500"
-#     networks:
-#       - monitoring
-
-#   parcheesi-service:
-#     build: backend/parcheesi-service
-#     container_name: parcheesi-service
-#     ports:
-#       - "5555:5555"
-#     networks:
-#       - monitoring
-#   user-service:
-#     build: backend/User-Service
-#     container_name: user-service
-#     ports:
-#       - "5004:5004"
-#     networks:
-#       - monitoring   
-
-#   # ---------------------------
-#   # Prometheus
-#   prometheus:
-#     image: prom/prometheus
-#     container_name: prometheus
-#     ports:
-#       - "9090:9090"
-#     volumes:
-#       - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
-#     networks:
-#       - monitoring
-
-#   # ---------------------------
-#   # Grafana
-#   grafana:
-#     image: grafana/grafana
-#     container_name: grafana
-#     ports:
-#       - "4000:3000"
-#     environment:
-#       - GF_SECURITY_ADMIN_USER=admin
-#       - GF_SECURITY_ADMIN_PASSWORD=admin
-#     networks:
-#       - monitoring
-#     volumes:
-#       - grafana_data:/var/lib/grafana
-
-# # ---------------------------
-# networks:
-#   monitoring:
-#     driver: bridge
-
-# volumes:
-#   grafana_data:
-#   prometheus_conf:
-#     driver: local
-
-
-
-# services:
-#   # ---------------------------
-#   # Frontend
-#   frontend:
-#     build: ./frontend
-#     container_name: frontend
-#     ports:
-#       - "3000:3000"
-#     depends_on:
-#       - auth-service
-#       - chat-service
-#       - dashboard-service
-#       - db-service
-#       - ping-pong-service
-#       - parcheesi-service
-#       - user-service
-#     networks:
-#       - monitoring
-#     logging:
-#       driver: json-file
-
-#   # ---------------------------
-#   # Backend Services
-#   auth-service:
-#     build: backend/auth-service
-#     container_name: auth-service
-#     ports:
-#       - "5001:5001"
-#     networks:
-#       - monitoring
-#     environment:
-#       - SECRET_KEY=mysecretkey
-#     logging:
-#       driver: json-file
-
-#   chat-service:
-#     build: backend/chat-service
-#     container_name: chat-service
-#     ports:
-#       - "5003:5003"
-#     networks:
-#       - monitoring
-#     logging:
-#       driver: json-file
-
-#   dashboard-service:
-#     build: backend/dashboard-service
-#     container_name: dashboard-service
-#     ports:
-#       - "5002:5002"
-#     networks:
-#       - monitoring
-#     logging:
-#       driver: json-file
-
-#   db-service:
-#     build: backend/db-service
-#     container_name: db-service
-#     ports:
-#       - "5000:5000"
-#     volumes:
-#       - ./backend/db-service/src/db:/app/src/db
-#     networks:
-#       - monitoring
-#     logging:
-#       driver: json-file
-
-#   ping-pong-service:
-#     build: backend/ping-pong-service
-#     container_name: ping-pong-service
-#     ports:
-#       - "5500:5500"
-#     networks:
-#       - monitoring
-#     logging:
-#       driver: json-file
-
-#   parcheesi-service:
-#     build: backend/parcheesi-service
-#     container_name: parcheesi-service
-#     ports:
-#       - "5555:5555"
-#     networks:
-#       - monitoring
-#     logging:
-#       driver: json-file
-
-#   user-service:
-#     build: backend/User-Service
-#     container_name: user-service
-#     ports:
-#       - "5004:5004"
-#     networks:
-#       - monitoring
-#     logging:
-#       driver: json-file
-
-#   # ---------------------------
-#   # Prometheus & Grafana
-#   prometheus:
-#     image: prom/prometheus
-#     container_name: prometheus
-#     ports:
-#       - "9090:9090"
-#     volumes:
-#       - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
-#     networks:
-#       - monitoring
-
-#   grafana:
-#     image: grafana/grafana
-#     container_name: grafana
-#     ports:
-#       - "4000:3000"
-#     environment:
-#       - GF_SECURITY_ADMIN_USER=admin
-#       - GF_SECURITY_ADMIN_PASSWORD=admin
-#     networks:
-#       - monitoring
-#     volumes:
-#       - grafana_data:/var/lib/grafana
-
-#   # ---------------------------
-#   # Elasticsearch + Kibana
-#   elasticsearch:
-#     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
-#     container_name: elasticsearch
-#     environment:
-#       - discovery.type=single-node
-#       - xpack.security.enabled=false
-#       - ES_JAVA_OPTS=-Xms1g -Xmx1g
-#     ports:
-#       - "9200:9200"
-#     volumes:
-#       - es_data:/usr/share/elasticsearch/data
-#     networks:
-#       - monitoring
-
-#   kibana:
-#     image: docker.elastic.co/kibana/kibana:8.15.0
-#     container_name: kibana
-#     depends_on:
-#       - elasticsearch
-#     environment:
-#       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-#     ports:
-#       - "5601:5601"
-#     networks:
-#       - monitoring
-
-#   # ---------------------------
-#   # Logstash
-#   logstash:
-#     image: docker.elastic.co/logstash/logstash:8.15.0
-#     container_name: logstash
-#     depends_on:
-#       - elasticsearch
-#     entrypoint: /bin/bash -c "
-#       until curl -s http://elasticsearch:9200 >/dev/null; do
-#       echo 'Waiting for Elasticsearch...'
-#       sleep 5
-#       done
-#       exec /usr/share/logstash/bin/logstash -f /usr/share/logstash/pipeline
-#       "
-#     ports:
-#       - "5044:5044"
-#       - "9600:9600"
-#     volumes:
-#       - ./logstash/pipeline:/usr/share/logstash/pipeline
-#     networks:
-#       - monitoring
-
-
-#   # ---------------------------
-#   # Filebeat
-#   filebeat:
-#     image: docker.elastic.co/beats/filebeat:8.15.0
-#     container_name: filebeat
-#     user: root
-#     depends_on:
-#       - logstash
-#     volumes:
-#       - /var/lib/docker/containers:/var/lib/docker/containers:ro
-#       - /var/run/docker.sock:/var/run/docker.sock:ro
-#       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-#     networks:
-#       - monitoring
-
-# # ---------------------------
-# volumes:
-#   grafana_data:
-#   prometheus_conf:
-#     driver: local
-#   es_data:
-
-# networks:
-#   monitoring:
-#     driver: bridge
-
-
-
-
-# version: "3.9"
+volumes:
+  grafana_data:
+  prometheus_data:
+  es_data:
+  filebeat_data:
 
 services:
   # ---------------------------
   # Frontend
+  # ---------------------------
   frontend:
     build: ./frontend
     container_name: frontend
-    # ports:
-    #   - "3000:3000"
-    depends_on:
-      - auth-service
-      - chat-service
-      - dashboard-service
-      - db-service
-      - ping-pong-service
-      - parcheesi-service
-      - user-service
     networks:
       - monitoring
     # volumes:
-    #   - ./frontend:/app          # 👈 Mount your local source code
+    #   - ./frontend:/app
     #   - /app/node_modules
     logging:
       driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
-   # Nginx Reverse Proxy
-  nginx:
-    build: ./nginx       
-    container_name: nginx
-    ports:
-      - "443:443"         # HTTPS
-      - "80:80"           # HTTP
-    networks:
-      - monitoring
-    depends_on:
-      - frontend
-      - auth-service
-      - chat-service
-      - dashboard-service
-      - db-service
-      - ping-pong-service
-      - parcheesi-service
-      - gateway-service
-      - user-service
-    logging:
-      driver: json-file
   # ---------------------------
   # Backend Services
+  # ---------------------------
   auth-service:
     build: backend/auth-service
     container_name: auth-service
@@ -379,6 +41,10 @@ services:
       - SECRET_KEY=mysecretkey
     logging:
       driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
   chat-service:
     build: backend/chat-service
@@ -389,6 +55,10 @@ services:
       - monitoring
     logging:
       driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
   dashboard-service:
     build: backend/dashboard-service
@@ -399,6 +69,10 @@ services:
       - monitoring
     logging:
       driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
   db-service:
     build: backend/db-service
@@ -411,6 +85,10 @@ services:
       - monitoring
     logging:
       driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
   ping-pong-service:
     build: backend/ping-pong-service
@@ -421,6 +99,10 @@ services:
       - monitoring
     logging:
       driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
   parcheesi-service:
     build: backend/parcheesi-service
@@ -431,19 +113,27 @@ services:
       - monitoring
     logging:
       driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
   gateway-service:
     build: backend/gateway-service
-    container_name: gateway
+    container_name: gateway-service
     ports:
       - "5006:5006"
     networks:
       - monitoring
+    volumes:
+      - ./backend/gateway-service:/app
+      - /app/node_modules
     logging:
       driver: json-file
-    volumes:
-      - ./backend/gateway-service:/app          # 👈 Mount your local source code
-      - /app/node_modules
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
   user-service:
     build: backend/User-Service
@@ -454,99 +144,200 @@ services:
       - monitoring
     logging:
       driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
   # ---------------------------
-  # Prometheus & Grafana
-#   prometheus:
-#     image: prom/prometheus
-#     container_name: prometheus
-#     ports:
-#       - "9090:9090"
-#     volumes:
-#       - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
-#     networks:
-#       - monitoring
+  # Nginx Reverse Proxy
+  # ---------------------------
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    networks:
+      - monitoring
+    depends_on:
+      - frontend
+      - gateway-service
+      - grafana
+      - prometheus
+      # - kibana
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
-#   grafana:
-#     image: grafana/grafana
-#     container_name: grafana
-#     ports:
-#       - "4000:3000"
-#     environment:
-#       - GF_SECURITY_ADMIN_USER=admin
-#       - GF_SECURITY_ADMIN_PASSWORD=admin
-#     networks:
-#       - monitoring
-#     volumes:
-#       - grafana_data:/var/lib/grafana
+  prometheus:
+    build:
+      context: ./prometheus_conf
+      dockerfile: Dockerfile
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.external-url=/prometheus"
+      - "--web.route-prefix=/"
+    networks:
+      - monitoring
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
-#   # ---------------------------
-#   # Elasticsearch + Kibana
-#   elasticsearch:
-#     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
-#     container_name: elasticsearch
-#     environment:
-#       - discovery.type=single-node
-#       - xpack.security.enabled=false
-#       - ES_JAVA_OPTS=-Xms1g -Xmx1g
-#     ports:
-#       - "9200:9200"
-#     volumes:
-#       - es_data:/usr/share/elasticsearch/data
-#     networks:
-#       - monitoring
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "4000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SERVER_ROOT_URL=https://localhost/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_METRICS_ENABLED=true
+    networks:
+      - monitoring
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
-#   kibana:
-#     image: docker.elastic.co/kibana/kibana:8.15.0
-#     container_name: kibana
-#     depends_on:
-#       - elasticsearch
-#     environment:
-#       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-#     ports:
-#       - "5601:5601"
-#     networks:
-#       - monitoring
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: node-exporter
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - monitoring
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
 
-#   # ---------------------------
-#   # Logstash avec wait-for-elasticsearch
-#   logstash:
-#     image: docker.elastic.co/logstash/logstash:8.15.0
-#     container_name: logstash
-#     depends_on:
-#       - elasticsearch
-#     entrypoint: /bin/bash -c "until curl -s http://elasticsearch:9200 >/dev/null; do echo 'Waiting for Elasticsearch...' ; sleep 5; done; exec /usr/share/logstash/bin/logstash -f /usr/share/logstash/pipeline"
-#     ports:
-#       - "5044:5044"
-#       - "9600:9600"
-#     volumes:
-#       - ./logstash/pipeline:/usr/share/logstash/pipeline
-#     networks:
-#       - monitoring
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=false
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    mem_limit: 1g
+    mem_reservation: 512m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
 
-#   # ---------------------------
-#   # Filebeat
-#   filebeat:
-#     image: docker.elastic.co/beats/filebeat:8.15.0
-#     container_name: filebeat
-#     user: root
-#     depends_on:
-#       - logstash
-#     volumes:
-#       - /var/lib/docker/containers:/var/lib/docker/containers:ro
-#       - /var/run/docker.sock:/var/run/docker.sock:ro
-#       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-#     networks:
-#       - monitoring
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.0
+    container_name: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_HOST=0.0.0.0
+      - SERVER_NAME=kibana
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d
+      - XPACK_REPORTING_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d
+      - XPACK_SECURITY_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d
+      - TELEMETRY_ENABLED=false
+      - LOGGING_VERBOSE=false
+      - NODE_OPTIONS=--max-old-space-size=768
+      - SERVER_PUBLICBASEURL=https://localhost/kibana
+      - SERVER_BASEPATH=/kibana
+      - SERVER_REWRITEBASEPATH=true
+    ports:
+      - "5601:5601"
+    networks:
+      - monitoring
+    mem_limit: 1536m
+    mem_reservation: 768m
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s
+    restart: unless-stopped
 
-# # ---------------------------
-# volumes:
-#   grafana_data:
-#   prometheus_conf:
-#     driver: local
-#   es_data:
+  # Logstash
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.15.0
+    container_name: logstash
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    networks:
+      - monitoring
+    environment:
+      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9600/_node/stats || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
 
-networks:
-  monitoring:
-    driver: bridge
-
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.15.0
+    container_name: filebeat
+    user: root
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - filebeat_data:/usr/share/filebeat/data
+    depends_on:
+      logstash:
+        condition: service_healthy
+    environment:
+      - strict.perms=false
+    command: filebeat -e -c /usr/share/filebeat/filebeat.yml --strict.perms=false
+    networks:
+      - monitoring
+    restart: unless-stopped
