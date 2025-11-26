@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import fastifyHttpProxy from "@fastify/http-proxy";
 import * as jwt from "jsonwebtoken";
+import metricsPlugin from "fastify-metrics";
 // import { SERVICES } from "./config/services";
 
 // ! we should add the cors orginal for this service also to avoid issues when frontend will try to connect
@@ -31,7 +32,7 @@ const fastify = Fastify({
   }
 });
 
-
+fastify.register(metricsPlugin, { endpoint: "/metrics" });
 // Helper for proxy error handling
 const proxyErrorHandler = (serviceName: string) => (reply: any, error: any) => {
   fastify.log.error(`Proxy error on ${serviceName}: ${error.message}`);

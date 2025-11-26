@@ -5,6 +5,7 @@ import auth2FaPlugin from './plugins/auth2FaPlugin';
 import fastifyCors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
 import dotenv from "dotenv";
+import metricsPlugin from "fastify-metrics";
 dotenv.config();
 
 
@@ -12,6 +13,7 @@ dotenv.config();
 export async function buildApp()
 {
     const app = fastify();
+    app.register(metricsPlugin, { endpoint: "/metrics" });
 
     app.register( fastifyCors,{
         origin: ["http://localhost:3000", "http://10.13.1.16:3000", "https://localhost:3000"],

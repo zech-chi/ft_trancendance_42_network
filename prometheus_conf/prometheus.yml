@@ -1,16 +1,41 @@
 global:
-  scrape_interval: 5s # fréquence de collecte
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'docker-compose'
+    environment: 'development'
 
 scrape_configs:
-  - job_name: "fastify"
+  # 1️⃣ Prometheus self-monitoring
+  - job_name: 'prometheus'
+    scheme: http
+    static_configs:
+      - targets: ['prometheus:9090']  # Nom du service dans docker-compose
+
+  # 2️⃣ Fastify backend services
+  - job_name: 'fastify-services'
+    scheme: http
+    metrics_path: '/metrics'
+    scrape_interval: 5s
     static_configs:
       - targets:
-          [
-            "auth-service:5001",
-            "chat-service:5003",
-            "dashboard-service:5002",
-            "db-service:5000",
-            "ping-pong-service:5500",
-            "parcheesi-service:5555",
-            "user-service:5004",
-          ]
+          - 'auth-service:5001'
+          - 'chat-service:5003'
+          - 'dashboard-service:5002'
+          - 'db-service:5000'
+          - 'ping-pong-service:5500'
+          - 'parcheesi-service:5555'
+          - 'user-service:5004'
+          - 'gateway-service:5006'
+        labels:
+          service_type: 'backend'
+          framework: 'fastify'
+
+  # 3️⃣ Node Exporter for system metrics
+  - job_name: 'node-exporter'
+    scheme: http
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service_type: 'infrastructure'
