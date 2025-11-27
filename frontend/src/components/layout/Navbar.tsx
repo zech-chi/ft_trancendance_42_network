@@ -90,9 +90,20 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
 
   return (
     <div className="relative inline-block" ref={menuRef}>
-      <img
+      {/* <img
         src={userProfile}
         alt="User Profile"
+        className="rounded-full w-9 h-9 xl:w-12 xl:h-12 2xl:w-15 2xl:h-15
+                  border-2 border-black/50
+                  xl:border-3 2xl:border-4
+                  object-cover ml-5 cursor-pointer"
+        onClick={() => setMenuOpen(!menuOpen)}
+      /> */}
+      <Image
+        src={userProfile}
+        alt="User Profile"
+        width={60}          // placeholder large enough (will be overridden by Tailwind)
+        height={60}
         className="rounded-full w-9 h-9 xl:w-12 xl:h-12 2xl:w-15 2xl:h-15
                   border-2 border-black/50
                   xl:border-3 2xl:border-4
@@ -356,9 +367,17 @@ function SearchForm(): JSX.Element {
                     rounter.push("/protected");
                   }}
                 >
-                  <img
+                  {/* <img
                     src={user.imageUrl}
                     alt={user.userName}
+                    className="h-8 w-8 rounded-full object-cover"
+                    style={{ border: "1px solid #B2B2B2" }}
+                  /> */}
+                  <Image
+                    src={user.imageUrl}
+                    alt={user.userName}
+                    width={32}   // matches w-8 (8 * 4 = 32px)
+                    height={32}  // matches h-8
                     className="h-8 w-8 rounded-full object-cover"
                     style={{ border: "1px solid #B2B2B2" }}
                   />
