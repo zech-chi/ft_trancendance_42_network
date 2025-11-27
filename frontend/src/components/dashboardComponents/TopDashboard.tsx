@@ -8,6 +8,7 @@ import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useLoggedUserId } from "@/context/UserIdContext";
 import React from "react";
+import Image from "next/image";
 
 interface User {
   id: number;
@@ -66,12 +67,21 @@ function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
                 border-[#1CBABA]/0
                 border-l-transparent border-b-transparent 
                 flex items-center justify-center overflow-hidden rotate-225`}>
-                <img
+                {/* <img
                 src={imageUrl}
                 alt="User Profile"
                 className="w-full h-full object-cover rounded-full -rotate-225 
                 border-3 xl:border-4 2xl:border-5
                 border-black/50"
+                /> */}
+                <Image
+                  src={imageUrl}
+                  alt="User Profile"
+                  width={500}             // placeholder (overridden by w-full / h-full)
+                  height={500}
+                  className="w-full h-full object-cover rounded-full -rotate-225 
+                            border-3 xl:border-4 2xl:border-5
+                            border-black/50"
                 />
             </div>
             {

@@ -10,7 +10,7 @@ import { useLoggedUserId } from '@/context/UserIdContext';
 import { send } from 'process';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useRouter } from 'next/navigation';
-
+import Image from "next/image";
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
 interface User {
@@ -58,12 +58,21 @@ function DisplayData({userName} : {userName: string}): JSX.Element {
                 border-[#1CBABA]/0
                 border-l-transparent border-b-transparent 
                 flex items-center justify-center overflow-hidden rotate-225`}>
-                <img
+                {/* <img
                 src={userCur.imageUrl}
                 alt={userCur.userName}
                 className="w-full h-full object-cover rounded-full -rotate-225 
                 border-3 xl:border-4 2xl:border-5
                 border-black/50"
+                /> */}
+                <Image
+                    src={userCur.imageUrl}
+                    alt={userCur.userName}
+                    width={500} // placeholder (Tailwind w-full/h-full overrides)
+                    height={500}
+                    className="w-full h-full object-cover rounded-full 
+                                border-3 xl:border-4 2xl:border-5 border-black/50"
+                    style={{ transform: "rotate(-225deg)" }} // Tailwind does not support -rotate-225
                 />
             </div>
             {/* {
@@ -213,12 +222,21 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
                     border-[#1CBABA]/0
                     border-l-transparent border-b-transparent 
                     flex items-center justify-center overflow-hidden rotate-225`}>
-                    <img
+                    {/* <img
                     src={friend.imageUrl}
                     alt={friend.userName}
                     className="w-full h-full object-cover rounded-full -rotate-225 
                     border-3 xl:border-4 2xl:border-5
                     border-black/50"
+                    /> */}
+                    <Image
+                    src={friend.imageUrl}
+                    alt={friend.userName}
+                    width={500} // placeholder (Tailwind w-full/h-full overrides)
+                    height={500}
+                    className="w-full h-full object-cover rounded-full 
+                                border-3 xl:border-4 2xl:border-5 border-black/50"
+                    style={{ transform: "rotate(-225deg)" }} // Tailwind does not support -rotate-225
                     />
                 </div>
                 {/* {
@@ -275,13 +293,13 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
                         router.push('/protected/chat');
                     }}
                 />
-                <img
+                {/* <img
                     src={hoveredGames ? '/GAMES2.png' : '/GAMES.png'}
                     alt="games"
                     className="w-auto h-[12px] md:h-[14px] xl:h-[19px] transition-transform duration-500"
                     onMouseEnter={() => setHoveredGames(true)}
                     onMouseLeave={() => setHoveredGames(false)}
-                />
+                /> */}
             </div>
         </div>
     );
@@ -331,12 +349,21 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     border-[#1CBABA]/0
                     border-l-transparent border-b-transparent 
                     flex items-center justify-center overflow-hidden rotate-225`}>
-                    <img
+                    {/* <img
                     src={friend.imageUrl}
                     alt={friend.userName}
                     className="w-full h-full object-cover rounded-full -rotate-225 
                     border-3 xl:border-4 2xl:border-5
                     border-black/50"
+                    /> */}
+                    <Image
+                    src={friend.imageUrl}
+                    alt={friend.userName}
+                    width={500} // placeholder; Tailwind w-full/h-full will override
+                    height={500}
+                    className="w-full h-full object-cover rounded-full 
+                                border-3 xl:border-4 2xl:border-5 border-black/50"
+                    style={{ transform: "rotate(-225deg)" }} // Tailwind does not support -rotate-225
                     />
                 </div>
                 {/* {
@@ -501,12 +528,21 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                     border-[#1CBABA]/0
                     border-l-transparent border-b-transparent 
                     flex items-center justify-center overflow-hidden rotate-225`}>
-                    <img
+                    {/* <img
                     src={friend.imageUrl}
                     alt={friend.userName}
                     className="w-full h-full object-cover rounded-full -rotate-225 
                     border-3 xl:border-4 2xl:border-5
                     border-black/50"
+                    /> */}
+                    <Image
+                    src={friend.imageUrl}
+                    alt={friend.userName}
+                    width={500} // placeholder; Tailwind w-full/h-full overrides
+                    height={500}
+                    className="w-full h-full object-cover rounded-full 
+                                border-3 xl:border-4 2xl:border-5 border-black/50"
+                    style={{ transform: "rotate(-225deg)" }} // Tailwind does not support -rotate-225
                     />
                 </div>
                 {/* {
@@ -634,12 +670,22 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                     border-[#1CBABA]/0
                     border-l-transparent border-b-transparent 
                     flex items-center justify-center overflow-hidden rotate-225`}>
-                    <img
+                    {/* <img
                     src={friend.imageUrl}
                     alt={friend.userName}
                     className="w-full h-full object-cover rounded-full -rotate-225 
                     border-3 xl:border-4 2xl:border-5
                     border-black/50"
+                    /> */}
+
+                    <Image
+                    src={friend.imageUrl}
+                    alt={friend.userName}
+                    width={500} // placeholder; Tailwind w-full/h-full will control the displayed size
+                    height={500}
+                    className="w-full h-full object-cover rounded-full 
+                                border-3 xl:border-4 2xl:border-5 border-black/50"
+                    style={{ transform: "rotate(-225deg)" }} // Tailwind does not support -rotate-225
                     />
                 </div>
                 {/* {
