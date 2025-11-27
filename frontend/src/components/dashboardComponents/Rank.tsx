@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction } from "react";
 import { fetchUser, fetchRankData } from '@/app/lib/apiDashboard';
 import Cookies from 'js-cookie';
 import {useLoggedUserName} from '@/context/LoggedUserNameContext';
+import Image from "next/image";
 
 interface User {
     id: number;
@@ -43,12 +44,14 @@ function DisplayData({user, rank} : {user: User, rank: number}): JSX.Element {
                 border-[#1CBABA]/0
                 border-l-transparent border-b-transparent 
                 flex items-center justify-center overflow-hidden rotate-225`}>
-                <img
-                src={user.imageUrl}
-                alt={user.userName}
-                className="w-full h-full object-cover rounded-full -rotate-225 
-                border-3 xl:border-4 2xl:border-5
-                border-black/50"
+                <Image
+                  src={user.imageUrl}
+                  alt={user.userName}
+                  width={500}    // placeholder (overridden by w-full / h-full)
+                  height={500}
+                  className="w-full h-full object-cover rounded-full -rotate-225 
+                            border-3 xl:border-4 2xl:border-5
+                            border-black"
                 />
             </div>
             {
