@@ -191,30 +191,11 @@ function ListFriends({
               setSearchQuery(""); // Clear search query when selecting a chat
               // setContactsList(saveContacts); // Reset filtered contacts
             }}
-            className={`flex items-center justify-between p-2 rounded-[50px] cursor-pointer
-              ${
-                selectedChat?.id === contact.id
-                  ? showSidebar
-                    ? "bg-[#3b0430]"
-                    : "bg-[rgba(14,1,1,0.6)]"
-                  : ""
-              }
-              ${
-                showSidebar && selectedChat?.id !== contact.id
-                  ? "bg-[#22041c]"
-                  : ""
-              }
-              ${
-                !showSidebar && selectedChat?.id !== contact.id
-                  ? "bg-[rgba(14,1,1,0.3)]"
-                  : ""
-              }
-              ${
-                selectedChat?.id !== contact.id
-                  ? "hover:bg-[rgba(255,255,255,0.1)]"
-                  : ""
-              }
-              bg-gray-800/100 backdrop-blur-md
+            className={`flex items-center justify-between p-2 rounded-[50px] cursor-pointer border border-white/20
+              ${selectedChat?.id === contact.id 
+      ? "bg-gray-700/80" 
+      : "bg-gray-700/10 hover:bg-gray-700/50"}
+              
               `}
           >
             <div className="flex items-center gap-3 relative">
