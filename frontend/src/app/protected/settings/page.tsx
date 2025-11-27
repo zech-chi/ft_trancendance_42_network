@@ -7,6 +7,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 import TwoFASetup from "./components/TwoFASetup";
 import { useLoggedUserId } from "@/context/UserIdContext";
+import Image from "next/image";
 
 type PropsProfileImage = {
   imgSrc: string;
@@ -18,10 +19,17 @@ function ProfileImage({ imgSrc, handleImageUpload }: PropsProfileImage) {
   return (
     <div className="flex items-center justify-center mt-20">
       <div className="w-[130px] h-[130px] md:w-[160px] md:h-[160px] rounded-full border-2 border-[#1CBABA]/75 flex items-center justify-center relative">
-        <img
+        {/* <img
           src={imgSrc}
           alt="Profile"
           className="w-full h-full object-cover object-center rounded-full"
+        /> */}
+        <Image
+          src={imgSrc}
+          alt="Profile"
+          fill
+          className="object-cover object-center rounded-full"
+          sizes="100vw"
         />
 
         {/* Hidden file input */}

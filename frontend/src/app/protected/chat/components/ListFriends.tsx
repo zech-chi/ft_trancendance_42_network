@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ListFriendsProps, Message } from "../types/typesChat";
 import { formatLengthNameUser } from "../utils/formatLengthNameUser"; // Import the utility function for formatting names
 import { useSocket } from "../context/SocketContext";
+import Image from "next/image";
 
 // type updateMessage = {
 //   deleted: boolean;
@@ -218,10 +219,16 @@ function ListFriends({
           >
             <div className="flex items-center gap-3 relative">
               <div className="relative w-14 h-14 md:w-16 md:h-16">
-                <img
+                {/* <img
                   src={contact.avatar}
                   alt={contact.name}
                   className="w-full h-full rounded-full border-[3px]"
+                /> */}
+                <Image
+                  src={contact.avatar}
+                  alt={contact.name}
+                  fill
+                  className="rounded-full border-[3px] object-cover object-center"
                 />
                 <span
                   className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 ${

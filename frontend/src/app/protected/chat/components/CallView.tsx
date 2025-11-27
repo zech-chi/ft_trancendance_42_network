@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, PhoneOff } from "lucide-react";
 import CallTimer from "./CallTimer";
+import Image from "next/image";
 
 interface CallViewProps {
   localStream: MediaStream | null;
@@ -105,7 +106,14 @@ export const CallView: React.FC<CallViewProps> = ({
         <p className="text-white">
           {type === "audio" ? "call audio" : "call video"}
         </p>
-        <img src={avatar} alt="profile Frineds" className="rounded-full" />
+        {/* <img src={avatar} alt="profile Frineds" className="rounded-full" /> */}
+        <Image
+          src={avatar}
+          alt="Profile Friends"
+          width={400}
+          height={400}
+          className="rounded-full object-cover bg-amber-200"
+        />
       </div>
     </div>
   );
