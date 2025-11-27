@@ -2,18 +2,20 @@ import Fastify from "fastify";
 import fastifyHttpProxy from "@fastify/http-proxy";
 import * as jwt from "jsonwebtoken";
 import metricsPlugin from "fastify-metrics";
-// import { SERVICES } from "./config/services";
+import { SERVICES } from "./config/services";
+import cors from '@fastify/cors';
+
 
 // ! we should add the cors orginal for this service also to avoid issues when frontend will try to connect
 
-export const  SERVICES = {
-  auth_service: "http://auth-service:5001",
-  chat_service: "http://chat-service:5003",
-  dashboard_service: "http://dashboard-service:5002",
-  ping_pong_service: "http://ping-pong-service:5500",
-  parcheesi_service: "http://parcheesi-service:5555",
-  user_service: "http://user-service:5004",
-};
+// export const  SERVICES = {
+//   auth_service: "http://auth-service:5001",
+//   chat_service: "http://chat-service:5003",
+//   dashboard_service: "http://dashboard-service:5002",
+//   ping_pong_service: "http://ping-pong-service:5500",
+//   parcheesi_service: "http://parcheesi-service:5555",
+//   user_service: "http://user-service:5004",
+// };
 
 
 const fastify = Fastify({
@@ -30,6 +32,12 @@ const fastify = Fastify({
       }
     } 
   }
+});
+
+// Register CORS to allow cross-origin requests
+fastify.register(cors, {
+  origin: ["http://localhost:3000", "https://localhost:3000"], // Allow requests from frontend's origin
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allow these HTTP methods
 });
 
 fastify.register(metricsPlugin, { endpoint: "/metrics" });
