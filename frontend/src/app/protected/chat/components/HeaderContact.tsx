@@ -52,7 +52,7 @@ export default function HeaderContact({contact, setShowSidebar, showSidebar, isC
           <div className="flex items-center p-2 gap-0.5 md:gap-2 md:p-3">
             <button
               onClick={() => setShowSidebar(!showSidebar)}
-              className="text-white lg:hidden"
+              className="text-white lg:hidden cursor-pointer"
             >
               <ArrowLeft className="w-7 h-7 text-amber-200" />
             </button>

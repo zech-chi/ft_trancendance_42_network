@@ -60,7 +60,7 @@ function ListFriends({
       return prevContacts.map(contact => {
         // If this is the contact to block, create a new object for them
         if (contact.id == friendId || contact.id == userId) {
-          alert(`You have been blocked by ${contact.name}`);
+          // alert(`You have been blocked by ${contact.name}`);
           return { ...contact, blocked: true , blockedBy: userId }; //! to change to friendId
         }
         // Otherwise, return the contact unchanged
