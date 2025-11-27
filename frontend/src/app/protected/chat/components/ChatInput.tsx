@@ -124,12 +124,12 @@ export default function ChatInput({
         <div className="p-1 bg-[rgba(255,255,255,0.3)] rounded-[10px] md:rounded-[20px] flex-1 flex flex-row gap-1 md:gap-2">
           {audioBlob ? (
             <div className="flex items-center w-full p-2 gap-2">
-              <button onClick={resetRecording} title="Discard recording">
-                <Trash2 className="w-6 h-6 text-red-500 hover:text-red-400" />
+              <button onClick={resetRecording} title="Discard recording" className="cursor-pointer">
+                <Trash2 className="w-6 h-6 text-[#FFB700]/70 hover:text-[#FFB700]" />
               </button>
               <div className="h-2 flex-1 bg-gray-500 rounded-full relative">
                 <div
-                  className="h-full bg-amber-400 rounded-full"
+                  className="h-full bg-[#1CBABA] rounded-full"
                   style={{ width: "100%" }}
                 ></div>
                 <span className="absolute right-1.5 ml-2 text-white text-xs whitespace-nowrap">
@@ -193,7 +193,7 @@ export default function ChatInput({
           {inputValue && !audioBlob ? (
             // Show Send button if there is text input
             <button
-              className={`w-12 h-12 md:w-13 md:h-13 p-2 bg-[rgba(255,255,255,0.4)] hover:bg-amber-200 
+              className={`w-12 h-12 md:w-13 md:h-13 p-2 bg-[rgba(255,255,255,0.4)] hover:bg-amber-200 cursor-pointer
               transition-all duration-150 rounded-full flex items-center justify-center ${
               isUploading ? "cursor-not-allowed" : ""
             }`}
@@ -206,7 +206,7 @@ export default function ChatInput({
             // Show Send button if there is an audio blob
             <button
               className="w-12 h-12 md:w-13 md:h-13 p-2 bg-[rgba(255,255,255,0.4)] hover:bg-amber-200 
-              transition-all duration-150 rounded-full flex items-center justify-center"
+              transition-all duration-150 rounded-full flex items-center justify-center cursor-pointer"
               onClick={handleSendAudio}
               disabled={isUploading}
             >
