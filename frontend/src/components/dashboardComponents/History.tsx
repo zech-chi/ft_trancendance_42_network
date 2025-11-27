@@ -7,6 +7,7 @@ import { fetchGames, fetchUser, fetchUserById } from '@/app/lib/apiDashboard';
 import Cookies from 'js-cookie';
 import {useLoggedUserName} from '@/context/LoggedUserNameContext';
 import { useLoggedUserId } from "@/context/UserIdContext";
+import Image from "next/image";
 
 type GameName = 'pong' | 'parcheesi';
 type Game = {
@@ -100,12 +101,14 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
             border-t-${opponentWon ? '[#1CBABA]' : '[#FFB700]'} 
             border-r-${opponentWon ? '[#1CBABA]' : '[#FFB700]'} 
             flex items-center justify-center overflow-hidden rotate-225`}>
-            <img
+            <Image
               src={userOther.imageUrl}
               alt={userOther.userName}
-              className="w-full h-full object-cover rounded-full -rotate-225 
-              border-3 xl:border-4 2xl:border-5
-            border-black"
+              width={500} // placeholder (Tailwind will override)
+              height={500}
+              className="w-full h-full object-cover rounded-full 
+                        border-3 xl:border-4 2xl:border-5 border-black"
+              style={{ transform: "rotate(-225deg)" }} // Tailwind does not support -rotate-225
             />
           </div>
               {/* {
@@ -163,13 +166,15 @@ function DisplayData({ game }: { game: Game }): JSX.Element {
             border-t-${currentUserWon ? '[#1CBABA]' : '[#FFB700]'} 
             border-l-${currentUserWon ? '[#1CBABA]' : '[#FFB700]'} 
             flex items-center justify-center overflow-hidden -rotate-225`}>
-            <img
-              src={userCur.imageUrl}
-              alt={userCur.userName}
-              className="w-full h-full object-cover rounded-full
-              border-3 xl:border-4 2xl:border-5
-              border-black rotate-225"
-            />
+          <Image
+            src={userCur.imageUrl}
+            alt={userCur.userName}
+            width={500} // placeholder (Tailwind w-full/h-full will override)
+            height={500}
+            className="w-full h-full object-cover rounded-full 
+                      border-3 xl:border-4 2xl:border-5 border-black"
+            style={{ transform: "rotate(225deg)" }} // Tailwind does not support rotate-225
+          />
           </div>
         </div>
       </div>
