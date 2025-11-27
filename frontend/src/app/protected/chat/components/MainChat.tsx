@@ -21,7 +21,7 @@ function NoContactSelected({ setShowSidebar }: { setShowSidebar: (show: boolean)
     <div className="relative text-gray-400 h-full flex items-center flex-col gap-5 justify-center">
       <button
               onClick={() => setShowSidebar(true)}
-              className="text-white lg:hidden absolute top-6 left-5"
+              className="text-white lg:hidden absolute top-6 left-5 cursor-pointer"
             >
               <ArrowLeft className="w-7 h-7 text-amber-200" />
         </button>
@@ -159,7 +159,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
   //   }
   // }
   const handleBlockUser = ({ userId, friendId }: { userId: number; friendId: number }) => {
-    alert("Block user event received for ID:" + userId + " friendId: " + friendId);
+    // alert("Block user event received for ID:" + userId + " friendId: " + friendId);
     if (!contact) return;
   
     // If current user is the one blocking
@@ -204,7 +204,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
   //   }
   // }
   const handleUnblockUser = ({ userId, friendId }: { userId: number; friendId: number }) => {
-    alert("Unblock user event received for ID:" + userId + " friendId: " + friendId);
+    // alert("Unblock user event received for ID:" + userId + " friendId: " + friendId);
     if (!contact) return;
   
     // 🔓 If current user unblocked someone
@@ -231,7 +231,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
     console.warn("Delete message event received for ID:", messageId , from ,userId , currentUserId);
     // Check if the message belongs to the current contact
     if ((contact.id == from || contact.id == userId)) {
-      alert("Deleting message with ID:" + messageId);
+      // alert("Deleting message with ID:" + messageId);
       // Filter out the deleted message from the messages list
       setMessagesList((prevMessages) => prevMessages.filter((msg) => msg.id != messageId));
     }
@@ -240,7 +240,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
   const handleUpdateMessage = ({ messageId, Updatemessage, from, userId }: { messageId: number; Updatemessage: string; from: number, userId: number }) => {
     if (contact == null) return ;
     console.warn("Update message event received for ID:", messageId, Updatemessage, from, userId);
-    alert("Updating message with ID:" + messageId + " to: " + Updatemessage);
+    // alert("Updating message with ID:" + messageId + " to: " + Updatemessage);
     // Check if the message belongs to the current contact
     if ((contact.id == from || contact.id == userId)) {
       // Update the specific message in the messages list
