@@ -10,6 +10,7 @@ import { formatLengthNameUser } from "@/app/protected/chat/utils/formatLengthNam
 import { IncomingCall } from "@/app/protected/chat/types/typesChat"
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useRouter } from "next/navigation";
+import Image from "next/image"
 
 type HeaderContactProps = {
     contact: Contact,
@@ -56,11 +57,18 @@ export default function HeaderContact({contact, setShowSidebar, showSidebar, isC
               <ArrowLeft className="w-7 h-7 text-amber-200" />
             </button>
             <div className="flex items-center gap-3">
-              <img
+              {/* <img
                 src={contact?.avatar}
                 alt={contact?.name}
                 className="w-12 h-12 md:w-18 md:h-18 rounded-full border-2 border-white/20"
-              />
+              /> */}
+              <Image
+                src={contact?.avatar}
+                alt={contact?.name}
+                width={48}       // w-12 = 48px
+                height={48}      // h-12 = 48px
+                className="rounded-full border-2 border-white/20 md:w-18 md:h-18 object-cover object-center"
+                />
               <div>
                 <h2 className="text-white text-sm md:text-[18px] font-semibold">{formatLengthNameUser(contact?.name)}</h2>
                 {/* // ! to talk with team, if it should stay or not */}
