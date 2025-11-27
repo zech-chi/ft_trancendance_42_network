@@ -199,7 +199,7 @@ function ListFriends({
               `}
           >
             <div className="flex items-center gap-3 relative">
-              <div className="relative w-14 h-14 md:w-16 md:h-16">
+              <div className="relative w-14 h-14 md:w-16 md:h-16 border border-white/20 rounded-full">
                 {/* <img
                   src={contact.avatar}
                   alt={contact.name}
