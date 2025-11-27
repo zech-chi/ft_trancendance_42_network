@@ -151,7 +151,7 @@ function OnlinePageContent() {
           )}
 
           {activeTab === 'existing' && (
-            <div className="flex flex-col gap-4 border border-[#1CBABA]/70 rounded-2xl">
+            <div className="flex flex-col gap-4 border rounded-2xl">
               {isLoadingRooms ? (
                 <p className="text-[#ffb86b]/80 text-center">Loading rooms...</p>
               ) : rooms.length === 0 ? (

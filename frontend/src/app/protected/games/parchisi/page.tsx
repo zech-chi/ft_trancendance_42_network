@@ -130,17 +130,17 @@ export default function HomePage() {
                         2xl:mt-[67px] xl:mt-[60px]
                     "
     >
-        <div className="flex h-screen w-screen flex-col items-center justify-start overflow-hidden ">
+        <div className="flex h-full w-full flex-col items-center justify-start overflow-hidden">
   <div className="absolute top-18 right-5 z-50 min">
   </div>
 
-  <div className="flex flex-col h-[calc(100%-120px)] w-full  overflow-hidden items-center justify-center">
+  <div className="flex flex-col h-full w-full  overflow-hidden items-center justify-center">
   {/* Title and Description */}
   <div className="items-center gap-2">
     <h1 className="text-5xl font-bold text-center mb-2 text-[#1CBABA] mb-7">Parcheesi</h1>
   </div>
     <div
-      className="bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20 p-6 w-[70%] h-[80%] flex flex-col items-center gap-2 justify-center 
+      className="bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20 p-6 w-[90%] md:w-[70%] h-[80%] flex flex-col items-center gap-2 justify-center 
                     sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:place-items-center rounded-2xl"
     >
       {gameModes.map(({ id, label, className, pageLink }) => (
