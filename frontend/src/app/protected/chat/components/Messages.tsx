@@ -229,13 +229,14 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
 
           {/* Error message display */}
           {message && (
-            <div className="fixed bottom-50 left-[90%] -translate-x-1/2 w-[300px] h-[100px] text-white py-2 px-4 flex flex-col items-center justify-center
-                          bg-[rgba(0,0,0,0.7)] backdrop-blur-2xl border border-yellow-100  
+            <div className="fixed bottom-2 left-[90%] -translate-x-1/2 w-[300px] h-[100px] text-white py-2 px-4 flex flex-col items-center justify-center
+                          bg-gray-800/100 backdrop-blur-2xl p-6 shadow-xl border border-white/20 rounded-2xl
                           rounded-lg shadow-lg text-center z-50 animate-fade-in-up">
               <p className="text-gray-300">{message}</p>
               <button className="rounded-md mt-1 flex justify-end w-full">
                 <span
-                  className="text-green-400 cursor-pointer w-[30%] font-semibold border p-1 px-4 rounded-md hover:bg-green-500 hover:w-[40%] hover:text-white transition-all duration-150"
+                  className="text-white  cursor-pointer w-[30%] font-semibold border p-1 px-4 rounded-md
+                  bg-[#1CBABA]/80 hover:bg-[#1CBABA] hover:w-[40%] hover:text-white transition-all duration-150"
                   onClick={() =>setMessage("")}
                 >
                   ok
