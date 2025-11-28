@@ -38,6 +38,7 @@ const fastify = Fastify({
 fastify.register(cors, {
   origin: ["http://localhost:3000", "https://localhost:3000"], // Allow requests from frontend's origin
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allow these HTTP methods
+  credentials: true,   //  allow cookies
 });
 
 fastify.register(metricsPlugin, { endpoint: "/metrics" });
