@@ -129,6 +129,7 @@ function ProfileInfo({ user, friendshipStatus, setFriendshipStatus }: {user : Us
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     sender_id: loggedUserId,
                     receiver_id: user.id,

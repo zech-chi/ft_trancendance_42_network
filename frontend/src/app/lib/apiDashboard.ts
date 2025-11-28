@@ -1,5 +1,7 @@
 export const fetchUser = async (userName: string) => {
-  const response = await fetch(`/api/dashboard/users/${userName}`);
+  const response = await fetch(`/api/dashboard/users/${userName}`, {
+    credentials: "include",
+  });
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }
@@ -8,7 +10,9 @@ export const fetchUser = async (userName: string) => {
 }
 
 export const fetchUserById = async (userId: number) => {
-  const response = await fetch(`/api/dashboard/usersId/${userId}`);
+  const response = await fetch(`/api/dashboard/usersId/${userId}`, {
+    credentials: "include",
+  });
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }
@@ -17,7 +21,9 @@ export const fetchUserById = async (userId: number) => {
 }
 
 export const fetchFriendshipStatus = async (userId1: number, userId2: number) => {
-const response = await fetch(`/api/dashboard/friends/status?userId1=${userId1}&userId2=${userId2}`);
+const response = await fetch(`/api/dashboard/friends/status?userId1=${userId1}&userId2=${userId2}`, {
+  credentials: "include",
+});
 if (!response.ok) {
   throw new Error(`Error: ${response.status}`);
 }
@@ -26,7 +32,9 @@ return data;
 }
 
 export const fetchGames = async (userId: number, gameType: string) => {
-  const response = await fetch(`/api/dashboard/Games/${userId}?gameType=${gameType}`);
+  const response = await fetch(`/api/dashboard/Games/${userId}?gameType=${gameType}`, {
+    credentials: "include",
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch games');
   }
@@ -35,7 +43,9 @@ export const fetchGames = async (userId: number, gameType: string) => {
 }
 
 export const fetchRankData = async () => {
-const response = await fetch(`/api/dashboard/rank`);
+const response = await fetch(`/api/dashboard/rank`, {
+  credentials: "include",
+});
 if (!response.ok) {
   throw new Error(`Error: ${response.status}`);
 }
@@ -55,9 +65,13 @@ if (choice === 'friends') {
 }
 let response ;
 if (status !== '')
-    response = await fetch(`/api/dashboard/friends/${userId}?status=${status}`);
+    response = await fetch(`/api/dashboard/friends/${userId}?status=${status}`, {
+      credentials: "include",
+    });
 else 
-    response = await fetch(`/api/dashboard/friends/sentrequest/${userId}?status=pending`);
+    response = await fetch(`/api/dashboard/friends/sentrequest/${userId}?status=pending`, {
+      credentials: "include",
+    });
 if (!response.ok) {
 //   throw new Error('Failed to fetch games');
   console.log("Error");
@@ -69,7 +83,9 @@ return data;
 
 /* radar chart component api */
 export const fetchRadarData = async (userName: string) => {
-const response = await fetch(`/api/dashboard/radarData/${userName}`);
+const response = await fetch(`/api/dashboard/radarData/${userName}`, {
+  credentials: "include",
+});
 if (!response.ok) {
   throw new Error(`Error: ${response.status}`);
 }
@@ -79,7 +95,9 @@ return data;
 
 /* number of Players */
 export const fetchNumberOfPlayers = async () => {
-  const response = await fetch(`/api/dashboard/rank/numPlayers`);
+  const response = await fetch(`/api/dashboard/rank/numPlayers`, {
+    credentials: "include",
+  });
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }
@@ -90,7 +108,9 @@ export const fetchNumberOfPlayers = async () => {
 
 /* calendar data */
 export const fetchCalendarData = async (userName: string) => {
-  const response = await fetch(`/api/dashboard/Calendar/${userName}`);
+  const response = await fetch(`/api/dashboard/Calendar/${userName}`, {
+    credentials: "include",
+  });
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }
@@ -107,6 +127,7 @@ export const fetchMakePlayerOnline = async (userId: number, online: boolean) => 
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: "include",
       body: JSON.stringify({ online }),
     }
   );

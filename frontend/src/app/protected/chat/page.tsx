@@ -140,6 +140,7 @@ function Chat() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ userId: userId }), // replace with actual user ID
+          credentials: 'include'
         });
   
         const data = await response.json();

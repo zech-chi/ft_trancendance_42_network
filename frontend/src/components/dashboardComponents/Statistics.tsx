@@ -77,6 +77,7 @@ export default function Statistics() {
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include'
                 });
 
                 if (!response.ok) {

@@ -697,6 +697,7 @@ function Settings() {
         {
           method: "PATCH", // Use PATCH for partial updates
           body: formData, // No 'Content-Type' header needed for FormData
+          credentials: 'include'
         }
       );
 
@@ -749,7 +750,7 @@ function Settings() {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `/api/settings/info/${loggedUserId}`
+          `/api/settings/info/${loggedUserId}`, { credentials: 'include'}
         );
         if (!response.ok) {
           throw new Error("Failed to fetch user data");

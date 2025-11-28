@@ -240,6 +240,7 @@ export default function VerifyEmailPage() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail }),
+        credentials: 'include',
       });
 
       if (res.ok) {

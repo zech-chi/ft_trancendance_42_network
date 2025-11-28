@@ -269,7 +269,9 @@ function SearchForm(): JSX.Element {
         const res = await fetch(
           `/api/dashboard/search\?prefix\=${encodeURIComponent(
             inputValue
-          )}`
+          )}`, {
+            credentials: 'include'
+          }
         );
         if (!res.ok) throw new Error("Failed to fetch users");
         const result: { users: UserSearch[] } = await res.json();

@@ -309,6 +309,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           to: contact.id,
           message: messageToSend,
         }),
+        credentials: 'include'
       });
 
       if (!result.ok) {
@@ -404,6 +405,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
             limit: 20,
             offset: 0,
           }),
+          credentials: 'include'
         });
         if (!res.ok) {
           console.error("Server responded with an error here here ");
@@ -432,6 +434,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
       const response = await fetch(`${ApiRoutes.sendFile}/${currentUserId}/${contact.id}`, { 
         method: "POST",
         body: formData,
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -551,6 +554,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           from: currentUserId,
           to: contact.id,
         }),
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -606,6 +610,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           from: currentUserId,
           to: contact.id,
         }),
+        credentials: 'include'
       });
 
       if (!response.ok) {

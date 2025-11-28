@@ -70,6 +70,7 @@ export function SocketProvider({ children}: { children: ReactNode }) {
       {
         transports: ["websocket"],
         path: `/socket.io/parchisi`,
+        withCredentials: true,
       })
     socketInstance.on("connect", () => {
       console.log("Connected to server")
