@@ -100,7 +100,7 @@ fastify.register(fastifyHttpProxy, {
   prefix: "/api/chat",
   rewritePrefix: "/api/chat",
   replyOptions: {
-    onError: proxyErrorHandler("Uploads")
+    onError: proxyErrorHandler("chat service unavailable")
   }
 });
 
