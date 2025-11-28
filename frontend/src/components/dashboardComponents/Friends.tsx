@@ -412,6 +412,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
+                                credentials: 'include',
                                 body: JSON.stringify({
                                     sender_id: friends.sender_id,
                                     receiver_id: friends.receiver_id,
@@ -451,6 +452,7 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
+                                credentials: 'include',
                                 body: JSON.stringify({
                                     sender_id: friends.sender_id,
                                     receiver_id: friends.receiver_id,
@@ -591,6 +593,7 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
+                                    credentials: 'include',
                                     body: JSON.stringify({
                                         sender_id: friends.sender_id,
                                         receiver_id: friends.receiver_id,
@@ -734,6 +737,7 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
+                                    credentials: 'include',
                                     body: JSON.stringify({
                                         sender_id: loggedUserId,
                                         receiver_id: friends.sender_id === loggedUserId ? friends.receiver_id : friends.sender_id,

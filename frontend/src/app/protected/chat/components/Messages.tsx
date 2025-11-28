@@ -62,6 +62,7 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
           from: currentUserId,
           to: contact?.id,
         }),
+        credentials: 'include'
       });
 
       if (!result.ok) {
@@ -103,6 +104,7 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
               method: 'POST', // Or PUT
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ from: currentUserId, to: contact?.id, message: newText }),
+              credentials: 'include'
           });
 
           if (!res.ok) {
@@ -163,6 +165,7 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
             limit: 20,
             offset,
           }),
+          credentials: 'include'
         });
     
         if (!res.ok) {

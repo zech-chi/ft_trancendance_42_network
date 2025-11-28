@@ -33,7 +33,9 @@ function OnlinePageContent() {
   useEffect(() => {
     async function fetchRooms() {
       try {
-        const res = await fetch("/api/parchisi/online/rooms");
+        const res = await fetch("/api/parchisi/online/rooms", {
+          credentials: 'include'
+        });
         const data = await res.json();
         setRooms(data);
       } catch (err) {

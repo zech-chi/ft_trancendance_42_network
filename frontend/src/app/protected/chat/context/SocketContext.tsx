@@ -38,6 +38,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const newSocket = io({
             path: "/socket.io/chat",
             query: { userId: userId.toString() },
+            withCredentials: true,
         });
 
         setSocket(newSocket);

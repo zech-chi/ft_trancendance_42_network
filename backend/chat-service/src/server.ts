@@ -73,7 +73,7 @@ fastifyServer.setErrorHandler(function (error, request, reply) {
 // Register CORS to allow cross-origin requests
 fastifyServer.register(cors, {
   // Put your options here
-  origin: ["http://localhost:3000", "https://localhost:3000" ,"http://10.32.125.111:3000"], // Allow requests from frontend's origin
+  origin: ["http://localhost:3000", "https://localhost:3000"], // Allow requests from frontend's origin
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allow these HTTP methods
 });
 

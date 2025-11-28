@@ -1,21 +1,21 @@
-import Fastify from "fastify";
+import Fastify, { FastifyReply, FastifyRequest } from "fastify";
 import fastifyHttpProxy from "@fastify/http-proxy";
 import * as jwt from "jsonwebtoken";
 import metricsPlugin from "fastify-metrics";
 import { SERVICES } from "./config/services";
 import cors from '@fastify/cors';
+import fastifyCookie from "@fastify/cookie";
+import dotenv from "dotenv"
 
+dotenv.config();
 
-// ! we should add the cors orginal for this service also to avoid issues when frontend will try to connect
+console.log("======>", process.env.JWT_SECRETS)
 
-// export const  SERVICES = {
-//   auth_service: "http://auth-service:5001",
-//   chat_service: "http://chat-service:5003",
-//   dashboard_service: "http://dashboard-service:5002",
-//   ping_pong_service: "http://ping-pong-service:5500",
-//   parcheesi_service: "http://parcheesi-service:5555",
-//   user_service: "http://user-service:5004",
-// };
+declare module "fastify" {
+  interface FastifyRequest {
+    user?: any;
+  }
+}
 
 
 const fastify = Fastify({
@@ -41,6 +41,8 @@ fastify.register(cors, {
   credentials: true,   //  allow cookies
 });
 
+fastify.register(fastifyCookie);
+
 fastify.register(metricsPlugin, { endpoint: "/metrics" });
 // Helper for proxy error handling
 const proxyErrorHandler = (serviceName: string) => (reply: any, error: any) => {
@@ -48,40 +50,55 @@ const proxyErrorHandler = (serviceName: string) => (reply: any, error: any) => {
   reply.code(200).send({ code: 0, message: `${serviceName} unavailable` });
 };
 
-// add a preHandler to log incoming requests
-fastify.addHook("preHandler", async (request, reply) => {
-  // add colors to the log output
-  const color = (text: string) => `\x1c[36m${text}\x1b[0m`; // Cyan color
-  fastify.log.info(`Incoming request: ${color(request.method)} ${color(request.url)}`);
-});
 
 // JWT verification preHandler - protects API and websocket routes
-// fastify.addHook("preHandler", async (request, reply) => {
-//   // No-op for public assets or the frontend
-  // const publicPaths = ["/", "/favicon.ico", "/api/auth/login", "/api/auth/register"];
-  // if (publicPaths.some((p) => request.url.startsWith(p))) return;
+fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyReply) => {
+  const publicPaths = [
+    "/api/auth/",
+    "/api/chat/uploads",
+    "/api/settings/profileImage"
+  ];
 
-//   // Only protect API and socket routes
-  // if (!request.url.startsWith("/api") && !request.url.startsWith("/socket.io")) return;
+  const url = request.url;
 
-  // const authHeader = request.headers["authorization"] as string | undefined;
-  // if (!authHeader || !authHeader.startsWith("Bearer ")) {
-  //   reply.code(401).send({ code: 400, message: "Unauthorized" });
-  //   return;
-  // }
+  if (publicPaths.some((p) => url.startsWith(p))) return;
 
-//   const token = authHeader.slice(7);
-//   const secret = process.env.JWT_SECRET || "change-me";
+  // 2. Only protect API routes & websocket upgrades
+  const isApi = url.startsWith("/api");
+  const isSocket = url.startsWith("/socket.io");
 
-//   try {
-//     const decoded = jwt.verify(token, secret, { algorithms: ["HS256"] });
-//     // attach user info to request for downstream handlers
-//     (request as any).user = decoded;
-//   } catch (err) {
-//     fastify.log.warn({ err, url: request.url }, "JWT verification failed");
-//     reply.code(401).send({ code: 0, message: "Unauthorized" });
-//   }
-// });
+  if (!isApi && !isSocket) return;
+
+  // 3. Read token from cookies
+  const secret = process.env.JWT_SECRETS || "super-realy-secret-key";
+  const access = request.cookies.access_token;
+  const refresh = request.cookies.refresh_token;
+
+  if (access) {
+    try {
+      const decoded = jwt.verify(access, secret);
+      request.user = decoded;
+      return; // access OK
+    } catch (err) {
+      fastify.log.info("Access token expired, trying refresh token...");
+    }
+  }
+
+   // 2️⃣ If access expired or missing, try REFRESH TOKEN
+   if (!refresh) {
+    reply.code(401).send({ message: "Unauthorized: No tokens" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(refresh, secret);
+    request.user = decoded; // Attach user for next routes
+  } catch (err) {
+    fastify.log.warn({ err, url }, "JWT verification failed");
+    reply.code(401).send({ code: 401, message: "Unauthorized: Invalid token" });
+    return;
+  }
+});
 
 // auth service proxy
 fastify.register(fastifyHttpProxy, {
