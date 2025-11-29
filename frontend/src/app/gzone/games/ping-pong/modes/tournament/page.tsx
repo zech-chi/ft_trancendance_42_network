@@ -57,17 +57,18 @@ export default function Tournament() {
                     2xl:mt-[67px] xl:mt-[60px] overflow-y-hidden px-4
                 "
             >
-                <div className="flex flex-col h-full flex-1 bg-cover bg-center  justify-center items-center text-white bg-black/50 rounded-[50px]">
-                    <div className="flex gap-4 mb-6">
+                <div className="flex flex-col h-full flex-1 bg-cover bg-center  justify-center items-center text-white bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20 rounded-2xl">
+                   <div className="flex flex-col justify-center items-center border border-white/20 gap-6 bg-gray-800/50 p-6 rounded-2xl  w-full h-full  md:w-[70%] ">
+                   <div className="flex gap-4">
                         <button
-                            className={`px-6 py-2 rounded-2xl ${isCreating ? "bg-blue-600" : "bg-gray-700"
+                            className={`px-6 py-2 rounded-2xl cursor-pointer ${isCreating ? "bg-[#1CBABA]/60" : "bg-gray-700"
                                 }`}
                             onClick={() => setIsCreating(true)}
                         >
                             Create Tournament
                         </button>
                         <button
-                            className={`px-6 py-2 rounded-2xl ${!isCreating ? "bg-blue-600" : "bg-gray-700"
+                            className={`px-6 py-2 rounded-2xl cursor-pointer ${!isCreating ? "bg-[#1CBABA]/60" : "bg-gray-700"
                                 }`}
                             onClick={() => setIsCreating(false)}
                         >
@@ -75,6 +76,7 @@ export default function Tournament() {
                         </button>
                     </div>
                     {isCreating ? <CreateTournament /> : <JoinTournament />}
+                   </div>
                 </div>
             </main>
         </div>

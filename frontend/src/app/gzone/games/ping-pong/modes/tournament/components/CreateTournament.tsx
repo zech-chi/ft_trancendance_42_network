@@ -70,7 +70,7 @@ export default function CreateTournament() {
 
     return (
         <>
-            <form className="flex flex-col gap-4 bg-black/70 p-6 rounded-lg">
+            <form className="flex flex-col gap-4 bg-gray-900/70 p-6 rounded-lg">
                 <label>
                     Tournament Name:
                     <input
@@ -82,7 +82,7 @@ export default function CreateTournament() {
                 </label>
                 <button
                     type="submit"
-                    className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="mt-4 bg-[#1CBABA]/60 hover:bg-[#1CBABA]/80 text-white font-bold py-2 px-4 cursor-pointer rounded"
                     onClick={handleSubmit}
                 >
                     Create Tournament
