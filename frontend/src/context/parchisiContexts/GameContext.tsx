@@ -215,7 +215,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "CLEAR_LOBBY" });
 
     // redirect back to /online
-    window.location.href = "/protected/games/parchisi";
+    window.location.href = "/gzone/games/parchisi";
   });
   socket.on("gameOver", (data: {winner: string, color: string}) => {
     dispatch({type:"SET_WINNER", payload: {winner: data.winner, winnerColor: data.color}});

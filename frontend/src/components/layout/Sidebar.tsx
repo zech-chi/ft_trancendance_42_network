@@ -13,25 +13,25 @@ import { useSelectedUserId } from '@/context/SelectedUserId';
 
 const navLinks = [
     { 
-        href: '/protected',
+        href: '/gzone',
         label: 'Home',
         icon: '/HOME.png',
         activeIcon: '/HOME2.png'
     },
     { 
-        href: '/protected/chat',
+        href: '/gzone/chat',
         label: 'Chat',
         icon: '/CHAT.png',
         activeIcon: '/CHAT2.png'
     },
     { 
-        href: '/protected/games',
+        href: '/gzone/games',
         label: 'Games',
         icon: '/GAMES.png',
         activeIcon: '/GAMES2.png'
     },
     { 
-        href: '/protected/settings',
+        href: '/gzone/settings',
         label: 'Settings',
         icon: '/SETTINGS.png',
         activeIcon: '/SETTINGS2.png'
@@ -47,7 +47,7 @@ export default function Sidebar(): JSX.Element {
 
     const handleClick = (link: string): void => {
         setSelected(link);
-        if (link === '/protected') {
+        if (link === '/gzone') {
             setSelectedUserName(loggedUserName);
             setSelectedUserId(loggedUserId);
         }
@@ -78,17 +78,17 @@ export default function Sidebar(): JSX.Element {
                         key={link.href}
                         href={link.href}
                         className={`flex items-center justify-center w-10 h-10 xl:w-13 xl:h-13 2xl:w-15 2xl:h-15 rounded-full transition border border-white/15
-                            ${selected === '/protected' && link.href === '/protected' 
+                            ${selected === '/gzone' && link.href === '/gzone' 
                                 ? 'bg-black/50' 
-                                : selected !== '/protected' && selected.startsWith(link.href) && link.href !== '/protected'
+                                : selected !== '/gzone' && selected.startsWith(link.href) && link.href !== '/gzone'
                                     ? 'bg-black/30' 
                                     : 'bg-black/30 hover:bg-black/70'}`}
                         onClick={() => handleClick(link.href)}
                     >
                         <img 
                             src={
-                                (selected === '/protected' && link.href === '/protected') ||
-                                (selected !== '/protected' && selected.startsWith(link.href) && link.href !== '/protected')
+                                (selected === '/gzone' && link.href === '/gzone') ||
+                                (selected !== '/gzone' && selected.startsWith(link.href) && link.href !== '/gzone')
                                     ? link.activeIcon
                                     : link.icon
                             } 

@@ -1,4 +1,4 @@
-import { Message } from "@/app/protected/chat/types/typesChat"
+import { Message } from "@/app/gzone/chat/types/typesChat"
 
 export const contacts = [
 {

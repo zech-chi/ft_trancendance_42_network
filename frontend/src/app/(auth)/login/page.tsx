@@ -1,5 +1,5 @@
 'use client'
-import { JSX } from "react";
+import { JSX, React } from "react";
 import { useEffect, useState } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
@@ -86,7 +86,7 @@ export default function LoginPage() {
         setSelectedUserName(user.userName);
         setSelectedUserId(user.id);
         setLoggedUserId(user.id);
-        router.push("/protected");
+        router.push("/gzone");
         return; 
       }
       setLoading(false);
@@ -135,7 +135,7 @@ export default function LoginPage() {
           setSelectedUserName(data.user.userName);
           setSelectedUserId(data.user.id);
           setLoggedUserId(data.user.id);
-          router.push("/protected");
+          router.push("/gzone");
         }
       }else {
         if (data && data.verifyEmail === true) {
@@ -154,6 +154,11 @@ export default function LoginPage() {
             setError("Something went wrong");
             // setErrorMsg("Something went wrong");
           }
+      };
+  
+      const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        handleLogin();
       };
         
 
@@ -183,7 +188,7 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             type="email"
             placeholder="mail@abc.com"
@@ -201,8 +206,7 @@ export default function LoginPage() {
 
           <button
             className="w-full bg-white text-black font-semibold py-2 rounded-md hover:bg-gray-200 transition"
-            type="button"
-            onClick={handleLogin}
+            type="submit"
           >
             Log in
           </button>

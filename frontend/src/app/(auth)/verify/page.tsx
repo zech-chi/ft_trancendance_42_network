@@ -215,7 +215,7 @@ export default function VerifyEmailPage() {
         setSelectedUserName(data.user.userName);
         setSelectedUserId(data.user.id);
         setLoggedUserId(data.user.id);
-        setTimeout(() => router.push("/protected"), 500);
+        setTimeout(() => router.push("/gzone"), 500);
       } else {
         setError(data.error || data.message || 'Verification failed.');
         setCode(["", "", "", "", "", ""]);
