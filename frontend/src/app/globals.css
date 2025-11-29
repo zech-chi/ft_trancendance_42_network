@@ -365,28 +365,30 @@ audio::-webkit-media-controls-mute-button{
 
 /* globals.css */
 
-/* width of scrollbar */
+/* ----- Chrome / Edge / Safari ----- */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
 
-/* track (background of scrollbar) */
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #003a3a;
   border-radius: 9999px;
 }
 
-/* scrollbar thumb */
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #3b82f6; /* Tailwind blue-500 */
+  background: #3b82f6;
   border-radius: 9999px;
 }
 
-/* hover effect */
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #2563eb; /* Tailwind blue-600 */
+  background: #5ac7c7;
 }
 
+/* ----- Firefox ----- */
+.custom-scrollbar {
+  scrollbar-width: thin;                   /* makes scrollbar thinner */
+  scrollbar-color: #5ac7c7 #003a3a;        /* thumb | track */
+}
 
 canvas {
   image-rendering: -moz-crisp-edges;

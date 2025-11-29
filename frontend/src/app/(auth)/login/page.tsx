@@ -70,6 +70,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true); // new state
   const { setUserEmail } = useUserEmail(); // ✅ Add this line
+  const [errorMsg, setErrorMsg] = useState("");
 
   // check if already logged in
   useEffect(() => {
@@ -113,6 +114,17 @@ export default function LoginPage() {
       console.log("response:", res.status, data);
 
       setUserEmail(email); 
+      
+      // if (!res.ok) {
+      //   const cleanMessage =
+      //     data.message?.replace(/^body\//, "") ||
+      //     "Login failed";
+      
+      //   setErrorMsg(cleanMessage);
+      //   // return; // important: stop execution
+      // }
+      
+
       if (res.ok) {
         if (data.twoFARequired) {
           router.push("/twofa-verify");
@@ -131,12 +143,19 @@ export default function LoginPage() {
               return;
           }
               setError(data.message || "Login failed");
-            }
-          } catch (err) {
+              const cleanMessage =
+                data.message?.replace(/^body\//, "") ||
+                "Login failed";
+            
+              setErrorMsg(cleanMessage);
+          }
+      } catch (err) {
             console.error("fetch error:", err);
             setError("Something went wrong");
+            // setErrorMsg("Something went wrong");
           }
-        };
+      };
+        
 
   if (loading) {
     return (
@@ -149,15 +168,18 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center"
+      className="min-h-screen bg-gradient-to-br  from-black via-gray-900 to-black flex items-center justify-center"
       // style={{ backgroundImage: "url('/bg.png')" }}
     >
       {/* Card */}
-      <div className="bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20  rounded-2xl w-full max-w-md">
         {/* Logo */}
         <div className="flex flex-col items-center mb-6">
           <img src="/logo.png" alt="Logo" className="w-40 h-auto" />
           <h1 className="text-white text-2xl font-bold mt-4">Sign in</h1>
+          {errorMsg && (
+              <p className="text-[#FFB700] bg-[#1CBABA]/30 text-sm text-center mt-5 p-2 rounded-2xl">{errorMsg}</p>
+          )}
         </div>
 
         {/* Form */}
@@ -208,7 +230,7 @@ export default function LoginPage() {
         {/* Sign up link */}
         <p className="text-center text-gray-400 text-sm mt-4">
           Not Registered Yet?{" "}
-          <Link href="/register" className="text-pink-400 hover:underline">
+          <Link href="/register" className="text-[#1CBABA] hover:underline">
             Sign up
           </Link>
         </p>
