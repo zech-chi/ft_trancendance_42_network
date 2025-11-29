@@ -1,5 +1,6 @@
 'use client'
-import { JSX, React } from "react";
+// import { JSX } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
