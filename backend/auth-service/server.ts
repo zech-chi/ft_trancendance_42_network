@@ -15,7 +15,7 @@ import metricsPlugin from "fastify-metrics";
 dotenv.config();
  
 // prnint the secret from env
-console.log("==========>> DB_SECRET:", process.env.SECRET_KEY);  
+console.log("==========>> JWT_SECRETS:", process.env.JWT_SECRETS);  
 
 const fastify = Fastify({ logger: true });
 fastify.register(metricsPlugin, { endpoint: "/metrics" });
