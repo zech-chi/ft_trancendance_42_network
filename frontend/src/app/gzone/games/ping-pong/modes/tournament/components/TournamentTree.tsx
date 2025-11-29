@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useTreeTournament } from "../context/TreeTournamentContext";
+import Image from "next/image";
 
 export default function TournamentBracket() {
   const { tournamentTree } = useTreeTournament();
@@ -9,8 +10,8 @@ export default function TournamentBracket() {
 
   if (!tournamentTree) {
     return (
-      <div className="flex flex-col items-center justify-center p-6">
-        <p className="text-gray-500">No tournament initialized yet.</p>
+      <div className="w-full flex flex-col items-center justify-center p-1">
+        <p className="text-[#FFB700]/90">No tournament initialized yet.</p>
       </div>
     );
   }
@@ -22,10 +23,12 @@ export default function TournamentBracket() {
     return (
       <div className="flex items-center gap-2">
         {player.avatarUrl ? (
-          <img
+          <Image
             src={player.avatarUrl}
             alt={player.name}
-            className="w-8 h-8 rounded-full object-cover"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-full object-cover border border-white/30"
           />
         ) : (
           <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm text-yellow-600">
@@ -49,7 +52,7 @@ export default function TournamentBracket() {
   const renderMatch = (match: any, label: string) => (
     <div
       key={label}
-      className="border rounded-lg p-4 shadow-sm bg-white w-64 hover:cursor-pointer"
+      className="border rounded-lg p-4 shadow-sm  w-64 hover:cursor-pointer"
       onMouseEnter={() => handleEnter(label)}
       onMouseLeave={handleLeave}
     >
@@ -92,8 +95,8 @@ export default function TournamentBracket() {
       <div className="flex flex-col items-center gap-10 p-8">
         {/* Round 1 */}
         <div className="flex flex-col items-center gap-4">
-          <h2 className="text-lg font-bold text-blue-700">Round 1</h2>
-          <div className="flex gap-6">
+          <h2 className="text-lg font-bold text-[#1CBABA]">Round 1</h2>
+          <div className="flex gap-6 flex-col md:flex-row">
             {renderMatch(tournamentTree.round1.match1, "Match 1")}
             {renderMatch(tournamentTree.round1.match2, "Match 2")}
           </div>
@@ -101,13 +104,15 @@ export default function TournamentBracket() {
 
         {/* Round 2 */}
         <div className="flex flex-col items-center gap-4">
-          <h2 className="text-lg font-bold text-blue-700">Round 2 (Final)</h2>
+          <h2 className="text-lg font-bold text-[#1CBABA]">Round 2 (Final)</h2>
           {renderMatch(tournamentTree.round2.match1, "Final Match")}
         </div>
 
         {/* Winner */}
         <div className="flex flex-col items-center gap-2 mt-8">
-          <h2 className="text-lg font-bold text-green-700">🏆 Winner</h2>
+        <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+              🏆 Champion
+            </h2>
           {tournamentTree.winner ? (
             renderPlayer(tournamentTree.winner)
           ) : (

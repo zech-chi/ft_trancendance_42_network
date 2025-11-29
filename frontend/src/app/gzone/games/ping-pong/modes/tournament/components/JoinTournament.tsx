@@ -71,8 +71,9 @@ export default function JoinTournament() {
   }, [socketContext.socket]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">🏓 Join a Tournament</h1>
+    <>
+      <h1 className="text-2xl font-bold text-center">🏓 Join a Tournament</h1>
+    <div className="p-6 bg-black/30 h-full overflow-y-auto rounded-2xl custom-scrollbar w-full max-w-md">
 
       {publicTournaments.length === 0 ? (
         <p className="text-gray-500">No public tournaments available right now.</p>
@@ -97,7 +98,7 @@ export default function JoinTournament() {
                     playerId: loggedUserId,
                   });
                 }}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                className="bg-[#1CBABA]/60 text-white px-4 py-2 rounded-lg hover:bg-[#1CBABA]/80 transition-colors duration-200 cursor-pointer"
               >
                 Join
               </button>
@@ -106,5 +107,6 @@ export default function JoinTournament() {
         </ul>
       )}
     </div>
+    </>
   );
 }

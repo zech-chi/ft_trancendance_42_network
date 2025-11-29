@@ -172,9 +172,25 @@ export default function Play() {
                           2xl:mt-[67px] xl:mt-[60px] overflow-y-hidden
                       "
       >
-        <div className="w-[80%] h-full flex flex-col items-center justify-center p-4 bg-black/40 rounded-[50px]">
-          <h1 className="text-2xl font-bold mb-4">Tournament Bracket</h1>
-          <TournamentBracket />
+        <div className="w-full h-full flex flex-col items-center justify-center  rounded-2xl bg-gray-800/40 backdrop-blur-md shadow-xl border border-white/20 text-white p-4 md:p-0">
+          {/* <div className="flex flex-col items-center justify-center bg-gray-800 rounded-2xl border border-white/20 gap-5 w-full h-full md:w-[70%] md:h-[70%] max-h-[70%] overflow-y-auto">
+            <h1 className="text-2xl font-bold mb-4">Tournament</h1>
+            <TournamentBracket />
+          </div> */}
+          <div className="flex flex-col items-center  bg-gray-800 rounded-2xl border border-white/20 w-full h-full p-4">
+          {/* Fixed title */}
+          <h1 className="text-2xl font-bold mb-4 sticky top-0 bg-gray-800 z-10">
+            Tournament
+          </h1>
+
+          {/* Scrollable bracket */}
+          <div className="flex-1 w-full overflow-y-auto custom-scrollbar">
+            <div className="flex justify-center w-full">
+              <TournamentBracket />
+            </div>
+          </div>
+        </div>
+
         </div>
       </main>
     </div>
