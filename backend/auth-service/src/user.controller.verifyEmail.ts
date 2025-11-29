@@ -55,7 +55,7 @@ export async function verifyEmail(
         jti: crypto.randomUUID(),
       },
       {
-        expiresIn: "15m",
+        expiresIn: "2d",
       }
     );
     

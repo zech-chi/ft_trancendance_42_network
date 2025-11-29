@@ -21,11 +21,21 @@ export function setRefreshTokenCookie(reply: FastifyReply, token: string) {
 }
 
 export function clearRefreshTokenCookie(reply: FastifyReply) {
-  reply.clearCookie("refresh_token", { path: "/api/auth/refresh" });
+  reply.clearCookie('refresh_token', {
+    path: '/api/auth/refresh',
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === "production" || false
+  });
 }
 
 export function clearAccessTokenCookie(reply: FastifyReply) {
-  reply.clearCookie("access_token", { path: "/" });
+  reply.clearCookie('access_token', {
+    path: '/',          // must match cookie creation path
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === "production" || false       // true if HTTPS
+  });
 }
 
 export function setTmp2FACookie(reply: FastifyReply, token: string) {
@@ -39,5 +49,10 @@ export function setTmp2FACookie(reply: FastifyReply, token: string) {
 }
 
 export function clearTmp2FACookie(reply: FastifyReply) {
-  reply.clearCookie("tmp_2fa", { path: "/" });
+  reply.clearCookie('tmp_2fa', {
+    path: "/" ,
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === "production" || false
+  });
 }

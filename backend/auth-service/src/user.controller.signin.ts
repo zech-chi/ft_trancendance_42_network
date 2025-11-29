@@ -71,7 +71,7 @@ export async function LoginUser(
         jti: crypto.randomUUID(),
       },
       {
-        expiresIn: "15m",
+        expiresIn: "2d",
       }
     );
     
