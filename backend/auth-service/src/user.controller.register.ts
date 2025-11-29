@@ -92,16 +92,24 @@ export async function RegisterUser(
         const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = Date.now() + 15 * 60 * 1000; // 15 minutes from now
         
-        const res = await fetch(API_ROUTES.SAVE_VERIFICATION_CODE, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                userId: newUser.id,
-                code: verificationCode,
-                expiresAt,
-            }),
-        });
-        if (!radarDataId || !chartsDataId || !res.ok) {
+
+        // !!!!!!!!!!!!!!! I updated SAVE_VERIFICATION_CODE
+        try {
+            const res = await fetch(API_ROUTES.SAVE_VERIFICATION_CODE, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: newUser.id,
+                    code: verificationCode,
+                    expiresAt,
+                }),
+            });
+        } catch (err) {
+            console.error('Error saving verification code:', err);
+        }
+
+        // if (!radarDataId || !chartsDataId || !res.ok) {
+        if (!radarDataId || !chartsDataId) {
             // should I delete the user if this fails?
             const res = await fetch(API_ROUTES.DELETE_USER_BY_ID, {
                 method: 'POST',

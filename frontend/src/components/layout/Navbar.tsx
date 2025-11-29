@@ -345,7 +345,7 @@ function SearchForm(): JSX.Element {
         />
 
         {showDropdown && (
-          <ul className="absolute top-full mt-4 left-0 w-full rounded shadow-lg z-[999] max-h-60 overflow-y-auto border border-white/50"
+          <ul className="absolute top-full mt-4 left-0 w-full rounded shadow-lg z-[999] max-h-60 overflow-y-auto border border-white/50 backdrop-blur-2xl"
             style={{
               background: "bg-white/5 backdrop-blur-2xl p-8 rounded-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)] border border-white/50  w-full",
               borderRadius: "15px",
@@ -359,7 +359,7 @@ function SearchForm(): JSX.Element {
                   key={user.userName}
                   className="flex items-center gap-2 px-4 py-2 cursor-pointer"
                   style={{ color: "#ffffff", transition: "background-color 0.2s ease" }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(14, 85, 152, 0.353)"}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(28, 186, 186, 0.2)"}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                   onClick={() => {
                     setSelectedUserName(user.userName);
