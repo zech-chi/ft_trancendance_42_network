@@ -3,6 +3,7 @@ import { RegisterUserInput } from "./user.schema"
 import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
 import { sendEmail } from "./utils/mailer";
+import { clearAccessTokenCookie, clearRefreshTokenCookie } from "./utils/auth.utils";
 
 // function to check if user exists by email, username, or full name
 export async function findUserIfExists(userName: string, email: string): Promise<any> {
@@ -123,7 +124,9 @@ export async function RegisterUser(
             return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
         }
         await sendEmail(email, "Verify your email", `<p>Your verification code: <b>${verificationCode}</b></p>`);
-        
+        clearAccessTokenCookie(reply);
+        clearRefreshTokenCookie(reply);
+
         // respond with the new user's details
         return reply.code(201).send({
             id: newUser.id,
