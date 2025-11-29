@@ -1,14 +1,14 @@
 'use client';
 import { useRef, useEffect, use, useState } from "react";
-import { Parcheesi3D } from "@/app/protected/games/parchisi/lib/Parcheesi3D_src/parcheesi3d";
-import { Board } from "@/app/protected/games/parchisi/lib/Parcheesi3D_src/Board";
-import { Player } from "@/app/protected/games/parchisi/lib/Parcheesi3D_src/Player";
+import { Parcheesi3D } from "@/app/gzone/games/parchisi/lib/Parcheesi3D_src/parcheesi3d";
+import { Board } from "@/app/gzone/games/parchisi/lib/Parcheesi3D_src/Board";
+import { Player } from "@/app/gzone/games/parchisi/lib/Parcheesi3D_src/Player";
 import { io, Socket } from "socket.io-client";
-import { PlayerColor, SphereDataType, DiceDataType, JumpDataType, MoveAbleType } from "@/app/protected/games/parchisi/lib/Parcheesi3D_src/types";
+import { PlayerColor, SphereDataType, DiceDataType, JumpDataType, MoveAbleType } from "@/app/gzone/games/parchisi/lib/Parcheesi3D_src/types";
 import chalk from 'chalk';
 import * as BABYLON from "@babylonjs/core";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
-import {MoveDataType} from "@/app/protected/games/parchisi/lib/Parcheesi3D_src/types";
+import {MoveDataType} from "@/app/gzone/games/parchisi/lib/Parcheesi3D_src/types";
 import { useSocket } from "@/context/parchisiContexts/SocketContext"
 import {useGame } from "@/context/parchisiContexts/GameContext";
 import { CustomizationType } from "@/types/game";

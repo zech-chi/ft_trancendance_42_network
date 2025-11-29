@@ -120,7 +120,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
               setMenuOpen(false);
               setSelectedUserId(loggedUserId);
               setSelectedUserName(loggedUserName);
-              router.push("/protected");
+              router.push("/gzone");
             }}
           >
             View Profile
@@ -366,7 +366,7 @@ function SearchForm(): JSX.Element {
                     setSelectedUserId(user.id);
                     setInputValue("");
                     setShowDropdown(false);
-                    rounter.push("/protected");
+                    rounter.push("/gzone");
                   }}
                 >
                   {/* <img

@@ -45,7 +45,7 @@ export default function SignupPage() {
         const user = await fetchUser();
         if (user && user.userName) {
           // alert("Already logged in, redirecting to home page.");
-          router.push("/protected");
+          router.push("/gzone");
           return; 
         } else {
           setIsLoading(false);

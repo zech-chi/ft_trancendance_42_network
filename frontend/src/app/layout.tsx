@@ -6,10 +6,10 @@ import { LoggedUserNameProvider } from '@/context/LoggedUserNameContext';
 import { SelectedUserIdProvider } from '@/context/SelectedUserId';
 import { SelectedUserNameProvider } from '@/context/SelectedUserNameContext';
 import { LoggedUserIdProvider } from '@/context/UserIdContext';
-import { SocketProvider } from "./protected/games/ping-pong/context/SocketContext";
-import { InviteProvider } from "./protected/games/ping-pong/context/InviteContext";
+import { SocketProvider } from "./gzone/games/ping-pong/context/SocketContext";
+import { InviteProvider } from "./gzone/games/ping-pong/context/InviteContext";
 import { UserEmailProvider } from '@/context/UserEmailContext';
-import Notifications from './protected/games/ping-pong/components/Notifications';
+import Notifications from './gzone/games/ping-pong/components/Notifications';
 import { Toaster } from "react-hot-toast";
 
 const BG_URL = 'https://images6.alphacoders.com/134/1344450.jpeg';
