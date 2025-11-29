@@ -230,7 +230,7 @@ export default function Home() : JSX.Element {
 						2xl:h-[calc(100%-85px)]
 						2xl:mt-[67px] xl:mt-[60px]
 					">
-						<button className="text-white absolute top-1 right-3 2xl:hidde z-13"
+						<button className="text-white absolute top-1 right-7 2xl:hidde z-13 cursor-pointer"
 						onClick={() => setShowRightComp(prev => !prev)}
 						>
 							{!showRightComp ? <img src="/show.png" alt="show" className="w-auto h-[30px] md:h-[40px] lg:h-[50px] xl:h-[60px] opacity-70 hover:opacity-100 2xl:hidden"/> : 

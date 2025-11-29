@@ -11,6 +11,7 @@ import { useLoggedUserId } from "@/context/UserIdContext";
 import { useRef } from "react";
 import { useSelectedUserId } from '@/context/SelectedUserId';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 // function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
 // 	const [ userProfile, setUserProfile ] = useState<string | null>(null);
@@ -105,17 +106,16 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
         width={60}          // placeholder large enough (will be overridden by Tailwind)
         height={60}
         className="rounded-full w-9 h-9 xl:w-12 xl:h-12 2xl:w-15 2xl:h-15
-                  border-2 border-black/50
-                  xl:border-3 2xl:border-4
+                  border-2 border-white/50
                   object-cover ml-5 cursor-pointer"
         onClick={() => setMenuOpen(!menuOpen)}
       />
 
       {/* Dropdown Menu */}
       {menuOpen && (
-        <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-300 rounded-xl shadow-lg z-50">
+        <div className="absolute right-0 mt-4.5 w-40 bg-gray-800/40 backdrop-blur-md shadow-xl border border-white/20 rounded-2xl z-50">
           <button
-            className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-t-xl"
+            className="w-full px-4 py-2 text-left text-white hover:bg-[#1CBABA]/30 cursor-pointer rounded-t-xl"
             onClick={() => {
               setMenuOpen(false);
               setSelectedUserId(loggedUserId);
@@ -126,7 +126,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
             View Profile
           </button>
           <button
-            className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 rounded-b-xl"
+            className="w-full px-4 py-2 text-left text-[#FFB700] hover:bg-[#1CBABA]/30 cursor-pointer rounded-b-xl"
             onClick={async () => {
               setMenuOpen(false);
               console.log("Logout clicked");
@@ -139,7 +139,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
                 setSelectedUserId(0);
                 setSelectedUserName("");
                 // navigate to login page or homepage
-                window.location.href = "/login";
+                router.push("/login");
               }
               // logout logic here
             }}
@@ -154,25 +154,27 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
 
 function Logo(): JSX.Element {
   return (
-    <div className="mr-5 mt-1">
-      {/* <Image
-        src="/logo.png"
-        alt="Logo"
-        width={150}
-        height={150}
-        className="rounded-full"
-        priority
-      /> */}
-      <Image
+    <Link href="/gzone">
+      <div className="mr-5 mt-1 cursor-pointer">
+        {/* <Image
           src="/logo.png"
           alt="Logo"
-          width={100}
-          height={100}
-          className="w-[50px] h-auto xl:w-[75px] 2xl:w-[90px]"
+          width={150}
+          height={150}
+          className="rounded-full"
           priority
-      />
+        /> */}
+        <Image
+            src="/logo.png"
+            alt="Logo"
+            width={100}
+            height={100}
+            className="w-[50px] h-auto xl:w-[75px] 2xl:w-[90px]"
+            priority
+        />
 
-    </div>
+      </div>
+    </Link>
   );
 }
 

@@ -80,8 +80,8 @@ function ProfileImage({ imageUrl, online }: ProfileImageProps): JSX.Element {
                   width={500}             // placeholder (overridden by w-full / h-full)
                   height={500}
                   className="w-full h-full object-cover rounded-full -rotate-225 
-                            border-3 xl:border-4 2xl:border-5
-                            border-black/50"
+                            border-2
+                            border-white/50"
                 />
             </div>
             {
