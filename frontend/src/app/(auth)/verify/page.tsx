@@ -31,10 +31,10 @@
 //     setMessage('');
 
 //     try {
-//       const res = await fetch(`http://localhost:5001/api/auth/verify-email`, {
+//       const res = await fetchWithAuth(`http://localhost:5001/api/auth/verify-email`, {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
+//         
 //         body: JSON.stringify({ code , email: userEmail }),
 //       });
 
@@ -64,7 +64,7 @@
 //     setMessage('');
 
 //     try {
-//       const res = await fetch(`http://localhost:5001/api/auth/resend-code`, {
+//       const res = await fetchWithAuth(`http://localhost:5001/api/auth/resend-code`, {
 //         method: 'PUT',
 //         headers: { 'Content-Type': 'application/json' },
 //         body: JSON.stringify({ email: userEmail }),
@@ -134,6 +134,7 @@ import { useSelectedUserName } from '@/context/SelectedUserNameContext';
 import { useSelectedUserId } from '@/context/SelectedUserId';
 import { useLoggedUserId } from '@/context/UserIdContext';
 import Image from 'next/image';
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -201,10 +202,10 @@ export default function VerifyEmailPage() {
     setMessage('');
 
     try {
-      const res = await fetch(`/api/auth/verify-email`, {
+      const res = await fetchWithAuth(`/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        
         body: JSON.stringify({ code: codeString, email: userEmail }),
       });
 
@@ -236,11 +237,11 @@ export default function VerifyEmailPage() {
     setMessage('');
 
     try {
-      const res = await fetch(`/api/auth/resend-code`, {
+      const res = await fetchWithAuth(`/api/auth/resend-code`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail }),
-        credentials: 'include',
+        
       });
 
       if (res.ok) {

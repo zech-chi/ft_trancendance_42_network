@@ -6,6 +6,7 @@ import { SocketContextType } from '../types/typesChat';
 import { useUser } from './UserContext';
 import { host } from '@/app/protected/chat/utils/ApiRoutes';
 import { useLoggedUserId } from '@/context/UserIdContext';
+import { setupSocketAuthHandler } from '@/utils/socketAuthHandler';
 
 const SocketContext = createContext<SocketContextType | null>(null);
 
@@ -40,6 +41,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             query: { userId: userId.toString() },
             withCredentials: true,
         });
+
+        // Setup automatic token refresh on auth errors
+        setupSocketAuthHandler(newSocket);
 
         setSocket(newSocket);
 

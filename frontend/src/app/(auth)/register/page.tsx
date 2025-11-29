@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FlowGraphConsoleLogBlock } from "@babylonjs/core";
 import {fetchUser} from "@/app/(auth)/login/page"
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 export default function SignupPage() {
 
@@ -27,7 +28,7 @@ export default function SignupPage() {
     // const handleGoogle = async () => {
     //   try {
     //       console.log("log with google");
-    //       const res = await fetch("http://localhost:5001/api/auth/login/google")
+    //       const res = await fetchWithAuth("http://localhost:5001/api/auth/login/google")
 
     //        if (!res.ok) {
     //             throw new Error("Failed to register");
@@ -70,7 +71,7 @@ export default function SignupPage() {
     const handleSubmit = async () => {
         try {
             console.log("Attempting registration with", { userName, fullName, email, password });
-            const res = await fetch("/api/auth/register", {
+            const res = await fetchWithAuth("/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

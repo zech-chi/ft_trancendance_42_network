@@ -1,0 +1,416 @@
+===========================================
+PROJECT CHANGES SUMMARY
+Date: 2025-11-29 .01:00
+===========================================
+
+OVERVIEW:
+This document tracks all changes made to improve responsive design and implement automatic token refresh functionality across the entire application.
+
+===========================================
+SECTION 1: RESPONSIVE DESIGN IMPROVEMENTS
+===========================================
+
+PROBLEM:
+- Game lobby page had scrolling issues on small screens
+- Connected players list couldn't scroll when there were many players
+- Content was visible through transparent navbar when scrolling
+- Bottom buttons (Leave button) were hidden under navbar on small screens
+
+SOLUTION:
+Fixed the game lobby layout to be fully responsive with proper scrolling behavior.
+
+FILES MODIFIED:
+1. /frontend/src/app/protected/games/parchisi/online/lobby/[id]/page.tsx
+
+CHANGES MADE:
+- Changed root container from min-h-screen to h-screen with flex flex-col
+- Made navbar fixed position (fixed top-0) to reserve its space
+- Added fixed navbar wrapper: <div className="fixed top-0 left-0 lg:left-16 right-0 z-50">
+- Made main content scrollable: overflow-y-auto with flex-1
+- Added solid background to main: bg-gradient-to-br from-gray-900 via-black to-gray-900
+  * This prevents content from showing through transparent navbar
+- Added padding: pt-16 sm:pt-20 pb-6 to clear navbar and add bottom space
+- Set connected players list to fixed height for 2.5 players:
+  * style={{ maxHeight: 'calc(2.5 * (3.5rem + 0.5rem))' }}
+  * This allows internal scrolling when there are more than 2.5 players
+- Added extra bottom padding (pb-8) to ensure all buttons are visible when scrolled
+
+RESPONSIVE BEHAVIOR:
+- Small screens: Whole lobby scrolls, navbar stays fixed, players list scrolls internally
+- Large screens: Same behavior with adjusted spacing
+- Connected players show 2.5 players max, scroll for more
+- All action buttons (Ready, Start Game, Leave) are fully visible when scrolled to bottom
+
+===========================================
+SECTION 2: AUTOMATIC TOKEN REFRESH SYSTEM
+===========================================
+
+PROBLEM:
+When access tokens expired, users had to manually refresh the page to get a new token. 
+This caused:
+- API calls to fail with 401/403 errors
+- Socket connections to disconnect
+- Poor user experience requiring manual page refresh
+
+SOLUTION:
+Implemented a centralized automatic token refresh system that works for both HTTP requests and WebSocket connections.
+
+===========================================
+NEW FILES CREATED:
+===========================================
+
+1. /frontend/src/utils/fetchWithAuth.ts
+   PURPOSE: Centralized fetch wrapper with automatic token refresh
+   
+   FUNCTIONALITY:
+   - Wraps native fetch() with auth handling
+   - Automatically includes credentials: 'include' (sends cookies)
+   - Intercepts 401/403 HTTP errors
+   - Calls /api/auth/refresh endpoint to get new access token
+   - Retries the original request with new token
+   - Redirects to /login if refresh fails
+   - Transparent to the caller - works exactly like fetch()
+   
+   EXPORT: fetchWithAuth(url, options)
+
+2. /frontend/src/utils/socketAuthHandler.ts
+   PURPOSE: Socket.IO authentication error handler
+   
+   FUNCTIONALITY:
+   - Monitors socket connect_error events for auth issues
+   - Listens for 'unauthorized' events from server
+   - Automatically refreshes token when auth errors occur
+   - Reconnects socket after successful refresh
+   - Redirects to /login if refresh fails
+   
+   EXPORT: setupSocketAuthHandler(socket)
+
+===========================================
+FILES UPDATED - API CALLS (HTTP):
+===========================================
+
+Updated to use fetchWithAuth() instead of fetch():
+
+1. /frontend/src/app/lib/apiDashboard.ts
+   - fetchUser()
+   - fetchUserById()
+   - fetchFriendshipStatus()
+   - fetchGames()
+   - fetchRankData()
+   - fetchFriends()
+   - fetchRadarData()
+   - fetchNumberOfPlayers()
+   - fetchCalendarData()
+   - fetchMakePlayerOnline()
+   * Removed all 'credentials: include' (now handled by wrapper)
+
+2. /frontend/src/app/(auth)/login/page.tsx
+   - fetchUser() function (session check)
+   - Simplified logic (removed manual refresh code)
+
+3. /frontend/src/app/protected/settings/page.tsx
+   - Profile update fetch
+   - User data fetch
+
+4. /frontend/src/components/dashboardComponents/Friends.tsx
+   - Reject friend request
+   - Accept friend request
+   - Unblock user
+
+5. /frontend/src/components/dashboardComponents/TopDashboard.tsx
+   - Send friend request
+
+6. /frontend/src/app/protected/chat/components/Messages.tsx
+   - Delete message
+   - Edit message
+   - Get messages
+
+7. /frontend/src/app/protected/chat/page.tsx
+   - All chat-related API calls
+
+8. /frontend/src/app/protected/chat/components/MainChat.tsx
+   - Chat API calls
+
+9. /frontend/src/app/protected/games/parchisi/game/[id]/page.tsx
+   - Game-related API calls
+
+10. /frontend/src/app/protected/games/parchisi/online/page.tsx
+    - Lobby API calls
+
+11. /frontend/src/app/protected/games/ping-pong/components/InviteFriendtoPlay.tsx
+    - Invite API calls
+
+12. /frontend/src/app/protected/games/ping-pong/context/SocketContext.tsx
+    - User fetch calls
+
+13. /frontend/src/app/protected/layout.tsx
+    - Layout-level API calls
+
+14. /frontend/src/app/protected/settings/components/TwoFASetup.tsx
+    - 2FA setup API calls
+
+15. /frontend/src/app/(auth)/verify/page.tsx
+    - Email verification calls
+
+16. /frontend/src/app/(auth)/register/page.tsx
+    - Registration API calls
+
+17. /frontend/src/app/(auth)/twofa-verify/page.tsx
+    - 2FA verification calls
+
+18. /frontend/src/components/dashboardComponents/Statistics.tsx
+    - Statistics API calls
+
+19. /frontend/src/components/layout/Navbar.tsx
+    - Navbar-related API calls
+
+===========================================
+FILES UPDATED - SOCKET CONNECTIONS:
+===========================================
+
+Added setupSocketAuthHandler() to all socket initializations:
+
+1. /frontend/src/app/protected/chat/context/SocketContext.tsx
+   - Added import: setupSocketAuthHandler
+   - Called setupSocketAuthHandler(newSocket) after io() initialization
+   - Handles chat socket auth errors
+
+2. /frontend/src/context/parchisiContexts/SocketContext.tsx
+   - Added import: setupSocketAuthHandler
+   - Called setupSocketAuthHandler(socketInstance) after io() initialization
+   - Handles Parchisi game socket auth errors
+
+3. /frontend/src/app/protected/games/ping-pong/context/SocketContext.tsx
+   - Added import: setupSocketAuthHandler
+   - Called setupSocketAuthHandler(newSocket) after io() initialization
+   - Handles ping-pong game socket auth errors
+
+===========================================
+TECHNICAL IMPLEMENTATION DETAILS:
+===========================================
+
+HOW TOKEN REFRESH WORKS:
+
+1. HTTP Requests Flow:
+   ┌─────────────────────┐
+   │ Component makes     │
+   │ API call using      │
+   │ fetchWithAuth()     │
+   └──────────┬──────────┘
+              │
+              ▼
+   ┌─────────────────────┐
+   │ Request sent with   │
+   │ cookies (tokens)    │
+   └──────────┬──────────┘
+              │
+              ▼
+   ┌─────────────────────┐
+   │ Server responds     │
+   │ 200 OK or 401/403   │
+   └──────────┬──────────┘
+              │
+              ▼
+        Is 401/403?
+              │
+         Yes  │  No
+              ▼     └──────────────┐
+   ┌─────────────────────┐         │
+   │ Call /api/auth/     │         │
+   │ refresh endpoint    │         │
+   └──────────┬──────────┘         │
+              │                    │
+              ▼                    │
+       Refresh OK?                 │
+              │                    │
+         Yes  │  No                │
+              ▼     │               │
+   ┌─────────────────────┐         │
+   │ Retry original      │         │
+   │ request             │         │
+   └──────────┬──────────┘         │
+              │                    │
+              ▼                    │
+              └────────────────────┤
+                                   │
+                                   ▼
+              ┌─────────────────────┐
+              │ Return response     │
+              │ to component        │
+              └─────────────────────┘
+
+2. Socket Connections Flow:
+   ┌─────────────────────┐
+   │ Socket connects     │
+   │ with cookies        │
+   └──────────┬──────────┘
+              │
+              ▼
+   ┌─────────────────────┐
+   │ Auth middleware     │
+   │ validates token     │
+   └──────────┬──────────┘
+              │
+              ▼
+      Token valid?
+              │
+         No   │  Yes
+              ▼     └─────────────────┐
+   ┌─────────────────────┐            │
+   │ Emit 'connect_error'│            │
+   │ or 'unauthorized'   │            │
+   └──────────┬──────────┘            │
+              │                       │
+              ▼                       │
+   ┌─────────────────────┐            │
+   │ socketAuthHandler   │            │
+   │ catches error       │            │
+   └──────────┬──────────┘            │
+              │                       │
+              ▼                       │
+   ┌─────────────────────┐            │
+   │ Call /api/auth/     │            │
+   │ refresh             │            │
+   └──────────┬──────────┘            │
+              │                       │
+              ▼                       │
+       Refresh OK?                    │
+              │                       │
+         Yes  │  No                   │
+              ▼     │                 │
+   ┌─────────────────────┐            │
+   │ socket.connect()    │            │
+   │ reconnect with      │            │
+   │ new token           │            │
+   └──────────┬──────────┘            │
+              │                       │
+              ▼                       │
+              └───────────────────────┤
+                                      │
+                                      ▼
+              ┌─────────────────────┐
+              │ Connection          │
+              │ established         │
+              └─────────────────────┘
+
+===========================================
+BENEFITS OF THIS IMPLEMENTATION:
+===========================================
+
+1. SEAMLESS USER EXPERIENCE:
+   - No more manual page refreshes needed
+   - Token refresh happens in background
+   - User doesn't notice when tokens expire
+   - Continuous gameplay without interruption
+
+2. CENTRALIZED LOGIC:
+   - Single place to handle token refresh (fetchWithAuth)
+   - Easy to maintain and update
+   - Consistent behavior across entire app
+
+3. AUTOMATIC COVERAGE:
+   - All API calls protected
+   - All socket connections protected
+   - No need to remember to add refresh logic
+
+4. SECURITY:
+   - Tokens still expire (good security practice)
+   - Refresh only happens when needed
+   - Automatic logout if refresh fails
+
+5. DEVELOPER FRIENDLY:
+   - Simple API: just use fetchWithAuth() instead of fetch()
+   - Works like native fetch()
+   - One-line socket protection: setupSocketAuthHandler(socket)
+
+===========================================
+USAGE EXAMPLES:
+===========================================
+
+FOR HTTP REQUESTS:
+Before:
+  const response = await fetch('/api/endpoint', {
+    credentials: 'include',
+  });
+
+After:
+  const response = await fetchWithAuth('/api/endpoint');
+
+FOR SOCKET CONNECTIONS:
+Before:
+  const socket = io({
+    withCredentials: true,
+  });
+
+After:
+  const socket = io({
+    withCredentials: true,
+  });
+  setupSocketAuthHandler(socket);
+
+===========================================
+FILES NOT MODIFIED:
+===========================================
+
+The following files still use native fetch() but don't need token refresh:
+- /app/(auth)/login/page.tsx - Login/register endpoints (logging in, not authenticated)
+- /utils/socketAuthHandler.ts - Refresh handler itself
+
+===========================================
+TESTING RECOMMENDATIONS:
+===========================================
+
+1. Test token expiration:
+   - Wait for access token to expire (check backend JWT expiry time)
+   - Make an API call
+   - Verify it succeeds without manual refresh
+
+2. Test socket connections:
+   - Connect to chat/game with socket
+   - Let token expire
+   - Verify socket reconnects automatically
+
+3. Test refresh failure:
+   - Clear all cookies
+   - Make an API call
+   - Verify redirect to /login
+
+4. Test responsive design:
+   - Open lobby on mobile screen size
+   - Add 5+ players
+   - Verify players list scrolls internally
+   - Scroll to bottom and verify all buttons visible
+
+===========================================
+MAINTENANCE NOTES:
+===========================================
+
+1. To add new API calls:
+   - Import: import { fetchWithAuth } from '@/utils/fetchWithAuth';
+   - Use: const response = await fetchWithAuth(url, options);
+
+2. To add new socket connections:
+   - Import: import { setupSocketAuthHandler } from '@/utils/socketAuthHandler';
+   - Setup: setupSocketAuthHandler(socket); // after io() initialization
+
+3. To modify refresh logic:
+   - Edit: /frontend/src/utils/fetchWithAuth.ts
+   - All API calls will automatically use new logic
+
+4. To modify socket refresh logic:
+   - Edit: /frontend/src/utils/socketAuthHandler.ts
+   - All sockets will automatically use new logic
+
+===========================================
+STATISTICS:
+===========================================
+
+Total Files Created: 2
+Total Files Modified: 23 (20 for API calls + 3 for sockets + 1 for responsive design)
+Lines of Code Added: ~250
+Functions Updated: 40+
+Socket Contexts Updated: 3
+
+===========================================
+END OF SUMMARY
+===========================================

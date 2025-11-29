@@ -9,6 +9,7 @@ import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useLoggedUserId } from "@/context/UserIdContext";
 import React from "react";
 import Image from "next/image";
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 interface User {
   id: number;
@@ -124,12 +125,12 @@ function ProfileInfo({ user, friendshipStatus, setFriendshipStatus }: {user : Us
 
     const sendFriendRequest = async () => {
         try {
-           const response = await fetch(`/api/dashboard/friends/requestfriend`, {
+           const response = await fetchWithAuth(`/api/dashboard/friends/requestfriend`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include',
+                
                 body: JSON.stringify({
                     sender_id: loggedUserId,
                     receiver_id: user.id,

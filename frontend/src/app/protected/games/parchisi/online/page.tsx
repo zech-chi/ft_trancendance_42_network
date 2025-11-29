@@ -9,6 +9,7 @@ import Input from '@/components/ui/Input';
 import { useGame } from "@/context/parchisiContexts/GameContext";
 import Sidebar from '@/components/layout/Sidebar';
 import Navbar from '@/components/layout/Navbar';
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 export default function OnlineGamePage() {
   return <OnlinePageContent />;
@@ -33,8 +34,8 @@ function OnlinePageContent() {
   useEffect(() => {
     async function fetchRooms() {
       try {
-        const res = await fetch("/api/parchisi/online/rooms", {
-          credentials: 'include'
+        const res = await fetchWithAuth("/api/parchisi/online/rooms", {
+          
         });
         const data = await res.json();
         setRooms(data);

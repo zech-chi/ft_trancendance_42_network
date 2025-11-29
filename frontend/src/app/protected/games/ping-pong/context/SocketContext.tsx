@@ -6,6 +6,8 @@ import { io, Socket } from "socket.io-client";
 import { fetchUser } from "@/app/(auth)/login/page";
 import { useRouter } from "next/navigation";
 import { fetchMakePlayerOnline } from "@/app/lib/apiDashboard";
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
+import { setupSocketAuthHandler } from '@/utils/socketAuthHandler';
 
 interface User {
   id: number;
@@ -100,14 +102,17 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
        query: { userId: loggedUserId?.toString(), username: loggedUserName },
     });
 
+    // Setup automatic token refresh on auth errors
+    setupSocketAuthHandler(newSocket);
+
     newSocket.on("connect", async () => {
       try {
         // make player Online in the database
         await fetchMakePlayerOnline(loggedUserId, true);
 
         setIsConnected(true);
-        const res = await fetch(`/api/pong/get-user/${loggedUserId}`, {
-          credentials: "include",
+        const res = await fetchWithAuth(`/api/pong/get-user/${loggedUserId}`, {
+          
         });
         const data = await res.json();
 

@@ -1,12 +1,13 @@
 // /protected/layout.tsx
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 async function getUserFromSession() {
   const cookieStore = await cookies(); // get cookies from the incoming request
   const cookieHeader = cookieStore.toString();
 
-  const res = await fetch("http://localhost:5000/api/auth/session", {
+  const res = await fetchWithAuth("http://localhost:5000/api/auth/session", {
     headers: {
       Cookie: cookieHeader, // forward cookies to backend
     },

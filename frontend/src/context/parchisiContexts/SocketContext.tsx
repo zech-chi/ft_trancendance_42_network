@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import { io, type Socket } from "socket.io-client"
+import { setupSocketAuthHandler } from '@/utils/socketAuthHandler';
 
 interface SocketContextType {
   socket: Socket | null
@@ -72,6 +73,10 @@ export function SocketProvider({ children}: { children: ReactNode }) {
         path: `/socket.io/parchisi`,
         withCredentials: true,
       })
+    
+    // Setup automatic token refresh on auth errors
+    setupSocketAuthHandler(socketInstance);
+    
     socketInstance.on("connect", () => {
       console.log("Connected to server")
       setIsConnected(true)

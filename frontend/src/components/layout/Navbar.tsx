@@ -11,6 +11,7 @@ import { useLoggedUserId } from "@/context/UserIdContext";
 import { useRef } from "react";
 import { useSelectedUserId } from '@/context/SelectedUserId';
 import { useRouter } from 'next/navigation';
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 // function ProfileImg({loggedUserName} : {loggedUserName : string}): JSX.Element {
 // 	const [ userProfile, setUserProfile ] = useState<string | null>(null);
@@ -130,9 +131,9 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
             onClick={async () => {
               setMenuOpen(false);
               console.log("Logout clicked");
-              let response = await fetch("/api/auth/logout", {
+              let response = await fetchWithAuth("/api/auth/logout", {
                 method: "DELETE",
-                credentials: "include",
+                
               });
               if (response.ok) {
                 setLoggedUserId(0);
@@ -266,11 +267,11 @@ function SearchForm(): JSX.Element {
       setIsLoading(true);
       setShowDropdown(true);
       try {
-        const res = await fetch(
+        const res = await fetchWithAuth(
           `/api/dashboard/search\?prefix\=${encodeURIComponent(
             inputValue
           )}`, {
-            credentials: 'include'
+            
           }
         );
         if (!res.ok) throw new Error("Failed to fetch users");

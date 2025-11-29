@@ -11,6 +11,7 @@ import { send } from 'process';
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 type FriendsChoice = 'friends' | 'friend request' | 'sent request' | 'blocked';
 
 interface User {
@@ -407,12 +408,12 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     onClick = {
                     async () => {
                         try {
-                            const response = await fetch(`/api/dashboard/friends/reject`, {
+                            const response = await fetchWithAuth(`/api/dashboard/friends/reject`, {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
-                                credentials: 'include',
+                                
                                 body: JSON.stringify({
                                     sender_id: friends.sender_id,
                                     receiver_id: friends.receiver_id,
@@ -447,12 +448,12 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                     onClick = {
                     async () => {
                         try {
-                            const response = await fetch(`/api/dashboard/friends/accept`, {
+                            const response = await fetchWithAuth(`/api/dashboard/friends/accept`, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
-                                credentials: 'include',
+                                
                                 body: JSON.stringify({
                                     sender_id: friends.sender_id,
                                     receiver_id: friends.receiver_id,
@@ -588,12 +589,12 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                     onClick = {
                         async () => {
                             try {
-                                const response = await fetch(`/api/dashboard/friends/reject`, {
+                                const response = await fetchWithAuth(`/api/dashboard/friends/reject`, {
                                     method: 'DELETE',
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
-                                    credentials: 'include',
+                                    
                                     body: JSON.stringify({
                                         sender_id: friends.sender_id,
                                         receiver_id: friends.receiver_id,
@@ -732,12 +733,12 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                     onClick = {
                         async () => {
                             try {
-                                const response = await fetch(`/api/dashboard/friends/unblock`, {
+                                const response = await fetchWithAuth(`/api/dashboard/friends/unblock`, {
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
-                                    credentials: 'include',
+                                    
                                     body: JSON.stringify({
                                         sender_id: loggedUserId,
                                         receiver_id: friends.sender_id === loggedUserId ? friends.receiver_id : friends.sender_id,

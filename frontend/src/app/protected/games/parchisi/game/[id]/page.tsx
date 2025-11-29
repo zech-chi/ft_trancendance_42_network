@@ -7,6 +7,7 @@ import { Parcheesi3DComponent } from "@/components/parchisi_game/Parcheesi3D";
 import { useGame } from "@/context/parchisiContexts/GameContext";
 import PopupWinner from "@/components/parchisi_game/winner-announcement";
 import { useLoggedUserId } from "@/context/UserIdContext";
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 export default function Games(): JSX.Element {
 
@@ -23,8 +24,8 @@ export default function Games(): JSX.Element {
     const fetchWinner = async () => {
       if (state.winner) {
         try {
-          const response = await fetch(`/api/parchisi/users/${state.winner}`, {
-            credentials: 'include'
+          const response = await fetchWithAuth(`/api/parchisi/users/${state.winner}`, {
+            
           });
 
           if (!response.ok) throw new Error("Failed to fetch winner data");

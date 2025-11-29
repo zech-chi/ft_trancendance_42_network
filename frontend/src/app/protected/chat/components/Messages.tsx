@@ -9,6 +9,7 @@ import { ChevronDown, Trash2, Pencil } from "lucide-react";
 import DeleteConfirmation from "./DeleteConfirmation";
 import EditMessageForm from "./EditMessageForm";
 import { ApiRoutes } from "@/app/protected/chat/utils/ApiRoutes";
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 type MessageCompProps = {
     currentUserId: number;
@@ -53,7 +54,7 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
       console.log("Confirmed deletion for message ID:", deletingMessageId);
       
       // fetch request to delete the message
-      const result = await fetch(`/api/chat/deletemsg/${deletingMessageId}`, {
+      const result = await fetchWithAuth(`/api/chat/deletemsg/${deletingMessageId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +101,7 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
       
       try {
           // // --- API Call to update the message ---
-          const res = await fetch(`/api/chat/editmsg/${editingMessage.id}`, {
+          const res = await fetchWithAuth(`/api/chat/editmsg/${editingMessage.id}`, {
               method: 'POST', // Or PUT
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ from: currentUserId, to: contact?.id, message: newText }),
@@ -154,7 +155,7 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
       try {
         console.log("Fetching older messages with offset:", offset);
     
-        const res = await fetch(ApiRoutes.getMessages, {
+        const res = await fetchWithAuth(ApiRoutes.getMessages, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

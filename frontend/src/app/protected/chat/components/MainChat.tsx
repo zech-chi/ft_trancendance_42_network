@@ -13,6 +13,7 @@ import ChatInput from "./ChatInput";
 import HeaderContact from "./HeaderContact";
 import Messages from "./Messages";
 import { useLoggedUserId } from "@/context/UserIdContext";
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 
 // this componenent will be rendring when no contact is selected
@@ -299,7 +300,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
       console.log("Message sent:", messageToSend);
       // update the last message of the contact
       // send the message to the server
-     const result = await fetch(ApiRoutes.sendMessage, {
+     const result = await fetchWithAuth(ApiRoutes.sendMessage, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -309,7 +310,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           to: contact.id,
           message: messageToSend,
         }),
-        credentials: 'include'
+        
       });
 
       if (!result.ok) {
@@ -394,7 +395,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
     async function fetchData() {
       console.log("Fetching messages for contact:", currentUserId, contact?.id);
       try {
-        const res = await fetch(ApiRoutes.getMessages, {
+        const res = await fetchWithAuth(ApiRoutes.getMessages, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -405,7 +406,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
             limit: 20,
             offset: 0,
           }),
-          credentials: 'include'
+          
         });
         if (!res.ok) {
           console.error("Server responded with an error here here ");
@@ -431,10 +432,10 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const response = await fetch(`${ApiRoutes.sendFile}/${currentUserId}/${contact.id}`, { 
+      const response = await fetchWithAuth(`${ApiRoutes.sendFile}/${currentUserId}/${contact.id}`, { 
         method: "POST",
         body: formData,
-        credentials: 'include'
+        
       });
 
       if (!response.ok) {
@@ -545,7 +546,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
     console.log(`Blocking action from : ${currentUserId} -> ${contact.id}`);
     // Close the confirmation block after blocking
     try {
-      const response = await fetch(ApiRoutes.blockUser, {
+      const response = await fetchWithAuth(ApiRoutes.blockUser, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -554,7 +555,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           from: currentUserId,
           to: contact.id,
         }),
-        credentials: 'include'
+        
       });
 
       if (!response.ok) {
@@ -601,7 +602,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
     console.log(`Unblocking user: ${contact.username}`);
     // Close the confirmation block after unblocking
     try {
-      const response = await fetch(ApiRoutes.unblockUser, {
+      const response = await fetchWithAuth(ApiRoutes.unblockUser, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -610,7 +611,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           from: currentUserId,
           to: contact.id,
         }),
-        credentials: 'include'
+        
       });
 
       if (!response.ok) {

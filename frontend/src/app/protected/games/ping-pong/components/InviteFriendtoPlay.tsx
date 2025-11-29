@@ -11,6 +11,7 @@ import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { fetchUser } from "@/app/(auth)/login/page";
 import { useRouter } from "next/navigation";
 import { handleInvite } from "../utils/handleInvite";
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 
 interface User {
@@ -49,8 +50,8 @@ export default function InviteToPlay() {
 
   const listFriends = async (): Promise<void> => {
     try {
-      const response = await fetch(`/api/pong/friends/${loggedUserId}`, {
-        credentials: "include",
+      const response = await fetchWithAuth(`/api/pong/friends/${loggedUserId}`, {
+        
       });
 
       if (!response.ok) {
@@ -74,8 +75,8 @@ export default function InviteToPlay() {
   // fetch current user only once
   // useEffect(() => {
   //   const init = async () => {
-  //     const res = await fetch("http://localhost:5500/test-user", {
-  //       credentials: "include",
+  //     const res = await fetchWithAuth("http://localhost:5500/test-user", {
+  //       
   //     });
   //     const dataUser: TestUserResponse = await res.json();
   //     if (!dataUser.authenticated) return;

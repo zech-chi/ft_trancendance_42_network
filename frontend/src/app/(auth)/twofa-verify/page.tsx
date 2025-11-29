@@ -73,9 +73,9 @@
 //     setStatus("Verifying code...");
     
 //     try {
-//       const res = await fetch("/api/auth/2fa-verify", {
+//       const res = await fetchWithAuth("/api/auth/2fa-verify", {
 //         method: "POST",
-//         credentials: "include",
+//         
 //         headers: { "Content-Type": "application/json" },
 //         body: JSON.stringify({ otp: otpString }),
 //       });
@@ -172,6 +172,7 @@ import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useSelectedUserId } from "@/context/SelectedUserId";
 import Image from 'next/image';
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 
 export default function TwoFAVerifyPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -257,9 +258,9 @@ export default function TwoFAVerifyPage() {
     setStatus("Verifying code...");
     
     try {
-      const res = await fetch("/api/auth/2fa-verify", {
+      const res = await fetchWithAuth("/api/auth/2fa-verify", {
         method: "POST",
-        credentials: "include",
+        
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ otp: otpString }),
       });
