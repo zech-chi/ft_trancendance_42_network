@@ -3,6 +3,7 @@ import { RegisterUserInput } from "./user.schema"
 import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
 import { sendEmail } from "./utils/mailer";
+import { clearAccessTokenCookie, clearRefreshTokenCookie } from "./utils/auth.utils";
 
 // function to check if user exists by email, username, or full name
 export async function findUserIfExists(userName: string, email: string): Promise<any> {
@@ -92,16 +93,24 @@ export async function RegisterUser(
         const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = Date.now() + 15 * 60 * 1000; // 15 minutes from now
         
-        const res = await fetch(API_ROUTES.SAVE_VERIFICATION_CODE, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                userId: newUser.id,
-                code: verificationCode,
-                expiresAt,
-            }),
-        });
-        if (!radarDataId || !chartsDataId || !res.ok) {
+
+        // !!!!!!!!!!!!!!! I updated SAVE_VERIFICATION_CODE
+        try {
+            const res = await fetch(API_ROUTES.SAVE_VERIFICATION_CODE, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: newUser.id,
+                    code: verificationCode,
+                    expiresAt,
+                }),
+            });
+        } catch (err) {
+            console.error('Error saving verification code:', err);
+        }
+
+        // if (!radarDataId || !chartsDataId || !res.ok) {
+        if (!radarDataId || !chartsDataId) {
             // should I delete the user if this fails?
             const res = await fetch(API_ROUTES.DELETE_USER_BY_ID, {
                 method: 'POST',
@@ -115,7 +124,9 @@ export async function RegisterUser(
             return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
         }
         await sendEmail(email, "Verify your email", `<p>Your verification code: <b>${verificationCode}</b></p>`);
-        
+        clearAccessTokenCookie(reply);
+        clearRefreshTokenCookie(reply);
+
         // respond with the new user's details
         return reply.code(201).send({
             id: newUser.id,

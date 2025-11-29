@@ -1,0 +1,198 @@
+'use client';
+import React, { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useSocket } from "../../../context/SocketContext";
+import toast from "react-hot-toast";
+import { useTreeTournament } from "../context/TreeTournamentContext";
+import { Player, Match, TreeTournament } from "../context/TreeTournamentContext";
+import TournamentBracket from "../components/TournamentTree";
+import { useSearchParams, useParams } from "next/navigation";
+import { fetchUserById } from "@/app/lib/apiDashboard";
+import Navbar from "@/components/layout/Navbar";
+import Sidebar from "@/components/layout/Sidebar";
+
+export async function getNameAndAvatarFromId(id: number) {
+  try {
+    const data = await fetchUserById(id);
+    return {
+      name: data.userName,
+      avatarUrl: data.imageUrl,
+    };
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
+    return {
+      name: `playerId_${id}`,
+      avatarUrl: `https://i.pravatar.cc/150?u=${id}`,
+    };
+  }
+}
+
+export const makePlayersFromIds = async (ids: number[]): Promise<Player[]> => {
+  const players = await Promise.all(
+    ids.map(async (id) => {
+      const { name, avatarUrl } = await getNameAndAvatarFromId(id);
+      return { id, name, avatarUrl, status: "pending" as const };
+    })
+  );
+  return players;
+};
+
+export const makePlayerFromId = async (id: number): Promise<Player> => {
+  const { name, avatarUrl } = await getNameAndAvatarFromId(id);
+  return { id, name, avatarUrl, status: "pending" as const };
+}
+
+
+export default function Play() {
+  const { tournamentTree, JoinTournament, add_players_to_round2, resetTournament, setTheWinner, getfinalPlayed, setFinalPlayed } = useTreeTournament();
+  const router = useRouter();
+  const socketContext = useSocket();
+  const pathname = usePathname();
+  const tournamentId = pathname.split("/").pop();
+  const searchParams = useSearchParams();
+  const round = searchParams.get("round");
+  let hasEmitted = false;
+  console.log(" hasEmitted value:", hasEmitted);
+
+  console.log("🏆 Tournament ID from URL:", tournamentId);
+  console.log("🔄 Current Tournament round:", round);
+  useEffect(() => {
+    const socket = socketContext.socket;
+    if (!socket || !tournamentId) return;
+
+    const handleStarted = (data: any) => {
+      console.log("✅ Tournament started:", data);
+      // toast.success(data.message, { id: data.message });
+    };
+
+    const handleGameStarting = async (data: any) => {
+      console.log("🚀 Tournament game is starting:", data);
+      // toast.success("Tournament game is starting!", { id: "tournament_game_starting" });
+      const inviterId = data.opponentId === socketContext.currentUser?.id ? data.reciverId : data.opponentId;
+      const inviter_name = await getNameAndAvatarFromId(inviterId).then(res => res.name);
+      const accepterId = socketContext.currentUser?.id;
+      if (inviterId === data.reciverId) {
+        console.log("---->>>>>>>>>>>>>>> ids of opponents:", inviterId, accepterId);
+        socket.emit("accept_invite_tournament", {
+          inviter: inviterId,
+          inviterName: inviter_name,
+          accepter: socketContext.currentUser,
+          tournamentId: tournamentId,
+        });
+      }
+    };
+
+    /// first round
+    if (!round) {
+      const emitOnce = () => {
+        if (!hasEmitted) {
+          hasEmitted = true;
+          console.log("📡 Emitting canWeStartTournament...");
+          socket.emit("canWeStartTournament", { tournamentId });
+        }
+      };
+
+      setTimeout(emitOnce, 2000);
+
+      // console.log("📡 Emitting canWeStartTournament...");
+      // setTimeout(() => {
+      //   socket.emit("canWeStartTournament", { tournamentId });
+      // }, 1000);
+    } else {
+      const emitOnce = () => {
+        if (!hasEmitted) {
+          hasEmitted = true;
+          console.log("📡 Emitting canWeStartTournament...");
+          socket.emit("canWeStartFinal", { tournamentId });
+        }
+      };
+
+      setTimeout(emitOnce, 5000);
+    }
+
+    if (!getfinalPlayed()) {
+      socket.on("tournament_started", handleStarted);
+      socket.on("tournament_game_starting", handleGameStarting);
+      socket.on("winner_reported_round1", async (data: { message: string; playerIds: number[] }) => {
+        console.log("📢 to the final --> :", data.playerIds);
+        if (data.playerIds.length === 2) {
+          if (data.playerIds[0] === socketContext.currentUser?.id || data.playerIds[1] === socketContext.currentUser?.id) {
+            toast.success("You are in the Final!", { id: "in_final" });
+          }
+        }
+        const players = await makePlayersFromIds(data.playerIds);
+        add_players_to_round2(players);
+      });
+      setFinalPlayed();
+      socket.on("catch_the_winner", async (data: { message: string; winnerId: number }) => {
+        console.log("🏆 Tournament Winner is --> :", data.winnerId);
+        const playerInfo = await getNameAndAvatarFromId(data.winnerId);
+        toast.success(`🏆 Tournament Winner is ${playerInfo.name}`, {
+          id: `winner-${data.winnerId}`,
+        });
+        const player = await makePlayerFromId(data.winnerId);
+        setTheWinner(player);
+
+        // send that tournament if finished to backend to reset
+        setTimeout(() => {
+          router.push('/gzone/games/ping-pong');
+          socket.emit("touranment_finished", { tournamentId: tournamentId });
+        }, 5000);
+      });
+    } else {
+      console.log(" Final already played.");
+    }
+
+
+    // 🧹 Clean up on unmount
+    return () => {
+      socket.off("tournament_started", handleStarted);
+      socket.off("tournament_game_starting", handleGameStarting);
+    };
+  }, [socketContext.socket, tournamentId, TournamentBracket]);
+
+  return (
+    // <div className="flex items-center overflow-x-auto">
+    //     <Sidebar />
+    //     <Navbar />
+    //     <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-black/40">
+    //       <h1 className="text-2xl font-bold mb-4">Tournament Bracket</h1>
+    //       <TournamentBracket />
+    //     </div>
+    // </div>
+    <div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto">
+      <Sidebar />
+      <Navbar />
+      <main
+        className="flex flex-row items-center justify-center relative overflow-x-hidden
+                          xl:pl-20 2xl:pl-24 w-full
+                          h-[calc(100%-130px)]
+                          xl:h-[calc(100%-75px)]
+                          2xl:h-[calc(100%-85px)]
+                          2xl:mt-[67px] xl:mt-[60px] overflow-y-hidden
+                      "
+      >
+        <div className="w-full h-full flex flex-col items-center justify-center  rounded-2xl bg-gray-800/40 backdrop-blur-md shadow-xl border border-white/20 text-white p-4 md:p-0">
+          {/* <div className="flex flex-col items-center justify-center bg-gray-800 rounded-2xl border border-white/20 gap-5 w-full h-full md:w-[70%] md:h-[70%] max-h-[70%] overflow-y-auto">
+            <h1 className="text-2xl font-bold mb-4">Tournament</h1>
+            <TournamentBracket />
+          </div> */}
+          <div className="flex flex-col items-center  bg-gray-800 rounded-2xl border border-white/20 w-full h-full p-4">
+          {/* Fixed title */}
+          <h1 className="text-2xl font-bold mb-4 sticky top-0 bg-gray-800 z-10">
+            Tournament
+          </h1>
+
+          {/* Scrollable bracket */}
+          <div className="flex-1 w-full overflow-y-auto custom-scrollbar">
+            <div className="flex justify-center w-full">
+              <TournamentBracket />
+            </div>
+          </div>
+        </div>
+
+        </div>
+      </main>
+    </div>
+  )
+}

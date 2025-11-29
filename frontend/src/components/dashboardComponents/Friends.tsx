@@ -291,7 +291,7 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
                     onClick={() => {
                         console.log('Clicked Chat with ', friend.userName);
                         setSelectedUserName(friend.userName);
-                        router.push('/protected/chat');
+                        router.push('/gzone/chat');
                     }}
                 />
                 {/* <img

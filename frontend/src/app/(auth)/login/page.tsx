@@ -1,5 +1,6 @@
 'use client'
-import { JSX } from "react";
+// import { JSX } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
@@ -41,6 +42,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true); // new state
   const { setUserEmail } = useUserEmail(); // ✅ Add this line
+  const [errorMsg, setErrorMsg] = useState("");
 
   // check if already logged in
   useEffect(() => {
@@ -56,7 +58,7 @@ export default function LoginPage() {
         setSelectedUserName(user.userName);
         setSelectedUserId(user.id);
         setLoggedUserId(user.id);
-        router.push("/protected");
+        router.push("/gzone");
         return; 
       }
       setLoading(false);
@@ -84,6 +86,17 @@ export default function LoginPage() {
       console.log("response:", res.status, data);
 
       setUserEmail(email); 
+      
+      // if (!res.ok) {
+      //   const cleanMessage =
+      //     data.message?.replace(/^body\//, "") ||
+      //     "Login failed";
+      
+      //   setErrorMsg(cleanMessage);
+      //   // return; // important: stop execution
+      // }
+      
+
       if (res.ok) {
         if (data.twoFARequired) {
           router.push("/twofa-verify");
@@ -94,7 +107,7 @@ export default function LoginPage() {
           setSelectedUserName(data.user.userName);
           setSelectedUserId(data.user.id);
           setLoggedUserId(data.user.id);
-          router.push("/protected");
+          router.push("/gzone");
         }
       }else {
         if (data && data.verifyEmail === true) {
@@ -102,12 +115,24 @@ export default function LoginPage() {
               return;
           }
               setError(data.message || "Login failed");
-            }
-          } catch (err) {
+              const cleanMessage =
+                data.message?.replace(/^body\//, "") ||
+                "Login failed";
+            
+              setErrorMsg(cleanMessage);
+          }
+      } catch (err) {
             console.error("fetch error:", err);
             setError("Something went wrong");
+            // setErrorMsg("Something went wrong");
           }
-        };
+      };
+  
+      const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        handleLogin();
+      };
+        
 
   if (loading) {
     return (
@@ -120,19 +145,22 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center"
+      className="min-h-screen bg-gradient-to-br  from-black via-gray-900 to-black flex items-center justify-center"
       // style={{ backgroundImage: "url('/bg.png')" }}
     >
       {/* Card */}
-      <div className="bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20  rounded-2xl w-full max-w-md">
         {/* Logo */}
         <div className="flex flex-col items-center mb-6">
           <img src="/logo.png" alt="Logo" className="w-40 h-auto" />
           <h1 className="text-white text-2xl font-bold mt-4">Sign in</h1>
+          {errorMsg && (
+              <p className="text-[#FFB700] bg-[#1CBABA]/30 text-sm text-center mt-5 p-2 rounded-2xl">{errorMsg}</p>
+          )}
         </div>
 
         {/* Form */}
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             type="email"
             placeholder="mail@abc.com"
@@ -150,8 +178,7 @@ export default function LoginPage() {
 
           <button
             className="w-full bg-white text-black font-semibold py-2 rounded-md hover:bg-gray-200 transition"
-            type="button"
-            onClick={handleLogin}
+            type="submit"
           >
             Log in
           </button>
@@ -179,7 +206,7 @@ export default function LoginPage() {
         {/* Sign up link */}
         <p className="text-center text-gray-400 text-sm mt-4">
           Not Registered Yet?{" "}
-          <Link href="/register" className="text-pink-400 hover:underline">
+          <Link href="/register" className="text-[#1CBABA] hover:underline">
             Sign up
           </Link>
         </p>

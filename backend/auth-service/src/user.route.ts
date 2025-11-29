@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import { API_ROUTES } from "./utils/APIrouts";
 import { verifyEmail } from './user.controller.verifyEmail';
 import { resendVerificationCode } from './user.controller.resendCode';
-import { clearTmp2FACookie, setAccessTokenCookie, setRefreshTokenCookie, setTmp2FACookie } from './utils/auth.utils';
+import { clearAccessTokenCookie, clearTmp2FACookie, clearRefreshTokenCookie,  setAccessTokenCookie, setRefreshTokenCookie, setTmp2FACookie } from './utils/auth.utils';
 // import TwoFASetup from './user.controller.TwoFASetup';
 // import TwoFAEnable from './user.controller.TwoFAEnable';
 // import TwoFAVerify from './user.controller.TwoFAVerify';
@@ -88,24 +88,29 @@ export async function authRoutes(app: FastifyInstance) {
         LoginUser
     );
 
+    // logout
     app.delete('/logout', (req: FastifyRequest, reply: FastifyReply) => {
-      reply.clearCookie('access_token', {
-        path: '/',          // must match cookie creation path
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: false       // true if HTTPS
-      });
+      // reply.clearCookie('access_token', {
+      //   path: '/',          // must match cookie creation path
+      //   httpOnly: true,
+      //   sameSite: 'lax',
+      //   secure: process.env.NODE_ENV === "production" || false       // true if HTTPS
+      // });
     
-      reply.clearCookie('refresh_token', {
-        path: '/api/auth/refresh', // match your refresh endpoint
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: false
-      });
-    
+      // reply.clearCookie('refresh_token', {
+      //   path: '/api/auth/refresh',
+      //   httpOnly: true,
+      //   sameSite: 'lax',
+      //   secure: process.env.NODE_ENV === "production" || false
+      // });
+      clearAccessTokenCookie(reply);
+      clearRefreshTokenCookie(reply);
+
+
       reply.code(200).send({ message: 'Logged out successfully' });
     });
 
+    // refresh token
     app.post('/refresh', async (req: FastifyRequest, reply: FastifyReply) => {
       const refreshToken = req.cookies.refresh_token;
       console.log("Refresh token cookie: ", refreshToken);
@@ -135,7 +140,7 @@ export async function authRoutes(app: FastifyInstance) {
       }
     });
 
-    // add get user from session route
+    // get session
     app.get('/session', async (req: FastifyRequest, reply: FastifyReply) => {
       const accessToken = req.cookies.access_token;
       const tmp_2fa = req.cookies.tmp_2fa;
@@ -149,7 +154,9 @@ export async function authRoutes(app: FastifyInstance) {
         if (accessToken) {
           const decoded =  app.jwt.verify<JwtPayload>(accessToken);
           const user = await findUserByEmail(decoded.email);
-          if (!user) return reply.code(401).send({ message: 'Invalid token' });
+          if (!user || !user.email_verified || (user &&  user.email !== decoded.email)) {
+              return reply.code(401).send({ message: 'Invalid token' });
+        }
           // distract only username , id  and return it 
           const userData = { id : user.id, userName: user.userName};
           return reply.send(userData);
@@ -174,6 +181,8 @@ export async function authRoutes(app: FastifyInstance) {
       }
     });
     // 2fa routes 
+
+    // setup 2fa
     app.post (
       '/2fa-setup',
       {
@@ -227,6 +236,7 @@ export async function authRoutes(app: FastifyInstance) {
         // return qr and secret to frontend so user can scan right away (securely)
         reply.send({ qr});
       });
+      // enable 2fa
     app.post (
       '/2fa-enable',
       {
@@ -275,6 +285,7 @@ export async function authRoutes(app: FastifyInstance) {
     }
     reply.send({ message: "2FA enabled" });
   });
+    // disable 2fa
   app.post (
     "/2fa-disable",   
     {
@@ -329,6 +340,7 @@ export async function authRoutes(app: FastifyInstance) {
       reply.send({ message: "2FA disabled" });
     }
   );
+    // verify 2fa
     app.post(
       '/2fa-verify',
       {
@@ -411,6 +423,7 @@ export async function authRoutes(app: FastifyInstance) {
       )
 
 
+    // Google OAuth routes
     app.get('/login/google', async (req, reply) => {
       // if already logged in, redirect to profile
       // const user = (req.session as any).user;

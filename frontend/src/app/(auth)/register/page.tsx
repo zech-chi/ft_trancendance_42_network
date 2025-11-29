@@ -23,6 +23,7 @@ export default function SignupPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [ isLoading, setIsLoading ] = useState(true);
+    const [errorMsg, setErrorMsg] = useState("");
 
 
     // const handleGoogle = async () => {
@@ -45,7 +46,7 @@ export default function SignupPage() {
         const user = await fetchUser();
         if (user && user.userName) {
           // alert("Already logged in, redirecting to home page.");
-          router.push("/protected");
+          router.push("/gzone");
           return; 
         } else {
           setIsLoading(false);
@@ -80,7 +81,10 @@ export default function SignupPage() {
             });
 
             if (!res.ok) {
-                throw new Error("Failed to register");
+                const err = await res.json();
+                const cleanMessage = err.message?.replace(/^body\//, "") || "Failed to register";
+                setErrorMsg(cleanMessage);
+                throw new Error(err.message || "Failed to register");
             }
             const data = await res.json();
             router.push("/login");
@@ -95,11 +99,16 @@ export default function SignupPage() {
       className="min-h-screen bg-cover bg-center flex items-center justify-center"
     >
       {/* Card */}
-      <div className="bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20  rounded-2xl w-full max-w-md">
         {/* Logo */}
+
+
         <div className="flex flex-col items-center mb-6">
           <img src="/logo.png" alt="Logo" className="w-40 h-auto" />
           <h1 className="text-white text-2xl font-bold mt-4">Sign up</h1>
+          {errorMsg && (
+              <p className="text-[#FFB700] bg-[#1CBABA]/30 text-sm text-center mt-5 p-2 rounded-2xl">{errorMsg}</p>
+          )}
         </div>
 
         {/* Form */}
@@ -166,7 +175,7 @@ export default function SignupPage() {
         {/* Sign in link */}
         <p className="text-center text-gray-400 text-sm mt-4">
           Already have an account?{" "}
-          <Link href="/login" className="text-pink-400 hover:underline">
+          <Link href="/login" className="text-[#1CBABA] hover:underline">
             Sign in
           </Link>
         </p>

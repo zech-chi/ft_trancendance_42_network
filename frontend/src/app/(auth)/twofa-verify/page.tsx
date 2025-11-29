@@ -273,7 +273,7 @@ export default function TwoFAVerifyPage() {
       setSelectedUserName(data.user.userName);
       setSelectedUserId(data.user.id);
       setLoggedUserId(data.user.id);
-      setTimeout(() => router.push("/protected"), 300);
+      setTimeout(() => router.push("/gzone"), 300);
     } catch (err: any) {
       setStatus("❌ " + err.message);
       
