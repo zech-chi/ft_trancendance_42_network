@@ -37,7 +37,11 @@ function OnlinePageContent() {
           credentials: 'include'
         });
         const data = await res.json();
-        setRooms(data);
+        if (Array.isArray(data)) {
+          setRooms(data);
+        } else{
+          setRooms([]);
+        }
       } catch (err) {
         console.error("Failed to load rooms", err);
       } finally {
