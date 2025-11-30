@@ -77,7 +77,7 @@ fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyRepl
   if (access) {
     try {
       const decoded = jwt.verify(access, secret);
-      request.user = decoded;
+      request.headers['x-user-data'] = JSON.stringify(decoded);
       return; // access OK
     } catch (err) {
       fastify.log.info("Access token expired, trying refresh token...");
@@ -92,7 +92,7 @@ fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyRepl
 
   try {
     const decoded = jwt.verify(refresh, secret);
-    request.user = decoded; // Attach user for next routes
+    request.headers['x-user-data'] = JSON.stringify(decoded);
   } catch (err) {
     fastify.log.warn({ err, url }, "JWT verification failed");
     reply.code(401).send({ code: 401, message: "Unauthorized: Invalid token" });
