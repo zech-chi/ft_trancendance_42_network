@@ -26,7 +26,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}): Pro
       // Redirect to login page but avoid infinite loops and unnecessary redirects
       // only redirect if im in a protected route  to avoid the pages of login/register/verify all the protected pages start with /protected
       
-      if (window.location.pathname.startsWith('/protected')) {
+      if (window.location.pathname.startsWith('/gzone')) {
         window.location.href = '/login';
       }
       throw new Error('Session expired. Please login again.');
