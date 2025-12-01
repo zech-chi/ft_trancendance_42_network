@@ -200,6 +200,18 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
         return; // return if the mimetype is not allowed
       }
 
+       // Check if a profile image has already been uploaded
+      if (profileImagePath !== null) {
+        // ! should remove the already uploaded file
+        // if (fs.existsSync(profileImagePath)) {
+        //   fs.unlinkSync(profileImagePath);
+        // }
+        return reply.status(400).send({
+          status: 'error',
+          message: 'Only one profile image is allowed.'
+        });
+      }
+
       const saveTo = path.join(profileDir, `${uuid4()}-${part.filename}`);
       console.log(`Saving profile image to ${saveTo}`);
       await pump(part.file, fs.createWriteStream(saveTo));
