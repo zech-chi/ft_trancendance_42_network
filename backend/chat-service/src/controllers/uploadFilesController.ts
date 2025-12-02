@@ -13,7 +13,7 @@ import { MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES } from "../utils/consta
 import { fromPath } from "pdf2pic"
 import { getTime } from "../utils/getTime";
 // import { MessageRequestBody } from "../types/message";
-import { checkFriendship, checkIds, checkRequestBody, checkUserExists } from "../utils/utilsControllerChat";
+import { checkFriendship, checkIds, checkRequestBody, checkUserExists, checkAuthenticatedUser } from "../utils/utilsControllerChat";
 import { ALLOWED_MIMETYPES_CHAT } from "../utils/constants";
 import { sendMessageToUser } from "../socket/socket";
 import { ApidataBase } from "../utils/ApiDataBase";
@@ -220,6 +220,10 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     if (!checkIds(reply, from, to, "You cannot send a file to yourself.")){
       console.log("here 2");
       return; // If checkIds returns false, exit the function
+    }
+
+    if (!checkAuthenticatedUser(reply, from, request.user?.id)) {
+      return;
     }
 
     // check userif exist to send 
