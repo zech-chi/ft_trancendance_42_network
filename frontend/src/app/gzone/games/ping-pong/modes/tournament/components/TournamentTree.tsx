@@ -3,12 +3,15 @@
 import React, { useState } from "react";
 import { useTreeTournament } from "../context/TreeTournamentContext";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function TournamentBracket() {
   const { tournamentTree } = useTreeTournament();
   const [hoveredMatchLabel, setHoveredMatchLabel] = useState<string | null>(null);
+  const router = useRouter();
 
   if (!tournamentTree) {
+    router.push("/gzone/games/ping-pong");
     return (
       <div className="w-full flex flex-col items-center justify-center p-1">
         <p className="text-[#FFB700]/90">No tournament initialized yet.</p>

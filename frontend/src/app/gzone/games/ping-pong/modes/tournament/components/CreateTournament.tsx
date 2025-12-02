@@ -54,7 +54,7 @@ export default function CreateTournament() {
         });
         socketContext.socket?.on("joined_tournament", async (data) => {
             console.log("✅ Join tournament response:", data);
-            if (data.message === "Joined successfully") {
+            if (data?.status) {
                 if (data.newUserJoinedId !== loggedUserId) { 
                     toast.success(data.newUserJoinedId, {id: data.newUserJoinedId} );
                 }

@@ -10,9 +10,11 @@ export class Tournament {
     private joinedPlayersSockets : Socket[] = [];
     private finalPlayersIds : number[] = [];
     private finalPlayersSockets : Socket[] = [];
+    // deconnected players
+    private deconnectedPlayersIds : number[] = [];
     private isPrivate : boolean;
     private createdBy : number;
-    private winnerId : number | null = null;    
+    private winnerId : number | null = null; 
     private creatrionDate : Date = new Date();
     private state: 'pending' | 'ongoing' | 'completed' = 'pending';
     private io: SocketIOServer;
@@ -60,6 +62,10 @@ export class Tournament {
         this.state = newState;
     }
 
+    getState(): 'pending' | 'ongoing' | 'completed' {
+        return this.state;
+    }
+
     getNumberOfJoinedPlayers(): number {
         return this.joinedPlayersIds.length;
     }
@@ -103,4 +109,30 @@ export class Tournament {
         this.winnerId = winnerId;
     }
     
+    istournamentFull(): boolean {
+        return this.joinedPlayersIds.length == 4;
+    }
+
+    isThisSocketExist(socket: Socket): boolean {
+        return this.joinedPlayersSockets.includes(socket);
+    }
+
+    getIdOfPlayerFromSocket(socket: Socket): number | null {
+        const index = this.joinedPlayersSockets.indexOf(socket);
+        if (index !== -1) {
+            return this.joinedPlayersIds[index];
+        }
+        return null;
+    }
+
+    addPlayertoDeconnected(playerId: number): void {
+        if (!this.deconnectedPlayersIds.includes(playerId)) {
+            this.deconnectedPlayersIds.push(playerId);
+        }
+    }
+
+    isAllPlayersDeconnected(): boolean {
+        return this.deconnectedPlayersIds.length === 4;
+    }
+
 };

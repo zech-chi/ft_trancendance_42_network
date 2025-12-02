@@ -55,7 +55,7 @@ export default function JoinTournament() {
 
     socketContext.socket?.on("joined_tournament", async (data) => {
         console.log("✅ Join tournament response:", data);
-        if (data.message === "Joined successfully") {
+        if (data?.status) {
             if (data.newUserJoinedId !== loggedUserId) {
               const playerInfo = await getNameAndAvatarFromId(data.newUserJoinedId);
               toast.success(`${playerInfo.name} joined`, {id: data.newUserJoinedId} );
@@ -76,7 +76,7 @@ export default function JoinTournament() {
     <div className="p-6 bg-black/30 h-full overflow-y-auto rounded-2xl custom-scrollbar w-full max-w-md">
 
       {publicTournaments.length === 0 ? (
-        <p className="text-gray-500">No public tournaments available right now.</p>
+        <p className="text-gray-500 text-center ">No public tournaments available right now.</p>
       ) : (
         <ul className="space-y-3">
           {publicTournaments.map((tournament: any, index: number) => (

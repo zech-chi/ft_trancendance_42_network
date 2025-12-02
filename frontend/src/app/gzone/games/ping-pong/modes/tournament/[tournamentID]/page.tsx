@@ -111,6 +111,12 @@ export default function Play() {
     }
 
     if (!getfinalPlayed()) {
+      socket.on('tournament_cancelled', (data: { message: string }) => {
+        console.log("❌ Tournament cancelled:", data.message);
+        toast.error(`❌ Tournament cancelled: ${data.message}`, { id: "tournament_cancelled" });
+        resetTournament();
+        router.push('/gzone/games/ping-pong');
+      });
       socket.on("tournament_started", handleStarted);
       socket.on("tournament_game_starting", handleGameStarting);
       socket.on("winner_reported_round1", async (data: { message: string; playerIds: number[] }) => {
@@ -148,6 +154,7 @@ export default function Play() {
     return () => {
       socket.off("tournament_started", handleStarted);
       socket.off("tournament_game_starting", handleGameStarting);
+      // socket.off("tournament_cancelled");
     };
   }, [socketContext.socket, tournamentId, TournamentBracket]);
 

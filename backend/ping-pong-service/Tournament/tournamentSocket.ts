@@ -20,6 +20,11 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
       socket.emit("created_tournament", { message: "Failed to create tournament, name already taken or empty" });
       return;
     }
+    // check if this player is alsready in a tournament
+    if (!tournamentSystem.canPlayerJoinTournament(obj.createdBy)) {
+      socket.emit("created_tournament", { message: "Failed to create tournament, you are already in a tournament" });
+      return;
+    }  
     const tournament = tournamentSystem.createTournament(
         obj.name,
         obj.number_of_players,
@@ -27,17 +32,20 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
         obj.createdBy,
         io
     );
-    const success = tournamentSystem.addPlayerToTournament(tournament.getId(), obj.createdBy, socket);
-    if (success) {
+    const res : {status : boolean, message: string}= tournamentSystem.addPlayerToTournament(tournament.getId(), obj.createdBy, socket);
+    console.log("Auto-joining creator to tournament:", res);
+    if (res.status) {
       io.to(tournament.getId()).emit("joined_tournament", {
-        message: "Joined successfully",
+        message: res.message,
+        status: true,
         round: 1,
         tournamentId: tournament.getId(),
         newUserJoinedId: obj.createdBy,
         allPlayersJoinedIds: tournamentSystem.getTournament(tournament.getId())?.getJoinedPlayersIds() || []
       });
+      console.log("Player who created tournament joined:", obj.createdBy);
     } else {
-        socket.emit("joined_tournament", { message: "Failed to join tournament" });
+        socket.emit("joined_tournament", { status: false, message: res.message });
     }
 
     socket.emit("created_tournament", { message: "Tournament created successfully", tournamentId: tournament.getId() });
@@ -56,17 +64,18 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
 
   socket.on("join_tournament", async (obj : JoinedPlayerOBJ) => {
     console.log("👥 Player Want to Join:", obj);
-    const success = tournamentSystem.addPlayerToTournament(obj.tournamentId, obj.playerId, socket);
-    if (success) {
+    const res : {status: boolean, message: string} = tournamentSystem.addPlayerToTournament(obj.tournamentId, obj.playerId, socket);
+    if (res.status) {
         io.to(obj.tournamentId).emit("joined_tournament", {
-          message: "Joined successfully",
+          message: res.message,
+          status: true,
           round: 1,
           tournamentId: obj.tournamentId,
           newUserJoinedId: obj.playerId,
           allPlayersJoinedIds: tournamentSystem.getTournament(obj.tournamentId)?.getJoinedPlayersIds() || []
         });
     } else {
-        socket.emit("joined_tournament", { message: "Failed to join tournament" });
+        socket.emit("joined_tournament", {status: false, message: res.message });
     }
   });
 
@@ -102,7 +111,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
       // player at index 0 vs player at index 1 of joinedPlayers --> Room1
       // and player at index 2 vs player at index 3  join Room1 as spectators
       // and so on...
-
+      // give some time for players to get ready
       console.log("1 ->>>>> tournament id : ", obj.tournamentId);
       createTornamentGameFinal(
         obj.tournamentId,
@@ -152,6 +161,23 @@ socket.on("touranment_finished", async (obj : TournamentID) => {
   console.log("🧹 Cleaning up tournament:", obj.tournamentId);
   tournamentSystem.removeTournament(obj.tournamentId);
 });
+
+
+// if player disconnects, it will be removed from the tournament
+// cancel the tournament if it has not started yet
+  socket.on("disconnect", () => {
+    console.log("❌ Socket disconnected:", socket.id);
+    // cancel any tournament that this player created if it has not started yet
+    const tournamentId : string = tournamentSystem.handlePlayerDisconnect(socket);
+    if (tournamentId !== "") {
+      io.to(tournamentId).emit("tournament_cancelled", { message: "Tournament cancelled due to player disconnect." });
+      console.log("Tournament cancelled due to player disconnect:", tournamentId);
+      tournamentSystem.removeTournament(tournamentId);
+    }
+
+    // remove player from occupied players
+    tournamentSystem.removeOccupiedPlayerBySocket(socket);
+  });
 
 
 
