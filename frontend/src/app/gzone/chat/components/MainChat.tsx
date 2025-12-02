@@ -270,36 +270,124 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
 }, [socket, contact?.id]);
 
 
-  const  handleSendMessage = async () => {
-    // alert("send message called");
+  // const  handleSendMessage = async () => {
+  //   // alert("send message called");
+  //   if (contact == null) {
+  //     return ;
+  //   }
+
+  //   if (message) {
+  //     console.log("Error exists, cannot send message.");
+  //     return ;
+  //   }
+  //   const messageToSend = inputValue.trim();
+  //   if (isSending || !messageToSend) {
+  //     return;
+  //   }
+
+  //   setIsSending(true); // Set sending state to true
+  //   // setInputValue("");
+
+    
+  //   if (messageToSend) {
+  //     // if (messageToSend.length > 2000) {
+  //     //   setMessage("Message exceeds limit characters. Please shorten your message.");
+  //     //   setIsSending(false); // Reset sending state
+  //     //   return;
+  //     // }
+  //     // Here you would typically send the message
+  //     console.log("Message sent:", messageToSend);
+  //     // update the last message of the contact
+  //     // send the message to the server
+  //    const result = await fetch(ApiRoutes.sendMessage, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         from: currentUserId,
+  //         to: contact.id,
+  //         message: messageToSend,
+  //       }),
+  //       credentials: 'include'
+  //     });
+
+  //     if (!result.ok) {
+  //       const data = await result.json();
+  //       console.error("Failed to send message:", data);
+  //       setMessage("Failed to send message. Please try again.");
+  //       setIsSending(false); // Reset sending state
+  //       return;
+  //     }
+      
+  //     const data = await result.json();
+  //     // Assuming the server returns a success response
+  //     console.log("fetched data successfully:", data);
+
+  //     // contact.lastMessage = {
+  //     //   content: inputValue.trim(),
+  //     //   type: "text",
+  //     // };
+
+  //     // use setContactsList to update the contact's last message
+  //     setContactsList((prevContacts) => {
+  //       return prevContacts.map((c) => {
+  //         if (c.id === contact.id) {
+  //           return {
+  //             ...c,
+  //             lastMessage: {
+  //               content: inputValue.trim(),
+  //               type: "text",
+  //             },
+  //           };
+  //         }
+  //         return c;
+  //       });
+  //     })
+
+
+  //     // setMessagesList((prevMessages) => [
+  //     //   ...prevMessages,
+  //     //   {
+  //     //     id: data.data.id, // Assuming the server returns an ID for the message
+  //     //     type: data.data.type, // Assuming this is a text message
+  //     //     message: data.data.message, // The message content
+  //     //     time: data.data.time,
+  //     //     sent:data.data.sent,
+  //     //     url: data.data.url,
+  //     //     fileName: data.data.fileName,
+  //     //     thumbnailUrl: data.data.thumbnailUrl, // Optional thumbnail URL if applicable
+  //     //   },
+  //     // ]);
+  //     setIsSending(false); // Reset sending state
+  //     setInputValue("");
+  //     // reorder the contact to the top of the list
+  //     setUpdateMessage({ deleted: false, edited: false, id: -1 }); // Reset updateMessage state
+  //     reorderContacts(contact.id);
+  //   }
+  // };
+
+  const handleSendMessage = async () => {
+  try {
     if (contact == null) {
-      return ;
+      return;
     }
 
     if (message) {
       console.log("Error exists, cannot send message.");
-      return ;
+      return;
     }
+
     const messageToSend = inputValue.trim();
     if (isSending || !messageToSend) {
       return;
     }
 
     setIsSending(true); // Set sending state to true
-    // setInputValue("");
 
-    
     if (messageToSend) {
-      // if (messageToSend.length > 2000) {
-      //   setMessage("Message exceeds limit characters. Please shorten your message.");
-      //   setIsSending(false); // Reset sending state
-      //   return;
-      // }
-      // Here you would typically send the message
-      console.log("Message sent:", messageToSend);
-      // update the last message of the contact
-      // send the message to the server
-     const result = await fetch(ApiRoutes.sendMessage, {
+      // Send the message to the server
+      const result = await fetch(ApiRoutes.sendMessage, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -309,27 +397,20 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           to: contact.id,
           message: messageToSend,
         }),
-        credentials: 'include'
+        credentials: "include",
       });
 
       if (!result.ok) {
         const data = await result.json();
         console.error("Failed to send message:", data);
         setMessage("Failed to send message. Please try again.");
-        setIsSending(false); // Reset sending state
         return;
       }
-      
+
       const data = await result.json();
-      // Assuming the server returns a success response
-      console.log("fetched data successfully:", data);
+      console.log("Fetched data successfully:", data);
 
-      // contact.lastMessage = {
-      //   content: inputValue.trim(),
-      //   type: "text",
-      // };
-
-      // use setContactsList to update the contact's last message
+      // Update the contact's last message
       setContactsList((prevContacts) => {
         return prevContacts.map((c) => {
           if (c.id === contact.id) {
@@ -343,29 +424,19 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           }
           return c;
         });
-      })
+      });
 
-
-      // setMessagesList((prevMessages) => [
-      //   ...prevMessages,
-      //   {
-      //     id: data.data.id, // Assuming the server returns an ID for the message
-      //     type: data.data.type, // Assuming this is a text message
-      //     message: data.data.message, // The message content
-      //     time: data.data.time,
-      //     sent:data.data.sent,
-      //     url: data.data.url,
-      //     fileName: data.data.fileName,
-      //     thumbnailUrl: data.data.thumbnailUrl, // Optional thumbnail URL if applicable
-      //   },
-      // ]);
-      setIsSending(false); // Reset sending state
       setInputValue("");
-      // reorder the contact to the top of the list
-      setUpdateMessage({ deleted: false, edited: false, id: -1 }); // Reset updateMessage state
+      setUpdateMessage({ deleted: false, edited: false, id: -1 });
       reorderContacts(contact.id);
     }
-  };
+  } catch (error) {
+    console.error("Error sending message:", error);
+    setMessage("An unexpected error occurred. Please try again.");
+  } finally {
+    setIsSending(false); // Always reset sending state
+  }
+};
 
   // reset all when the contact changes
   useEffect(() => {
