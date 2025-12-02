@@ -6,13 +6,13 @@ import fs from "fs";
 import path from "path";
 import { pipeline } from "stream";
 import { promisify } from "util";
-import db from "../db/connectiondb";
-import { createUploadDir } from "../utils/createUploadDir";
+// import db from "../db/connectiondb";
+import { createUploadDir } from "../utils/createUploadDir"; 
 import { v4 as uuid4 } from "uuid";
 import { MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES } from "../utils/constants";
 import { fromPath } from "pdf2pic"
 import { getTime } from "../utils/getTime";
-import { MessageRequestBody } from "../types/message";
+// import { MessageRequestBody } from "../types/message";
 import { checkFriendship, checkIds, checkRequestBody, checkUserExists } from "../utils/utilsControllerChat";
 import { ALLOWED_MIMETYPES_CHAT } from "../utils/constants";
 import { sendMessageToUser } from "../socket/socket";
@@ -128,10 +128,10 @@ async function checkFileTruncated(reply: FastifyReply , data: any, filePath: str
 async function insertIntoDatabase(from: string, to: string, data: any, filename: string, fileUrl: string, thumbnailPath: string | null) {
   const timeSend = getTime();
   // Save file metadata to the database
-  const stmt = db.prepare(`
-    INSERT INTO messages (sender_id, receiver_id, message,type, url, file_name, thumbnail_url, timestamp)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `);
+  // const stmt = db.prepare(`
+  //   INSERT INTO messages (sender_id, receiver_id, message,type, url, file_name, thumbnail_url, timestamp)
+  //   VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  // `);
 
   // const result = stmt.run(
   //   from, // sender_id

@@ -2,9 +2,6 @@ import { FastifyRequest, FastifyReply } from "fastify";
 // import db from "../db/connectiondb";
 import { MessageRequestBody, MessageRow, Message } from "../types/message";
 import {
-  showAllUsers,
-  showAllFriends,
-  deleteAllMessages,
   checkIds,
   checkUserExists,
   checkFriendship,
@@ -16,6 +13,7 @@ import {
   checkRequestBody,
   checkMessageId,
   deleteMessageFromDatabase,
+  checkAuthenticatedUser,
 } from "../utils/utilsControllerChat";
 import {sendBlockEventToUser, sendDeleteOrUpdateMessageEventToUser, sendMessageToUser } from "../socket/socket";
 import { getTime } from "../utils/getTime";
@@ -29,7 +27,6 @@ export async function getFriends(request: FastifyRequest, reply: FastifyReply) {
       return;
     }
     // Uncomment the line below when you have user authentication middleware
-    // const user = request.user; // Assuming you have user authentication middleware
     const { userId } = request.body as { userId: string };
 
     // check if the from user is provided
@@ -40,6 +37,10 @@ export async function getFriends(request: FastifyRequest, reply: FastifyReply) {
           status: "error",
           message: "Invalid request. Please provide user.",
         });
+    }
+
+    if (!checkAuthenticatedUser(reply, userId, request.user?.id)) {
+      return;
     }
 
     // check if the user exists in the database
@@ -124,19 +125,22 @@ export async function addMessage(request: FastifyRequest, reply: FastifyReply) {
     //         message: 'Invalid request. Please provide from, to, and message.' });
     // }
 
-    // // check if the to user is not the same as from user
-    // if (from === to) {
-    //     return reply.status(400).send({
-    //         status: 'error',
-    //         message: 'You cannot send a message to yourself.' });
-    // }
-    const trimmedMessage = message.trim();
-
     if (!checkIds(reply, from, to, "You cannot send a message to yourself.")) {
       return; // If the IDs are invalid, exit the function
     }
-
-
+    // check if from user is not the same as to user
+   if (!checkAuthenticatedUser(reply, from, request.user?.id)) {
+      return;
+   }
+    
+    // // check if the to user is not the same as from user
+    // if (from === to) {
+      //     return reply.status(400).send({
+        //         status: 'error',
+        //         message: 'You cannot send a message to yourself.' });
+        // }
+        const trimmedMessage = message.trim();
+        
     // check the message is valid
     if (!checkMessageRequestBody(reply, trimmedMessage)) {
       return; // If the message is invalid, exit the function
@@ -253,19 +257,19 @@ export async function getMessages(
     //         status: 'error',
     //         message: 'You cannot fetch messages with yourself.' });
     // }
-
-    if (
-      !checkIds(reply, from, to, "You cannot fetch messages with yourself.")
-    ) {
+    if (!checkIds(reply, from, to, "You cannot fetch messages with yourself.")) {
       return; // If the IDs are invalid, exit the function
     }
+
+    if (!checkAuthenticatedUser(reply, from, request.user?.id)) {
+      return;
+    }
+
+
 
     if (!(await checkUserExists(reply, to))) {
       return; // If the user does not exist, exit the function
     }
-
-    // fetch all row in friends table
-    showAllFriends();
 
     // check if the users are friends or not
     // const checkFriendshipStmt = db.prepare(`
@@ -355,10 +359,15 @@ export async function blockUser(request: FastifyRequest, reply: FastifyReply) {
     // if (from === to) {
     //     return reply.status(400).send({ status: 'error', message: 'You cannot block yourself.' });
     // }
-
     if (!checkIds(reply, from, to, "You cannot block yourself.")) {
       return; // If the IDs are invalid, exit the function
     }
+
+    if (!checkAuthenticatedUser(reply, from, request.user?.id)) {
+      return;
+    }
+
+
 
     //Check if the users are friends or not
     // const checkFriendshipStmt = db.prepare(`
@@ -440,10 +449,15 @@ export async function unblockUser(request: FastifyRequest, reply: FastifyReply) 
     // if (from === to) {
     //     return reply.status(400).send({ status: 'error', message: 'You cannot unblock yourself.' });
     // }
-
     if (!checkIds(reply, from, to, "You cannot unblock yourself.")) {
       return; // If the IDs are invalid, exit the function
     }
+
+    if (!checkAuthenticatedUser(reply, from, request.user?.id)) {
+      return;
+    }
+
+
 
     //Check if the users are friends or not
     // const checkFriendshipStmt = db.prepare(`
@@ -529,6 +543,10 @@ export async function deleteMessage(request: FastifyRequest, reply: FastifyReply
       return; // If the IDs are invalid, exit the function
     }
 
+    if (!checkAuthenticatedUser(reply, from, request.user?.id)) {
+      return;
+    }
+
     if (!(await checkUserExists(reply, to))) {
       return; // If the user does not exist, exit the function
     }
@@ -582,6 +600,10 @@ export async function editMessage(request: FastifyRequest, reply: FastifyReply) 
     
     if (!checkIds(reply, from, to, "You cannot edit a message with yourself.")) {
       return; // If the IDs are invalid, exit the function
+    }
+
+    if (!checkAuthenticatedUser(reply, from, request.user?.id)) {
+      return;
     }
 
     if (!(await checkUserExists(reply, to))) {

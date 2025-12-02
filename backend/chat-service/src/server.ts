@@ -93,6 +93,22 @@ fastifyServer.register(chatRoutes, {prefix: 'api/chat'});
 //   return { users };
 // });
 
+// add a prehanlder to atach the user to the request
+fastifyServer.addHook('preHandler', async (request: any, reply: any) => {
+    const userData = request.headers['x-user-data'];
+    
+    if (userData) {
+      try {
+        // Parse the JSON string sent by the Gateway
+        request.user = JSON.parse(userData as string);
+        console.log("User data attached to request:", request.user);
+      } catch (err) {
+        console.error("Failed to parse user data from gateway", err);
+        request.user = null;
+      }
+    }
+});
+
 // Create a function to start the server
 const start = async () => {
   try {

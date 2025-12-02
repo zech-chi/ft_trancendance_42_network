@@ -228,7 +228,7 @@ function Messages({messagesList,messagesEndRef, setLightboxImageUrl, message, se
   return (
     <div   ref={messagesContainerRef}
           className="flex-1 overflow-y-auto overflow-x-hidden p-4 text-white max-h-[calc(100vh-200px)] border-l border-r border-white/20
-          md:max-h-[calc(100vh-250px)] scrollbar relative  bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-sm">
+          md:max-h-[calc(100vh-250px)] scrollbar relative  bg-gradient-to-br from-black/40 to-black/20">
 
           {/* Error message display */}
           {message && (

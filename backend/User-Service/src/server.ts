@@ -33,9 +33,19 @@ server.register(multipart, {
 
 server.register(ProfileRoutes, {prefix: 'api/settings'});
 
-server.get('/', async () => {
-  return { message: 'Hello World!' };
-});
+// server.addHook('preHandler', async (request: any, reply: any) => {
+//     const userData = request.headers['x-user-data'];
+    
+//     if (userData) {
+//       try {
+//         // Parse the JSON string sent by the Gateway
+//         request.user = JSON.parse(userData as string);
+//       } catch (err) {
+//         console.error("Failed to parse user data from gateway", err);
+//         request.user = null;
+//       }
+//     }
+// });
 
 const PORT = 5004;
 

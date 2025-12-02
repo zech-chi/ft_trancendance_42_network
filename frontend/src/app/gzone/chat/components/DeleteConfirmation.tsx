@@ -20,7 +20,7 @@ export const DeleteConfirmation = ({messageType, onConfirm, onCancel} : DeleteCo
   return (
     // This is the full-screen overlay inside the message bubble
     <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  inset-0 z-50 flex items-center justify-center rounded-lg">
-      <div className="flex flex-col items-center gap-3 rounded-lg bg-gray-800/100 border border-white/20 p-4 shadow-xl backdrop-blur-2xl">
+      <div className="flex flex-col items-center gap-3 rounded-lg bg-gray-800/100 border border-white/20 p-4">
         <h3 className="font-semibold text-white">Delete {getMessageTypeName()}?</h3>
         <p className="text-center text-sm text-gray-300">
           Are you sure you want to delete this {getMessageTypeName()}? <br /> This action cannot be undone.

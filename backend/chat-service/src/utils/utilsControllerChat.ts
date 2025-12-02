@@ -1,29 +1,24 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import db from '../db/connectiondb'
+// import db from '../db/connectiondb'
 import { MessageRequestBody, MessageRow, Message } from '../types/message';
 import { getTime } from '../utils/getTime';
 import { MAX_LENGTH_MESSAGE } from './constants';
 import { ApidataBase } from './ApiDataBase';
 
-// this function show all user in the database
-export function showAllUsers() {
-    // fetch all row in users table
-    const users = db.prepare('SELECT * FROM users').all();
-    console.log("Users in the database:", users);
-}
-
-// this function show all friends in the database
-export function showAllFriends() {
-    // fetch all row in friends table
-    const friends = db.prepare('SELECT * FROM friends').all();
-    console.log("Friends in the database:", friends);
-}
-
-export function deleteAllMessages() {
-    // delete all row in messages table
-    const stmt = db.prepare('DELETE  FROM messages');
-    const info = stmt.run();
-    console.log("All messages deleted from the database:", info);
+// Validates that the authenticated user matches the user making the request
+export function checkAuthenticatedUser(
+  reply: FastifyReply,
+  from: string | number,
+  authenticatedUserId: string | number | undefined
+): boolean {
+  if (from != authenticatedUserId) {
+    reply.status(403).send({
+      status: 'error',
+      message: 'Forbidden. User does not match authenticated user.'
+    });
+    return false;
+  }
+  return true;
 }
 
 // this function will be used to check if the request body is undifined or not
@@ -60,7 +55,7 @@ export function checkIds(reply:FastifyReply ,from: string, to: string, errorMess
         return false;
     }
     // check if the from user is not the same as to user
-    if (from === to) {
+    if (from == to) {
         reply.status(400).send({ status: 'error', message: errorMessage });
         return false;
     }
