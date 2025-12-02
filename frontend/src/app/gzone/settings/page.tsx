@@ -24,13 +24,14 @@ function ProfileImage({ imgSrc, handleImageUpload }: PropsProfileImage) {
           alt="Profile"
           className="w-full h-full object-cover object-center rounded-full"
         /> */}
-        <Image
+        {imgSrc && <Image
           src={imgSrc}
           alt="Profile"
           fill
           className="object-cover object-center rounded-full"
           sizes="100vw"
         />
+        }
 
         {/* Hidden file input */}
         <input
