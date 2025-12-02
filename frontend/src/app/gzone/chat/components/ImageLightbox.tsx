@@ -45,12 +45,12 @@ export function ImageLightbox ({ imageUrl, onClose }: ImageLightboxProps) {
   return (
     // Backdrop: Fixed position, covers the screen, with a semi-transparent background
     <div 
-      className="absolute inset-0 bg-black/80 flex items-center justify-center z-70 animate-fade-in backdrop-blur-md rounded-[50px]"
+      className="absolute inset-0 bg-gray-800/60 flex items-center justify-center z-70 animate-fade-in backdrop-blur-md rounded-2xl"
       onClick={onClose} // Close the lightbox when clicking the backdrop
     >
       {/* Close button in the top right corner */}
       <button 
-        className="absolute top-4 right-4 text-white/70 hover:text-white z-70"
+        className="absolute top-4 right-4 text-white/70 hover:text-white z-70 cursor-pointer"
         onClick={onClose}
         title="Close (Esc)"
       >
