@@ -26,7 +26,7 @@ server.register(cors, {
 
 server.register(multipart, {
   limits: {
-    fileSize: 6 * 1024 * 1024, // 6MB max per file
+    fileSize: 5 * 1024 * 1024, // 5MB max per file
     files: 1, // Limit to 1 file per request
   }
 });

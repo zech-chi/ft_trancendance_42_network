@@ -31,7 +31,8 @@ fastifyServer.register(metricsPlugin, { endpoint: "/metrics" });
 
 fastifyServer.register(multipart, {
   limits: {
-    fileSize: MAX_FILE_SIZE_IN_BYTES // 100MB max per file 
+    fileSize: MAX_FILE_SIZE_IN_BYTES, // 100MB max per file
+    files: 1, // Limit to 1 file per request
   }
 });
 
