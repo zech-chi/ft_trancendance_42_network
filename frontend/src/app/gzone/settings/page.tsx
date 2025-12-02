@@ -129,7 +129,7 @@ function ProfileInfo({
 
       <div className="flex flex-col items-center w-full">
         <span className="mb-1 text-white font-bold text-sm md:text-base">
-          Two-factor authentication (2fa)
+          Two-factor auth (2FA)
         </span>
 
         <div className="relative w-full max-w-[400px] h-[56px] rounded-[20px] overflow-hidden">
