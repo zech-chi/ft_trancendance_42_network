@@ -5,8 +5,8 @@ import { pipeline } from "stream";
 import { promisify } from "util";
 import { MAX, v4 as uuid4 } from "uuid";
 import bcrypt from "bcryptjs";
-// import db from "../db/connectiondb";
 import { createProfilesDir } from "../utils/createProfilesDir";
+import { checkAuthenticatedUser } from "../utils/check_userauth";
 import { MAX_LENGTH_BIO, VALID_LANGUAGES } from "../utils/constants";
 
 const pump = promisify(pipeline);
@@ -182,6 +182,9 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
   if (!id) {
     return reply.status(400).send({ status: 'error', message: 'User ID is required.' });
   }
+  if (!checkAuthenticatedUser(reply, id, request.user?.id)) {
+      return;
+  }
 
   console.log("Received request to update user settings:", request);
   const profileDir = createProfilesDir();
@@ -351,6 +354,9 @@ export async function getUserInfo(request: FastifyRequest, reply: FastifyReply) 
 
   // the userId should get it from the request.user object after authentication
   const userId = request.params.id;
+  if (!checkAuthenticatedUser(reply, userId, request.user?.id)) {
+      return;
+  }
   try {
     const response = await fetch(`http://db-service:5000/api/settings/users/${userId}`);
     if (!response.ok) {

@@ -31,21 +31,21 @@ server.register(multipart, {
   }
 });
 
-server.register(ProfileRoutes, {prefix: 'api/settings'});
-
-// server.addHook('preHandler', async (request: any, reply: any) => {
-//     const userData = request.headers['x-user-data'];
+server.addHook('preHandler', async (request: any, reply: any) => {
+    const userData = request.headers['x-user-data'];
     
-//     if (userData) {
-//       try {
-//         // Parse the JSON string sent by the Gateway
-//         request.user = JSON.parse(userData as string);
-//       } catch (err) {
-//         console.error("Failed to parse user data from gateway", err);
-//         request.user = null;
-//       }
-//     }
-// });
+    if (userData) {
+      try {
+        // Parse the JSON string sent by the Gateway
+        request.user = JSON.parse(userData as string);
+      } catch (err) {
+        console.error("Failed to parse user data from gateway", err);
+        request.user = null;
+      }
+    }
+});
+
+server.register(ProfileRoutes, {prefix: 'api/settings'});
 
 const PORT = 5004;
 
