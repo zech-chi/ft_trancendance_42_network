@@ -4,6 +4,8 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useSocket } from "../context/SocketContext";
 import { useInvite } from "../context/InviteContext";
 import { useRouter } from 'next/navigation';
+import Sidebar from "@/components/layout/Sidebar";
+import Navbar from "@/components/layout/Navbar";
 
 // Define interfaces for game state
 interface Player {
@@ -431,65 +433,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
         ctx.fill();
       }
     }
-
-    // Draw scores with responsive font size
-    if (gameState?.players) {
-      const fontSize = deviceType === 'mobile' ? 24 : 32;
-      ctx.fillStyle = '#ffffff';
-      ctx.font = `bold ${fontSize}px Arial`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      
-      const leftPlayer = gameState.players.find(p => p.side === "left");
-      const rightPlayer = gameState.players.find(p => p.side === "right");
-      
-      ctx.fillText(leftPlayer?.score.toString() || '0', width / 4, 40);
-      ctx.fillText(rightPlayer?.score.toString() || '0', (3 * width) / 4, 40);
-    }
-
-    // Display game status messages with responsive sizing
-    const statusFontSize = deviceType === 'mobile' ? 16 : 20;
-    const overlayWidth = deviceType === 'mobile' ? width * 0.8 : 300;
-    const overlayHeight = deviceType === 'mobile' ? 80 : 60;
-    
-    if (gameStatus === 'waiting') {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      ctx.fillRect(width / 2 - overlayWidth / 2, height / 2 - overlayHeight / 2, overlayWidth, overlayHeight);
-      
-      ctx.fillStyle = '#ffffff';
-      ctx.font = `${statusFontSize}px Arial`;
-      ctx.textAlign = 'center';
-      ctx.fillText('Waiting for game to start...', width / 2, height / 2);
-    }
-    else if (gameStatus === 'finished') {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      ctx.fillRect(0, 0, width, height);
-      
-      ctx.fillStyle = '#ffffff';
-      const titleFontSize = deviceType === 'mobile' ? 24 : 30;
-      ctx.font = `${titleFontSize}px Arial`;
-      ctx.textAlign = 'center';
-      
-      if (winner) {
-        ctx.fillText(`🎉 ${winner.username} wins!`, width / 2, height / 2 - 20);
-        ctx.font = `${statusFontSize}px Arial`;
-        ctx.fillText('Game over', width / 2, height / 2 + 20);
-      } else if (endGameReason) {
-        ctx.fillText('Game Over', width / 2, height / 2 - 20);
-        ctx.font = `${statusFontSize}px Arial`;
-        ctx.fillText(endGameReason, width / 2, height / 2 + 20);
-      } else {
-        ctx.fillText('Game Ended', width / 2, height / 2);
-      }
-    }
-
-    // Display current control mode with responsive font
-    const controlFontSize = deviceType === 'mobile' ? 10 : 14;
-    ctx.fillStyle = '#ffffff';
-    ctx.font = `${controlFontSize}px Arial`;
-    ctx.textAlign = 'left';
-    ctx.fillText(`Controls: ${controlMode} (Press M to change)`, 10, height - 10);
-  }, [tableImage, ballImage, gameState, gameStatus, winner, endGameReason, paddleColor, controlMode, width, height, paddleWidth, paddleHeight, deviceType]);
+  }, [tableImage, ballImage, gameState, paddleColor, width, height, paddleWidth, paddleHeight]);
 
   // Handle keyboard input in the animation loop
   const gameLoop = useCallback(() => {
@@ -737,73 +681,164 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
   }
 
   return (
-    <div className="relative flex justify-center items-center w-full h-full">
-      <div className="relative">
-        <canvas
-          ref={canvasRef}
-          width={width}
-          height={height}
-          className="border-2 border-gray-600 rounded-lg shadow-xl max-w-full max-h-full"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          style={{
-            cursor: gameStatus === 'playing' && controlMode === 'mouse' ? (isDragging ? 'grabbing' : 'grab') : 'default',
-            backgroundColor: '#2c3e50',
-            touchAction: 'none' // Prevent scrolling on touch devices
-          }}
-        />
+    <div className="h-screen flex items-center min-w-[200px] w-full overflow-x-auto">
+      <Sidebar />
+      <main
+        className="flex flex-row items-center justify-center relative overflow-x-hidden
+                  xl:pl-20 2xl:pl-24 w-full
+                  h-[calc(100%-130px)]
+                  xl:h-[calc(100%-75px)]
+                  2xl:h-[calc(100%-85px)]
+                  2xl:mt-[67px] xl:mt-[60px] overflow-y-auto"
+      >
+        <div className="w-full max-w-6xl mx-auto px-4 py-4">
+          <div className="p-3 md:p-4 lg:p-6 bg-black/60 backdrop-blur-sm rounded-2xl shadow-2xl">
+            {/* Scoreboard - Taille réduite */}
+            {localPlayer && opponentPlayer && (
+              <div className="relative bg-gradient-to-r from-black/80 via-gray-900/80 to-black/80 backdrop-blur-md border-2 border-white/30 rounded-2xl p-2 md:p-3 shadow-2xl mb-3">
+                <div className="grid grid-cols-3 gap-2 md:gap-3 items-center">
+                  <div className="text-left">
+                    <div className="text-[#FFB700] font-bold text-xs mb-1 uppercase tracking-wider">
+                      {localPlayer.side === "left" ? localPlayer.username : opponentPlayer.username}
+                    </div>
+                    <div className="text-2xl md:text-3xl font-bold text-white">
+                      {localPlayer.side === "left" ? localPlayer.score : opponentPlayer.score}
+                    </div>
+                    <div className="text-white/60 text-xs mt-1">Left</div>
+                  </div>
 
-        {/* Dynamic Instructions */}
-        {localPlayer && gameStatus === 'playing' && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-lg text-sm">
-            {controlMode === 'keyboard' ? (
-              <>Use ↑↓ arrows or W/S keys to move</>
-            ) : controlMode === 'touch' ? (
-              <>Tap and drag your {localPlayer.side} paddle to move</>
-            ) : (
-              <>Drag your {localPlayer.side} paddle to move</>
+                  <div className="text-center">
+                    <div className="text-white/40 text-xs mb-1">SCORE</div>
+                    <div className="text-lg md:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFB700] to-[#1CBABA]">
+                      VS
+                    </div>
+                    <div className="text-white/40 text-xs mt-1">
+                      First to {maxScore}
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <div className="text-[#1CBABA] font-bold text-xs mb-1 uppercase tracking-wider">
+                      {localPlayer.side === "right" ? localPlayer.username : opponentPlayer.username}
+                    </div>
+                    <div className="text-2xl md:text-3xl font-bold text-white">
+                      {localPlayer.side === "right" ? localPlayer.score : opponentPlayer.score}
+                    </div>
+                    <div className="text-white/60 text-xs mt-1">Right</div>
+                  </div>
+                </div>
+              </div>
             )}
+
+            {/* Waiting Status - Above Canvas */}
+            {gameStatus === 'waiting' && (
+              <div className="mb-3 bg-blue-600/20 border-2 border-blue-500 rounded-xl p-4 text-center">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>
+                  <p className="text-blue-400 font-medium text-sm md:text-base">
+                    Waiting for game to start...
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="relative">
+              <canvas
+                ref={canvasRef}
+                width={width}
+                height={height}
+                className="w-full h-auto rounded-lg shadow-2xl bg-black border-2 border-white/20"
+                style={{ 
+                  aspectRatio: "4 / 3",
+                  maxHeight: "60vh",
+                  cursor: gameStatus === 'playing' && controlMode === 'mouse' ? (isDragging ? 'grabbing' : 'grab') : 'default',
+                  touchAction: 'none'
+                }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              />
+
+              {/* Dynamic Instructions
+              {localPlayer && gameStatus === 'playing' && (
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-lg text-sm">
+                  {controlMode === 'keyboard' ? (
+                    <>Use ↑↓ arrows or W/S keys to move</>
+                  ) : controlMode === 'touch' ? (
+                    <>Tap and drag your {localPlayer.side} paddle to move</>
+                  ) : (
+                    <>Drag your {localPlayer.side} paddle to move</>
+                  )}
+                </div>
+              )} */}
+
+              {/* Connection Info */}
+              {/* <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded text-xs">
+                Room: {roomId} | Status: {gameStatus.charAt(0).toUpperCase() + gameStatus.slice(1)}
+              </div> */}
+
+              {/* Winner Modal */}
+              {gameStatus === 'finished' && winner && (
+                <div className="absolute inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 rounded-lg">
+                  <div className="bg-gradient-to-br from-gray-900 to-black border-4 border-[#1CBABA] p-8 md:p-12 rounded-3xl shadow-2xl text-center max-w-2xl mx-4">
+                    <div className="mb-6">
+                      <div className="text-6xl mb-4 animate-bounce">🏆</div>
+                      <h2 className={`text-4xl md:text-6xl font-bold mb-4 ${
+                        winner.id === userId ? "text-[#FFB700]" : "text-[#1CBABA]"
+                      } animate-pulse`}>
+                        {winner.username} Wins!
+                      </h2>
+                      <p className="text-white/80 mb-2 text-xl">Congratulations on your victory!</p>
+                      <div className="text-white/60 text-lg">
+                        Final Score: <span className="text-[#FFB700] font-bold">
+                          {localPlayer?.side === "left" ? localPlayer?.score : opponentPlayer?.score}
+                        </span> - <span className="text-[#1CBABA] font-bold">
+                          {localPlayer?.side === "right" ? localPlayer?.score : opponentPlayer?.score}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Buttons Section - Below Canvas */}
+            <div className="mt-4 flex flex-wrap gap-2 justify-center items-center">
+              {/* Control Mode Toggle */}[#FFB700]
+              <button
+                onClick={toggleControlMode}
+                className="bg-[#1CBABA] hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                Controls: {controlMode} (Press M)
+              </button>
+
+              {/* Start Game Button
+              {gameStatus === 'waiting' && (
+                <button
+                  onClick={startGameManually}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Start Game
+                </button>
+              )} */}
+
+              {/* Leave Game Button */}
+              {gameStatus !== 'finished' && (
+                <button
+                  onClick={handleLeaveGame}
+                  className="bg-[#FFB700] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Leave Game
+                </button>
+              )}
+            </div>
           </div>
-        )}
-
-        {/* Connection Info */}
-        <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded text-xs">
-          Room: {roomId} | Status: {gameStatus.charAt(0).toUpperCase() + gameStatus.slice(1)}
         </div>
-
-        {/* Control Mode Display & Toggle */}
-        <div 
-          className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded text-xs cursor-pointer hover:bg-blue-700" 
-          onClick={toggleControlMode}
-        >
-          Controls: {controlMode} (Click or Press M)
-        </div>
-
-        {/* Manual Start Game Button */}
-        {gameStatus === 'waiting' && (
-          <button
-            onClick={startGameManually}
-            className="absolute top-12 right-4 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
-          >
-            Start Game
-          </button>
-        )}
-
-        {/* Leave Game Button */}
-        {gameStatus !== 'finished' && (
-          <button
-            onClick={handleLeaveGame}
-            className="absolute top-20 right-4 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
-          >
-            Leave Game
-          </button>
-        )}
-      </div>
+      </main>
     </div>
   );
 };
