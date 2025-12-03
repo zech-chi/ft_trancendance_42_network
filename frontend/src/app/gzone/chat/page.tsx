@@ -20,6 +20,7 @@ import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { useSelectedUserName } from "@/context/SelectedUserNameContext";
 import { useLoggedUserId } from "@/context/UserIdContext";
 import { useRouter } from "next/navigation";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 function Chat() {
 
@@ -134,13 +135,12 @@ function Chat() {
     if (!userId) return;
     const fetchContacts = async () => {
       try {
-        const response = await fetch(`${ApiRoutes.ListFriends}`, {
+        const response = await fetchWithAuth(`${ApiRoutes.ListFriends}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ userId: userId }), // replace with actual user ID
-          credentials: 'include'
         });
   
         const data = await response.json();

@@ -8,6 +8,7 @@ import Navbar from "@/components/layout/Navbar";
 import TwoFASetup from "./components/TwoFASetup";
 import { useLoggedUserId } from "@/context/UserIdContext";
 import Image from "next/image";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 type PropsProfileImage = {
   imgSrc: string;
@@ -693,12 +694,11 @@ function Settings() {
     }
 
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `/api/settings/update/${loggedUserId}`,
         {
           method: "PATCH", // Use PATCH for partial updates
           body: formData, // No 'Content-Type' header needed for FormData
-          credentials: 'include'
         }
       );
 
@@ -750,8 +750,8 @@ function Settings() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(
-          `/api/settings/info/${loggedUserId}`, { credentials: 'include'}
+        const response = await fetchWithAuth(
+          `/api/settings/info/${loggedUserId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch user data");

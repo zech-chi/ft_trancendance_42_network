@@ -4,6 +4,7 @@ import { RadarChart } from './RadarChart';
 import { FriendsStats } from './FriendsStats';
 import { AIStats } from './AIStats';
 import { useSelectedUserId } from '@/context/SelectedUserId';
+import { fetchWithAuth } from '@/utils/fetchWithAuth';
 type GameName = 'pong' | 'parcheesi';
 
 type ChooseGameProps = {
@@ -72,12 +73,11 @@ export default function Statistics() {
         async function fetchData() {
             try {
                 if (!selectedUserId) return;
-                const response = await fetch(`/api/dashboard/chartsdata/${selectedUserId}?game=${game}`, {
+                const response = await fetchWithAuth(`/api/dashboard/chartsdata/${selectedUserId}?game=${game}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    credentials: 'include'
                 });
 
                 if (!response.ok) {

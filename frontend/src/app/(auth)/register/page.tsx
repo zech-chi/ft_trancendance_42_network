@@ -1,10 +1,7 @@
 'use client'
 import { JSX } from "react";
-// import Navbar from "@/components/layout/Navbar";
-// import Sidebar from "@/components/layout/Sidebar";
 import { useEffect } from "react";
 import { useLoggedUserName } from "@/context/LoggedUserNameContext";
-// import Login from "@/components/Login";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -23,21 +20,6 @@ export default function SignupPage() {
     const [password, setPassword] = useState("");
     const [ isLoading, setIsLoading ] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
-
-
-    // const handleGoogle = async () => {
-    //   try {
-    //       console.log("log with google");
-    //       const res = await fetch("http://localhost:5001/api/auth/login/google")
-
-    //        if (!res.ok) {
-    //             throw new Error("Failed to register");
-    //         }
-    //         // const data = await res.json();
-    //   }catch(error) {
-    //     console.log("something went wrong");
-    //   }
-    // }
 
     // check if already logged in
     useEffect(() => {
@@ -182,9 +164,3 @@ export default function SignupPage() {
     </div>
   );
 }
-
-// if (!data.user.isVerified) {
-//   router.push('/verify');
-// } else {
-//   router.push('/protected/dashboard');
-// }

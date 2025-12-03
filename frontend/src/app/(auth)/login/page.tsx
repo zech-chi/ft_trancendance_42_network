@@ -10,44 +10,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useUserEmail } from "@/context/UserEmailContext";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 export async function fetchUser() {
   
 	try {
-		let response = await fetch('/api/auth/session', {
-			credentials: 'include', // include cookies in the request
+		let response = await fetchWithAuth('/api/auth/session', {
 		});
 		if (response.ok) {
 			const data = await response.json();
 			return data;
-		} if (response.status === 401 || response.status === 403) {
-      console.log("Access token expired. Attempting refresh...");
-      console.log(response.statusText);
-      console.log(await response.text());
-
-      const refreshRes = await fetch('/api/auth/refresh', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (!refreshRes.ok) {
-        console.warn("Refresh token invalid or expired.");
-        return null;
-      }
-
-      console.log("Access token refreshed. Retrying session...");
-      // Step 3: Retry getting session after refresh
-      response = await fetch('/api/auth/session', {
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        return await response.json();
-      } else {
-        console.warn("Session fetch failed even after refresh.");
-        return null;
-      }
-    }
+		}
      else {
 			console.log('Failed to fetch user:', response.statusText);
 			return null;

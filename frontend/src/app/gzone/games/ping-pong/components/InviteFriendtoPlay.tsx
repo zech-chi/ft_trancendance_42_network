@@ -11,6 +11,7 @@ import { useLoggedUserName } from "@/context/LoggedUserNameContext";
 import { fetchUser } from "@/app/(auth)/login/page";
 import { useRouter } from "next/navigation";
 import { handleInvite } from "../utils/handleInvite";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 
 
 interface User {
@@ -49,8 +50,7 @@ export default function InviteToPlay() {
 
   const listFriends = async (): Promise<void> => {
     try {
-      const response = await fetch(`/api/pong/friends/${loggedUserId}`, {
-        credentials: "include",
+      const response = await fetchWithAuth(`/api/pong/friends/${loggedUserId}`, {
       });
 
       if (!response.ok) {

@@ -1,5 +1,6 @@
 'use client';
 import { useLoggedUserId } from "@/context/UserIdContext";
+import { fetchWithAuth } from "@/utils/fetchWithAuth";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
@@ -82,9 +83,8 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
       setStatus("Generating QR...");
       try {
         // Ensure no body is sent, and Content-Type is NOT set to json to avoid the 400 error
-        const res = await fetch("/api/auth/2fa-setup", {
+        const res = await fetchWithAuth("/api/auth/2fa-setup", {
           method: "POST",
-          credentials: "include",
         });
   
         const data = await res.json();
@@ -106,9 +106,8 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
 
       setStatus("Verifying...");
       try {
-        const res = await fetch("/api/auth/2fa-enable", {
+        const res = await fetchWithAuth("/api/auth/2fa-enable", {
           method: "POST",
-          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ otp: codeToUse }),
         });
@@ -132,9 +131,8 @@ export default function TwoFASetup({ onClose, onEnable, onDisable, is2FAEnabled 
 
       setStatus("Verifying...");
       try {
-        const res = await fetch("/api/auth/2fa-disable", {
+        const res = await fetchWithAuth("/api/auth/2fa-disable", {
           method: "POST",
-          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({otp: codeToUse }),
         });
