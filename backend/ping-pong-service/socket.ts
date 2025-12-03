@@ -973,7 +973,7 @@ socket.on("accept_invite_tournament", async ({ inviter, inviterName ,accepter, t
         ball.y <= paddleBottom // Ball's top edge before paddle's bottom edge
       ) {
         // Reverse horizontal direction and slightly increase speed
-        ball.dx = -ball.dx * 1.02; // Small speed boost
+        ball.dx = -ball.dx * 1; // Small speed boost
 
         // Adjust vertical direction based on where the ball hit the paddle
         const hitPos = (ball.y - paddleTop) / paddleHeight - 0.5; // -0.5 to 0.5

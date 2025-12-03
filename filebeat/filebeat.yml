@@ -4,25 +4,31 @@ filebeat.inputs:
       - /var/lib/docker/containers/*/*.log
     processors:
       - add_docker_metadata: ~
+      # Tag nginx logs and add a 'service' field for Logstash routing
+      - add_fields:
+          when:
+            equals:
+              container.name: "nginx"
+          target: ''
+          fields:
+            service: "nginx"
+            log_type: "nginx_container"
       - drop_event.when:
           equals:
-            container.name: "filebeat" # optional, to ignore filebeat logs itself
+            container.name: "filebeat"
 
-# Optional global fields
 fields:
   environment: dev
 
-# Output to Logstash
 output.logstash:
   hosts: ["logstash:5044"]
 
-# Optional: monitoring
 monitoring:
   enabled: true
   elasticsearch:
     hosts: ["http://elasticsearch:9200"]
 
 logging.level: info
-logging.to_files: false # disables file logging
+logging.to_files: false
 logging.to_syslog: false
 logging.to_console: true

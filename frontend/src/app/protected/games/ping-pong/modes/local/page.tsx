@@ -15,16 +15,16 @@ export default function Game() {
           className="relative z-10 container mx-auto px-4 py-8 flex justify-center items-center
       w"
         >
-          <div className="bg-black/30 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10">
+          {/* <div className="bg-black/30 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10"> */}
             <div className="xl:col-span-1">
               <PingPongCanvas
                 paddleColor={settings.paddle}
                 tableUrl={settings.bgTable}
                 ballUrl={settings.ball}
-                maxScore="1"
+                maxScore={settings.score}
               />
             </div>
-          </div>
+          {/* </div> */}
         </div>
       </div>
   );

@@ -208,99 +208,92 @@ export default function InviteToPlay() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <p className="text-white text-lg">Loading... in PONG</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="relative flex flex-col justify-center items-center z-10 container mx-auto px-4 py-8">
-      <div className="bg-black/30 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Invite a Friend To play
+    <div className="relative flex flex-col justify-center items-center z-10 w-full px-2 sm:px-4 py-4 sm:py-6 md:py-8 lg:py-10">
+      <div className="w-full max-w-4xl">
+        {/* Header Section */}
+        <div className="text-center mb-4 sm:mb-6 md:mb-8 lg:mb-10">
+          <div className="inline-block mb-2 sm:mb-3 md:mb-4">
+            <div className="w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 mx-auto bg-[#1CBABA] rounded-full flex items-center justify-center shadow-lg transition-all">
+              <svg className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </div>
+          </div>
+          <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-1 sm:mb-2 md:mb-3 px-2">
+            Invite Friends to Play
           </h1>
-          {/* Bouton de test temporaire */}
-          {/* <button
-            onClick={() => {
-              socket?.emit("cleanup_orphaned_states");
-              toast("🧹 Forcing cleanup...", { duration: 2000 });
-            }}
-            className="mt-2 bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-sm"
-          >
-            🧹 Force Cleanup Now
-          </button>
-          
-          {/* Test force leave button */}
-          {/* <button
-            onClick={() => {
-              if (friends.length > 0) {
-                socket?.emit("debug_force_leave", { targetUserId: friends[0].id });
-                toast("🐛 Testing force leave...", { duration: 2000 });
-              }
-            }}
-            className="mt-2 ml-2 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded text-sm"
-          >
-            🐛 Test Force Leave (First Friend)
-          </button>  */}
-          
-          {/* Test cancel invitation button */}
-          {/* <button
-            onClick={() => {
-              if (friends.length > 0) {
-                const friend = friends[0];
-                const inviteState = getInviteStatus(friend.id);
-                if (inviteState.status === 'pending' && inviteState.inviteId) {
-                  socket?.emit("cancel_invite", {
-                    targetUserId: friend.id,
-                    inviteId: inviteState.inviteId
-                  });
-                  toast("🧪 Testing invite cancellation...", { duration: 2000 });
-                } else {
-                  toast("🧪 No pending invitation to cancel", { duration: 2000 });
-                }
-              }
-            }}
-            className="mt-2 ml-2 bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded text-sm"
-          >
-            🧪 Test Cancel Invite
-          </button> */}
+          <p className="text-white/70 text-xs xs:text-sm sm:text-base md:text-lg px-2">
+            Select a friend and challenge them to a game!
+          </p>
         </div>
 
-        {friends.length === 0 ? (
-          <p className="text-center text-white">No friends found.</p>
-        ) : (
-          <ul className="flex flex-col gap-5 items-center justify-center">
-            {friends.map((friend) => (
-              <li
-                key={friend.id}
-                className="flex justify-between items-center w-125 h-20 border-2 rounded-full"
-              >
-                <div className="flex items-center ml-4 gap-2">
-                  <img
-                    // src="/images/tkannane.jpeg"
-                    src={friend.imageUrl}
-                    className="w-15 h-15 rounded-full border-2"
-                    alt="Profile"
-                  />
-                  <div>
-                    <p className="font-bold text-white">{friend.fullName}</p>
-                    <p className="font-serif text-gray-400">@{friend.userName}</p>
+        {/* Friends List - Enhanced Responsive */}
+        <div className="bg-black/40 backdrop-blur-xl rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-3xl p-2 xs:p-3 sm:p-4 md:p-6 lg:p-8 shadow-2xl border border-white/20">
+          {friends.length === 0 ? (
+            <div className="text-center py-6 xs:py-8 sm:py-12 md:py-16">
+              <div className="w-12 h-12 xs:w-16 xs:h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mx-auto mb-2 xs:mb-3 sm:mb-4 bg-gray-800/50 rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <p className="text-white/60 text-xs xs:text-sm sm:text-base md:text-lg px-2">No friends found.</p>
+              <p className="text-white/40 text-xs sm:text-sm mt-1 sm:mt-2 px-2">Add some friends to start playing together!</p>
+            </div>
+          ) : (
+            <ul className="flex flex-col gap-1.5 xs:gap-2 sm:gap-3 md:gap-4 lg:gap-5">
+              {friends.map((friend, index) => (
+                <li
+                  key={friend.id}
+                  className="group relative flex flex-row justify-between items-center w-full border border-white/10 hover:border-white/30 rounded-lg xs:rounded-xl sm:rounded-2xl md:rounded-full p-2 xs:p-2.5 sm:p-2 sm:pr-3 md:pr-4 gap-2 bg-gradient-to-r from-black/40 to-black/20 hover:from-black/60 hover:to-black/40 transition-all duration-300 hover:shadow-lg animate-slideIn"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className="relative flex items-center gap-2 xs:gap-2.5 sm:gap-3 md:gap-4 min-w-0 flex-1 z-10">
+                    <div className="relative flex-shrink-0">
+                      <img
+                        src={friend.imageUrl}
+                        className="w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-2 border-white/20"
+                        alt="Profile"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-white text-xs xs:text-sm sm:text-base md:text-lg truncate">
+                        {friend.fullName}
+                      </p>
+                      <p className="font-serif text-gray-400 text-xs sm:text-sm truncate group-hover:text-gray-300 transition-colors">
+                        @{friend.userName}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <InviteStatusButton
-                  friendId={friend.id}
-                  friendName={friend.fullName}
-                  inviteState={getInviteStatus(friend.id)}
-                  onInvite={() => handleInviteClick(friend.id)}
-                  onCancel={() => handleCancelInvite(friend.id)}
-                  showDebug={false} // Debug désactivé pour la production
-                />
-              </li>
-            ))}
-          </ul>
-        )}
+                  
+                  <div className="relative flex justify-end w-auto min-w-[100px] xs:min-w-[120px] sm:min-w-[140px] z-10">
+                    <InviteStatusButton
+                      friendId={friend.id}
+                      friendName={friend.fullName}
+                      inviteState={getInviteStatus(friend.id)}
+                      onInvite={() => handleInviteClick(friend.id)}
+                      onCancel={() => handleCancelInvite(friend.id)}
+                      showDebug={false}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
 }
+//         {/* Footer hint */}
+
+//       </div>
+//     </div>
+//   );
+// }
+// }
