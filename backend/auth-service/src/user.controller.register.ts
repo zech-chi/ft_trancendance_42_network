@@ -59,7 +59,10 @@ export async function RegisterUser(
     }>,
     reply: FastifyReply,
 ) {
-    const { fullName, userName, email, password } = req.body;
+    const fullName = req.body.fullName.trim();
+    const userName = req.body.userName.trim();
+    const email = req.body.email.trim();
+    const password = req.body.password;
     try {
         // check if user already exists
         console.log('RegisterUser called with body:', req.body);
@@ -67,7 +70,7 @@ export async function RegisterUser(
         if (checkUser) {
             return reply.code(400).send({ message: 'User with this email or userName already exists' });
         }
-        
+
 
         // hash the password
         const hashedPassword = await bcrypt.hash(password, 10);

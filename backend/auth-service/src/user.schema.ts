@@ -2,12 +2,31 @@ import { z } from 'zod';
 import { buildJsonSchemas } from 'fastify-zod';
 
 // data validation schema for user registration
+// const RegisterUserSchema = z.object({
+//     fullName: z.string().min(2).max(100),
+//     userName: z.string().min(3).max(30),
+//     email: z.string().email(),
+//     password: z.string().min(8).max(100),
+// });
+
 const RegisterUserSchema = z.object({
-    fullName: z.string().min(2).max(100),
-    userName: z.string().min(3).max(30),
+    fullName: z
+      .string()
+      .min(2)
+      .max(100)
+      .regex(/^[a-zA-Z ]+$/, "Full name must contain only letters and spaces"),
+  
+    userName: z
+      .string()
+      .min(3)
+      .max(30)
+      .regex(/^[a-zA-Z0-9]+$/, "Username must be alphanumeric"),
+  
     email: z.string().email(),
+  
     password: z.string().min(8).max(100),
 });
+  
 
 export type RegisterUserInput = z.infer<typeof RegisterUserSchema>;
 
