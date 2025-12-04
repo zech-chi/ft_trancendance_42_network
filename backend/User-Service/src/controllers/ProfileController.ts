@@ -269,14 +269,14 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
     values.push(fullName);
   }
 
-  if (language) {
-    // Validate the language
-    if (!isValidLanguage(reply, language)) {
-      return; // If language is not valid, exit the function
-    }
-    updates.push('language = ?');
-    values.push(language);
-  }
+  // if (language) {
+  //   // Validate the language
+  //   if (!isValidLanguage(reply, language)) {
+  //     return; // If language is not valid, exit the function
+  //   }
+  //   updates.push('language = ?');
+  //   values.push(language);
+  // }
 
   if (bio) {
     // Check the length of the bio
