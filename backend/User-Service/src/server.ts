@@ -33,7 +33,7 @@ server.register(multipart, {
 
 server.addHook('preHandler', async (request: any, reply: any) => {
     const userData = request.headers['x-user-data'];
-    
+    request.user = null;
     if (userData) {
       try {
         // Parse the JSON string sent by the Gateway
