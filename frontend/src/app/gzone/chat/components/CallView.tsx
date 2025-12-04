@@ -30,10 +30,10 @@ export const CallView: React.FC<CallViewProps> = ({
 
   const toggleMic = () => {
     if (!localStream) return;
-    alert("toggle mic");
+    // alert("toggle mic");
     const audioTracks = localStream.getAudioTracks();
     if (audioTracks.length > 0) {
-      alert("the mic is now " + (isMicMuted ? "unmuted" : "muted"));
+      // alert("the mic is now " + (isMicMuted ? "unmuted" : "muted"));
       const isEnabled = audioTracks[0].enabled;
       audioTracks[0].enabled = !isEnabled;
       setIsMicMuted(prev => !prev);
