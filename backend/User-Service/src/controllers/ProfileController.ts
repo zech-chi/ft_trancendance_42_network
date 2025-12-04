@@ -108,10 +108,10 @@ async function checkOldPassword(reply: FastifyReply, userId: string, oldPassword
 
 // check length of the passwords
 function checkPasswordLength(reply: FastifyReply , newPassword: string, confirmPassowrd: string ): boolean {
-  if (newPassword.length < 8 || confirmPassowrd.length < 8) {
+  if (newPassword.length < 8 || newPassword.length > 100 || confirmPassowrd.length < 8 || confirmPassowrd.length > 100) {
     reply.status(400).send({
       status: 'error',
-      message: 'New password and confirm password must be at least 8 characters long.'
+      message: 'Passwords must be between 8 and 100 characters long.'
     });
     return false;
   }
