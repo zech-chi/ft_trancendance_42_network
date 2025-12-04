@@ -7,8 +7,6 @@ import {buildApp} from "./app"
 
 async function start()
 {
-  //i have to connect the db befaure start the server
-
   const app = await buildApp();
   app.listen({ port: PORT, host: "0.0.0.0" }, (err: Error | null, address: string | undefined) => {
   if (err)

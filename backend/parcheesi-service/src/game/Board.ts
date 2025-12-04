@@ -6,10 +6,6 @@ import {
   HomeTile, HomePath, GoalTile, BaseArea, BoardPosition
 } from "../types";
 
-/**
- * A minimal board that only stores state and exposes simple, deterministic
- * atomic operations. Game rules and side-effects belong to GameLogic/GameRoom.
- */
 export class Board {
   sharedPath: SharedTile[];    // 68 shared tiles (0..
   homePaths: HomePath[];       // 4 players, each has 7 home tiles (keeps Hometile field for compatibility)

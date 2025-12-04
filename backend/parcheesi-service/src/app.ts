@@ -1,12 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import fastify from 'fastify';
 import parchisiPlugin from './plugins/parchisiPlugin';
-import auth2FaPlugin from './plugins/auth2FaPlugin';
 import fastifyCors from "@fastify/cors";
-import fastifyJwt from "@fastify/jwt";
-import dotenv from "dotenv";
 import metricsPlugin from "fastify-metrics";
-dotenv.config();
 
 
 

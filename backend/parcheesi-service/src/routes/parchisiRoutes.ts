@@ -5,10 +5,6 @@ import { ApidataBase } from '../utils/ApiDatabase';
 
 const parchisiRoutes: FastifyPluginAsync = async (fastify, opts) => {
 
-      fastify.get('/local', async () => {
-    return { message: 'Welcome to the Local game!' };
-  });
-
    fastify.get("/online/rooms", async () => {
    const availableRooms = Array.from(rooms.values()).map(room => ({
       id: room.id,

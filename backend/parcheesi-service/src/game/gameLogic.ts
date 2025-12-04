@@ -428,37 +428,6 @@ export class GameLogic {
    *
    * NOTE: We do NOT remove them here. We only return the list so GameRoom can act.
    */
-  // private _detectCapturesOnTile(
-  //   player: Player,
-  //   tileInfo: ReturnType<Board["peekShared"]>,
-  //   tileIndex: number
-  // ): { id: number; playerId: number; position: BoardPosition } | null {
-  
-  //   // If tile is safe, no capture possible
-  //   if (tileInfo.occupants.length === 0) return null;
-
-  //   // Find the first opponent piece on this tile
-  //   if (tileInfo.occupants.length === 1) 
-  //     {
-  //     if (tileInfo.isSafe && tileInfo.toWhom === player.color && tileInfo.occupants[0].playerId !== player.id)
-  //       {
-  //         const occupant = tileInfo.occupants[0];
-  //         if (occupant.playerId !== player.id) {
-  //           return { id: occupant.id, playerId: occupant.playerId, position: tileIndex };
-  //         }
-  //       }
-  //     else if (!tileInfo.isSafe)
-  //       {
-  //         const occupant = tileInfo.occupants[0];
-  //         if (occupant.playerId !== player.id) {
-  //           return { id: occupant.id, playerId: occupant.playerId, position: tileIndex };
-  //         }
-  //       }
-  //     return null;
-  //   }
-  //   // No opponent found → no capture
-  //   return null;
-  // }
   //logic for capturing multiple pieces on safe tiles more understanding
   
   private _detectCapturesOnTile(
