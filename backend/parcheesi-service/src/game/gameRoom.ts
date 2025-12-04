@@ -430,6 +430,12 @@ async doubleThreeTimes()
             // const pieceToMove = blockedPieces[0];
             const dieValue1 = this.currentDice[0];
             const dieValue2 = this.currentDice[1];
+            const can1 = this.logic.checkIfPieceCanMove(currentPlayer, dieValue1, pieceToMove);
+            const can2 = this.logic.checkIfPieceCanMove(currentPlayer, dieValue2 + dieValue1, pieceToMove);
+            if (!can1 || !can2) {
+              console.log(chalk.red(`Blocked piece ${pieceToMove.id} for player ${currentPlayer.userName} cannot move with double roll values.`));
+              continue;
+            }
             const decision1 = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue1);
             const decision2check = this.logic.movePieceDecision(currentPlayer, pieceToMove, dieValue2 + dieValue1);
             //get the other piece that is on that tile 
