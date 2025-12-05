@@ -43,7 +43,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
   const [isSending, setIsSending] = useState<boolean>(false);
 
 
-  console.warn("=======>", contact);
+  // console.warn("=======>", contact);
 
   const { socket, onlineUsers } = useSocket(); // Assuming you have a useSocket hook to get the socket instance
 

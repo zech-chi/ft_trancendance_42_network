@@ -32,7 +32,7 @@ function ListFriends({
     console.warn("Socket is lisning on listFrineds:", socket.id);
 
     const handleIncomingMessage = (message: Message) => {
-      console.warn("Received message:========>", message);
+      // console.warn("Received message:========>", message);
       const contactIndex = contactsList.findIndex((c) => c.id == message.from || c.id == message.to);
       if (contactIndex === -1) return;
       contactsList[contactIndex].lastMessage = {
