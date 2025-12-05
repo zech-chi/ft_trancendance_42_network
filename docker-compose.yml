@@ -22,6 +22,8 @@ services:
     # volumes:
     #   - ./frontend:/app
     #   - /app/node_modules
+    expose:
+      - "3000"
     logging:
       driver: json-file
       options:
@@ -35,12 +37,10 @@ services:
   auth-service:
     build: backend/auth-service
     container_name: auth-service
-    ports:
-      - "5001:5001"
+    expose:
+      - "5001"
     networks:
       - monitoring
-    environment:
-      - SECRET_KEY=mysecretkey
     logging:
       driver: json-file
       options:
@@ -51,8 +51,8 @@ services:
   chat-service:
     build: backend/chat-service
     container_name: chat-service
-    ports:
-      - "5003:5003"
+    expose:
+      - "5003"
     volumes:
       - chat_uploads:/app/uploads
       # - ./backend/chat-service:/app
@@ -69,8 +69,8 @@ services:
   dashboard-service:
     build: backend/dashboard-service
     container_name: dashboard-service
-    ports:
-      - "5002:5002"
+    expose:
+      - "5002"
     networks:
       - monitoring
     logging:
@@ -83,8 +83,8 @@ services:
   db-service:
     build: backend/db-service
     container_name: db-service
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
     volumes:
       - ./backend/db-service/src/db:/app/src/db
     networks:
@@ -99,8 +99,8 @@ services:
   ping-pong-service:
     build: backend/ping-pong-service
     container_name: ping-pong-service
-    ports:
-      - "5500:5500"
+    expose:
+      - "5500"
     networks:
       - monitoring
     logging:
@@ -113,8 +113,8 @@ services:
   parcheesi-service:
     build: backend/parcheesi-service
     container_name: parcheesi-service
-    ports:
-      - "5555:5555"
+    expose:
+      - "5555"
     networks:
       - monitoring
     logging:
@@ -127,8 +127,8 @@ services:
   gateway-service:
     build: backend/gateway-service
     container_name: gateway-service
-    ports:
-      - "5006:5006"
+    expose:
+      - "5006"
     networks:
       - monitoring
     # volumes:
@@ -144,8 +144,8 @@ services:
   user-service:
     build: backend/User-Service
     container_name: user-service
-    ports:
-      - "5004:5004"
+    expose:
+      - "5004"
     volumes:
       - user_profiles:/app/profilesImages
     networks:

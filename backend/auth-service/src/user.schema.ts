@@ -13,7 +13,7 @@ const RegisterUserSchema = z.object({
     fullName: z
       .string()
       .min(2)
-      .max(100)
+      .max(50)
       .regex(/^[a-zA-Z ]+$/, "Full name must contain only letters and spaces"),
   
     userName: z
