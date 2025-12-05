@@ -55,8 +55,8 @@ services:
       - "5003:5003"
     volumes:
       - chat_uploads:/app/uploads
-      - ./backend/chat-service:/app
-      - /app/node_modules
+      # - ./backend/chat-service:/app
+      # - /app/node_modules
     networks:
       - monitoring
     logging:
@@ -131,9 +131,9 @@ services:
       - "5006:5006"
     networks:
       - monitoring
-    volumes:
-      - ./backend/gateway-service:/app
-      - /app/node_modules
+    # volumes:
+      # - ./backend/gateway-service:/app
+      # - /app/node_modules
     logging:
       driver: json-file
       options:
