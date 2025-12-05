@@ -4,7 +4,6 @@ import { chatRoutes } from './routes/chatRoutes';
 import multipart from '@fastify/multipart';
 import { MAX_FILE_SIZE_IN_BYTES } from './utils/constants';
 import cors from '@fastify/cors';
-import { ProfileRoutes } from './routes/settingsRoutes';
 import { setupSocket } from './socket/socket';
 import { Server as HttpServer } from 'http';
 import { ApidataBase } from './utils/ApiDataBase';

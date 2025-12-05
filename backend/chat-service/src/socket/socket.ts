@@ -1,7 +1,6 @@
 // this file is used to handle socket connections and events
 import { Server as SocketIoServer } from "socket.io";
 import { Server as HttpServer} from "http";
-import db from "../db/connectiondb";
 import { blob } from "stream/consumers";
 import { getTime } from "../utils/getTime";
 

@@ -87,7 +87,7 @@ function checkSizeLimit(
     ? parseInt(request.headers["content-length"])
     : 0;
 
-      console.log("==================> Content-Length:", contentLength, MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES, "  " ,getFileType(request.headers["content-type"]) , " ", data.mimetype);
+      // console.log("==================> Content-Length:", contentLength, MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES, "  " ,getFileType(request.headers["content-type"]) , " ", data.mimetype);
   if (
     contentLength > MAX_FILE_SIZE_IN_BYTES ||
     (getFileType(data.mimetype) === "audio" &&
