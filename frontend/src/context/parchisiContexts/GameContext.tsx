@@ -30,6 +30,7 @@ interface GameState {
   winner?: string | null;
   winnerColor?: string | null;
   theme: CustomizationType;
+  message: string | null;
 }
 
 type GameAction =
@@ -43,6 +44,7 @@ type GameAction =
   | { type: "INIT_LOBBY"; payload: { gameId: string, hostId:string } }
   | { type: "SET_WINNER"; payload: {winner: string, winnerColor: string} }
   | { type: "SET_THEME"; payload: CustomizationType }
+  | { type: "SET_MESSAGE"; payload: string | null }
 
 const initialState: GameState = {
   lobby: null,
@@ -56,7 +58,8 @@ const initialState: GameState = {
     textureimage: "https://playground.babylonjs.com/"+"textures/skybox",
     istextureonline: true,
     showpic: '/parchisi_src/1337.jpg'
-  }
+  },
+  message: null 
 }
 
 function gameReducer(state: GameState, action: GameAction): GameState {
@@ -147,6 +150,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           ...state,
           theme: action.payload
         }
+    case "SET_MESSAGE":
+      return {
+        ...state,
+        message: action.payload
+      }
     default:
       return state
   }
@@ -197,12 +205,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
     socket.on("error", ({ message }: { message: string }) => {
       console.error("Socket error:", message)
-      alert(message)
+      dispatch({ type: "SET_MESSAGE", payload: message });
+      setTimeout(() => {
+        dispatch({ type: "SET_MESSAGE", payload: null });
+      }, 3000); // Clear message after 3 seconds
     })
 
     socket.on("roomFull", ({ message }: { message: string }) => {
       console.error("Room full:", message)
-      alert(message)
+      dispatch({ type: "SET_MESSAGE", payload:"Room full: "+ message });
+      setTimeout(() => {
+        dispatch({ type: "SET_MESSAGE", payload: null });
+      }, 3000); // Clear message after 3 seconds
     })
 
   socket.on("removePlayer", ({ id }: { id: string }) => {
@@ -247,7 +261,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     })
     socket.on("error", ({ message }: { message: string }) => {
       console.error("Socket error:", message)
-      alert(message)
+      dispatch({ type: "SET_MESSAGE", payload: message });
+      setTimeout(() => {
+        dispatch({ type: "SET_MESSAGE", payload: null });
+      }, 3000); // Clear message after 3 seconds
     })
     socket.on("gameOver", (data: {winner: string, color: string}) => {
       console.log("Game over! Winner:", data.winner);

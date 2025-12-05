@@ -25,6 +25,17 @@ function OnlinePageContent() {
   const router = useRouter();
   const { socket, setNamespace, isConnected, namespace } = useSocket();
   const { state, createGame, joinLobby } = useGame();
+  // show to user messages from context
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // if (state.message === null) return;
+    setErrorMessage(state.message);
+    // setTimeout(() => {
+    //   setErrorMessage(null);
+    // },3000);
+  }, [state.message]);
+
 
   useEffect(() => {
     setNamespace("online");
@@ -65,7 +76,7 @@ function OnlinePageContent() {
       const gameId = await createGame();
       router.replace(`/gzone/games/parchisi/online/lobby/${gameId}?role=host`);
     } catch (err) {
-      alert(err);
+      console.error(err);
     } finally {
       setTimeout(() => setIsCreating(false), 500);
     }
@@ -79,7 +90,7 @@ function OnlinePageContent() {
       await joinLobby(code);
       router.replace(`/gzone/games/parchisi/online/lobby/${code}?role=guest`);
     } catch (err) {
-      alert(err);
+      console.error(err);
     } finally {
       setTimeout(() => setIsJoining(false), 500);
     }
@@ -97,6 +108,11 @@ function OnlinePageContent() {
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-white mb-2">Parcheesi Online</h1>
           <p className="text-[#1CBABA]/80">Play Parcheesi with friends in real-time</p>
+          {errorMessage && (
+                <div className="bg-[#ffb86b]/80 text-white text-sm rounded-2xl px-4 py-2">
+                  {errorMessage}
+                </div>
+              )}
         </div>
 
         {/* Connection Status remove after */}
