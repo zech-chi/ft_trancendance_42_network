@@ -59,9 +59,6 @@ function checkFieldsIsEmpty(fields: Record<string, string>): boolean {
 async function checkOldPassword(reply: FastifyReply, userId: string, oldPassword: string): Promise<boolean> {
 
   try {
-      // const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
-      // const user = stmt.get(userId);
-      // fetch from the db user http://localhost:5000/api/settings/users/${userId}
       const response = await fetch(`http://db-service:5000/api/settings/users/${userId}`);
       if (!response.ok) {
         reply.status(400).send({
@@ -146,7 +143,7 @@ function checkBioLength(reply: FastifyReply, bio: string): boolean {
 
 // this function will check if the passowrds is valid and not undefined 
 function checkPasswordsValid(reply: FastifyReply, oldPassword: string | undefined, newPassword: string | undefined, confirmPassword: string | undefined): boolean {
-  console.log("mara min hona %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", oldPassword, newPassword, confirmPassword);
+  // console.log("mara min hona %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", oldPassword, newPassword, confirmPassword);
   if (oldPassword || newPassword || confirmPassword) {
     if (!oldPassword || !newPassword || !confirmPassword) {
       reply.status(400).send({
@@ -174,9 +171,6 @@ function checkPasswordsValid(reply: FastifyReply, oldPassword: string | undefine
 export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply) {
 
   // extract the user id from the request params
-
-  // Uncomment the following line if you have user authentication middleware after merging
-  // const user = request.user;
    const { id } = request.params as { id: string };
   
   if (!id) {
@@ -186,7 +180,7 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
       return;
   }
 
-  console.log("Received request to update user settings:", request);
+  // console.log("Received request to update user settings:", request);
   const profileDir = createProfilesDir();
 
   const parts = request.parts();
@@ -195,7 +189,7 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
 
 
   for await (const part of parts) {
-    console.log("Processing part:", part);
+    // console.log("Processing part:", part);
     if (part.type === 'file' && part.fieldname === 'profileImage') {
 
       // check if the mimetype is allowed
@@ -216,18 +210,18 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
       }
 
       const saveTo = path.join(profileDir, `${uuid4()}-${part.filename}`);
-      console.log(`Saving profile image to ${saveTo}`);
+      // console.log(`Saving profile image to ${saveTo}`);
       await pump(part.file, fs.createWriteStream(saveTo));
       profileImagePath = `${saveTo}`;
     } else if (part.type === 'field') {
-      console.log(`Received field: ${part.fieldname} with value: ${part.value}`);
+      // console.log(`Received field: ${part.fieldname} with value: ${part.value}`);
       // Store the field value in the fields object
       if (part.fieldname.includes('Password')) {
         fields[part.fieldname] = part.value as string;
       }
       else {
         if (typeof part.value === 'string') {
-          console.log(`Field ${part.fieldname} is a string: ${part.value}`);
+          // console.log(`Field ${part.fieldname} is a string: ${part.value}`);
           fields[part.fieldname] = part.value.trim();
         } else {
           fields[part.fieldname] = String(part.value).trim();
@@ -295,15 +289,15 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
     }
     // hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    console.log("Old password is correct, proceeding to update to new password.");
+    // console.log("Old password is correct, proceeding to update to new password.");
     updates.push('password = ?');
     values.push(hashedPassword); // In a real application, you would hash this password before storing it
   }
   
   
-  console.log('Fields:', fields);
-  console.log('Profile image:', profileImagePath);
-  console.log(`Updating settings for user ID: ${id}.`);
+  // console.log('Fields:', fields);
+  // console.log('Profile image:', profileImagePath);
+  // console.log(`Updating settings for user ID: ${id}.`);
 
   // prepare the SQL update statement
   // const stmt = db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`);
@@ -314,8 +308,8 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
 
   // Here you would typically update user settings in the database
   // For demonstration, we return a success response
-  console.log(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`);
-  console.log('With values:', values);
+  // console.log(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`);
+  // console.log('With values:', values);
 
   // fetch to the db to update the user http://localhost:5000/api/settings/users/updateprofile/${id}
   try {
@@ -335,9 +329,9 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
     }
 
     const data = await response.json();
-    console.log('User settings updated successfully:', data);
+    // console.log('User settings updated successfully:', data);
   } catch (error) {
-    console.error('Error updating user settings:', error);
+    // console.error('Error updating user settings:', error);
     return reply.status(400).send({
       status: 'error',
       message: 'something went wrong while updating user settings.'
@@ -374,14 +368,9 @@ export async function getUserInfo(request: FastifyRequest, reply: FastifyReply) 
   }
 }
 
-// exmaple curl to test getUserInfo function
-// curl -X GET http://localhost:5004/api/settings/info/6
-
-
-
 // this function is to get the profile image to implement later
 export async function getProfileImage(request: FastifyRequest, reply: FastifyReply) {
- console.log(" mara min hona Received request to get file:", request.params);
+//  console.log(" mara min hona Received request to get file:", request.params);
   try {
     
     // Require logged-in user (add real auth check here)
@@ -391,7 +380,7 @@ export async function getProfileImage(request: FastifyRequest, reply: FastifyRep
       // }
       
     const filename = (request.params as { '*': string })['*'];
-    console.log("Getting file:", filename);
+    // console.log("Getting file:", filename);
     if (!filename) {
       return reply
         .status(400)
@@ -418,7 +407,7 @@ export async function getProfileImage(request: FastifyRequest, reply: FastifyRep
 
     return reply.send(fs.createReadStream(filePath));
   } catch (error) {
-    console.error("Error retrieving file:", error);
+    // console.error("Error retrieving file:", error);
     return reply
       .status(400)
       .send({ status: "error", message: "something go wrong while geting the file!" });
