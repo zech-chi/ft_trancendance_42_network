@@ -353,12 +353,12 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
 export async function getUserInfo(request: FastifyRequest, reply: FastifyReply) {
 
   // the userId should get it from the request.user object after authentication
-  const userId = request.params.id;
-  if (!checkAuthenticatedUser(reply, userId, request.user?.id)) {
+  const { id } = request.params as { id: string };
+  if (!checkAuthenticatedUser(reply, id, request.user?.id)) {
       return;
   }
   try {
-    const response = await fetch(`http://db-service:5000/api/settings/users/${userId}`);
+    const response = await fetch(`http://db-service:5000/api/settings/users/${id}`);
     if (!response.ok) {
       throw new Error('Failed to fetch user data from database.');
     }

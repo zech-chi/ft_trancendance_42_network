@@ -9,6 +9,12 @@ import metricsPlugin from "fastify-metrics";
 // import createUploadsDir from './utils/createUploadsDir';
 // import { createProfilesDir } from './utils/createProfilesDir';
 
+declare module "fastify" {
+  interface FastifyRequest {
+    user?: any;
+  }
+}
+
 const server = Fastify({
   logger: {
   }
