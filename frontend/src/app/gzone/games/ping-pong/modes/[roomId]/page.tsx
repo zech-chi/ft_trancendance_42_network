@@ -74,21 +74,21 @@ export default function GamePage() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center bg-gray-900">
-        <div className="text-white text-center">
-          <div className="text-xl mb-4">User not authenticated</div>
-          <button
-            onClick={() => (window.location.href = "/login")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
-          >
-            Login
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (!user) {
+  //   return (
+  //     <div className="flex h-screen w-screen items-center justify-center bg-gray-900">
+  //       <div className="text-white text-center">
+  //         <div className="text-xl mb-4">User not authenticated</div>
+  //         <button
+  //           onClick={() => (window.location.href = "/login")}
+  //           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+  //         >
+  //           Login
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="relative w-full h-screen">

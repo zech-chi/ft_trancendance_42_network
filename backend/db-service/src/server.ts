@@ -22,7 +22,6 @@ declare module "fastify" {
 }
 
 // prnint the secret from env
-console.log("==========>> DB_SECRET:", process.env.SECRET_KEY);  
 
 const fastify = Fastify({ logger: true });
 fastify.register(metricsPlugin, { endpoint: "/metrics" });
