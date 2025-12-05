@@ -14,7 +14,7 @@ export function useAudioRecorder() {
     const startRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const recorder  = new MediaRecorder(stream);
+            const recorder = new MediaRecorder(stream);
             const audioChunks: Blob[] = [];
 
             mediaRecorderRef.current = recorder;

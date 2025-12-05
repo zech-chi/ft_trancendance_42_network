@@ -6,9 +6,8 @@ import { useSocket } from '@/context/parchisiContexts/SocketContext';
 import { useGame } from '@/context/parchisiContexts/GameContext';
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
-import Button from '@/components/ui/Button';
 import ThemePopup from '@/components/parchisi_game/ThemePopup';
-import { AiOutlineSkin } from 'react-icons/ai'; 
+import { AiOutlineSkin } from 'react-icons/ai';
 
 export default function LocalGamePage() {
   const [players, setPlayers] = useState(2);
@@ -30,7 +29,7 @@ export default function LocalGamePage() {
       router.push(`/gzone/games/parchisi/game/${gameId}`);
     } catch (err) {
       console.error(err);
-      alert("Failed to create game. Please try again.");
+      // alert("Failed to create game. Please try again.");
     }
   };
 

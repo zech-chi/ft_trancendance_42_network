@@ -9,8 +9,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 
-// }
-
 export default function Button({ children, loading, onClick,  ...props }: ButtonProps) {
   return (
     <button {...props} 

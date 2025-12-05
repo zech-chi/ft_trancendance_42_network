@@ -19,7 +19,7 @@ export default function Games(): JSX.Element {
   const [showWinner, setShowWinner] = useState(false);
   const [winnerData, setWinnerData] = useState<any>(null);
 
-  // ✅ Fetch winner data when gameOver happens
+  // Fetch winner data when gameOver happens
   useEffect(() => {
     const fetchWinner = async () => {
       if (state.winner) {
@@ -30,7 +30,7 @@ export default function Games(): JSX.Element {
           if (!response.ok) throw new Error("Failed to fetch winner data");
 
           const userData = await response.json();
-          console.log("Fetched user data:", userData);
+          // console.log("Fetched user data:", userData);
           setWinnerData(userData);
         } catch (error) {
           console.error("Error fetching winner:", error);
@@ -43,14 +43,14 @@ export default function Games(): JSX.Element {
     fetchWinner();
   }, [state.winner]);
 
-  // ✅ Disconnect socket if leaving the page
+  // Disconnect socket if leaving the page
   useEffect(() => {
     if (!pathname.startsWith("/gzone/games/parchisi/game/")) {
       if (namespace !== null) setNamespace(null);
     }
   }, [pathname, namespace]);
 
-  // ✅ Redirect if lobby no longer exists
+  // Redirect if lobby no longer exists
   useEffect(() => {
     if (state.lobby === null && state.winner === null) {
       router.push("/gzone/games/parchisi/");
@@ -83,7 +83,7 @@ export default function Games(): JSX.Element {
         </main>
       </div>
 
-      {/* ✅ Show popup only when winner info exists */}
+      {/* Show popup only when winner info exists */}
       {showWinner && state.winner && (
         <PopupWinner
           winner={{

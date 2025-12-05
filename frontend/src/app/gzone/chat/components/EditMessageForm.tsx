@@ -36,7 +36,7 @@ const EditMessageForm: React.FC<EditMessageFormProps> = ({
 
   const handleSave = async () => {
     const trimmedText = editText.trim();
-    
+
     if (!trimmedText) {
       // Shake animation for empty text
       textareaRef.current?.classList.add('animate-shake');
@@ -45,7 +45,7 @@ const EditMessageForm: React.FC<EditMessageFormProps> = ({
       }, 500);
       return;
     }
-    
+
     if (trimmedText === initialText.trim()) {
       onCancel(); // Cancel if text is unchanged
       return;
@@ -84,9 +84,7 @@ const EditMessageForm: React.FC<EditMessageFormProps> = ({
 
   return (
     <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 rounded-lg">
-      {/* Backdrop blur overlay */}
-      {/* <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-lg -m-2 bg-green-500"></div> */}
-      
+
       <div className="relative px-5 flex w-full flex-col gap-3 p-3 bg-gradient-to-br bg-gray-800/100 border border-white/30 rounded-lg">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -114,19 +112,17 @@ const EditMessageForm: React.FC<EditMessageFormProps> = ({
             onChange={handleTextChange}
             onKeyDown={handleKeyDown}
             disabled={isSaving}
-            className={`w-full resize-none rounded-lg border-2 bg-black/40 p-3 text-sm text-white placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-amber-400 focus:shadow-lg focus:shadow-amber-400/20 disabled:opacity-50 disabled:cursor-not-allowed ${
-              isEmpty ? 'border-red-400/50 focus:border-red-400' : 'border-gray-600/50'
-            }`}
+            className={`w-full resize-none rounded-lg border-2 bg-black/40 p-3 text-sm text-white placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-amber-400 focus:shadow-lg focus:shadow-amber-400/20 disabled:opacity-50 disabled:cursor-not-allowed ${isEmpty ? 'border-red-400/50 focus:border-red-400' : 'border-gray-600/50'
+              }`}
             placeholder="Type your message..."
             rows={1}
             style={{ minHeight: '44px', maxHeight: '120px' }}
             maxLength={maxChars}
           />
-          
+
           {/* Character counter */}
-          <div className={`absolute bottom-1 right-2 text-xs transition-colors duration-200 ${
-            charCount > maxChars * 0.9 ? 'text-red-400' : 'text-gray-500'
-          }`}>
+          <div className={`absolute bottom-1 right-2 text-xs transition-colors duration-200 ${charCount > maxChars * 0.9 ? 'text-red-400' : 'text-gray-500'
+            }`}>
             {charCount}/{maxChars}
           </div>
         </div>
@@ -136,7 +132,7 @@ const EditMessageForm: React.FC<EditMessageFormProps> = ({
           <div className="text-xs text-gray-400 hidden md:block">
             <kbd className="px-1.5 py-0.5 bg-gray-700/50 rounded text-xs">Enter</kbd> to save •
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
               onClick={onCancel}
@@ -146,15 +142,14 @@ const EditMessageForm: React.FC<EditMessageFormProps> = ({
               <X size={14} className="group-hover:rotate-90 transition-transform duration-200" />
               Cancel
             </button>
-            
+
             <button
               onClick={handleSave}
               disabled={isSaving || isEmpty || !hasChanged}
-              className={`group cursor-pointer flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed ${
-                isEmpty || !hasChanged
+              className={`group cursor-pointer flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed ${isEmpty || !hasChanged
                   ? 'bg-gray-600/50'
                   : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-lg hover:shadow-green-500/25 hover:scale-105 active:scale-95'
-              }`}
+                }`}
             >
               {isSaving ? (
                 <>
@@ -178,7 +173,7 @@ const EditMessageForm: React.FC<EditMessageFormProps> = ({
             <span className="text-green-400">Ready to save changes</span>
           </div>
         )}
-        
+
         {isEmpty && (
           <div className="flex items-center gap-2 text-xs">
             <div className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></div>

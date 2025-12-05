@@ -3,7 +3,6 @@
 import React from 'react';
 
 type DeleteConfirmationProps = {
-  // The type of message (e.g., "image", "file", "message")
   messageType: 'text' | 'image' | 'file' | 'audio';
   // Function to call when the user confirms the deletion
   onConfirm: () => void;
@@ -11,7 +10,7 @@ type DeleteConfirmationProps = {
   onCancel: () => void;
 }
 
-export const DeleteConfirmation = ({messageType, onConfirm, onCancel} : DeleteConfirmationProps) => {
+export const DeleteConfirmation = ({ messageType, onConfirm, onCancel }: DeleteConfirmationProps) => {
   const getMessageTypeName = () => {
     if (messageType === 'text') return 'message';
     return messageType;

@@ -30,7 +30,7 @@ const formWaveSurferOptions = (ref: HTMLDivElement, sentbyMe: boolean) => ({
 });
 
 
-const Loader = ({sentbyMe} : {sentbyMe: boolean}) => (
+const Loader = ({ sentbyMe }: { sentbyMe: boolean }) => (
   <div className="w-7 h-7">
     <svg viewBox="0 0 32 32" className="animate-spin -rotate-90">
       <circle
@@ -57,11 +57,11 @@ const Loader = ({sentbyMe} : {sentbyMe: boolean}) => (
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({ url, id, onReady, sentbyMe }) => {
   const waveformRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+
   // Type the ref to hold either a WaveSurfer instance or null
   const { playingId, setPlayingId } = useAudioContext();
   const wavesurferRef = useRef<WaveSurfer | null>(null);
-  
+
   // Type the state variables
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<string>('0:00');
@@ -97,7 +97,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ url, id, onReady, sent
     wavesurfer.load(url);
 
     // --- Typed Event Listeners ---
-    
+
     // 'ready' event provides the duration as a number
     wavesurfer.on('ready', (durationSeconds: number) => {
       setDuration(formatTime(durationSeconds));
@@ -109,7 +109,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ url, id, onReady, sent
     wavesurfer.on('audioprocess', (currentTimeSeconds: number) => {
       setCurrentTime(formatTime(currentTimeSeconds));
     });
-    
+
     wavesurfer.on('finish', () => {
       setIsPlaying(false);
       wavesurfer.seekTo(0); // Reset to the beginning on finish
@@ -132,34 +132,29 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({ url, id, onReady, sent
       wavesurferRef.current.pause();
       // If I am pausing myself, tell the context that nothing is playing.
       setIsPlaying(prev => !prev);
-      setPlayingId(null); 
+      setPlayingId(null);
     } else {
       // Before I play, I must tell the context that I AM the one playing now.
       // This will trigger the useEffect in all other players to pause.
       setIsPlaying(prev => !prev);
-      setPlayingId(id); 
+      setPlayingId(id);
       wavesurferRef.current?.play();
     }
   }, [id, setPlayingId]);
 
   return (
     // here i should add the with to controle the with of the audio.
-    <div className="flex items-center gap-1 flex-1 rounded-2xl"> 
-      {/* <button onClick={handlePlayPause} className="text-white hover:text-amber-400">
-        {isPlaying ? <Pause size={28} /> : <Play size={28} />}
-      </button> */}
-       
-
+    <div className="flex items-center gap-1 flex-1 rounded-2xl">
       <div className="flex-1 flex flex-col justify-center">
         <div className='flex gap-0.5'>
-        {isLoading ? (
-              <Loader sentbyMe={sentbyMe} />
-            ) : (
-              <button onClick={handlePlayPause} className="text-white hover:text-amber-400">
-                {isPlaying ? <Pause size={25} /> : <Play size={25} />}
-              </button>
-            )}
-            <div id="waveform" ref={waveformRef} className="w-[87%]" />
+          {isLoading ? (
+            <Loader sentbyMe={sentbyMe} />
+          ) : (
+            <button onClick={handlePlayPause} className="text-white hover:text-amber-400">
+              {isPlaying ? <Pause size={25} /> : <Play size={25} />}
+            </button>
+          )}
+          <div id="waveform" ref={waveformRef} className="w-[87%]" />
         </div>
         <div className="flex justify-end text-xs text-white mt-1">
           <span>{currentTime}</span>

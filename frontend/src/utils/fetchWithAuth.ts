@@ -24,7 +24,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}): Pro
     if (!refreshRes.ok) {
       console.warn('Refresh token invalid or expired. Redirecting to login...');
       // Redirect to login page but avoid infinite loops and unnecessary redirects
-      // only redirect if im in a protected route  to avoid the pages of login/register/verify all the protected pages start with /protected
+      // only redirect if im in a gzone route  to avoid the pages of login/register/verify all the gzone pages start with /gzone
       
       if (window.location.pathname.startsWith('/gzone')) {
         window.location.href = '/login';

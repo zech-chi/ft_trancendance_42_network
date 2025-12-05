@@ -30,10 +30,8 @@ export const CallView: React.FC<CallViewProps> = ({
 
   const toggleMic = () => {
     if (!localStream) return;
-    // alert("toggle mic");
     const audioTracks = localStream.getAudioTracks();
     if (audioTracks.length > 0) {
-      // alert("the mic is now " + (isMicMuted ? "unmuted" : "muted"));
       const isEnabled = audioTracks[0].enabled;
       audioTracks[0].enabled = !isEnabled;
       setIsMicMuted(prev => !prev);
@@ -60,8 +58,8 @@ export const CallView: React.FC<CallViewProps> = ({
       <div className="absolute top-[5%] right-1/2 translate-x-1/2 text-yellow-300 text-lg font-bold py-1 px-2 bg-[rgba(0,0,0,0.7)] rounded-[10px]">
         <h2>{contactName}</h2>
       </div>
-      { !isCallStarted && <p>calling...</p> }
-      { isCallStarted && <CallTimer/> }
+      {!isCallStarted && <p>calling...</p>}
+      {isCallStarted && <CallTimer />}
 
       {/* show  the time just if the call start */}
 
@@ -77,7 +75,7 @@ export const CallView: React.FC<CallViewProps> = ({
         ref={localVideoRef}
         autoPlay
         playsInline
-        muted // Your own video should be muted to prevent echo
+        muted // the video should be muted to prevent echo
         className={`absolute bottom-15 right-4 w-[40%] md:w-[25%] rounded-lg border-2 border-white shadow-lg  transform -scale-x-100 ${type === "video" ? "" : "hidden"}`}
       />
 
@@ -90,9 +88,8 @@ export const CallView: React.FC<CallViewProps> = ({
         >
           <PhoneOff size={28} className="text-white" />
         </button>
-        {/* You can add Mute/Unmute and Video On/Off buttons here */}
         {/* add the button of mute/umute */}
-        <button onClick={toggleMic} title={isMicMuted ? "Unmute" : "Mute"} 
+        <button onClick={toggleMic} title={isMicMuted ? "Unmute" : "Mute"}
           className={`border cursor-pointer ${isMicMuted ? "border-[#FFB700]" : "border-[#1CBABA]"} rounded-full p-3`}>
           {isMicMuted ? (
             <MicOff size={28} className="text-[#FFB700]" />
@@ -106,13 +103,12 @@ export const CallView: React.FC<CallViewProps> = ({
         <p className="text-white">
           {type === "audio" ? "call audio" : "call video"}
         </p>
-        {/* <img src={avatar} alt="profile Frineds" className="rounded-full" /> */}
         <Image
           src={avatar}
           alt="Profile Friends"
           width={400}
           height={400}
-          className="rounded-full object-cover bg-amber-200"
+          className="rounded-full object-cover bg-amber-200 aspect-square"
         />
       </div>
     </div>

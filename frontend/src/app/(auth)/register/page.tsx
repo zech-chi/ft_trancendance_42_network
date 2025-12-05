@@ -10,8 +10,7 @@ import { FlowGraphConsoleLogBlock } from "@babylonjs/core";
 import {fetchUser} from "@/app/(auth)/login/page"
 
 export default function SignupPage() {
-
-    // use router 
+ 
     const router = useRouter();
     
     const [userName, setUserName] = useState("");
@@ -26,7 +25,6 @@ export default function SignupPage() {
       async function checkAuth() {
         const user = await fetchUser();
         if (user && user.userName) {
-          // alert("Already logged in, redirecting to home page.");
           router.push("/gzone");
           return; 
         } else {
@@ -148,7 +146,6 @@ export default function SignupPage() {
         <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#1CBABA]/50 transition mb-2"
             onClick={handleGoogle}
         >
-          {/* <Image src="/google-icon.png" alt="Google" width={20} height={20} /> */}
           Continue with Google
         </button>
 

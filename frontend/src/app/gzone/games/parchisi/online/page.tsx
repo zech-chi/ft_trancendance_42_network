@@ -29,11 +29,7 @@ function OnlinePageContent() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // if (state.message === null) return;
     setErrorMessage(state.message);
-    // setTimeout(() => {
-    //   setErrorMessage(null);
-    // },3000);
   }, [state.message]);
 
 
@@ -50,7 +46,7 @@ function OnlinePageContent() {
         const data = await res.json();
         if (Array.isArray(data)) {
           setRooms(data);
-        } else{
+        } else {
           setRooms([]);
         }
       } catch (err) {
@@ -109,16 +105,15 @@ function OnlinePageContent() {
           <h1 className="text-3xl font-bold text-white mb-2">Parcheesi Online</h1>
           <p className="text-[#1CBABA]/80">Play Parcheesi with friends in real-time</p>
           {errorMessage && (
-                <div className="bg-[#ffb86b]/80 text-white text-sm rounded-2xl px-4 py-2">
-                  {errorMessage}
-                </div>
-              )}
+            <div className="bg-[#ffb86b]/80 text-white text-sm rounded-2xl px-4 py-2">
+              {errorMessage}
+            </div>
+          )}
         </div>
 
         {/* Connection Status remove after */}
-        <div className={`flex items-center justify-center mb-6 text-sm font-medium ${
-          isConnected ? 'text-green-400' : 'text-yellow-400'
-        }`}>
+        <div className={`flex items-center justify-center mb-6 text-sm font-medium ${isConnected ? 'text-green-400' : 'text-yellow-400'
+          }`}>
           <div className={`w-3 h-3 rounded-full mr-2 ${isConnected ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
           <span>{isConnected ? 'Connected' : 'Connecting...'}</span>
         </div>
@@ -129,11 +124,10 @@ function OnlinePageContent() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-colors ${
-                activeTab === tab
+              className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-colors ${activeTab === tab
                   ? 'bg-[#1CBABA]/70 text-white'
                   : 'text-white hover:text-[#1CBABA]/80'
-              }`}
+                }`}
             >
               {tab === 'join' ? 'Join Game' : tab === 'create' ? 'Create Game' : 'Join Existing'}
             </button>

@@ -42,8 +42,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true); // new state
-  const { setUserEmail } = useUserEmail(); // ✅ Add this line
+  const [loading, setLoading] = useState(true);
+  const { setUserEmail } = useUserEmail();
   const [errorMsg, setErrorMsg] = useState("");
 
   // check if already logged in
@@ -55,7 +55,6 @@ export default function LoginPage() {
         return;
       }
       if (user && user.userName) {
-        // alert("Already logged in, redirecting to home page.");
         setLoggedUserName(user.userName);
         setSelectedUserName(user.userName);
         setSelectedUserId(user.id);
@@ -76,7 +75,6 @@ export default function LoginPage() {
   
   const handleLogin = async () => {
     try {
-      // console.log("Attempting login with", { email, password });
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,16 +86,7 @@ export default function LoginPage() {
       console.log("response:", res.status, data);
 
       setUserEmail(email); 
-      
-      // if (!res.ok) {
-      //   const cleanMessage =
-      //     data.message?.replace(/^body\//, "") ||
-      //     "Login failed";
-      
-      //   setErrorMsg(cleanMessage);
-      //   // return; // important: stop execution
-      // }
-      
+    
 
       if (res.ok) {
         if (data.twoFARequired) {
@@ -126,7 +115,6 @@ export default function LoginPage() {
       } catch (err) {
             console.error("fetch error:", err);
             setError("Something went wrong");
-            // setErrorMsg("Something went wrong");
           }
       };
   
@@ -143,12 +131,10 @@ export default function LoginPage() {
       </div>
     );
   }
-  // console.log("Rendering LoginPage with", { email, password, error });
 
   return (
     <div
       className="min-h-screen bg-gradient-to-br  from-black via-gray-900 to-black flex items-center justify-center"
-      // style={{ backgroundImage: "url('/bg.png')" }}
     >
       {/* Card */}
       <div className="bg-gray-800/40 backdrop-blur-md p-6 shadow-xl border border-white/20  rounded-2xl w-full max-w-md">
@@ -197,13 +183,9 @@ export default function LoginPage() {
         <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#1CBABA]/50 transition mb-2"
             onClick={handleGoogle}
         >
-          {/* <Image src="/google-icon.png" alt="Google" width={20} height={20} /> */}
           Continue with Google
         </button>
 
-        {/* <button className="w-full flex items-center justify-center gap-2 border border-gray-600 text-white py-2 rounded-md hover:bg-[#1CBABA]/50 transition">
-          {/* <Image src="/google-icon.png" alt="42" width={20} height={20} /> *
-          Continue with 42 Intra</button> */}
 
         {/* Sign up link */}
         <p className="text-center text-gray-400 text-sm mt-4">

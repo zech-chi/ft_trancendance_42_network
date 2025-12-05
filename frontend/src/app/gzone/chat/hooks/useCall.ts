@@ -84,12 +84,12 @@ export function useCall(currentUserId: number | null, currentName: string) {
     setPlayingId(null); // Clear the currently playing audio
 
     try {
-      if(type === 'video') {
+      if (type === 'video') {
         setType("video");
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
-        
+
         video: type === 'video',
         audio: true,
       });
@@ -111,11 +111,6 @@ export function useCall(currentUserId: number | null, currentName: string) {
       console.warn("Call started. Waiting for the other user to answer...");
 
       callTimeoutRef.current = setTimeout(() => {
-        // alert("Call timed out. No answer from the other user.");
-        // const otherUserId = activePeerIdRef.current;
-        // if(socket && otherUserId ) {
-        //   socket.emit("end-call", { to: otherUserId });
-        // }
         endCall();
       }, CALL_TIMEOUT); // 15 seconds timeout
 
@@ -132,24 +127,24 @@ export function useCall(currentUserId: number | null, currentName: string) {
 
     try {
       // alert("Answering call from " + incomingCall.type);
-      if(incomingCall.type === 'video') {
+      if (incomingCall.type === 'video') {
         setType("video");
       }
-      
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: incomingCall.type === 'video',
         audio: true,
       });
       setLocalStream(stream);
       setIsCallActive(true);
-      
+
       const pc = createPeerConnection(incomingCall.from);
       stream.getTracks().forEach(track => pc.addTrack(track, stream));
-      
+
       await pc.setRemoteDescription(new RTCSessionDescription(incomingCall.offer));
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
-      
+
       // save the is : activePeerIdRef.current = incomingCall.from;
       activePeerIdRef.current = incomingCall.from;
       socket.emit("make-answer", { answer, to: incomingCall.from });
@@ -157,7 +152,7 @@ export function useCall(currentUserId: number | null, currentName: string) {
       // alert("Call answered successfully." + isCallStarted);
       // setIncomingCall(null); // Clear the incoming call notification
     } catch (error) {
-      console.error("Failed to answer call:", error);
+      // console.error("Failed to answer call:", error);
       closeCall();
     }
   }, [socket, incomingCall, currentUserId, createPeerConnection, closeCall]);
@@ -168,19 +163,19 @@ export function useCall(currentUserId: number | null, currentName: string) {
     }
     setIncomingCall(null);
   }, [socket, incomingCall]);
-  
+
   const endCall = useCallback(() => {
-      const otherUserId = activePeerIdRef.current;
-      console.warn("the user is =====>>>::", incomingCall);
-      console.warn("Ending call with user:", otherUserId, isCallStarted);
-      // alert("Ending call with user: " + otherUserId + isCallStarted);
-      if(socket && otherUserId) {
-          socket.emit("end-call", { to: otherUserId, from: currentUserId });
-      }
-      console.warn("Call ended by user.");
-      setIncomingCall(null);
-      activePeerIdRef.current = null;
-      closeCall();
+    const otherUserId = activePeerIdRef.current;
+    // console.warn("the user is =====>>>::", incomingCall);
+    // console.warn("Ending call with user:", otherUserId, isCallStarted);
+    // alert("Ending call with user: " + otherUserId + isCallStarted);
+    if (socket && otherUserId) {
+      socket.emit("end-call", { to: otherUserId, from: currentUserId });
+    }
+    // console.warn("Call ended by user.");
+    setIncomingCall(null);
+    activePeerIdRef.current = null;
+    closeCall();
   }, [socket, closeCall, incomingCall]);
 
   // --- Socket Event Listeners ---
@@ -199,21 +194,21 @@ export function useCall(currentUserId: number | null, currentName: string) {
       peerConnectionRef.current?.addIceCandidate(new RTCIceCandidate(data.candidate));
     };
     const handleCallRejected = () => {
-        console.log("Call was rejected by the other user.");
-        clearCallTimeout();
-        closeCall();
+      // console.log("Call was rejected by the other user.");
+      clearCallTimeout();
+      closeCall();
     };
 
-    const handleEndCall = (data: {from: string}) => {
-      console.log("++++++++++=======> Call ended by the other user.", data.from);
+    const handleEndCall = (data: { from: string }) => {
+      // console.log("++++++++++=======> Call ended by the other user.", data.from);
       if (activePeerIdRef.current == data.from || activePeerIdRef.current === null) {
-          closeCall();
+        closeCall();
       }
     }
 
     const handleBeforeUnload = () => {
       // Check if this user is in an active call
-      console.log("=======> Handling beforeunload event.");
+      // console.log("=======> Handling beforeunload event.");
       const peerId = activePeerIdRef.current;
       if (peerId) {
         // If so, send a final "end-call" message to the other user.
@@ -224,7 +219,7 @@ export function useCall(currentUserId: number | null, currentName: string) {
 
     const handleCallAccepted = (data: { from: string, to?: string }) => {
       // Another session of this user accepted the call — clear incoming UI in this session
-      console.log('call accepted event received', data);
+      // console.log('call accepted event received', data);
       setIncomingCall(null);
       // Do NOT set this session to active — only the answering session should become active
     };

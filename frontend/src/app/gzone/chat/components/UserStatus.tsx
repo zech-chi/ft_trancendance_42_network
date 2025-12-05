@@ -2,7 +2,7 @@
 
 // import types
 import React from "react";
-import {Contact} from "../types/typesChat";
+import { Contact } from "../types/typesChat";
 
 function formatLastSeenDate(time: number | Date): string {
   const date = new Date(time);
@@ -10,8 +10,8 @@ function formatLastSeenDate(time: number | Date): string {
 
   const isSameDay = (d1: Date, d2: Date): boolean => {
     return d1.getFullYear() === d2.getFullYear() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getDate() === d2.getDate();
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
   };
 
   // Check if the date is today
@@ -42,10 +42,10 @@ function formatLastSeenDate(time: number | Date): string {
 export default function UserStatus({ user }: { user: Contact }) {
   let statusText: string;
   let statusColor: string = "text-gray-400";
-  
+
   // it user null return 
   if (!user) {
-    return ;
+    return;
   }
 
   if (user.online) {

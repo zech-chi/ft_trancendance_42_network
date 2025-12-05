@@ -1,6 +1,3 @@
-// export const host = 'http://localhost:5000';
-const hostIp: string = "localhost";
-export const host = `http://${hostIp}:5006`;
 
 export const ApiRoutes = {
 

@@ -17,15 +17,13 @@ export default function TwoFAVerifyPage() {
   const { setSelectedUserName } = useSelectedUserName();
   const { setSelectedUserId } = useSelectedUserId();
   const { setLoggedUserId } = useLoggedUserId();
-  
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    // Focus first input on mount
     inputRefs.current[0]?.focus();
   }, []);
 
-  // --- LOGIC: Handle Input Change + Auto Submit ---
   const handleChange = (index: number, value: string) => {
     // Only allow digits
     if (value && !/^\d$/.test(value)) return;
@@ -34,17 +32,13 @@ export default function TwoFAVerifyPage() {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // CHECK: If all digits are filled, auto-submit
-    // We check 'newOtp' because state hasn't updated yet
     if (value && newOtp.every((digit) => digit !== "")) {
-        // Blur the input to hide keyboard on mobile (optional, feels cleaner)
-        inputRefs.current[index]?.blur();
-        handleVerify(newOtp.join(""));
+      inputRefs.current[index]?.blur();
+      handleVerify(newOtp.join(""));
     }
   };
 
@@ -54,11 +48,10 @@ export default function TwoFAVerifyPage() {
     }
   };
 
-  // --- LOGIC: Handle Paste + Auto Submit ---
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").slice(0, 6);
-    
+
     if (!/^\d+$/.test(pastedData)) return;
 
     const newOtp = [...otp];
@@ -73,16 +66,15 @@ export default function TwoFAVerifyPage() {
 
     // If we pasted exactly 6 digits, submit immediately
     if (pastedData.length === 6) {
-        inputRefs.current[5]?.blur();
-        handleVerify(pastedData);
+      inputRefs.current[5]?.blur();
+      handleVerify(pastedData);
     }
   };
 
-  // --- LOGIC: Verify + Auto Clear on Error ---
   // Added 'otpOverride' param to allow immediate submission before state updates
   const handleVerify = async (otpOverride?: string) => {
     const otpString = otpOverride || otp.join("");
-    
+
     if (otpString.length !== 6) {
       setStatus("Please enter all 6 digits");
       return;
@@ -90,7 +82,7 @@ export default function TwoFAVerifyPage() {
 
     setIsVerifying(true);
     setStatus("Verifying code...");
-    
+
     try {
       const res = await fetchWithAuth("/api/auth/2fa-verify", {
         method: "POST",
@@ -109,7 +101,7 @@ export default function TwoFAVerifyPage() {
       setTimeout(() => router.push("/gzone"), 300);
     } catch (err: any) {
       setStatus("❌ " + err.message);
-      
+
       // Auto clear inputs on error
       setOtp(["", "", "", "", "", ""]);
       setTimeout(() => inputRefs.current[0]?.focus(), 10);
@@ -122,8 +114,8 @@ export default function TwoFAVerifyPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen p-6">
-      <div className="w-full max-w-sm bg-brown-900/95 backdrop-blur-sm rounded-2xl p-10 shadow-2xl" style={{backgroundColor: 'rgba(00,00,00, 0.70)'}}>
-        
+      <div className="w-full max-w-sm bg-brown-900/95 backdrop-blur-sm rounded-2xl p-10 shadow-2xl" style={{ backgroundColor: 'rgba(00,00,00, 0.70)' }}>
+
         {/* Logo */}
         <div className="flex flex-col items-center mb-6">
           <Image src="/logo.png" alt="Logo" width={100} height={100} />
@@ -150,7 +142,7 @@ export default function TwoFAVerifyPage() {
               onChange={e => handleChange(index, e.target.value)}
               onKeyDown={e => handleKeyDown(index, e)}
               className="w-11 h-14 text-center text-2xl font-bold bg-brown-800/70 border border-white/5  rounded-lg text-white placeholder-gray-500 focus:border-[#1CBABA]  focus:outline-none transition-all shadow-[0_0_40px_rgba(28,186,186,0.45)]"
-              style={{backgroundColor: 'rgba(0, 0, 5, 0.5)'}}
+              style={{ backgroundColor: 'rgba(0, 0, 5, 0.5)' }}
               disabled={isVerifying}
             />
           ))}
@@ -158,11 +150,10 @@ export default function TwoFAVerifyPage() {
 
         {/* Status message */}
         {status && (
-          <div className={`text-center text-sm mb-6 ${
-            status.includes("✅") ? "text-green-400" : 
-            status.includes("❌") ? "text-red-400" : 
-            "text-gray-400"
-          }`}>
+          <div className={`text-center text-sm mb-6 ${status.includes("✅") ? "text-green-400" :
+              status.includes("❌") ? "text-red-400" :
+                "text-gray-400"
+            }`}>
             {status}
           </div>
         )}
@@ -171,11 +162,10 @@ export default function TwoFAVerifyPage() {
         <button
           onClick={() => handleVerify()} // Call without args so it uses state if button is clicked
           disabled={!isComplete || isVerifying}
-          className={`w-full py-3 rounded-lg font-semibold transition-all mb-6 ${
-            isComplete && !isVerifying
+          className={`w-full py-3 rounded-lg font-semibold transition-all mb-6 ${isComplete && !isVerifying
               ? "bg-white text-gray-900 hover:bg-gray-100"
               : "bg-gray-700/50 text-gray-500 cursor-not-allowed"
-          }`}
+            }`}
         >
           {isVerifying ? "Verifying..." : "Verify"}
         </button>
