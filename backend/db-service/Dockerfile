@@ -21,4 +21,8 @@ RUN npm install --build-from-source --legacy-peer-deps
 COPY . .
 
 EXPOSE 5000
-CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
+
+RUN npm run build
+
+CMD ["npm", "start"]

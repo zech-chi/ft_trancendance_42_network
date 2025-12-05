@@ -39,64 +39,83 @@ export async function updateCalendarData(fastify: FastifyInstance, userId: numbe
   }
 }
 
-export async function updateRadarData(fastify: FastifyInstance, userId: number, winner: boolean) {
-  const db = fastify.db;
-
-  const skills = [
-    "Quick_Reflexes",
-    "Strategic_Thinking",
-    "Precision_Shots",
-    "Pattern_Recognition",
-    "Anticipating_Moves",
-    "Board_Control",
-    "Adaptive_Playstyle",
-    "Risk_Management",
-    "Mind_Games",
-  ];
-
-  const clamp = (val: number) => Math.max(0, Math.min(20, val));
-
-  // ✅ use prepared statement instead of db.get()
-  const currentStmt = db.prepare("SELECT * FROM RadarData WHERE userId = ?");
-  const current = currentStmt.get(userId);
-  if (!current) {
-    console.warn(`⚠️ No RadarData found for user ${userId}`);
-    return;
-  }
-
-  const updates: Record<string, number> = {};
-  for (const skill of skills) {
-    const change = Math.random() < 0.5 ? 0.1 : 0;
-    const delta = winner ? change : -change;
-    updates[skill] = clamp((current[skill] ?? 0) + delta);
-  }
-
-  const setClause = skills.map((s) => `${s} = ?`).join(", ");
-  const values = [...skills.map((s) => updates[s]), userId];
-
-  console.log(`Updating RadarData for user ${userId}:`, updates);
-
-  // ✅ use prepared UPDATE
-  const updateStmt = db.prepare(`UPDATE RadarData SET ${setClause} WHERE userId = ?`);
-  updateStmt.run(...values);
-
-  console.log(
-    `✅ RadarData updated for user ${userId} (${winner ? "Winner" : "Loser"})`
-  );
+interface RadarData {
+  userId: number;
+  Quick_Reflexes: number;
+  Strategic_Thinking: number;
+  Precision_Shots: number;
+  Pattern_Recognition: number;
+  Anticipating_Moves: number;
+  Board_Control: number;
+  Adaptive_Playstyle: number;
+  Risk_Management: number;
+  Mind_Games: number;
+  [key: string]: number;
 }
 
-export default async function routesPong(fastify: FastifyInstance){
-    // get the db instance
+
+export async function updateRadarData(fastify: FastifyInstance, userId: number, winner: boolean) {
+  try {
     const db = fastify.db;
+  
+    const skills = [
+      "Quick_Reflexes",
+      "Strategic_Thinking",
+      "Precision_Shots",
+      "Pattern_Recognition",
+      "Anticipating_Moves",
+      "Board_Control",
+      "Adaptive_Playstyle",
+      "Risk_Management",
+      "Mind_Games",
+    ];
+  
+    const clamp = (val: number) => Math.max(0, Math.min(20, val));
+  
+    // ✅ use prepared statement instead of db.get()
+    const currentStmt = db.prepare("SELECT * FROM RadarData WHERE userId = ?");
+    const current = currentStmt.get(userId) as RadarData;
+    if (!current) {
+      console.warn(`⚠️ No RadarData found for user ${userId}`);
+      return;
+    }
+  
+    const updates: Record<string, number> = {};
+    for (const skill of skills) {
+      const change = Math.random() < 0.5 ? 0.1 : 0;
+      const delta = winner ? change : -change;
+      updates[skill] = clamp((current[skill] ?? 0) + delta);
+    }
+  
+    const setClause = skills.map((s) => `${s} = ?`).join(", ");
+    const values = [...skills.map((s) => updates[s]), userId];
+  
+    console.log(`Updating RadarData for user ${userId}:`, updates);
+  
+    // ✅ use prepared UPDATE
+    const updateStmt = db.prepare(`UPDATE RadarData SET ${setClause} WHERE userId = ?`);
+    updateStmt.run(...values);
+  
+    console.log(
+      `✅ RadarData updated for user ${userId} (${winner ? "Winner" : "Loser"})`
+    );
+  } catch (err) {
+    console.error("❌ Error updating RadarData:", err);
+  }
+}
 
-    // define a simple route to say hello from the pong service
-    fastify.get('/pong', async (request: FastifyRequest, reply: FastifyReply) => {
-        return { message: 'Hello from the Pong service!' };
-    });
+export default async function routesPong(fastify: FastifyInstance) {
+  // get the db instance
+  const db = fastify.db;
 
-    // fetch friends list for a user
-    fastify.get('/friends/:userId', async (request: FastifyRequest<{ Params: { userId: string } }>, reply: FastifyReply) => {
-        const { userId } = request.params;
+  // define a simple route to say hello from the pong service
+  fastify.get('/pong', async (request: FastifyRequest, reply: FastifyReply) => {
+    return { message: 'Hello from the Pong service!' };
+  });
+
+  // fetch friends list for a user
+  fastify.get('/friends/:userId', async (request: FastifyRequest<{ Params: { userId: string } }>, reply: FastifyReply) => {
+    const { userId } = request.params;
     try {
       const stmt = db.prepare(`
       SELECT u.id, u.fullName, u.userName, u.imageUrl, f.status
@@ -106,7 +125,7 @@ export default async function routesPong(fastify: FastifyInstance){
         OR (u.id = f.sender_id AND f.receiver_id = ?)
       WHERE f.status = 'accepted'
     `);
-    //AND u.state = 'online'
+      //AND u.state = 'online'
       const friends = stmt.all(userId, userId);
       if (!friends) {
         reply.code(404);
@@ -118,76 +137,82 @@ export default async function routesPong(fastify: FastifyInstance){
         friends,
       };
     } catch (err) {
-        console.error(err);
+      console.error(err);
       reply.code(400);
       return { success: false, error: "something went wrong try again later!" };
     }
-    });
+  });
 
 
-    // add winner to a game
+  // add winner to a game
 
 
-    fastify.post("/addwinner", async (request: FastifyRequest, reply: FastifyReply) => {
-      const { player1, player2, score1, score2, winner} = request.body as {
+  fastify.post("/addwinner", async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+
+      const { player1, player2, score1, score2, winner } = request.body as {
         player1: number,
         player2: number,
         score1: number,
         score2: number,
         winner: number,
       };
-    
+  
       const stmt = db.prepare(`
-        INSERT INTO Games (user1, user2, user1_score, user2_score, user1_win)
-        VALUES (?, ?, ?, ?, ?)
-      `);
-    
+          INSERT INTO Games (user1, user2, user1_score, user2_score, user1_win)
+          VALUES (?, ?, ?, ?, ?)
+        `);
+  
       const info = stmt.run(player1, player2, score1, score2, winner);
-    
+  
       if (info.changes === 0) {
         return reply.status(400).send({ success: false, error: 'Failed to add game result' });
       }
-
+  
       console.log(player1, player2, score1, score2, winner, '<<<<<<<<<<');
       // update  data in ChartsData table
       // update friendsTotalGames for both players
       const loserId = player1 === winner ? player2 : player1;
       const winnerId = player1 === loserId ? player2 : player1;
       db.prepare(`
-      UPDATE ChartsData 
-      SET friendsTotalGames = friendsTotalGames + 1
-      WHERE userId IN (?, ?)
-      AND game = 'pong'
-      `).run(player1, player2);
-
+        UPDATE ChartsData 
+        SET friendsTotalGames = friendsTotalGames + 1
+        WHERE userId IN (?, ?)
+        AND game = 'pong'
+        `).run(player1, player2);
+  
       // update winner's friendsWins
       db.prepare(`
-      UPDATE ChartsData 
-      SET friendsWins = friendsWins + 1
-      WHERE userId = ?
-      AND game = 'pong'
-      `).run(winnerId);
-      // update loser’s friendsLosses
-      
-
-      db.prepare(`
-        UPDATE ChartsData
-        SET friendsLosses = friendsLosses + 1
+        UPDATE ChartsData 
+        SET friendsWins = friendsWins + 1
         WHERE userId = ?
         AND game = 'pong'
-      `).run(loserId);
-
+        `).run(winnerId);
+      // update loser’s friendsLosses
+  
+  
+      db.prepare(`
+          UPDATE ChartsData
+          SET friendsLosses = friendsLosses + 1
+          WHERE userId = ?
+          AND game = 'pong'
+        `).run(loserId);
+  
       // update radar chart data for both players
       await updateRadarData(fastify, winnerId, true);
       await updateRadarData(fastify, loserId, false);
       await updateCalendarData(fastify, winnerId);
       await updateCalendarData(fastify, loserId);
+  
+      console.log('===========> Game result added with ID:', info.lastInsertRowid);
+      return { success: true, gameId: info.lastInsertRowid };
+    
+    } catch (error) {
+      reply.status(400).send({ success: false, error: 'something went wrong try again later!' });
+    }
+  });
 
-        console.log('===========> Game result added with ID:', info.lastInsertRowid);
-        return { success: true, gameId: info.lastInsertRowid };
-      });
-
-    fastify.get("/user/:id", async (request:FastifyRequest, reply: FastifyReply) => {
+  fastify.get("/user/:id", async (request: FastifyRequest, reply: FastifyReply) => {
     const { id } = request.params as { id: number };
     if (!id) {
       reply.code(400);

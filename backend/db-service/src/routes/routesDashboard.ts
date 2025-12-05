@@ -4,145 +4,177 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 export default async function routesDashboard(fastify: FastifyInstance) {
     const db = fastify.db;
     fastify.get('/hello1', async (request: FastifyRequest, reply: FastifyReply) => {
-        return { hello: 'world' };
+        try {
+            return { hello: 'world' };
+        } catch (err) {
+            reply.status(400).send({ success: "hell nah", message: "Error occurred" });
+        }
     });
 
     fastify.get('/hello2', async (request: FastifyRequest, reply: FastifyReply) => {
-        const stmt = db.prepare("SELECT * from users");
-        const users = stmt.all();
-        console.log(users);
-        return { status: "ok", message: "Hello from DB service!" , users: users};
+        try {
+            const stmt = db.prepare("SELECT * from users");
+            const users = stmt.all();
+            console.log(users);
+            return { status: "ok", message: "Hello from DB service!", users: users };
+        } catch (err) {
+            reply.status(400).send({ success: "hell nah", message: "Error occurred" });
+        }
     });
 
     // fetch User by userName
     fastify.get('/users/:userName', async (request: FastifyRequest<{ Params: { userName: string } }>, reply: FastifyReply) => {
-        const { userName } = request.params;
-        const stmt = db.prepare("SELECT * FROM users WHERE userName = ?");
-        const user = stmt.get(userName);
-        if (!user) {
-            reply.status(404).send({success: "ko", message: "User not found" }); 
-            return null;
+        try {
+            const { userName } = request.params;
+            const stmt = db.prepare("SELECT * FROM users WHERE userName = ?");
+            const user = stmt.get(userName);
+            if (!user) {
+                reply.status(404).send({ success: "ko", message: "User not found" });
+                return null;
+            }
+            return user;
+        } catch (err) {
+            reply.status(400).send({ success: "hell nah", message: "Error occurred" });
         }
-        return user;
     });
 
-     // fetch User by userId
+    // fetch User by userId
     fastify.get('/usersId/:userId', async (request: FastifyRequest<{ Params: { userId: string } }>, reply: FastifyReply) => {
-        const { userId } = request.params;
-        const stmt = db.prepare("SELECT * FROM users WHERE id = ?");
-        const user = stmt.get(userId);
-        if (!user) {
-            reply.status(404).send({success: "ko", message: "User not found" });
-            return null;
+        try {
+            const { userId } = request.params;
+            const stmt = db.prepare("SELECT * FROM users WHERE id = ?");
+            const user = stmt.get(userId);
+            if (!user) {
+                reply.status(404).send({ success: "ko", message: "User not found" });
+                return null;
+            }
+            return user;
+        } catch (err) {
+            reply.status(400).send({ success: "hell nah", message: "Error occurred" });
         }
-        return user;
     });
 
     // fetch all users by search term limited by 7
     fastify.get('/search', async (request: FastifyRequest<{ Querystring: { prefix: string } }>, reply: FastifyReply) => {
-        const { prefix } = request.query;
-        const stmt = db.prepare("SELECT * FROM users WHERE userName LIKE ? ORDER BY userName ASC LIMIT 7");
-        const users = stmt.all(`${prefix}%`);
-        return { status: "ok", users: users };
+        try {
+            const { prefix } = request.query;
+            const stmt = db.prepare("SELECT * FROM users WHERE userName LIKE ? ORDER BY userName ASC LIMIT 7");
+            const users = stmt.all(`${prefix}%`);
+            return { status: "ok", users: users };
+        } catch (err) {
+            reply.status(400).send({ success: "hell nah", message: "Error occurred" });
+        }
     });
 
 
     // fetch radar stats for a user
     fastify.get('/radarData/:userName', async (request: FastifyRequest<{ Params: { userName: string } }>, reply: FastifyReply) => {
-        const { userName } = request.params;
-        const stmt = db.prepare(`
-          SELECT
-            quick_reflexes,
-            strategic_thinking,
-            precision_shots,
-            pattern_recognition,
-            anticipating_moves,
-            board_control,
-            adaptive_playstyle,
-            risk_management,
-            mind_games
-          FROM
-            Users
-          JOIN
-            RadarData ON Users.id = RadarData.userId
-          WHERE
-            Users.userName = ?;
-        `);
-        const stats = stmt.get(userName);
-        if (!stats) {
-            reply.status(404).send({ success: "ko", message: "User not found" });
-            return null;
+        try {
+            const { userName } = request.params;
+            const stmt = db.prepare(`
+              SELECT
+                quick_reflexes,
+                strategic_thinking,
+                precision_shots,
+                pattern_recognition,
+                anticipating_moves,
+                board_control,
+                adaptive_playstyle,
+                risk_management,
+                mind_games
+              FROM
+                Users
+              JOIN
+                RadarData ON Users.id = RadarData.userId
+              WHERE
+                Users.userName = ?;
+            `);
+            const stats = stmt.get(userName);
+            if (!stats) {
+                reply.status(404).send({ success: "ko", message: "User not found" });
+                return null;
+            }
+            return stats;
+        } catch (err) {
+            reply.status(400).send({ success: "hell nah", message: "Error occurred" });
         }
-        return stats;
     });
 
     fastify.get('/friends/:userId', async (
-    request: FastifyRequest<{ Params: { userId: string }; Querystring: { status: string } }>,
-    reply: FastifyReply
-  ) => {
-    const { userId } = request.params;
-    const { status } = request.query;
-
-    console.log("request params: ", request.params);
-    console.log("request query: ", request.query);
-
-    let stmt;
-    let params: any[] = [];
-
-    if (status === 'accepted') {
-      stmt = db.prepare(
-        `SELECT * FROM Friends WHERE (sender_id = ? OR receiver_id = ?) AND status = ?;`
-      );
-      params = [userId, userId, status];
-    } else if (status === 'pending') {
-      stmt = db.prepare(
-        `SELECT * FROM Friends WHERE receiver_id = ? AND status = ?;`
-      );
-      params = [userId, status];
-    } else if (status === 'blocked') {
-      stmt = db.prepare(
-        `SELECT * FROM Friends WHERE blocked_by = ? AND status = ?;`
-      );
-      params = [userId, status];
-    } else {
-      reply.status(400).send({ success: 'ko', message: 'Invalid status' });
-      return null;
+        request: FastifyRequest<{ Params: { userId: string }; Querystring: { status: string } }>,
+        reply: FastifyReply
+    ) => {
+        try {
+            const { userId } = request.params;
+            const { status } = request.query;
+    
+            console.log("request params: ", request.params);
+            console.log("request query: ", request.query);
+    
+            let stmt;
+            let params: any[] = [];
+    
+            if (status === 'accepted') {
+                stmt = db.prepare(
+                    `SELECT * FROM Friends WHERE (sender_id = ? OR receiver_id = ?) AND status = ?;`
+                );
+                params = [userId, userId, status];
+            } else if (status === 'pending') {
+                stmt = db.prepare(
+                    `SELECT * FROM Friends WHERE receiver_id = ? AND status = ?;`
+                );
+                params = [userId, status];
+            } else if (status === 'blocked') {
+                stmt = db.prepare(
+                    `SELECT * FROM Friends WHERE blocked_by = ? AND status = ?;`
+                );
+                params = [userId, status];
+            } else {
+                reply.status(400).send({ success: 'ko', message: 'Invalid status' });
+                return null;
+            }
+    
+            const friends = stmt.all(...params);
+            return { status: 'ok', friends };
+        } catch (err) {
+            reply.status(400).send({ success: 'hell nah', message: 'Error occurred' });
+        }
     }
-
-    const friends = stmt.all(...params);
-    return { status: 'ok', friends };
-  }
-);
+    );
 
 
 
     fastify.get('/friends/sentrequest/:userId', async (
-    request: FastifyRequest<{ Params: { userId: string }; Querystring: { status: string } }>,
-    reply: FastifyReply
-  ) => {
-    const { userId } = request.params;
-    const { status } = request.query;
-
-    console.log("request params: ", request.params);
-    console.log("request query: ", request.query);
-
-    let stmt;
-    let params: any[] = [];
-
-    if (status === 'pending') {
-      stmt = db.prepare(
-        `SELECT * FROM Friends WHERE sender_id = ? AND status = ?;`
-      );
-      params = [userId, status];
-    } else {
-      reply.status(400).send({ success: 'ko', message: 'Invalid status' });
-      return null;
+        request: FastifyRequest<{ Params: { userId: string }; Querystring: { status: string } }>,
+        reply: FastifyReply
+    ) => {
+        try {
+            const { userId } = request.params;
+            const { status } = request.query;
+    
+            console.log("request params: ", request.params);
+            console.log("request query: ", request.query);
+    
+            let stmt;
+            let params: any[] = [];
+    
+            if (status === 'pending') {
+                stmt = db.prepare(
+                    `SELECT * FROM Friends WHERE sender_id = ? AND status = ?;`
+                );
+                params = [userId, status];
+            } else {
+                reply.status(400).send({ success: 'ko', message: 'Invalid status' });
+                return null;
+            }
+    
+            const friends = stmt.all(...params);
+            return { status: 'ok', friends };
+        } catch (err) {
+            reply.status(400).send({ success: 'hell nah', message: 'Error occurred' });
+        }
     }
-
-    const friends = stmt.all(...params);
-    return { status: 'ok', friends };
-  }
-);
+    );
 
 
     //    app.delete('/Friends/Reject', async (request, reply) => {
@@ -166,7 +198,7 @@ export default async function routesDashboard(fastify: FastifyInstance) {
     // }
     // );
 
-        // delete friend request or friendship using the db same logic just in this case use fastify.delete in body
+    // delete friend request or friendship using the db same logic just in this case use fastify.delete in body
     fastify.delete('/friends/reject', async (request: FastifyRequest<{ Body: { sender_id: string; receiver_id: string } }>, reply: FastifyReply) => {
         const { sender_id, receiver_id } = request.body;
         if (!sender_id || !receiver_id) {
@@ -212,7 +244,7 @@ export default async function routesDashboard(fastify: FastifyInstance) {
     });
 
     // get status of friendship between two users
-     fastify.get('/friends/status', async (request: FastifyRequest<{ Querystring: { userId1: string; userId2: string } }>, reply: FastifyReply) => {
+    fastify.get('/friends/status', async (request: FastifyRequest<{ Querystring: { userId1: string; userId2: string } }>, reply: FastifyReply) => {
         const { userId1, userId2 } = request.query;
         if (!userId1 || !userId2) {
             return reply.code(400).send({ error: 'Missing userId1 or userId2' });
@@ -297,29 +329,37 @@ export default async function routesDashboard(fastify: FastifyInstance) {
 
     // get charts data for a game by userId and a query param game
     fastify.get('/chartsdata/:userId', async (request: FastifyRequest<{ Params: { userId: string }; Querystring: { game: string } }>, reply: FastifyReply) => {
-        const { userId } = request.params;
-        const { game } = request.query;
-        if (!game) {
-            return reply.status(400).send({ success: "ko", message: "Missing game query parameter" });
+        try {
+            const { userId } = request.params;
+            const { game } = request.query;
+            if (!game) {
+                return reply.status(400).send({ success: "ko", message: "Missing game query parameter" });
+            }
+            const stmt = db.prepare("SELECT * FROM ChartsData WHERE userId = ? AND game = ?");
+            const stats = stmt.get(userId, game);
+            if (!stats) {
+                reply.status(404).send({ success: "ko", message: "No stats found for this user and game" });
+                return null;
+            }
+            return { status: "ok", stats: stats };
+        } catch (err) {
+            reply.status(400).send({ success: "hell nah", message: "Error occurred" });
         }
-        const stmt = db.prepare("SELECT * FROM ChartsData WHERE userId = ? AND game = ?");
-        const stats = stmt.get(userId, game);
-        if (!stats) {
-            reply.status(404).send({ success: "ko", message: "No stats found for this user and game" });
-            return null;
-        }
-        return { status: "ok", stats: stats };
     });
 
     // get rank data for all users
     fastify.get('/rank', async (request: FastifyRequest, reply: FastifyReply) => {
-        const stmt = db.prepare(`
-            SELECT id, userName, fullName, imageUrl, level, progress, rank, progress, online
-            FROM Users
-            ORDER BY level DESC, progress DESC
-        `);
-        const users = stmt.all();
-        return users;
+        try {
+            const stmt = db.prepare(`
+                SELECT id, userName, fullName, imageUrl, level, progress, rank, progress, online
+                FROM Users
+                ORDER BY level DESC, progress DESC
+            `);
+            const users = stmt.all();
+            return users;
+        } catch (err) {
+            reply.status(400).send({ success: "hell nah", message: "Error occurred" });
+        }
     });
 
     // get games history by userName and a query param gameType
@@ -353,11 +393,21 @@ export default async function routesDashboard(fastify: FastifyInstance) {
 
     // get total users count for ranking
     fastify.get('/rank/numPlayers', async (request: FastifyRequest, reply: FastifyReply) => {
-        const stmt = db.prepare("SELECT COUNT(*) as count FROM Users");
-        const result = stmt.get();
-        return { numPlayers: result.count };
+        try {
+            const stmt = db.prepare("SELECT COUNT(*) as count FROM Users");
+            const result = stmt.get() as { count: number };
+            return { numPlayers: result.count };
+        } catch (err) {
+            reply.status(400).send({ success: "hell nah", message: "Error occurred" });
+        }
     });
 
+
+    interface CalendarRow {
+        year: number;
+        day: number;
+        activity: number;
+    }
 
     fastify.get(
         "/Calendar/:userName",
@@ -368,13 +418,13 @@ export default async function routesDashboard(fastify: FastifyInstance) {
             const { userName } = request.params;
 
             // Get userId from userName
-            const user = db.prepare("SELECT id FROM Users WHERE userName = ?").get(userName);
+            const user = db.prepare("SELECT id FROM Users WHERE userName = ?").get(userName) as { id: number };
             const userId = user ? user.id : null;
-    
+
             if (!userId) {
                 return reply.code(400).send({ error: "Missing userId" });
             }
-    
+
             try {
                 // Fetch all rows for user (all years)
                 const rows = db.prepare(`
@@ -382,8 +432,8 @@ export default async function routesDashboard(fastify: FastifyInstance) {
                     FROM Calendar
                     WHERE userId = ?
                     ORDER BY year DESC, day ASC
-                `).all(userId);
-    
+                `).all(userId) as CalendarRow[];
+
                 // If no data → return current year with all zeros
                 if (rows.length === 0) {
                     const year = new Date().getFullYear();
@@ -396,9 +446,9 @@ export default async function routesDashboard(fastify: FastifyInstance) {
                         }
                     });
                 }
-    
+
                 const response: any = {};
-    
+
                 // Build year structure
                 for (const r of rows) {
                     if (!response[r.year]) {
@@ -409,26 +459,26 @@ export default async function routesDashboard(fastify: FastifyInstance) {
                             DaysData: {}
                         };
                     }
-    
+
                     const yearObj = response[r.year];
                     const activity = r.activity || 0;
-    
+
                     // Save day value
                     yearObj.DaysData[r.day] = activity;
-    
+
                     // Stats
                     yearObj.totalGames += Number(activity / 0.1);
                     if (activity > 0) yearObj.totalActiveDays++;
                 }
-    
+
                 // Compute streaks
                 for (const year of Object.keys(response)) {
                     const yearObj = response[year];
                     const days = yearObj.DaysData;
-    
+
                     let streak = 0;
                     let maxStreak = 0;
-    
+
                     for (let d = 1; d <= 366; d++) {
                         if (days[d] > 0) {
                             streak++;
@@ -437,12 +487,12 @@ export default async function routesDashboard(fastify: FastifyInstance) {
                             streak = 0;
                         }
                     }
-    
+
                     yearObj.maxStreak = maxStreak;
                 }
-    
+
                 return reply.send(response);
-    
+
             } catch (err) {
                 console.error(err);
                 return reply.code(400).send({ error: "❌ Error fetching calendar data" });
@@ -472,6 +522,4 @@ export default async function routesDashboard(fastify: FastifyInstance) {
             return reply.code(400).send({ error: '❌ Error running query' });
         }
     });
-    
-    
 }
