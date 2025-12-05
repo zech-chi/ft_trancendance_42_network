@@ -27,12 +27,12 @@ const userCallState = new Map<string, CallSession>();
 export function setupSocket(server: HttpServer) {
   const io = new SocketIoServer(server, {
     cors: {
-      origin: ["http://localhost:3000", "http://10.32.125.111:3000"],
+      origin: ["http://localhost:3000", "https://localhost:3000"],
       methods: ["GET", "POST"],
     },
   });
 
-    ioInstance = io;  // ✅ save for later global access
+    ioInstance = io;  // save for later global access
 
   io.on("connection", async (socket) => {
     console.log("A user connected:", socket.id);
@@ -317,7 +317,7 @@ export function sendBlockEventToUser(userId: string, event: string, friendId: st
     console.log(`User ${friendId} is not online.`);
   }
 
-  // 🔥 Also notify the blocker (userA) in all their sessions
+  //  Also notify the blocker (userA) in all their sessions
   if (userSockets) {
     userSockets.forEach((socketId) => {
       ioInstance?.to(socketId).emit(event, {
@@ -338,21 +338,6 @@ export async function setOnlineTodb(userId: string, status: boolean, updateLastS
 
   console.log(`Setting online status for user ${userId} to ${status}`);
 
-  // let stmt;
-  // let result;
-  // if (updateLastSeen) { 
-  //     stmt = db.prepare(`UPDATE users SET online = ?, last_seen = ? WHERE id = ?`);
-  //     result = stmt.run(status ? 1 : 0, getTime(), userId);
-  // } else {
-  //     stmt = db.prepare(`UPDATE users SET online = ? WHERE id = ?`);
-  //     result = stmt.run(status ? 1 : 0, userId);
-  // }
-
-  // if (result.changes === 0) {
-  //   console.log(`Failed to update online status for user ${userId}`);
-  // } else {
-  //   console.log(`User ${userId} online status updated to ${status}`);
-  // }
 
   try {
         // send the request to db-service
