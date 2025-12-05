@@ -5,8 +5,6 @@ import path from 'path';
 import { createServer } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import PongPlugin from './plugins/pongPlugin';
-import fastifyCookie from "@fastify/cookie";
-import fastifyJwt from '@fastify/jwt';
 import {SocketFunction} from "./socket"
 import metricsPlugin from "fastify-metrics";
 
@@ -20,14 +18,6 @@ fastify.register(cors, {
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-});
-
-fastify.register(fastifyCookie, {
-  secret:"my-cookie-secret-key",
-  hook: "onRequest",
-});
-fastify.register(fastifyJwt, {
-  secret: "super-secret-jwt-key-12345",
 });
 
 // Plugin d'authentification

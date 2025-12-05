@@ -13,4 +13,7 @@ COPY . .
 EXPOSE 5004
 
 # Run in dev mode
-CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
+RUN npm run build
+
+CMD ["npm", "start"]
