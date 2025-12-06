@@ -258,7 +258,6 @@ export default async function routesChat(fastify: FastifyInstance) {
 
             const { userId } = request.body as { userId: string };
             const sql = `
-            -- Step 1: Same as before, but corrected to use 'accepted' and 'blocked' for message searching
             WITH UserRelationships AS (
               SELECT receiver_id AS contact_id, status, blocked_by, sender_id as initiator FROM friends
               WHERE sender_id = ? AND status IN ('accepted', 'blocked')
@@ -267,7 +266,6 @@ export default async function routesChat(fastify: FastifyInstance) {
               WHERE receiver_id = ? AND status IN ('accepted', 'blocked')
             ),
             
-            -- Step 2: Same as before
             LastMessages AS (
               SELECT
                 message,
@@ -282,7 +280,6 @@ export default async function routesChat(fastify: FastifyInstance) {
               WHERE sender_id = ? OR receiver_id = ?
             )
         
-            -- Step 3: Combine everything with the simplified JOIN
             SELECT
               u.id,
               u.fullName,
@@ -297,9 +294,6 @@ export default async function routesChat(fastify: FastifyInstance) {
             FROM UserRelationships ur
             JOIN users u ON u.id = ur.contact_id
             
-            -- ----------- THE FIX IS HERE -----------
-            -- Instead of rebuilding the key, we check the IDs directly.
-            -- This is much more reliable.
             LEFT JOIN LastMessages lm ON (
                 (lm.sender_id = ur.contact_id AND lm.receiver_id = ?) OR
                 (lm.sender_id = ? AND lm.receiver_id = ur.contact_id)

@@ -7,7 +7,7 @@ import { MAX, v4 as uuid4 } from "uuid";
 import bcrypt from "bcryptjs";
 import { createProfilesDir } from "../utils/createProfilesDir";
 import { checkAuthenticatedUser } from "../utils/check_userauth";
-import { MAX_LENGTH_BIO, VALID_LANGUAGES } from "../utils/constants";
+import { MAX_LENGTH_BIO, MAX_LENGTH_FULLNAME, VALID_LANGUAGES } from "../utils/constants";
 
 const pump = promisify(pipeline);
 
@@ -140,6 +140,25 @@ function checkBioLength(reply: FastifyReply, bio: string): boolean {
   return true;
 }
 
+// check full name validation
+function checkFullNameValid(reply: FastifyReply, fullName: string): boolean {
+  if (fullName.trim() === '') {
+    reply.status(400).send({
+      status: 'error',
+      message: 'Full name cannot be empty.'
+    });
+    return false;
+  }
+  if (fullName.length > MAX_LENGTH_FULLNAME) {
+    reply.status(400).send({
+      status: 'error',
+      message: 'Full name must be less than 50 characters.'
+    });
+    return false;
+  }
+  return true;
+}
+
 
 // this function will check if the passowrds is valid and not undefined 
 function checkPasswordsValid(reply: FastifyReply, oldPassword: string | undefined, newPassword: string | undefined, confirmPassword: string | undefined): boolean {
@@ -259,6 +278,10 @@ export async function UpdateProfile(request: FastifyRequest, reply: FastifyReply
   }
 
   if (fullName) {
+    // Validate the full name
+    if (!checkFullNameValid(reply, fullName)) {
+      return; // If full name is not valid, exit the function
+    }
     updates.push('fullName = ?');
     values.push(fullName);
   }
