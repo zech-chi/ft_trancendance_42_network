@@ -217,18 +217,18 @@ CREATE TABLE IF NOT EXISTS messages (
 
 INSERT OR IGNORE INTO Users (id, fullName, userName, email, password, bio, imageUrl, rank, last_seen, level, progress, online)
 VALUES
-(1, 'boot', 'boot', 'example@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://api.dicebear.com/9.x/identicon/svg?seed=700', 0, strftime('%s','now') - 120, 5, 0.75, 1);
+(1, 'boot', 'boot', 'example@example.com', 'hash12345', 'Hello! It is nice to meet you 👋', 'https://api.dicebear.com/9.x/identicon/svg?seed=6', 0, strftime('%s','now') - 120, 5, 0.75, 1);
 
 
 INSERT OR IGNORE INTO RadarData 
 (userId, Quick_Reflexes, Strategic_Thinking, Precision_Shots, Pattern_Recognition, Anticipating_Moves, Board_Control, Adaptive_Playstyle, Risk_Management, Mind_Games)
 VALUES
-(1, 17, 14, 18, 12, 15, 16, 14, 13, 12);
+(1, 17, 1.7, 19.5, 12, 3, 1, 14, 5.5, 16.4);
 
 INSERT OR IGNORE INTO ChartsData (userId, game, totalGamesWithAi, gamesWithAiEasy, gamesWithAiMedium, gamesWithAiHard, totalWins, easyWins, mediumWins, hardWins, friendsWins, friendsLosses, friendsTotalGames)
 VALUES
-(1, 'pong', 50, 20, 20, 10, 30, 10, 12, 8, 5, 3, 8),
-(1, 'parcheesi', 40, 15, 15, 10, 18, 8, 6, 4, 7, 6, 13);
+(1, 'pong', 5372, 2149, 1893, 1278, 3621, 947, 1543, 1117, 742, 389, 2036),
+(1, 'parcheesi', 4287, 1764, 1639, 1325, 2578, 1213, 934, 657, 1318, 927, 2985);
 
 -- (2, 'Mohamed Karim', 'mkarim', 'mkarim@example.com', 'hash12345', 'Excited to join 🚀', 'https://cdn.intra.42.fr/users/db4a3023c112e0d3d3bcf65d84609d6f/mkarim.jpg', 2, strftime('%s','now') - 300, 3, 0.45, 1),
 

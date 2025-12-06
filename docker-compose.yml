@@ -47,6 +47,8 @@ services:
         max-size: "10m"
         max-file: "3"
     restart: unless-stopped
+    env_file:
+      - .env
 
   chat-service:
     build: backend/chat-service
@@ -140,6 +142,8 @@ services:
         max-size: "10m"
         max-file: "3"
     restart: unless-stopped
+    env_file:
+      - .env
 
   user-service:
     build: backend/User-Service
@@ -208,12 +212,8 @@ services:
       - prometheus
     ports:
       - "4000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_SERVER_ROOT_URL=https://localhost/grafana/
-      - GF_SERVER_SERVE_FROM_SUB_PATH=true
-      - GF_METRICS_ENABLED=true
+    env_file:
+      - .env
     networks:
       - monitoring
     volumes:
@@ -245,14 +245,105 @@ services:
         max-file: "3"
     restart: unless-stopped
 
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+  #   container_name: elasticsearch
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #   ulimits:
+  #     nofile:
+  #       soft: 65536
+  #       hard: 65536
+  #   mem_limit: 1g
+  #   mem_reservation: 512m
+  #   ports:
+  #     - "9200:9200"
+  #     - "9300:9300"
+  #   volumes:
+  #     - es_data:/usr/share/elasticsearch/data
+  #   networks:
+  #     - monitoring
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 60s
+  #   restart: unless-stopped
+
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.15.0
+  #   container_name: kibana
+  #   depends_on:
+  #     elasticsearch:
+  #       condition: service_healthy
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "5601:5601"
+  #   networks:
+  #     - monitoring
+  #   mem_limit: 1536m
+  #   mem_reservation: 768m
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 180s
+  #   restart: unless-stopped
+
+  # # Logstash
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:8.15.0
+  #   container_name: logstash
+  #   depends_on:
+  #     elasticsearch:
+  #       condition: service_healthy
+  #   ports:
+  #     - "5044:5044"
+  #     - "9600:9600"
+  #   volumes:
+  #     - ./logstash/pipeline:/usr/share/logstash/pipeline
+  #   networks:
+  #     - monitoring
+  #   env_file:
+  #     - .env
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -f http://localhost:9600/_node/stats || exit 1"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 60s
+  #   restart: unless-stopped
+
+  # filebeat:
+  #   image: docker.elastic.co/beats/filebeat:8.15.0
+  #   container_name: filebeat
+  #   user: root
+  #   volumes:
+  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+  #     - filebeat_data:/usr/share/filebeat/data
+  #   depends_on:
+  #     logstash:
+  #       condition: service_healthy
+  #   env_file:
+  #     - .env
+  #   command: filebeat -e -c /usr/share/filebeat/filebeat.yml --strict.perms=false
+  #   networks:
+  #     - monitoring
+  #   restart: unless-stopped
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
     container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - bootstrap.memory_lock=false
+    env_file:
+      - .env
+    # environment:
+    #   - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       nofile:
         soft: 65536
@@ -280,19 +371,8 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - SERVER_HOST=0.0.0.0
-      - SERVER_NAME=kibana
-      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d
-      - XPACK_REPORTING_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d
-      - XPACK_SECURITY_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d
-      - TELEMETRY_ENABLED=false
-      - LOGGING_VERBOSE=false
-      - NODE_OPTIONS=--max-old-space-size=768
-      - SERVER_PUBLICBASEURL=https://localhost/kibana
-      - SERVER_BASEPATH=/kibana
-      - SERVER_REWRITEBASEPATH=true
+    env_file:
+      - .env
     ports:
       - "5601:5601"
     networks:
@@ -306,7 +386,6 @@ services:
       retries: 5
       start_period: 180s
     restart: unless-stopped
-
 
   # Logstash
   logstash:
@@ -322,8 +401,8 @@ services:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
     networks:
       - monitoring
-    environment:
-      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9600/_node/stats || exit 1"]
       interval: 30s
@@ -346,6 +425,8 @@ services:
         condition: service_healthy
     environment:
       - strict.perms=false
+    env_file:
+      - .env
     command: filebeat -e -c /usr/share/filebeat/filebeat.yml --strict.perms=false
     networks:
       - monitoring

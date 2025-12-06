@@ -1,5 +1,5 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { updateCalendarData, updateRadarData } from "./routesPong";
+import { updateCalendarData, updateLevel, updateRadarData } from "./routesPong";
 // import { get } from "https";
 
 type UserRow = {
@@ -124,7 +124,7 @@ export default async function routesParchisi(fastify: FastifyInstance) {
         await updateRadarData(fastify, loserId, false);
         await updateCalendarData(fastify, loserId);
       }
-  
+      await updateLevel(fastify, winnerId);
   
       // update ParchisiGames table
       db.prepare(`

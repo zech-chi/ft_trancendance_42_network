@@ -104,6 +104,47 @@ export async function updateRadarData(fastify: FastifyInstance, userId: number, 
   }
 }
 
+interface UserLevelData {
+  level: number;
+  progress: number;
+}
+
+export async function updateLevel(fastify: FastifyInstance, userId: number) {
+  try {
+    const db = fastify.db;
+
+    // get user
+    const user = db.prepare("SELECT level, progress FROM Users WHERE id = ?").get(userId) as UserLevelData;
+    if (!user) {
+      console.error("User not found");
+      return;
+    }
+
+    let { level, progress } = user;
+
+    // increase progress (simple example: +0.1)
+    progress += 0.37;
+
+    // check if level up
+    if (progress >= 1) {
+      level += 1;
+      progress -= 1;
+    }
+
+    // update user in db
+    db.prepare(`
+      UPDATE Users 
+      SET level = ?, progress = ? 
+      WHERE id = ?
+    `).run(level, progress, userId);
+
+    console.log(`✅ User ${userId}: level=${level}, progress=${progress}`);
+  } catch (err) {
+    console.error("❌ Error updating level:", err);
+  }
+}
+
+
 export default async function routesPong(fastify: FastifyInstance) {
   // get the db instance
   const db = fastify.db;
@@ -203,6 +244,7 @@ export default async function routesPong(fastify: FastifyInstance) {
       await updateRadarData(fastify, loserId, false);
       await updateCalendarData(fastify, winnerId);
       await updateCalendarData(fastify, loserId);
+      await updateLevel(fastify, winnerId);
   
       console.log('===========> Game result added with ID:', info.lastInsertRowid);
       return { success: true, gameId: info.lastInsertRowid };
