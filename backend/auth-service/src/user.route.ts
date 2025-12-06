@@ -120,7 +120,9 @@ export async function authRoutes(app: FastifyInstance) {
         const decoded =  app.jwt.verify<JwtPayload>(refreshToken);
         console.log("Decoded refresh token: ", decoded);
         const user = await findUserById(decoded.id);
-        if (!user) return reply.code(401).send({ message: 'Invalid refresh token' });
+        if (!user || !user.email_verified || (user &&  (user.email !== decoded.email || user.id !== decoded.id))) {
+          return reply.code(401).send({ message: 'Invalid refresh token' });
+        }
     
         const newAccessToken = await reply.jwtSign({
           id: user.id,
@@ -152,9 +154,9 @@ export async function authRoutes(app: FastifyInstance) {
       try {
         // try verifying access token
         if (accessToken) {
-          const decoded =  app.jwt.verify<JwtPayload>(accessToken);
+          const decoded =  app.jwt.verify<JwtPayload>(accessToken) as JwtPayload;
           const user = await findUserByEmail(decoded.email);
-          if (!user || !user.email_verified || (user &&  user.email !== decoded.email)) {
+          if (!user || !user.email_verified || (user &&  (user.email !== decoded.email || user.id !== decoded.id))) {
               return reply.code(401).send({ message: 'Invalid token' });
         }
           // distract only username , id  and return it 
