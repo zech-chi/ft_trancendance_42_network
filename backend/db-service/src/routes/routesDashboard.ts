@@ -387,7 +387,7 @@ export default async function routesDashboard(fastify: FastifyInstance) {
             }
             return reply.send(filteredGames);
         } catch (err) {
-            return reply.code(500).send({ error: '❌ Error running query' });
+            return reply.code(400).send({ error: 'Error running query' });
         }
     });
 

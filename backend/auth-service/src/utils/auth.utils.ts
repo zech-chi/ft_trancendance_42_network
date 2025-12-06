@@ -5,7 +5,7 @@ export function setAccessTokenCookie(reply: FastifyReply, token: string) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production" || false,
     sameSite:"lax" ,//"strict",
-    path: "/", // ✅ Must be root to be sent with all requests
+    path: "/", // Must be root to be sent with all requests
     maxAge: 15 * 60, // 15 minutes
   });
 }
@@ -15,7 +15,7 @@ export function setRefreshTokenCookie(reply: FastifyReply, token: string) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production" || false,
     sameSite: "lax", // "strict",
-    path: "/api/auth/refresh", // ✅ only sent when refreshing token
+    path: "/api/auth/refresh", // only sent when refreshing token
     maxAge: 7 * 24 * 60 * 60, // 7 days
   });
 }
