@@ -1,0 +1,1 @@
+export const HOST="http://e3r4p12.1337.ma"

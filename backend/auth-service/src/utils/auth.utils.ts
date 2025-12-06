@@ -3,7 +3,7 @@ import { FastifyReply } from "fastify";
 export function setAccessTokenCookie(reply: FastifyReply, token: string) {
   reply.setCookie("access_token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production" || false,
+    secure: true,
     sameSite:"lax" ,//"strict",
     path: "/", // Must be root to be sent with all requests
     maxAge: 15 * 60, // 15 minutes
@@ -13,7 +13,7 @@ export function setAccessTokenCookie(reply: FastifyReply, token: string) {
 export function setRefreshTokenCookie(reply: FastifyReply, token: string) {
   reply.setCookie("refresh_token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production" || false,
+    secure: true,
     sameSite: "lax", // "strict",
     path: "/api/auth/refresh", // only sent when refreshing token
     maxAge: 7 * 24 * 60 * 60, // 7 days
@@ -25,7 +25,7 @@ export function clearRefreshTokenCookie(reply: FastifyReply) {
     path: '/api/auth/refresh',
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === "production" || false
+    secure: true
   });
 }
 
@@ -34,14 +34,14 @@ export function clearAccessTokenCookie(reply: FastifyReply) {
     path: '/',          // must match cookie creation path
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === "production" || false       // true if HTTPS
+    secure: true      // true if HTTPS
   });
 }
 
 export function setTmp2FACookie(reply: FastifyReply, token: string) {
   reply.setCookie("tmp_2fa", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production" || false,
+    secure: true,
     sameSite:"lax" ,//"strict",
     path: "/",
     maxAge: 5 * 60, // 5 minutes
@@ -53,6 +53,6 @@ export function clearTmp2FACookie(reply: FastifyReply) {
     path: "/" ,
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === "production" || false
+    secure: true
   });
 }

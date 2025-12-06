@@ -11,13 +11,9 @@ import Image from "next/image";
 import { useSelectedUserId } from "@/context/SelectedUserId";
 import { useUserEmail } from "@/context/UserEmailContext";
 import { fetchWithAuth } from "@/utils/fetchWithAuth";
-import dotenv from "dotenv";
+import { HOST } from "@/utils/Hostname";
 
-dotenv.config();
 
-if (!process.env.HOST) {
-  throw new Error('Missing required environment variable: HOST');
-}
 
 export async function fetchUser() {
   
@@ -75,7 +71,7 @@ export default function LoginPage() {
   }, []);
 
   const handleGoogle = () => {
-      window.location.href = `${process.env.HOST}/api/auth/login/google`;
+      window.location.href = `${HOST}/api/auth/login/google`;
   };
   
   const handleLogin = async () => {
