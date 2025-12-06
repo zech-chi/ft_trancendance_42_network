@@ -42,10 +42,10 @@ export function Parcheesi3DComponent() {
         if (canvasRef.current) {
             if (!socketRef) return
 
-            console.log(chalk.green("Connected to server:", socketRef?.id));
-            console.log(chalk.green("Socket connection initialized:", socketRef?.id));
+            //console.log(chalk.green("Connected to server:", socketRef?.id));
+            //console.log(chalk.green("Socket connection initialized:", socketRef?.id));
             
-            console.log(chalk.green("Initializing Parcheesi3D..."));
+            //console.log(chalk.green("Initializing Parcheesi3D..."));
             // Initialize the Parcheesi3D game with the canvas
             if (canvasRef.current) gameRef.current = new Parcheesi3D(canvasRef.current, state.theme as CustomizationType);
             // Start the render loop
@@ -59,25 +59,25 @@ export function Parcheesi3DComponent() {
                     return;
 
             socketRef.on("welcome", (data) => {
-                console.log(chalk.blue("💬 Server says:", data.message));
+                //console.log(chalk.blue("💬 Server says:", data.message));
             });
             
-            console.log("ready to play");
+            //console.log("ready to play");
             socketRef.emit("readyToPlayX", { userName: loggedUserName, gameId: gameId });
             // Handle welcome message from the server
             socketRef.on("addPlayer", async (data: SphereDataType) => {
-                console.log("📥 Sphere data received:", data);
+                //console.log("📥 Sphere data received:", data);
                 await boardRef.current?.addPlayerAvatar(data);
                 boardRef.current?.createSpheres(data.color);
             });
             
             socketRef.on("setPlayerTurn", async(data: { color: PlayerColor }) => {
-                console.log(chalk.green("📥 Player turn set:", data.color));
+                //console.log(chalk.green("📥 Player turn set:", data.color));
                 boardRef.current?.setPlayerTurn(data.color);
             });
 
             socketRef.on("rollDices", (data: DiceDataType) => {
-                console.log(chalk.green("📥 Dice update received:", data), data);
+                //console.log(chalk.green("📥 Dice update received:", data), data);
                 boardRef.current?.updateLabel(data);
             });
 
@@ -86,23 +86,23 @@ export function Parcheesi3DComponent() {
             });
 
             socketRef.on("move", (data: MoveDataType) => {
-                console.log(chalk.green("📥 Move data received:", data), data);
+                //console.log(chalk.green("📥 Move data received:", data), data);
                 boardRef.current?.move(data);
             });
 
             socketRef.on("jump", (data: JumpDataType) => {
-                console.log(chalk.green("📥 Jump data received:", data));
+                //console.log(chalk.green("📥 Jump data received:", data));
                 boardRef.current?.jump(data);
             });
             
             // Handle incoming commands from the server
             socketRef.on("command", (data) => {
-                console.log(chalk.yellow("📥 Command received:", data.message, "at", data.time));
+                //console.log(chalk.yellow("📥 Command received:", data.message, "at", data.time));
             });
 
             // Handle disconnection event
             socketRef.on("disconnect", () => {
-                console.log(chalk.red("Disconnected from server"));
+                //console.log(chalk.red("Disconnected from server"));
             });
             // setIsLoaded(true);
         }

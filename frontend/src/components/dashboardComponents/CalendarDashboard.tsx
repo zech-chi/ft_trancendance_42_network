@@ -46,12 +46,12 @@ export default function CalendarDashboard(): JSX.Element {
         async function fetchData() {
             if (!selectedUserName) return;
             try {
-                console.log("~~~~~~~~~~~~~~~~Fetching calendar data for:", selectedUserName);
+                //console.log("~~~~~~~~~~~~~~~~Fetching calendar data for:", selectedUserName);
                 const data = await fetchCalendarData(selectedUserName);
-                console.log("~~~~~~~~~~~~~~~~", data);
+                //console.log("~~~~~~~~~~~~~~~~", data);
                 setCalendarData(data);
             } catch (error) {
-                console.error("Failed to fetch calendar data:", error);
+                //console.error("Failed to fetch calendar data:", error);
             }
         }
         fetchData();

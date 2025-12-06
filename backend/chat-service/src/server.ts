@@ -101,9 +101,9 @@ fastifyServer.addHook('preHandler', async (request: any, reply: any) => {
       try {
         // Parse the JSON string sent by the Gateway
         request.user = JSON.parse(userData as string);
-        console.log("User data attached to request:", request.user);
+        //console.log("User data attached to request:", request.user);
       } catch (err) {
-        console.error("Failed to parse user data from gateway", err);
+        //console.error("Failed to parse user data from gateway", err);
         request.user = null;
       }
     }
@@ -122,7 +122,7 @@ const start = async () => {
     setupSocket(httpServer);
 
     httpServer.listen({ port: 5003, host: '0.0.0.0' }, () => {
-      console.log(`Server is running on http://localhost:5003`);
+      //console.log(`Server is running on http://localhost:5003`);
     });
 
   } catch (err) {

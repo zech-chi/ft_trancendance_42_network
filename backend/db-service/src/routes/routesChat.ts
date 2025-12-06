@@ -21,7 +21,7 @@ export default async function routesChat(fastify: FastifyInstance) {
         try {
             const stmt = db.prepare("SELECT * from users");
             const users = stmt.all();
-            console.log(users);
+            //console.log(users);
             return { status: "ok", message: "Hello from DB service!" , users: users};
         } catch (error) {
             return reply.status(400).send({ status: "error", message: "Error connecting to database." });
@@ -115,7 +115,7 @@ export default async function routesChat(fastify: FastifyInstance) {
                 LIMIT ? OFFSET ?
             `);
             const messages = stmt.all(userId1, userId2, userId2, userId1, limit, offset);
-            console.log(messages);
+            //console.log(messages);
             return { messages };
         } catch (error) {
             return reply.status(400).send({ status: "error", message: "Error retrieving messages from database." });
@@ -151,7 +151,7 @@ export default async function routesChat(fastify: FastifyInstance) {
     fastify.post("/canunblock", async (request: FastifyRequest, reply: FastifyReply) => {
         try {
             const { from, to } = request.body as { from: string, to: string };
-            console.log("Can unblock request from:", from, "to:", to);
+            //console.log("Can unblock request from:", from, "to:", to);
             const stmt = db.prepare(`
                 SELECT * FROM friends
                 WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?))
@@ -173,7 +173,7 @@ export default async function routesChat(fastify: FastifyInstance) {
     fastify.post("/unblockuser", async (request: FastifyRequest, reply: FastifyReply) => {
         try {
             const { from, to } = request.body as { from: string, to: string };
-            console.log("Unblock request from:", from, "to:", to);
+            //console.log("Unblock request from:", from, "to:", to);
             const stmt = db.prepare(`Update friends
                 SET status = 'accepted', blocked_by = NULL
                 WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)

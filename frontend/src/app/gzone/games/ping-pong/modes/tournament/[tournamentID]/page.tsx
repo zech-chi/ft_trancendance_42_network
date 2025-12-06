@@ -19,7 +19,7 @@ export async function getNameAndAvatarFromId(id: number) {
       avatarUrl: data.imageUrl,
     };
   } catch (error) {
-    console.error("Error fetching user by ID:", error);
+    //console.error("Error fetching user by ID:", error);
     return {
       name: `playerId_${id}`,
       avatarUrl: `https://i.pravatar.cc/150?u=${id}`,
@@ -52,27 +52,27 @@ export default function Play() {
   const searchParams = useSearchParams();
   const round = searchParams.get("round");
   let hasEmitted = false;
-  console.log(" hasEmitted value:", hasEmitted);
+  //console.log(" hasEmitted value:", hasEmitted);
 
-  console.log("🏆 Tournament ID from URL:", tournamentId);
-  console.log("🔄 Current Tournament round:", round);
+  //console.log("🏆 Tournament ID from URL:", tournamentId);
+  //console.log("🔄 Current Tournament round:", round);
   useEffect(() => {
     const socket = socketContext.socket;
     if (!socket || !tournamentId) return;
 
     const handleStarted = (data: any) => {
-      console.log("✅ Tournament started:", data);
+      //console.log("✅ Tournament started:", data);
       // toast.success(data.message, { id: data.message });
     };
 
     const handleGameStarting = async (data: any) => {
-      console.log("🚀 Tournament game is starting:", data);
+      //console.log("🚀 Tournament game is starting:", data);
       // toast.success("Tournament game is starting!", { id: "tournament_game_starting" });
       const inviterId = data.opponentId === socketContext.currentUser?.id ? data.reciverId : data.opponentId;
       const inviter_name = await getNameAndAvatarFromId(inviterId).then(res => res.name);
       const accepterId = socketContext.currentUser?.id;
       if (inviterId === data.reciverId) {
-        console.log("---->>>>>>>>>>>>>>> ids of opponents:", inviterId, accepterId);
+        //console.log("---->>>>>>>>>>>>>>> ids of opponents:", inviterId, accepterId);
         socket.emit("accept_invite_tournament", {
           inviter: inviterId,
           inviterName: inviter_name,
@@ -87,14 +87,14 @@ export default function Play() {
       const emitOnce = () => {
         if (!hasEmitted) {
           hasEmitted = true;
-          console.log("📡 Emitting canWeStartTournament...");
+          //console.log("📡 Emitting canWeStartTournament...");
           socket.emit("canWeStartTournament", { tournamentId });
         }
       };
 
       setTimeout(emitOnce, 2000);
 
-      // console.log("📡 Emitting canWeStartTournament...");
+      // //console.log("📡 Emitting canWeStartTournament...");
       // setTimeout(() => {
       //   socket.emit("canWeStartTournament", { tournamentId });
       // }, 1000);
@@ -102,7 +102,7 @@ export default function Play() {
       const emitOnce = () => {
         if (!hasEmitted) {
           hasEmitted = true;
-          console.log("📡 Emitting canWeStartTournament...");
+          //console.log("📡 Emitting canWeStartTournament...");
           socket.emit("canWeStartFinal", { tournamentId });
         }
       };
@@ -112,7 +112,7 @@ export default function Play() {
 
     if (!getfinalPlayed()) {
       socket.on('tournament_cancelled', (data: { message: string }) => {
-        console.log("❌ Tournament cancelled:", data.message);
+        //console.log("❌ Tournament cancelled:", data.message);
         toast.error(`❌ Tournament cancelled: ${data.message}`, { id: "tournament_cancelled" });
         resetTournament();
         router.push('/gzone/games/ping-pong');
@@ -120,7 +120,7 @@ export default function Play() {
       socket.on("tournament_started", handleStarted);
       socket.on("tournament_game_starting", handleGameStarting);
       socket.on("winner_reported_round1", async (data: { message: string; playerIds: number[] }) => {
-        console.log("📢 to the final --> :", data.playerIds);
+        //console.log("📢 to the final --> :", data.playerIds);
         if (data.playerIds.length === 2) {
           if (data.playerIds[0] === socketContext.currentUser?.id || data.playerIds[1] === socketContext.currentUser?.id) {
             toast.success("You are in the Final!", { id: "in_final" });
@@ -131,7 +131,7 @@ export default function Play() {
       });
       setFinalPlayed();
       socket.on("catch_the_winner", async (data: { message: string; winnerId: number }) => {
-        console.log("🏆 Tournament Winner is --> :", data.winnerId);
+        //console.log("🏆 Tournament Winner is --> :", data.winnerId);
         const playerInfo = await getNameAndAvatarFromId(data.winnerId);
         toast.success(`🏆 Tournament Winner is ${playerInfo.name}`, {
           id: `winner-${data.winnerId}`,
@@ -146,7 +146,7 @@ export default function Play() {
         }, 5000);
       });
     } else {
-      console.log(" Final already played.");
+      //console.log(" Final already played.");
     }
 
 

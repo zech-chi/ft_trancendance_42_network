@@ -25,7 +25,7 @@ import { fetchWithAuth } from '@/utils/fetchWithAuth';
 // 				setUserProfile(user.imageUrl);
 // 			} catch (error) {
 // 				setErr("Failed to fetch profile image.");
-//         console.log(error);
+//         //console.log(error);
 // 			}
 // 		};
 
@@ -63,7 +63,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
         setUserProfile(user.imageUrl);
       } catch (error) {
         setErr("Failed to fetch profile image.");
-        console.log(error);
+        //console.log(error);
       }
     };
     fetchProfile();
@@ -130,7 +130,7 @@ function ProfileImg({ loggedUserName }: { loggedUserName: string }): JSX.Element
             className="w-full px-4 py-2 text-left text-[#FFB700] hover:bg-[#1CBABA]/30 cursor-pointer rounded-b-xl"
             onClick={async () => {
               setMenuOpen(false);
-              console.log("Logout clicked");
+              //console.log("Logout clicked");
               let response = await fetchWithAuth("/api/auth/logout", {
                 method: "DELETE",
               });
@@ -185,7 +185,7 @@ function Logo(): JSX.Element {
 //   useEffect(() => {
 //     const handler = setTimeout(() => {
 //       setSearchQuery(inputValue); // set debounced value
-//       console.log("Search Query:", inputValue); // now it logs
+//       //console.log("Search Query:", inputValue); // now it logs
 //     }, 1000);
 
 //     return () => {
@@ -280,7 +280,7 @@ function SearchForm(): JSX.Element {
           setShowDropdown(true);
         }
       } catch (err) {
-        console.error(err);
+        //console.error(err);
         setFilteredUsers([]);
         setShowDropdown(true);
       } finally {

@@ -14,13 +14,13 @@ import { rooms, localRooms  } from "../game/GameManager";
 export default async function socketManager(io: Server) {
   
   io.on("connection", (socket: Socket) => {
-    console.log(chalk.green(`Client connected to main namespace: ${socket.id}`));
+    //console.log(chalk.green(`Client connected to main namespace: ${socket.id}`));
   });
   
   const remote = io.of("/games/parchisi/online");
   const local = io.of("/games/parchisi/local");
   remote.on("connection", (socket: Socket) => {
-    console.log(chalk.green(`Client connected: ${socket.id}`));
+    //console.log(chalk.green(`Client connected: ${socket.id}`));
     /**
      * When a player creates a new game
      */
@@ -39,7 +39,7 @@ export default async function socketManager(io: Server) {
       rooms.set(gameId, room); // remove old room if there is only one player or game over or host leave or all players leave
       //check if the player name is already in this game or other games
       
-      console.log(chalk.blue(`Game created with ID: ${gameId} by ${data.username} --> remote game`));
+      //console.log(chalk.blue(`Game created with ID: ${gameId} by ${data.username} --> remote game`));
       // Join creator into room
       socket.join(room.id);
 
@@ -156,7 +156,7 @@ export default async function socketManager(io: Server) {
       const room = rooms.get(data.gameId);
       if (!room)
       {
-        console.log(chalk.red(`Game not found: ${data.gameId}`));
+        //console.log(chalk.red(`Game not found: ${data.gameId}`));
         socket.emit("error", { message: "Game not found" });
         return;
       }
@@ -195,7 +195,7 @@ export default async function socketManager(io: Server) {
               color: room.currentPlayer.color,
             })
           const id = room.id;
-          console.log(chalk.red(`Cleaning up game ${id}`));
+          //console.log(chalk.red(`Cleaning up game ${id}`));
           room.destroy();
           rooms.delete(id);
       }
@@ -220,14 +220,14 @@ export default async function socketManager(io: Server) {
             color: room.currentPlayer.color,
         });
           const id = room.id;
-          console.log(chalk.red(`Cleaning up game ${id}`));
+          //console.log(chalk.red(`Cleaning up game ${id}`));
           room.destroy();
           rooms.delete(id);
       }
     });
     
     socket.on("leaveLobby", (data: { lobbyId: string }) => {
-      console.log(chalk.red(`Player leaving lobby: ${socket.id}`));
+      //console.log(chalk.red(`Player leaving lobby: ${socket.id}`));
       const room = rooms.get(data.lobbyId);
       if (!room) return;
       const playerIndex = room.players.findIndex(
@@ -238,17 +238,17 @@ export default async function socketManager(io: Server) {
         room.players.splice(playerIndex, 1);
         room.sockets.delete(player.id);
         room.broadcast("removePlayer", { id: player.id });
-        console.log(chalk.red(`Player ${player.userName} left game ${data.lobbyId}`));
+        //console.log(chalk.red(`Player ${player.userName} left game ${data.lobbyId}`));
         // If the host leaves, room should be deleted, and all players notified
 
         if (playerIndex === 0 || room.players.length === 0) {
           room.broadcast("lobbyClosed", { message: "Room destroyed by host" });
           if (playerIndex === 0){
-          console.log(chalk.red(`Host has left the lobby. Lobby is closed`));
+          //console.log(chalk.red(`Host has left the lobby. Lobby is closed`));
           }
           else if (room.players.length === 0)
           {
-          console.log(chalk.red(`Game ${data.lobbyId} deleted (no players left).`));
+          //console.log(chalk.red(`Game ${data.lobbyId} deleted (no players left).`));
           }
           rooms.delete(data.lobbyId);
         } else {
@@ -267,7 +267,7 @@ export default async function socketManager(io: Server) {
     });
     
     socket.on("disconnect", async () => {
-      console.log(chalk.red(`Client disconnected: ${socket.id}`));
+      //console.log(chalk.red(`Client disconnected: ${socket.id}`));
     
       for (const [id, room] of rooms) {
         // Try to find the player belonging to this socket
@@ -287,9 +287,9 @@ export default async function socketManager(io: Server) {
         room.sockets.delete(player.id);
     
         room.broadcast("removePlayer", { id: player.id });
-        console.log(chalk.red(`Player ${player.userName} removed from game ${id}`));
+        //console.log(chalk.red(`Player ${player.userName} removed from game ${id}`));
     
-        console.log(
+        //console.log(
           chalk.red(
             `Checking ==> Players left in game ${id}: ${room.players.length}`
           )
@@ -315,7 +315,7 @@ export default async function socketManager(io: Server) {
     
           room.destroy();
           rooms.delete(id);
-          console.log(chalk.red(`Game ${id} deleted (winner declared).`));
+          //console.log(chalk.red(`Game ${id} deleted (winner declared).`));
           break;
         }
       
@@ -328,12 +328,12 @@ export default async function socketManager(io: Server) {
           room.destroy();
           rooms.delete(id);
     
-          console.log(chalk.red(`Game ${id} deleted (no players left or host left).`));
+          //console.log(chalk.red(`Game ${id} deleted (no players left or host left).`));
           break;
         }
         if (!room.gamestarted)
         {
-          console.log(chalk.red(`A player has left the lobby. Lobby -1`));
+          //console.log(chalk.red(`A player has left the lobby. Lobby -1`));
           room.broadcast("lobbyUpdate", {
             gameId: room.id,
             hostId: room.sockets.get(room.players[0].id)?.id, // assume first player is host
@@ -356,7 +356,7 @@ export default async function socketManager(io: Server) {
 
 
   local.on("connection", (socket: Socket) => {
-    console.log(chalk.yellow(`Client connected locally: ${socket.id}`));
+    //console.log(chalk.yellow(`Client connected locally: ${socket.id}`));
 
     socket.on("createGame", (data: {playersnumber:number}) => {
       const gameId = randomUUID(); // generate unique game id
@@ -392,7 +392,7 @@ export default async function socketManager(io: Server) {
               color: room.currentPlayer.color,
             });
           const id = room.id;
-          console.log(chalk.red(`Cleaning up game ${id}`));
+          //console.log(chalk.red(`Cleaning up game ${id}`));
           room.destroy();
           localRooms.delete(id);
       }
@@ -415,13 +415,13 @@ export default async function socketManager(io: Server) {
       await room.handleMovePiece(data.sphere_id, data.sphere_type, data.choice);
        
       if (room.gameOver) {
-        console.log("game over detected in moveRequest");
+        //console.log("game over detected in moveRequest");
         room.broadcast("gameOver", {
             winner: room.currentPlayer.userName,
             color: room.currentPlayer.color,
         });
           const id = room.id;
-          console.log(chalk.red(`Cleaning up game ${id}`));
+          //console.log(chalk.red(`Cleaning up game ${id}`));
           room.destroy();
           localRooms.delete(id);
       }
@@ -431,7 +431,7 @@ export default async function socketManager(io: Server) {
     //still need to hundle if the game is over
 
     socket.on("disconnect", () => {
-      console.log(chalk.red(`Client disconnected: ${socket.id}`));
+      //console.log(chalk.red(`Client disconnected: ${socket.id}`));
 
       // find the room this socket belongs to
       for (const [id, room] of localRooms) {
@@ -439,7 +439,7 @@ export default async function socketManager(io: Server) {
           socket.emit("lobbyClosed", { message: "Room destroyed by host" });
           room.destroy();
           localRooms.delete(id);
-          console.log(chalk.magenta(`Local Game ${id} deleted (no players left).`));
+          //console.log(chalk.magenta(`Local Game ${id} deleted (no players left).`));
           break;
         }
       }

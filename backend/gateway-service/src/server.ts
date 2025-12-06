@@ -10,7 +10,7 @@ import dotenv from "dotenv"
 dotenv.config();
 
 if (!process.env.JWT_SECRETS) {
-  console.error("JWT_SECRETS is not defined in environment variables.");
+  //console.error("JWT_SECRETS is not defined in environment variables.");
   process.exit(1);
 }
 
@@ -197,8 +197,8 @@ fastify.register(fastifyHttpProxy, {
   preHandler: (request, reply, done) => {
     // rewrite the prefix for parcheesi namespaces
     const namespace = request.url.split("/")[3]; // e.g., "online" or "local"
-    console.log("Parcheesi namespace requested:", namespace);
-    console.log("Original URL:", request.url);
+    //console.log("Parcheesi namespace requested:", namespace);
+    //console.log("Original URL:", request.url);
     done();
   },
   upstream: SERVICES.parcheesi_service,
@@ -217,7 +217,7 @@ fastify.register(fastifyHttpProxy, {
 const start = async () => {
   try {
     await fastify.listen({ port: 5006, host: "0.0.0.0" });
-    console.log("🚀 Gateway running at http://localhost:8080");
+    //console.log("🚀 Gateway running at http://localhost:8080");
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

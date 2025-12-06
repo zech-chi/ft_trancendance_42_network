@@ -58,7 +58,7 @@ export default function InviteToPlay() {
       }
 
       const data = await response.json();
-      console.log("Fetched friends data:", data);
+      //console.log("Fetched friends data:", data);
       if (Array.isArray(data)) {
         setFriends(data);
       } else if (Array.isArray(data.friends)) {
@@ -67,7 +67,7 @@ export default function InviteToPlay() {
         setFriends([]);
       }
     } catch (error) {
-      console.error("Error fetching friends:", error);
+      //console.error("Error fetching friends:", error);
     }
   };
 
@@ -92,7 +92,7 @@ export default function InviteToPlay() {
     }
       async function checkAuth() {
           const user = await fetchUser();
-          console.log("Fetched user:", user);
+          //console.log("Fetched user:", user);
           if (!user || !user.userName) {
               setLoggedUserName(null);
               setLoggedUserId(0);
@@ -124,18 +124,18 @@ export default function InviteToPlay() {
   // const handleInvite = (friendId: number) => {
   //   // Vérifier si une invitation est déjà en cours pour cet ami
   //   const currentState = getInviteStatus(friendId);
-  //   console.log(`🎯 Attempting to invite friend ${friendId}, current state:`, currentState.status);
+  //   //console.log(`🎯 Attempting to invite friend ${friendId}, current state:`, currentState.status);
     
   //   if (currentState.status !== 'idle') {
-  //     console.log(`⚠️ Invitation already in progress for friend ${friendId}:`, currentState.status);
+  //     //console.log(`⚠️ Invitation already in progress for friend ${friendId}:`, currentState.status);
   //     return; // Empêcher les clics multiples
   //   }
     
   //   // Marquer comme "sending" immédiatement
-  //   console.log(`🔄 Setting state to 'sending' for friend ${friendId}`);
+  //   //console.log(`🔄 Setting state to 'sending' for friend ${friendId}`);
   //   updateInviteStatus(friendId, 'sending');
     
-  //   console.log(`📤 Emitting send_invite event for friend ${friendId}`);
+  //   //console.log(`📤 Emitting send_invite event for friend ${friendId}`);
   //   socket?.emit("send_invite", {
   //     from: loggedUserId,
   //     fromName: loggedUserName,
@@ -160,7 +160,7 @@ export default function InviteToPlay() {
         updateInviteStatus,
       });
     } else {
-      console.error("loggedUserId is null, cannot send invite.");
+      //console.error("loggedUserId is null, cannot send invite.");
     }
   };
 
@@ -169,7 +169,7 @@ export default function InviteToPlay() {
     
     // Only cancel if there's actually a pending invitation
     if (currentState.status === 'pending' && currentState.inviteId) {
-      console.log(`❌ Cancelling invitation ${currentState.inviteId} to friend ${friendId}`);
+      //console.log(`❌ Cancelling invitation ${currentState.inviteId} to friend ${friendId}`);
       
       // Send cancel request to backend
       socket?.emit("cancel_invite", {

@@ -45,7 +45,7 @@ server.addHook('preHandler', async (request: any, reply: any) => {
         // Parse the JSON string sent by the Gateway
         request.user = JSON.parse(userData as string);
       } catch (err) {
-        console.error("Failed to parse user data from gateway", err);
+        //console.error("Failed to parse user data from gateway", err);
         request.user = null;
       }
     }
@@ -56,5 +56,5 @@ server.register(ProfileRoutes, {prefix: 'api/settings'});
 const PORT = 5004;
 
 server.listen({ port: PORT, host: '0.0.0.0' }).then(() => {
-  console.log(`Server running at http://localhost:${PORT}`);     
+  //console.log(`Server running at http://localhost:${PORT}`);     
 });

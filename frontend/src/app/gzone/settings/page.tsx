@@ -617,7 +617,7 @@ function Settings() {
 
   // load the image from local storage if it exists
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log("Image upload triggered ------>", event.target.files);
+    //console.log("Image upload triggered ------>", event.target.files);
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > MAX_IMAGE_SIZE) {
@@ -631,7 +631,7 @@ function Settings() {
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        console.log("Image loaded successfully ------>", reader.result);
+        //console.log("Image loaded successfully ------>", reader.result);
         setImgSrc(reader.result as string);
         setNewProfileFile(file);
       };
@@ -640,7 +640,7 @@ function Settings() {
   };
 
   const handleSave = async () => {
-    console.log("Save button clicked");
+    //console.log("Save button clicked");
     const formData = new FormData();
     let hasChanges = false;
 
@@ -729,7 +729,7 @@ function Settings() {
       setFullName(fullName);
       setBioText(bioText);
     } catch (err: any) {
-      console.error("Error saving profile:", err);
+      //console.error("Error saving profile:", err);
       setPopupMessage(err.message || "Something went wrong during save!");
       setPopupType("error");
       setShowPopup(true);
@@ -740,7 +740,7 @@ function Settings() {
   useEffect(() => {
     if (textareaRef.current) {
       const el = textareaRef.current;
-      // console.log(el, el.scrollHeight);
+      // //console.log(el, el.scrollHeight);
       el.style.height = "auto"; // Reset height to shrink if needed
       el.style.height = `${el.scrollHeight}px`; // Set height to content height
     }
@@ -757,7 +757,7 @@ function Settings() {
           throw new Error("Failed to fetch user data");
         }
         const data = await response.json();
-        console.log("Fetched user data:", data);
+        //console.log("Fetched user data:", data);
 
         // Assuming the backend returns an object with keys: email, language, bio, imageUrl, fullName, userName
         setFullName(data.user.fullName || "mkyn walo");
@@ -772,7 +772,7 @@ function Settings() {
           bioText: data.user.bio || "mkyn walo",
         };
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        //console.error("Error fetching user data:", error);
         setPopupMessage("Error fetching user data");
         setPopupType("error");
         setShowPopup(true);

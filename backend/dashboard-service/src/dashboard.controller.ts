@@ -95,7 +95,7 @@ export async function fetchSearchUserHandler(
             return { users: [] };
         }
 
-        console.log("data from db service: ", data);
+        //console.log("data from db service: ", data);
 
         return { users: data.users || [] };
 
@@ -121,7 +121,7 @@ export async function fetchRadarDataHandler(
         }
 
         const data = await response.json();
-        console.log("data from db service: ", data);
+        //console.log("data from db service: ", data);
 
         if (data.status === "ko") {
             reply.status(404).send({ message: "Radar data not found" });
@@ -148,7 +148,7 @@ export async function fetchFriendsByStatusHandler(
     try {
         const response = await fetch(`http://db-service:5000/api/dashboard/friends/${userId}?status=${encodeURIComponent(status)}`);
 
-        console.log("response status from friends service: ", response.status, userId, status);
+        //console.log("response status from friends service: ", response.status, userId, status);
         if (!response.ok) {
             reply.status(404).send({ message: "No friends found" });
             return { friends: [] };
@@ -161,7 +161,7 @@ export async function fetchFriendsByStatusHandler(
             return { friends: [] };
         }
 
-        console.log("data from friends service: ", data);
+        //console.log("data from friends service: ", data);
 
         return { friends: data.friends || [] };
 
@@ -182,7 +182,7 @@ export async function fetchFriendsBySentHandler(
     try {
         const response = await fetch(`http://db-service:5000/api/dashboard/friends/sentrequest/${userId}?status=${encodeURIComponent(status)}`);
 
-        console.log("response status from friends service: ", response.status, userId, status);
+        //console.log("response status from friends service: ", response.status, userId, status);
         if (!response.ok) {
             reply.status(404).send({ message: "No friends found" });
             return { friends: [] };
@@ -195,7 +195,7 @@ export async function fetchFriendsBySentHandler(
             return { friends: [] };
         }
 
-        console.log("data from friends service: ", data);
+        //console.log("data from friends service: ", data);
 
         return { friends: data.friends || [] };
 
@@ -346,7 +346,7 @@ export async function fetchChartsDataHandler(
         }
 
         const data = await response.json();
-        console.log("data from db service: ", data);
+        //console.log("data from db service: ", data);
 
         if (data.status === "ko") {
             reply.status(404).send({ message: "Charts data not found" });
@@ -383,7 +383,7 @@ export async function fetchFriendshipStatusHandler(
             return { status: "none" };
         }
 
-        console.log("data from friends service: ", data);
+        //console.log("data from friends service: ", data);
 
         return { status: data.status || "none", blocked_by: data.blocked_by || null };
 
@@ -407,7 +407,7 @@ export async function fetchRankDataHandler(
         }
 
         const data = await response.json();
-        console.log("data from db service:", data);
+        //console.log("data from db service:", data);
 
         if (Array.isArray(data)) {
             const normalized = data.map(user => ({
@@ -421,7 +421,7 @@ export async function fetchRankDataHandler(
         return [];
 
     } catch (error) {
-        console.error("Error fetching rank data:", error);
+        //console.error("Error fetching rank data:", error);
         reply.status(400).send({ message: "something went wrong!" });
         return [];
     }
@@ -446,7 +446,7 @@ export async function fetchGamesHandler(
       }
   
       const data = await response.json();
-      console.log("data from DB service:", data);
+      //console.log("data from DB service:", data);
   
       // normalize array
       if (Array.isArray(data)) {
@@ -463,7 +463,7 @@ export async function fetchGamesHandler(
       return [];
   
     } catch (error) {
-      console.error("fetchGamesHandler error:", error);
+      //console.error("fetchGamesHandler error:", error);
       reply.status(400).send({ message: "something went wrong!" });
       return [];
     }
@@ -483,7 +483,7 @@ export async function fetchNumPlayersHandler(
         }
 
         const data = await response.json();
-        console.log("data from db service:", data);
+        //console.log("data from db service:", data);
 
         if (typeof data.numPlayers === "number") {
             return { numPlayers: data.numPlayers };
@@ -493,7 +493,7 @@ export async function fetchNumPlayersHandler(
         return { numPlayers: 0 };
 
     } catch (error) {
-        console.error("Error fetching number of players:", error);
+        //console.error("Error fetching number of players:", error);
         reply.status(400).send({ message: "something went wrong!" });
         return { numPlayers: 0 };
     }
@@ -515,7 +515,7 @@ export async function fetchCalendarDataHandler(
         }
 
         const data = await response.json();
-        console.log("data from db service: ", data);
+        //console.log("data from db service: ", data);
 
         if (data.status === "ko") {
             reply.status(404).send({ message: "Calendar data not found" });

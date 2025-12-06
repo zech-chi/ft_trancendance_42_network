@@ -12,10 +12,10 @@ import { WinnerOBJ } from "./types";
 
 
 export function registerTournamentEvents(socket: Socket, tournamentSystem: TournamentSystem, io: SocketIOServer) {
-  console.log("🎮 Registering tournament events for:", socket.id);
+  //console.log("🎮 Registering tournament events for:", socket.id);
 
   socket.on("create_tournament", async (obj : CreateTournamentOBJ) => {
-    console.log("🏆 Tournament creation requested");
+    //console.log("🏆 Tournament creation requested");
     if (!tournamentSystem.isValidTournamentName(obj.name)) {
       socket.emit("created_tournament", { message: "Failed to create tournament, name already taken or empty" });
       return;
@@ -33,7 +33,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
         io
     );
     const res : {status : boolean, message: string}= tournamentSystem.addPlayerToTournament(tournament.getId(), obj.createdBy, socket);
-    console.log("Auto-joining creator to tournament:", res);
+    //console.log("Auto-joining creator to tournament:", res);
     if (res.status) {
       io.to(tournament.getId()).emit("joined_tournament", {
         message: res.message,
@@ -43,7 +43,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
         newUserJoinedId: obj.createdBy,
         allPlayersJoinedIds: tournamentSystem.getTournament(tournament.getId())?.getJoinedPlayersIds() || []
       });
-      console.log("Player who created tournament joined:", obj.createdBy);
+      //console.log("Player who created tournament joined:", obj.createdBy);
     } else {
         socket.emit("joined_tournament", { status: false, message: res.message });
     }
@@ -52,7 +52,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
   });
 
   socket.on("get_all_available_public_tournaments", async () => {
-    console.log("📋 Fetching all available public tournaments");
+    //console.log("📋 Fetching all available public tournaments");
     const publicTournaments = tournamentSystem.getAllPublicTournaments();
     // send Id and Name and joinded only to reduce data size
     socket.emit("all_available_public_tournaments", { tournaments: publicTournaments.map(t => ({ id: t.getId(),
@@ -63,7 +63,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
   });
 
   socket.on("join_tournament", async (obj : JoinedPlayerOBJ) => {
-    console.log("👥 Player Want to Join:", obj);
+    //console.log("👥 Player Want to Join:", obj);
     const res : {status: boolean, message: string} = tournamentSystem.addPlayerToTournament(obj.tournamentId, obj.playerId, socket);
     if (res.status) {
         io.to(obj.tournamentId).emit("joined_tournament", {
@@ -80,7 +80,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
   });
 
   socket.on("canWeStartTournament", async (obj : TournamentID) => {
-    console.log("🚀 Checking if tournament can start");
+    //console.log("🚀 Checking if tournament can start");
     // Here you would typically check if the tournament can start
     if (tournamentSystem.canWeStartTournament(obj.tournamentId)) {
       io.to(obj.tournamentId).emit("tournament_started", { message: "Tournament started!" }, );
@@ -89,7 +89,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
       // and player at index 2 vs player at index 3  join Room1 as spectators
       // and so on...
 
-      console.log("1 ->>>>> tournament id : ", obj.tournamentId);
+      //console.log("1 ->>>>> tournament id : ", obj.tournamentId);
       
 
       createTornamentGame(
@@ -103,7 +103,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
   });
 
   socket.on("canWeStartFinal", async (obj : TournamentID) => {
-    console.log("🚀 Checking if tournament can start");
+    //console.log("🚀 Checking if tournament can start");
     // Here you would typically check if the tournament can start
     if (tournamentSystem.canWeStartFinal(obj.tournamentId)) {
       io.to(obj.tournamentId).emit("tournament_started", { message: "Tournament started!" }, );
@@ -112,7 +112,7 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
       // and player at index 2 vs player at index 3  join Room1 as spectators
       // and so on...
       // give some time for players to get ready
-      console.log("1 ->>>>> tournament id : ", obj.tournamentId);
+      //console.log("1 ->>>>> tournament id : ", obj.tournamentId);
       createTornamentGameFinal(
         obj.tournamentId,
         tournamentSystem,
@@ -124,9 +124,9 @@ export function registerTournamentEvents(socket: Socket, tournamentSystem: Tourn
 });  
 
 socket.on("winner_of_round1", async (obj : WinnerOBJ) => {
-  console.log("🏅 Winner reported for tournament:", obj);
+  //console.log("🏅 Winner reported for tournament:", obj);
   tournamentSystem.addPlayertofinal(obj.tournamentId, obj.winnerId, socket);
-  console.log(" final players so far: ", tournamentSystem.getTournament(obj.tournamentId)?.getFinalPlayersIds());
+  //console.log(" final players so far: ", tournamentSystem.getTournament(obj.tournamentId)?.getFinalPlayersIds());
   const finalPlayerIds = tournamentSystem.getTournament(obj.tournamentId)?.getFinalPlayersIds();
     io.to(obj.tournamentId).emit("winner_reported_round1", {
       message: `Winner ${obj.winnerId} reported for tournament ${obj.tournamentId}`,
@@ -137,17 +137,17 @@ socket.on("winner_of_round1", async (obj : WinnerOBJ) => {
 
 socket.on("laddies_and_gentlemen_we_have_a_winner", async (obj : WinnerOBJ) => {
   if (!tournamentSystem.getTournament(obj.tournamentId)) {
-    console.log("Tournament not found:", obj.tournamentId);
+    //console.log("Tournament not found:", obj.tournamentId);
     return;
   }
 
   const finalPlayerIds = tournamentSystem.getTournament(obj.tournamentId)?.getFinalPlayersIds();
   if (finalPlayerIds?.length !== 2) {
-    console.log("tournament not done yet! to announce winner:", obj.tournamentId);
+    //console.log("tournament not done yet! to announce winner:", obj.tournamentId);
     return ;
   }
 
-  console.log("🏆🏆🏆🏆 Tournament Winner announced:", obj.winnerId);
+  //console.log("🏆🏆🏆🏆 Tournament Winner announced:", obj.winnerId);
   // set winnerId,
   tournamentSystem.setTournamentWinner(obj.tournamentId, obj.winnerId);
   io.to(obj.tournamentId).emit("catch_the_winner", {
@@ -158,7 +158,7 @@ socket.on("laddies_and_gentlemen_we_have_a_winner", async (obj : WinnerOBJ) => {
 
 
 socket.on("touranment_finished", async (obj : TournamentID) => {
-  console.log("🧹 Cleaning up tournament:", obj.tournamentId);
+  //console.log("🧹 Cleaning up tournament:", obj.tournamentId);
   tournamentSystem.removeTournament(obj.tournamentId);
 });
 
@@ -166,12 +166,12 @@ socket.on("touranment_finished", async (obj : TournamentID) => {
 // if player disconnects, it will be removed from the tournament
 // cancel the tournament if it has not started yet
   socket.on("disconnect", () => {
-    console.log("❌ Socket disconnected:", socket.id);
+    //console.log("❌ Socket disconnected:", socket.id);
     // cancel any tournament that this player created if it has not started yet
     const tournamentId : string = tournamentSystem.handlePlayerDisconnect(socket);
     if (tournamentId !== "") {
       io.to(tournamentId).emit("tournament_cancelled", { message: "Tournament cancelled due to player disconnect." });
-      console.log("Tournament cancelled due to player disconnect:", tournamentId);
+      //console.log("Tournament cancelled due to player disconnect:", tournamentId);
       tournamentSystem.removeTournament(tournamentId);
     }
 
@@ -182,12 +182,12 @@ socket.on("touranment_finished", async (obj : TournamentID) => {
 
 
 //   socket.on("join_tournament", (data) => {
-//     console.log("👥 Player joined tournament:", data);
+//     //console.log("👥 Player joined tournament:", data);
 //     socket.emit("joined_tournament", { message: "Joined successfully" });
 //   });
 
 //   socket.on("start_tournament", (data) => {
-//     console.log("🚀 Starting tournament:", data);
+//     //console.log("🚀 Starting tournament:", data);
 //     socket.emit("tournament_started", { message: "Tournament started!" });
 //   });
 

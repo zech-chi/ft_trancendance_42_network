@@ -15,7 +15,7 @@ export default async function routesDashboard(fastify: FastifyInstance) {
         try {
             const stmt = db.prepare("SELECT * from users");
             const users = stmt.all();
-            console.log(users);
+            //console.log(users);
             return { status: "ok", message: "Hello from DB service!", users: users };
         } catch (err) {
             reply.status(400).send({ success: "hell nah", message: "Error occurred" });
@@ -108,8 +108,8 @@ export default async function routesDashboard(fastify: FastifyInstance) {
             const { userId } = request.params;
             const { status } = request.query;
     
-            console.log("request params: ", request.params);
-            console.log("request query: ", request.query);
+            //console.log("request params: ", request.params);
+            //console.log("request query: ", request.query);
     
             let stmt;
             let params: any[] = [];
@@ -152,8 +152,8 @@ export default async function routesDashboard(fastify: FastifyInstance) {
             const { userId } = request.params;
             const { status } = request.query;
     
-            console.log("request params: ", request.params);
-            console.log("request query: ", request.query);
+            //console.log("request params: ", request.params);
+            //console.log("request query: ", request.query);
     
             let stmt;
             let params: any[] = [];
@@ -494,7 +494,7 @@ export default async function routesDashboard(fastify: FastifyInstance) {
                 return reply.send(response);
 
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 return reply.code(400).send({ error: "❌ Error fetching calendar data" });
             }
         }

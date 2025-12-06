@@ -13,7 +13,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}): Pro
 
   // If we get a 401 or 403, try to refresh the token
   if (response.status === 401 || response.status === 403) {
-    console.log('Access token expired. Attempting refresh...');
+    //console.log('Access token expired. Attempting refresh...');
 
     // Try to refresh the token
     const refreshRes = await fetch('/api/auth/refresh', {
@@ -32,7 +32,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}): Pro
       throw new Error('Session expired. Please login again.');
     }
 
-    console.log('Access token refreshed. Retrying request...');
+    //console.log('Access token refreshed. Retrying request...');
     
     // Retry the original request with the new token
     response = await fetch(url, fetchOptions);

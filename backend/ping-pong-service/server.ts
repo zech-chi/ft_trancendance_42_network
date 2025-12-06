@@ -31,14 +31,14 @@ fastify.get('/', async () => {
 
 const start = async () => {
   try {
-    console.log("🚀 Starting Fastify server...");
+    //console.log("🚀 Starting Fastify server...");
     await fastify.ready();
-    console.log("✅ Fastify ready, initializing socket...");
+    //console.log("✅ Fastify ready, initializing socket...");
     SocketFunction(fastify);
-    console.log("✅ Socket initialized, starting server...");
-    fastify.listen({port:5500, host: "0.0.0.0"},() =>{console.log('🚀 Serveur lancé sur http://localhost:5500');});
+    //console.log("✅ Socket initialized, starting server...");
+    fastify.listen({port:5500, host: "0.0.0.0"},() =>{//console.log('🚀 Serveur lancé sur http://localhost:5500');});
   } catch (err) {
-   console.error("❌ Server startup error:", err);
+   //console.error("❌ Server startup error:", err);
    fastify.log.error(err);
     process.exit(1);
   }

@@ -28,7 +28,7 @@ export default async function routesSettings(fastify: FastifyInstance) {
                 user: user,
             };
         } catch (err) {
-            console.error(err);
+            //console.error(err);
             reply.code(400);
             return { success: false, error: "something went wrong try again later!" };
         }
@@ -63,14 +63,14 @@ export default async function routesSettings(fastify: FastifyInstance) {
         // const invalidFields = updates.filter((field: string) => allowedFields.includes(field));
         
         // if (invalidFields.length > 0) {
-        //     console.error("=========> Attempt to update invalid fields:", invalidFields);
+        //     //console.error("=========> Attempt to update invalid fields:", invalidFields);
         //     reply.code(400);
         //     return { success: false, error: `Invalid fields: ${invalidFields.join(', ')}. Cannot update other protected fields through this endpoint.` };
         // }
 
-        console.log("Updates:", updates);
-        console.log("Values:", values);
-        console.log("==========> UserID:", userId); 
+        //console.log("Updates:", updates);
+        //console.log("Values:", values);
+        //console.log("==========> UserID:", userId); 
         
         try {
             // Check if user exists first
@@ -102,7 +102,7 @@ export default async function routesSettings(fastify: FastifyInstance) {
             };
 
         } catch (err) {
-            console.error("Error updating user profile:", err);
+            //console.error("Error updating user profile:", err);
             reply.code(400);
             return { success: false, error: "Something went wrong, please try again later!" };
         }

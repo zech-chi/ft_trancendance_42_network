@@ -115,7 +115,7 @@ export function useCall(currentUserId: number | null, currentName: string) {
       }, CALL_TIMEOUT); // 15 seconds timeout
 
     } catch (error) {
-      console.error("Failed to start call:", error);
+      //console.error("Failed to start call:", error);
       closeCall();
     }
   }, [socket, currentUserId, createPeerConnection, closeCall]);
@@ -152,7 +152,7 @@ export function useCall(currentUserId: number | null, currentName: string) {
       // alert("Call answered successfully." + isCallStarted);
       // setIncomingCall(null); // Clear the incoming call notification
     } catch (error) {
-      // console.error("Failed to answer call:", error);
+      // //console.error("Failed to answer call:", error);
       closeCall();
     }
   }, [socket, incomingCall, currentUserId, createPeerConnection, closeCall]);
@@ -194,13 +194,13 @@ export function useCall(currentUserId: number | null, currentName: string) {
       peerConnectionRef.current?.addIceCandidate(new RTCIceCandidate(data.candidate));
     };
     const handleCallRejected = () => {
-      // console.log("Call was rejected by the other user.");
+      // //console.log("Call was rejected by the other user.");
       clearCallTimeout();
       closeCall();
     };
 
     const handleEndCall = (data: { from: string }) => {
-      // console.log("++++++++++=======> Call ended by the other user.", data.from);
+      // //console.log("++++++++++=======> Call ended by the other user.", data.from);
       if (activePeerIdRef.current == data.from || activePeerIdRef.current === null) {
         closeCall();
       }
@@ -208,7 +208,7 @@ export function useCall(currentUserId: number | null, currentName: string) {
 
     const handleBeforeUnload = () => {
       // Check if this user is in an active call
-      // console.log("=======> Handling beforeunload event.");
+      // //console.log("=======> Handling beforeunload event.");
       const peerId = activePeerIdRef.current;
       if (peerId) {
         // If so, send a final "end-call" message to the other user.
@@ -219,7 +219,7 @@ export function useCall(currentUserId: number | null, currentName: string) {
 
     const handleCallAccepted = (data: { from: string, to?: string }) => {
       // Another session of this user accepted the call — clear incoming UI in this session
-      // console.log('call accepted event received', data);
+      // //console.log('call accepted event received', data);
       setIncomingCall(null);
       // Do NOT set this session to active — only the answering session should become active
     };

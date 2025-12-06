@@ -51,7 +51,7 @@ function Messages({ messagesList, messagesEndRef, setLightboxImageUrl, message, 
 
 
       if (!deletingMessageId) return;
-      // console.log("Confirmed deletion for message ID:", deletingMessageId);
+      // //console.log("Confirmed deletion for message ID:", deletingMessageId);
 
       // fetch request to delete the message
       const result = await fetchWithAuth(`/api/chat/deletemsg/${deletingMessageId}`, {
@@ -66,7 +66,7 @@ function Messages({ messagesList, messagesEndRef, setLightboxImageUrl, message, 
       });
 
       if (!result.ok) {
-        // console.error("Failed to delete message:", result.statusText);
+        // //console.error("Failed to delete message:", result.statusText);
         setMessage("Failed to delete message");
         return;
       }
@@ -77,7 +77,7 @@ function Messages({ messagesList, messagesEndRef, setLightboxImageUrl, message, 
       );
 
     } catch (error) {
-      // console.error("Error deleting message:", error);
+      // //console.error("Error deleting message:", error);
       setMessage("Error deleting message");
     } finally {
       // Reset the state to hide the confirmation dialog
@@ -111,7 +111,7 @@ function Messages({ messagesList, messagesEndRef, setLightboxImageUrl, message, 
       }
 
       const { time } = await res.json();
-      // console.log("Message updated successfully:", time);
+      // //console.log("Message updated successfully:", time);
 
       // --- Update Local State ---
       setMessageList(prev =>
@@ -119,7 +119,7 @@ function Messages({ messagesList, messagesEndRef, setLightboxImageUrl, message, 
       );
 
     } catch (error) {
-      // console.error("Error updating message:", error);
+      // //console.error("Error updating message:", error);
       setMessage("Failed to update message.");
     } finally {
       setEditingMessage(null); // Exit editing mode
@@ -151,7 +151,7 @@ function Messages({ messagesList, messagesEndRef, setLightboxImageUrl, message, 
     const previousScrollTop = container.scrollTop;
 
     try {
-      // console.log("Fetching older messages with offset:", offset);
+      // //console.log("Fetching older messages with offset:", offset);
 
       const res = await fetchWithAuth(ApiRoutes.getMessages, {
         method: "POST",
@@ -167,13 +167,13 @@ function Messages({ messagesList, messagesEndRef, setLightboxImageUrl, message, 
       });
 
       if (!res.ok) {
-        // console.error("Failed to fetch older messages:", res.statusText);
+        // //console.error("Failed to fetch older messages:", res.statusText);
         setMessage("Failed to fetch older messages");
         return;
       }
 
       const result = await res.json();
-      // console.log("Fetched older messages:", result.messages);
+      // //console.log("Fetched older messages:", result.messages);
 
       if (result.messages.length === 0) {
         setHasMoreMessages(false); // No more messages to fetch
@@ -192,7 +192,7 @@ function Messages({ messagesList, messagesEndRef, setLightboxImageUrl, message, 
         }, 100); // Use a timeout to ensure the DOM updates before adjusting the scroll
       }
     } catch (error) {
-      // console.error("Error fetching older messages:", error);
+      // //console.error("Error fetching older messages:", error);
       setMessage("Error fetching older messages");
     }
   };

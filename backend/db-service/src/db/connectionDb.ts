@@ -25,13 +25,13 @@ function initDB(): DBType {
 
     return db;
   } catch (error) {
-    console.error("❌ DB Initialization Error:", error);
+    //console.error("❌ DB Initialization Error:", error);
     process.exit(1);
   }
 }
 
 const db = initDB();
-console.log("✅ Database initialized successfully at:", dbPath);
+//console.log("✅ Database initialized successfully at:", dbPath);
 
 export default db;
 

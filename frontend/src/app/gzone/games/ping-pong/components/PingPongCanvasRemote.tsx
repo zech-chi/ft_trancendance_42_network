@@ -221,7 +221,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
   useEffect(() => {
     return () => {
       if (socket && gameStatus === 'playing') {
-        console.log("📤 Client proactively leaving game room:", roomId);
+        //console.log("📤 Client proactively leaving game room:", roomId);
         socket.emit("leave_game", { roomId });
       }
     };
@@ -357,7 +357,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
   // UI Actions
   const handleLeaveGame = useCallback(() => {
     if (socket) {
-      console.log("🚪 User clicked 'Leave Game'. Emitting leave_game event.");
+      //console.log("🚪 User clicked 'Leave Game'. Emitting leave_game event.");
       socket.emit("leave_game", { roomId });
     }
     // setInviteState(prev => ({ ...prev, [userId]: true })); // Removed - using new invitation system
@@ -367,7 +367,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
 
   const startGameManually = useCallback(() => {
     if (socket) {
-      console.log("▶️ User clicked 'Start Game'. Emitting start_game event.");
+      //console.log("▶️ User clicked 'Start Game'. Emitting start_game event.");
       socket.emit("start_game", { roomId });
     }
   }, [socket, roomId]);
@@ -520,7 +520,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
       canvas.style.transform = `scale(${scale})`;
       canvas.style.transformOrigin = 'center center';
       
-      console.log(`🎮 Canvas scaled to: ${scale.toFixed(2)}x for ${deviceType} (${screenWidth}x${screenHeight})`);
+      //console.log(`🎮 Canvas scaled to: ${scale.toFixed(2)}x for ${deviceType} (${screenWidth}x${screenHeight})`);
     };
 
     handleResize();
@@ -539,7 +539,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
   useEffect(() => {
     if (!socket) return;
 
-    console.log("🎮 Attempting to join game room:", roomId);
+    //console.log("🎮 Attempting to join game room:", roomId);
     // setInviteState(prev => ({ ...prev, [userId]: false })); // Removed - using new invitation system
     socket.emit("join_game_room", { roomId });
 
@@ -580,11 +580,11 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
         if (!prev) return prev;
         return { ...prev, players: data.players };
       });
-      console.log(`Score updated. Scorer ID: ${data.scorer}`);
+      //console.log(`Score updated. Scorer ID: ${data.scorer}`);
     });
 
     socket.on("game_ended", (data: { winner?: Player; finalScore?: Player[]; reason?: string; disconnectedPlayer?: string; leftPlayer?: string ; tournamentId?: string }) => {
-      console.log("🛑 Game ended event received:", data);
+      //console.log("🛑 Game ended event received:", data);
       setGameStatus('finished');
       
       if (data.winner) {
@@ -605,13 +605,13 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
         // setInviteState(prev => ({ ...prev, [userId]: true })); // Removed - using new invitation system
         if (data.tournamentId) {
           socket.emit('laddies_and_gentlemen_we_have_a_winner', { tournamentId: data.tournamentId, winnerId: data.winner?.id });
-          console.log("the winner of round 1 is", data.winner?.id);
+          //console.log("the winner of round 1 is", data.winner?.id);
           setTimeout(() => {
             router.push(`/gzone/games/ping-pong/modes/tournament/${data.tournamentId}?round=2`);
             socket.emit('winner_of_round1', { tournamentId: data.tournamentId, winnerId: data.winner?.id });
           }, 3000);
         } else {
-          console.log("🚨 Redirecting to /gzone/games/ping-pong in 5 seconds...");
+          //console.log("🚨 Redirecting to /gzone/games/ping-pong in 5 seconds...");
           router.push('/gzone/games/ping-pong'); 
         }
       }, 5000);
@@ -619,18 +619,18 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
 
     // Handle forced leave when opponent leaves
     socket.on("force_leave_game", (data: { reason: string; message: string; timestamp: number }) => {
-      console.log("🚨 Force leave game event received:", data);
-      console.log("🚨 Current game status:", gameStatus);
-      console.log("🚨 Current location:", window.location.pathname);
+      //console.log("🚨 Force leave game event received:", data);
+      //console.log("🚨 Current game status:", gameStatus);
+      //console.log("🚨 Current location:", window.location.pathname);
       
       setGameStatus('finished');
       setWinner(null);
       setEndGameReason(data.message);
       
       // Immediately redirect without delay since opponent left
-      console.log("🚨 Redirecting to /gameMode in 2 seconds...");
+      //console.log("🚨 Redirecting to /gameMode in 2 seconds...");
       setTimeout(() => {
-        // console.log("🚨 Executing redirect to /gameMode");
+        // //console.log("🚨 Executing redirect to /gameMode");
         router.push('/gzone/games/ping-pong'); 
         // router.push('/gameMode');
       }, 2000); // Shorter delay for force leave
@@ -647,7 +647,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
         errorMessage = JSON.stringify(error);
       }
       
-      console.error("❌ Game error received:", errorMessage);
+      //console.error("❌ Game error received:", errorMessage);
       setEndGameReason(`Game Error: ${errorMessage}`);
       setGameStatus('finished');
       setTimeout(() => {

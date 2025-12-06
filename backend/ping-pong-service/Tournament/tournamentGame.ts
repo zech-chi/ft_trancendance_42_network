@@ -57,7 +57,7 @@ function generateInviteId(): string {
 
 function updateUserState(userId: number, state: 'available' | 'sending' | 'pending_response' | 'in_game') {
   userInvitationStates.set(userId, state);
-  console.log(`📋 User ${userId} state updated to: ${state}`);
+  //console.log(`📋 User ${userId} state updated to: ${state}`);
 }
 
 function getUserState(userId: number): 'available' | 'sending' | 'pending_response' | 'in_game' {
@@ -72,11 +72,11 @@ function cleanupInvitation(inviteId: string, fromUserId: number, toUserId: numbe
   updateUserState(fromUserId, 'available');
   updateUserState(toUserId, 'available');
   
-  console.log(`🧹 Cleaned up invitation ${inviteId} between users ${fromUserId} and ${toUserId}`);
+  //console.log(`🧹 Cleaned up invitation ${inviteId} between users ${fromUserId} and ${toUserId}`);
 }
 
 export async function  createTornamentGame(tournamentId: string, tournamentSystem: TournamentSystem, io: SocketIOServer ) {
-    console.log("2 ->>>>> tournament id : ", tournamentId);
+    //console.log("2 ->>>>> tournament id : ", tournamentId);
 
     // player at index 0 vs player at index 1 of joinedPlayers --> Room1
     // and player at index 2 vs player at index 3  join Room1 as spectators
@@ -84,22 +84,22 @@ export async function  createTornamentGame(tournamentId: string, tournamentSyste
 
     const tournament = tournamentSystem.getTournament(tournamentId);
     if (!tournament) {
-        console.error(`❌ Tournament with ID ${tournamentId} not found.`);
+        //console.error(`❌ Tournament with ID ${tournamentId} not found.`);
         return;
     }
     const joinedPlayers = tournament.getJoinedPlayersIds();
-    console.log("3 ->>>>> joinedPlayers : ", joinedPlayers);
+    //console.log("3 ->>>>> joinedPlayers : ", joinedPlayers);
     for (let i = 0; i < joinedPlayers.length; i += 2) {
         const player1Id = joinedPlayers[i];
         const player2Id = joinedPlayers[i + 1];
 
         // const roomId = `tournament-game-${tournamentId}-room-${i/2}-${uuidv4()}`;
-        // console.log(`🎮 Creating game room ${roomId} for players ${player1Id} and ${player2Id}`);
+        // //console.log(`🎮 Creating game room ${roomId} for players ${player1Id} and ${player2Id}`);
 
         // Here you would create the game room, initialize game state, etc.
         // For simplicity, we'll just emit an event to the players to join the room.
 
-        console.log(`🚀 Emitting tournament_game_starting to players ${player1Id}  ---------VS--------- ${player2Id} in tournament ${tournamentId}`);
+        //console.log(`🚀 Emitting tournament_game_starting to players ${player1Id}  ---------VS--------- ${player2Id} in tournament ${tournamentId}`);
         io.to(tournamentId).emit("tournament_game_starting", 
         {
           message: "Tournament game is starting!",
@@ -113,7 +113,7 @@ export async function  createTornamentGame(tournamentId: string, tournamentSyste
 
 
 export async function  createTornamentGameFinal(tournamentId: string, tournamentSystem: TournamentSystem, io: SocketIOServer ) {
-  console.log("2 ->>>>> tournament id : ", tournamentId);
+  //console.log("2 ->>>>> tournament id : ", tournamentId);
 
   // player at index 0 vs player at index 1 of joinedPlayers --> Room1
   // and player at index 2 vs player at index 3  join Room1 as spectators
@@ -121,23 +121,23 @@ export async function  createTornamentGameFinal(tournamentId: string, tournament
 
   const tournament = tournamentSystem.getTournament(tournamentId);
   if (!tournament) {
-      console.error(`❌ Tournament with ID ${tournamentId} not found.`);
+      //console.error(`❌ Tournament with ID ${tournamentId} not found.`);
       return;
   }
   const joinedPlayers = tournament.getJoinedPlayersIds();
   const finalPlayerIds = tournament.getFinalPlayersIds();
-  console.log("3 ->>>>> finalPlayerIds : ", finalPlayerIds);
+  //console.log("3 ->>>>> finalPlayerIds : ", finalPlayerIds);
   for (let i = 0; i < finalPlayerIds.length; i += 2) {
       const player1Id = finalPlayerIds[i];
       const player2Id = finalPlayerIds[i + 1];
 
       // const roomId = `tournament-game-${tournamentId}-room-${i/2}-${uuidv4()}`;
-      // console.log(`🎮 Creating game room ${roomId} for players ${player1Id} and ${player2Id}`);
+      // //console.log(`🎮 Creating game room ${roomId} for players ${player1Id} and ${player2Id}`);
 
       // Here you would create the game room, initialize game state, etc.
       // For simplicity, we'll just emit an event to the players to join the room.
 
-      console.log(`🚀 Emitting tournament_game_starting to players ${player1Id}  ---------VS--------- ${player2Id} in tournament ${tournamentId}`);
+      //console.log(`🚀 Emitting tournament_game_starting to players ${player1Id}  ---------VS--------- ${player2Id} in tournament ${tournamentId}`);
       io.to(tournamentId).emit("tournament_game_starting", 
       {
         message: "Tournament game is starting!",

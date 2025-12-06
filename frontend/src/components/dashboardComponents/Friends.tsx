@@ -284,12 +284,12 @@ function DisplayFriends({friends} : {friends: Friends}) : JSX.Element {
                     onMouseEnter={
                         () => {
                             setHoveredChat(true);
-                            console.log('Hovered Chat');
+                            //console.log('Hovered Chat');
                         }
                     }
                     onMouseLeave={() => setHoveredChat(false)}
                     onClick={() => {
-                        console.log('Clicked Chat with ', friend.userName);
+                        //console.log('Clicked Chat with ', friend.userName);
                         setSelectedUserName(friend.userName);
                         router.push('/gzone/chat');
                     }}
@@ -419,19 +419,19 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                                 }),
                             });
                             const data = await response.json();
-                            console.log('Response data:', data);
+                            //console.log('Response data:', data);
                             if (!response.ok) {
-                                console.error('❌Error refusing friend request:', data);
+                                //console.error('❌Error refusing friend request:', data);
                                 // alert('❌ Error refusing friend request');
                                 return;
                             } else {
-                                console.log('✅ Friend request refused:', data);
+                                //console.log('✅ Friend request refused:', data);
                                 // alert('✅ Friend request refused');
                             }
                             setChangeComponent(!changeComponent);
 
                         } catch (error) {
-                            console.error('❌ Network error:', error);
+                            //console.error('❌ Network error:', error);
                             // alert('❌ Network error');
                         }
 
@@ -458,18 +458,18 @@ function DisplayFriendsRequest({friends, changeComponent, setChangeComponent} : 
                                 }),
                             });
                             const data = await response.json();
-                            console.log('Response data:', data);
+                            //console.log('Response data:', data);
                             if (!response.ok) {
-                                console.error('❌Error accepting friend request:', data);
+                                //console.error('❌Error accepting friend request:', data);
                                 // alert('❌ Error accepting friend request');
                                 return;
                             } else {
-                                console.log('✅ Friend request accepted:', data);
+                                //console.log('✅ Friend request accepted:', data);
                                 // alert('✅ Friend request accepted');
                             }
                             setChangeComponent(!changeComponent);
                         } catch (error) {
-                            console.error('❌ Network error:', error);
+                            //console.error('❌ Network error:', error);
                             // alert('❌ Network error');
                         }
 
@@ -598,18 +598,18 @@ function DisplaySentFriendsRequest({friends, changeComponent, setChangeComponent
                                     }),
                                 });
                                 const data = await response.json();
-                                console.log('Response data:', data);
+                                //console.log('Response data:', data);
                                 if (!response.ok) {
-                                    console.error('❌Error accepting friend request:', data);
+                                    //console.error('❌Error accepting friend request:', data);
                                     // alert('❌ Error accepting friend request');
                                     return;
                                 } else {
-                                    console.log('✅ Friend request accepted:', data);
+                                    //console.log('✅ Friend request accepted:', data);
                                     // alert('✅ Friend request accepted');
                                 }
                                 setChangeComponent(!changeComponent);
                             } catch (error) {
-                                console.error('❌ Network error:', error);
+                                //console.error('❌ Network error:', error);
                                 // alert('❌ Network error');
                             }
     
@@ -741,18 +741,18 @@ function DisplayBlocked({friends, changeComponent, setChangeComponent} : {friend
                                     }),
                                 });
                                 const data = await response.json();
-                                console.log('Response data:', data);
+                                //console.log('Response data:', data);
                                 if (!response.ok) {
-                                    console.error('❌Error accepting friend request:', data);
+                                    //console.error('❌Error accepting friend request:', data);
                                     // alert('❌ Error accepting friend request');
                                     return;
                                 } else {
-                                    console.log('✅ Friend request accepted:', data);
+                                    //console.log('✅ Friend request accepted:', data);
                                     // alert('✅ Friend request accepted');
                                 }
                                 setChangeComponent(!changeComponent);
                             } catch (error) {
-                                console.error('❌ Network error:', error);
+                                //console.error('❌ Network error:', error);
                                 // alert('❌ Network error');
                             }
     
@@ -781,10 +781,10 @@ export function Friends({ choice }: { choice: FriendsChoice }): JSX.Element {
             fetchFriends(loggedUserId, choice)
                 .then((data) => {
                     setFriends(data.friends);
-                    console.log("Friends data: ", data);
+                    //console.log("Friends data: ", data);
                 }
             )
-            .catch((err) => console.error("Error: ", err));
+            .catch((err) => //console.error("Error: ", err));
 
         }
     }, [choice, loggedUserName, changeComponent]);

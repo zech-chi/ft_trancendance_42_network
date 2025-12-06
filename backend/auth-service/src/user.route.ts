@@ -110,12 +110,12 @@ export async function authRoutes(app: FastifyInstance) {
     // refresh token
     app.post('/refresh', async (req: FastifyRequest, reply: FastifyReply) => {
       const refreshToken = req.cookies.refresh_token;
-      console.log("Refresh token cookie: ", refreshToken);
+      //console.log("Refresh token cookie: ", refreshToken);
       if (!refreshToken) return reply.code(401).send({ message: 'No refresh token' });
     
       try {
         const decoded =  app.jwt.verify<JwtPayload>(refreshToken);
-        console.log("Decoded refresh token: ", decoded);
+        //console.log("Decoded refresh token: ", decoded);
         const user = await findUserById(decoded.id);
         if (!user || !user.email_verified || (user &&  (user.email !== decoded.email || user.id !== decoded.id))) {
           return reply.code(401).send({ message: 'Invalid refresh token' });
@@ -415,7 +415,7 @@ export async function authRoutes(app: FastifyInstance) {
       
           return reply.send({ user: { id: row.id, email: row.email, userName: row.userName, twoFARequired: false}, success: true, message: "2FA verified successfully"});
         } catch (err) {
-          console.error("2FA verification failed:", err);
+          //console.error("2FA verification failed:", err);
           return reply.code(401).send({ error: "Invalid or expired temporary token" });
         }
       }
@@ -493,7 +493,7 @@ export async function authRoutes(app: FastifyInstance) {
             body: JSON.stringify({ userId: user.id })
           });
             if (!res.ok)
-                console.error('Failed to delete user:', await res.text());
+                //console.error('Failed to delete user:', await res.text());
             return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
         }
         
@@ -545,12 +545,12 @@ export async function authRoutes(app: FastifyInstance) {
     // Set cookies
     setAccessTokenCookie(reply, accessToken);
     setRefreshTokenCookie(reply, refreshToken);
-    console.log(" Google login successful. Tokens set.");
+    //console.log(" Google login successful. Tokens set.");
     // Redirect to frontend
     return reply.redirect(`${process.env.HOST}`);
   
 } catch(error) {
-        console.log(error);
+        //console.log(error);
         return reply.status(400).send({message: "something went wron!"})
       }
     });

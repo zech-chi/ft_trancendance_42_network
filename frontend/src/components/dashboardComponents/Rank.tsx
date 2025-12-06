@@ -107,9 +107,9 @@ export function Rank(): JSX.Element {
           fetchRankData()
             .then((data) => {
               setUsers(data);
-              console.log(users);
+              //console.log(users);
             })
-            .catch((err) => console.log('Error: ', err));
+            .catch((err) => //console.log('Error: ', err));
         }, 0);
       }
     });

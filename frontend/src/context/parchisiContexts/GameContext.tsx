@@ -117,16 +117,16 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case "GAME_STARTED":
       if (!state.lobby || !action.payload) 
       {
-        console.error("No lobby or payload in GAME_STARTED action")
+        //console.error("No lobby or payload in GAME_STARTED action")
         return state
       }
         
       if (state.lobby.gameId !== action.payload.gameId)
       {
         
-        console.error("Mismatched room IDs in GAME_STARTED action")
-        console.log("state.lobby.gameId:", state.lobby.gameId)
-        console.log("action.payload.gameId:", action.payload.gameId)
+        //console.error("Mismatched room IDs in GAME_STARTED action")
+        //console.log("state.lobby.gameId:", state.lobby.gameId)
+        //console.log("action.payload.gameId:", action.payload.gameId)
         return state
       }
       return { 
@@ -191,12 +191,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
     })
 
     socket.on("gameCreated", ({ gameId }: { gameId: string }) => {
-      console.log("Game created with ID:", gameId)
+      //console.log("Game created with ID:", gameId)
     })
 
     socket.on("gameJoined", ({ success }: { success: boolean }) => {
       if (success) {
-        console.log("Successfully joined game")
+        //console.log("Successfully joined game")
       }
     })
     socket.on("gameStarted", (data: { gameId: string, players: Player[], board: object, currentPlayer: Player }) => {
@@ -204,7 +204,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     })
 
     socket.on("error", ({ message }: { message: string }) => {
-      console.error("Socket error:", message)
+      //console.error("Socket error:", message)
       dispatch({ type: "SET_MESSAGE", payload: message });
       setTimeout(() => {
         dispatch({ type: "SET_MESSAGE", payload: null });
@@ -212,7 +212,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     })
 
     socket.on("roomFull", ({ message }: { message: string }) => {
-      console.error("Room full:", message)
+      //console.error("Room full:", message)
       dispatch({ type: "SET_MESSAGE", payload:"Room full: "+ message });
       setTimeout(() => {
         dispatch({ type: "SET_MESSAGE", payload: null });
@@ -220,7 +220,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     })
 
   socket.on("removePlayer", ({ id }: { id: string }) => {
-    console.log("Player removed:", id);
+    //console.log("Player removed:", id);
     dispatch({ type: "REMOVE_PLAYER", payload: id });
   });
 
@@ -260,14 +260,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
     })
     socket.on("error", ({ message }: { message: string }) => {
-      console.error("Socket error:", message)
+      //console.error("Socket error:", message)
       dispatch({ type: "SET_MESSAGE", payload: message });
       setTimeout(() => {
         dispatch({ type: "SET_MESSAGE", payload: null });
       }, 3000); // Clear message after 3 seconds
     })
     socket.on("gameOver", (data: {winner: string, color: string}) => {
-      console.log("Game over! Winner:", data.winner);
+      //console.log("Game over! Winner:", data.winner);
       dispatch({type:"SET_WINNER", payload: {winner: data.winner, winnerColor: data.color}});
     })
     
@@ -301,7 +301,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (!socket) return reject("No socket connected");
       
       state.gametype = namespace;
-      console.log (`createGame with user : ${loggedUserName} in namespace ${namespace}`);
+      //console.log (`createGame with user : ${loggedUserName} in namespace ${namespace}`);
       const username = loggedUserName;
       const isLocal = namespace === "local";
       if (playernumber && (playernumber < 2 || playernumber > 4))

@@ -49,11 +49,11 @@ export async function getFriends(request: FastifyRequest, reply: FastifyReply) {
     }
 
     const friends = await getAllFriends(userId);
-    // console.log("Friends fetched from database:", friends);
+    // //console.log("Friends fetched from database:", friends);
 
     reply.status(200).send({ status: "ok", friends });
   } catch (error) {
-    // console.error("Error fetching friends:", error);
+    // //console.error("Error fetching friends:", error);
     return reply
       .status(400)
       .send({ status: "error", message: "Bad request! hhhhhh 1" });
@@ -103,7 +103,7 @@ export async function addMessage(request: FastifyRequest, reply: FastifyReply) {
       return; // If the users are not friends, exit the function
     }
 
-    // console.log("Message received from:", from, "to:", to, "message:", trimmedMessage);
+    // //console.log("Message received from:", from, "to:", to, "message:", trimmedMessage);
 
     // Insert the message into the database
     const messageData = await insertMessageToDatabase(reply, from, to, trimmedMessage);
@@ -119,7 +119,7 @@ export async function addMessage(request: FastifyRequest, reply: FastifyReply) {
   return reply;
 
   } catch (error) {
-    // console.error("Error adding message:", error);
+    // //console.error("Error adding message:", error);
     return reply
       .status(400)
       .send({ status: "error", message: "Bad request! hhhhhh 2." });
@@ -166,14 +166,14 @@ export async function getMessages(
     }
 
 
-    // console.log("Fetching messages from:", from, "to:", to);
+    // //console.log("Fetching messages from:", from, "to:", to);
 
     const messages = await getFormattedMessages(reply, from, to, limit, offset);
-    // console.log("Messages fetched:", messages);
+    // //console.log("Messages fetched:", messages);
 
     reply.status(200).send({ status: "ok", messages });
   } catch (error) {
-    // console.error("Error fetching messages:", error);
+    // //console.error("Error fetching messages:", error);
     return reply
       .status(400)
       .send({ status: "error", message: "Bad request! hhhhhh 3" });
@@ -185,7 +185,7 @@ export async function getMessages(
 export async function blockUser(request: FastifyRequest, reply: FastifyReply) {
 
   // to remove 
-  // console.log("Blocking user request body:", request.body);
+  // //console.log("Blocking user request body:", request.body);
   try {
 
     if (!checkRequestBody(reply, request)) {
@@ -229,7 +229,7 @@ export async function blockUser(request: FastifyRequest, reply: FastifyReply) {
       .status(200)
       .send({ status: "ok", message: "User blocked successfully.", blockUser: true, blockedBy: from });
   } catch (error) {
-    // console.error("Error blocking user:", error);
+    // //console.error("Error blocking user:", error);
     return reply
       .status(400)
       .send({
@@ -290,7 +290,7 @@ export async function unblockUser(request: FastifyRequest, reply: FastifyReply) 
       .status(200)
       .send({ status: "ok", message: "User unblocked successfully.", blockUser: false });
   } catch (error) {
-    // console.error("Error unblocking user:", error);
+    // //console.error("Error unblocking user:", error);
     return reply
     .status(400)
     .send({ status: "error", message: "Bad request! hhhhhh 5" });
@@ -348,7 +348,7 @@ export async function deleteMessage(request: FastifyRequest, reply: FastifyReply
     return reply;
 
   } catch (error) {
-    // console.error("Error deleting message:", error);
+    // //console.error("Error deleting message:", error);
     return reply
       .status(400)
       .send({ status: "error", message: "Bad request! hhhhhh 6" });
@@ -424,7 +424,7 @@ export async function editMessage(request: FastifyRequest, reply: FastifyReply) 
     return reply.status(200).send({status: "ok", message: "Message edited successfully.", time: timeUpdateMessage.slice(11, 16)});
 
   } catch (error) {
-    // console.error("Error editing message:", error);
+    // //console.error("Error editing message:", error);
     return reply
       .status(400)
       .send({ status: "error", message: "Bad request! hhhhhh 7" });

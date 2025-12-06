@@ -30,10 +30,10 @@ export default function Games(): JSX.Element {
           if (!response.ok) throw new Error("Failed to fetch winner data");
 
           const userData = await response.json();
-          // console.log("Fetched user data:", userData);
+          // //console.log("Fetched user data:", userData);
           setWinnerData(userData);
         } catch (error) {
-          console.error("Error fetching winner:", error);
+          //console.error("Error fetching winner:", error);
         } finally {
           setShowWinner(true);
         }

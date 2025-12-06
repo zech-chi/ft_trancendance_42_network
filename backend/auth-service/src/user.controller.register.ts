@@ -65,7 +65,7 @@ export async function RegisterUser(
     const password = req.body.password;
     try {
         // check if user already exists
-        console.log('RegisterUser called with body:', req.body);
+        //console.log('RegisterUser called with body:', req.body);
         const checkUser = await findUserIfExists(userName, email);
         if (checkUser) {
             return reply.code(400).send({ message: 'User with this email or userName already exists' });
@@ -79,7 +79,7 @@ export async function RegisterUser(
         // create new user
         // add the code_sent_to _email as parameter and add comn to db for 2FA 
         const newUser = await createUser(fullName, userName, email, hashedPassword, imageUrl);
-        console.log('New user created:', newUser);
+        //console.log('New user created:', newUser);
         
         // add new row in RadarData for the new user
         const radarDataId = await addNewRadarDataRow(newUser.id);
@@ -88,8 +88,8 @@ export async function RegisterUser(
         const chartsDataId = await addNewChartsDataRows(newUser.id);
 
         
-        console.log('RadarData row created with ID:', radarDataId);
-        console.log('ChartsData row created with ID:', chartsDataId);
+        //console.log('RadarData row created with ID:', radarDataId);
+        //console.log('ChartsData row created with ID:', chartsDataId);
         // lj9
         // additional steps like sending verification email can be added here
         // ......
@@ -109,7 +109,7 @@ export async function RegisterUser(
                 }),
             });
         } catch (err) {
-            console.error('Error saving verification code:', err);
+            //console.error('Error saving verification code:', err);
         }
 
         // if (!radarDataId || !chartsDataId || !res.ok) {
@@ -123,7 +123,7 @@ export async function RegisterUser(
                 body: JSON.stringify({ userId: newUser.id })
             });
             if (!res.ok)
-                console.error('Failed to delete user:', await res.text());
+                //console.error('Failed to delete user:', await res.text());
             return reply.code(400).send({ message: 'Could not initialize user data. Please try again.' });
         }
         await sendEmail(email, "Verify your email", `<p>Your verification code: <b>${verificationCode}</b></p>`);
@@ -139,7 +139,7 @@ export async function RegisterUser(
         });
 
     } catch (err) {
-        console.error('Error registering user:', err);
+        //console.error('Error registering user:', err);
         return reply.code(400).send({ message: 'Could not register user. Please try again.' });
     }
 }

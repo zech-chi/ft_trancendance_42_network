@@ -98,7 +98,7 @@ export default function ChatInput({
         updateInviteStatus,
       });
     } //else {
-      // console.error("User ID is null. Cannot send invite.");
+      // //console.error("User ID is null. Cannot send invite.");
    // }
   };
 

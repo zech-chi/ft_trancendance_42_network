@@ -32,13 +32,13 @@ export default function Notifications() {
   // 1. Gérer la réception des invitations
   useEffect(() => {
     if (!socket || !isConnected || !currentUser) {
-      console.log("Waiting for socket/user to be ready for invite listener.");
+      //console.log("Waiting for socket/user to be ready for invite listener.");
       return;
     }
 
     const handleReceiveInvite = ({ from, fromName, message, inviteId }: { from: User; fromName: string; message: string; inviteId: string }) => {
       //  alert("handleReceiveInvite called" + fromName); 
-      console.log(`📩 Invitation received from ${fromName}`, from, "inviteId:", inviteId);
+      //console.log(`📩 Invitation received from ${fromName}`, from, "inviteId:", inviteId);
 
       toast.custom((t) => (
         <div className={`${t.visible ? "animate-custom-enter" : "animate-custom-leave"} max-w-md w-full bg-gray/10 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]  border border-white/30 rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}>
@@ -55,7 +55,7 @@ export default function Notifications() {
           <div className="flex border-l border-gray-200">
             <button
               onClick={() => {
-                console.log(`✅ Accepting invite from ${fromName}`, "inviteId:", inviteId);
+                //console.log(`✅ Accepting invite from ${fromName}`, "inviteId:", inviteId);
                 socket.emit("accept_invite", {
                   inviter: from,
                   inviterName: fromName,
@@ -73,7 +73,7 @@ export default function Notifications() {
             </button>
             <button
               onClick={() => {
-                console.log(`❌ Declining invite from ${fromName}`, "inviteId:", inviteId);
+                //console.log(`❌ Declining invite from ${fromName}`, "inviteId:", inviteId);
                 socket.emit("decline_invite", {
                   decliner: currentUser,
                   inviter: from,
@@ -93,7 +93,7 @@ export default function Notifications() {
     };
 
     socket.on("receive_invite", handleReceiveInvite); 
-    console.log("Listening for 'receive_invite' events.");
+    //console.log("Listening for 'receive_invite' events.");
     
     return () => {
       socket.off("receive_invite", handleReceiveInvite);
@@ -103,18 +103,18 @@ export default function Notifications() {
   // 2. Gérer les déclins d'invitation
   useEffect(() => {
     if (!socket || !isConnected) {
-      console.log("Waiting for socket to be ready for decline listener.", socket, isConnected  );
+      //console.log("Waiting for socket to be ready for decline listener.", socket, isConnected  );
       return;
     }
 
     const handleDecline = ({ from, message }: { from: User; message: string }) => {
-      console.log(`Decline received from ${from.username}: ${message}`);
+      //console.log(`Decline received from ${from.username}: ${message}`);
       toast.error(`${message}`, { position: "top-right", duration: 500 });
       updateInviteStatus(from.id, 'declined');
     };
 
     socket.on("receive_decline", handleDecline);
-    console.log("Listening for 'receive_decline' events.");
+    //console.log("Listening for 'receive_decline' events.");
 
     return () => {
       socket.off("receive_decline", handleDecline);
@@ -126,7 +126,7 @@ export default function Notifications() {
     if (!socket || !isConnected || !router) return;
 
     const handleGameStarted = ({ roomId }: { roomId: string; opponent: User }) => {
-      console.log("✅ Game started received, redirecting to:", `/game/${roomId}`);
+      //console.log("✅ Game started received, redirecting to:", `/game/${roomId}`);
       toast.dismiss(); // Fermer toutes les toasts
       router.push(`/gzone/games/ping-pong/modes/${roomId}`);
     };
@@ -153,7 +153,7 @@ export default function Notifications() {
         errorMessage = JSON.stringify(error);
       }
       
-      console.error("❌ Game error received:", errorMessage);
+      //console.error("❌ Game error received:", errorMessage);
       toast.error(`Game Error: ${errorMessage}`, {
         position: "top-right",
         duration: 5000,
@@ -172,7 +172,7 @@ export default function Notifications() {
     if (!socket || !isConnected) return;
 
     const handleInviteExpired = ({ inviteId, to, reason }: { inviteId: string; to: number; reason: string }) => {
-      console.log(`⏰ Invitation expired: ${inviteId}, reason: ${reason}`);
+      //console.log(`⏰ Invitation expired: ${inviteId}, reason: ${reason}`);
       updateInviteStatus(to, 'expired');
       
       toast("Invitation expired", {
@@ -199,7 +199,7 @@ export default function Notifications() {
     if (!socket || !isConnected) return;
 
     const handleGameEnded = ({ reason }: { reason: string; leftPlayer?: string; disconnectedPlayer?: string }) => {
-      console.log(`🏁 Game ended: ${reason}`);
+      //console.log(`🏁 Game ended: ${reason}`);
       
       // Quand un jeu se termine, réinitialiser tous les états d'invitation à 'idle'
       // car les joueurs sont maintenant disponibles pour de nouvelles invitations
@@ -221,7 +221,7 @@ export default function Notifications() {
     if (!socket || !isConnected) return;
 
     const handlePlayerLeft = ({ leftPlayer }: { leftPlayer: string }) => {
-      console.log(`👋 Player left: ${leftPlayer}`);
+      //console.log(`👋 Player left: ${leftPlayer}`);
       
       // Réinitialiser tous les états d'invitation immédiatement
       resetAllInviteStates();
@@ -239,7 +239,7 @@ export default function Notifications() {
     if (!socket || !isConnected) return;
 
     const handleForceLeaveGame = ({ reason, message }: { reason: string; message: string; timestamp: number }) => {
-      console.log(`🚨 Force leave game: ${reason} - ${message}`);
+      //console.log(`🚨 Force leave game: ${reason} - ${message}`);
       
       // Réinitialiser tous les états d'invitation immédiatement
       resetAllInviteStates();
@@ -269,7 +269,7 @@ export default function Notifications() {
     if (!socket || !isConnected) return;
 
     const handleInviteSent = ({ to, inviteId }: { to: number; inviteId: string }) => {
-      console.log(`✅ Invitation sent confirmed for user ${to}, inviteId: ${inviteId}`);
+      //console.log(`✅ Invitation sent confirmed for user ${to}, inviteId: ${inviteId}`);
       
       updateInviteStatus(to, 'pending', {
         inviteId,
@@ -289,7 +289,7 @@ export default function Notifications() {
     if (!socket || !isConnected) return;
 
     const handleInviteAccepted = ({ from }: { from: User }) => {
-      console.log(`✅ Invitation accepted by ${from.username}`);
+      //console.log(`✅ Invitation accepted by ${from.username}`);
       updateInviteStatus(from.id, 'accepted');
       
       // Après 3 secondes, remettre à idle pour permettre de nouvelles invitations
@@ -315,8 +315,8 @@ export default function Notifications() {
       currentState?: string; 
       targetState?: string;
     }) => {
-      console.error(`❌ Invite error for user ${to}: ${message}`);
-      console.log(`Your state: ${currentState}, Target user state: ${targetState}`);
+      //console.error(`❌ Invite error for user ${to}: ${message}`);
+      //console.log(`Your state: ${currentState}, Target user state: ${targetState}`);
       
       // Remettre l'état à idle en cas d'erreur
       updateInviteStatus(to, 'idle');
@@ -357,7 +357,7 @@ export default function Notifications() {
       message: string;
       from: User;
     }) => {
-      console.log(`❌ Invitation cancelled: ${inviteId}, reason: ${reason}`);
+      //console.log(`❌ Invitation cancelled: ${inviteId}, reason: ${reason}`);
       
       // Update the invite status for the sender
       if (from) {
@@ -377,7 +377,7 @@ export default function Notifications() {
       inviteId: string; 
       message: string;
     }) => {
-      console.log(`✅ Invitation cancel confirmed: ${inviteId} for user ${targetUserId}`);
+      //console.log(`✅ Invitation cancel confirmed: ${inviteId} for user ${targetUserId}`);
       
       // Update local state to reflect cancellation
       updateInviteStatus(targetUserId, 'idle');
@@ -403,7 +403,7 @@ export default function Notifications() {
     if (!socket || !isConnected) return;
 
     const handleCleanupCompleted = ({ message }: { message: string }) => {
-      console.log("🧹 Cleanup completed:", message);
+      //console.log("🧹 Cleanup completed:", message);
       
       toast("✅ Cleanup done! Try again.", {
         position: "top-right",
@@ -424,7 +424,7 @@ export default function Notifications() {
     if (!socket || !isConnected) return;
 
     const debugAllEvents = (eventName: string) => (data: unknown) => {
-      console.log(`🔍 DEBUG Event received: ${eventName}`, data);
+      //console.log(`🔍 DEBUG Event received: ${eventName}`, data);
     };
 
     // Écouter tous les événements liés aux invitations

@@ -89,9 +89,9 @@ function Chat() {
 
       // Scenario 2: We started the call ourselves.
       // In this case, the currently selected chat MUST be our partner.
-      if (selectedChat) {
-        setCallPartner(selectedChat);
-      }
+      // if (selectedChat) {
+      //   setCallPartner(selectedChat);
+      // }
     } else {
       // If the call is not active, clear the partner.
       setCallPartner(null);
@@ -113,16 +113,16 @@ function Chat() {
         });
 
         const data = await response.json();
-        console.log("Fetched contacts:", data);
+        //console.log("Fetched contacts:", data);
         if (data.status === "ok") {
           setContactsList(data.friends);
         } else {
-          // console.error("Failed to fetch contacts:", data);
+          // //console.error("Failed to fetch contacts:", data);
         }
       } catch (err) {
-        // console.error("Error fetching contacts:", err);
+        // //console.error("Error fetching contacts:", err);
       }
-      console.log("Contacts list after fetch attempt:");
+      //console.log("Contacts list after fetch attempt:");
     };
 
     fetchContacts();

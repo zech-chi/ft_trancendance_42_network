@@ -30,11 +30,11 @@ export default function GamePage() {
       setUser(currentUser);
 
       if (socket && isConnected) {
-        console.log("🎮 Joining game room:", roomId);
+        //console.log("🎮 Joining game room:", roomId);
         socket.emit("join_game_room", { roomId });
       }
     } catch (err) {
-      console.error("Error loading user data:", err);
+      //console.error("Error loading user data:", err);
       setError("Failed to load user data");
     } finally {
       setLoading(false);
@@ -43,7 +43,7 @@ export default function GamePage() {
 
   useEffect(() => {
     if (socket && isConnected) {
-      console.log("✅ Socket connected, joining room:", roomId);
+      //console.log("✅ Socket connected, joining room:", roomId);
       socket.emit("join_game_room", { roomId });
     }
   }, [socket, isConnected, roomId]);

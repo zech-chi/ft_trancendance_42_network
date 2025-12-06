@@ -28,7 +28,7 @@ export default function InviteStatusButton({
   // Fonction pour vérifier l'état de l'ami
   const checkFriendState = () => {
     if (socket) {
-      console.log(`🔍 Checking state for friend ${friendId}`);
+      //console.log(`🔍 Checking state for friend ${friendId}`);
       socket.emit("check_user_state", { userId: friendId });
     }
   };

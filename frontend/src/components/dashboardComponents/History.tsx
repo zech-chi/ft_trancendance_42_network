@@ -193,10 +193,10 @@ export function History({ game, setGame }: HistoryProps): JSX.Element {
             fetchGames(loggedUserId, game)
             .then((games) => {
               setGames(games)
-                console.log("Games fetched: ", games);
+                //console.log("Games fetched: ", games);
               }
             )
-            .catch((err) => console.error("Error: ", err));
+            .catch((err) => //console.error("Error: ", err));
         }
     }, [game]);
 

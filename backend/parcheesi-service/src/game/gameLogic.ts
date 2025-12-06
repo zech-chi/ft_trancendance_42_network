@@ -49,7 +49,7 @@ export class GameLogic {
       // if start tile is fully occupied (2 pieces), no one can leave
       if (startTile.occupants.length === 2) {
         // do NOT consume dice
-        console.log(chalk.red(`Cannot leave base: start tile (${player.startIndex}) is full`));
+        //console.log(chalk.red(`Cannot leave base: start tile (${player.startIndex}) is full`));
         return results;
       }
 

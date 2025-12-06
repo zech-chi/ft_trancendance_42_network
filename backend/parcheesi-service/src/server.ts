@@ -22,7 +22,7 @@ async function start()
   });
       //test
   socketManager(io);
-  console.log(`🚀 Server running on ${address}`);
+  //console.log(`🚀 Server running on ${address}`);
 });
 }
 

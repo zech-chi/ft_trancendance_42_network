@@ -50,7 +50,7 @@ function OnlinePageContent() {
           setRooms([]);
         }
       } catch (err) {
-        console.error("Failed to load rooms", err);
+        //console.error("Failed to load rooms", err);
       } finally {
         setIsLoadingRooms(false);
       }
@@ -72,7 +72,7 @@ function OnlinePageContent() {
       const gameId = await createGame();
       router.replace(`/gzone/games/parchisi/online/lobby/${gameId}?role=host`);
     } catch (err) {
-      console.error(err);
+      //console.error(err);
     } finally {
       setTimeout(() => setIsCreating(false), 500);
     }
@@ -86,7 +86,7 @@ function OnlinePageContent() {
       await joinLobby(code);
       router.replace(`/gzone/games/parchisi/online/lobby/${code}?role=guest`);
     } catch (err) {
-      console.error(err);
+      //console.error(err);
     } finally {
       setTimeout(() => setIsJoining(false), 500);
     }

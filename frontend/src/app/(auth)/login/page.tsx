@@ -25,12 +25,12 @@ export async function fetchUser() {
 			return data;
 		}
      else {
-			console.log('Failed to fetch user:', response.statusText);
+			//console.log('Failed to fetch user:', response.statusText);
 			return null;
 		}
     
 	} catch (error) {
-		console.log('Error fetching user:', error);
+		//console.log('Error fetching user:', error);
 		return null;
 	}
 }
@@ -84,7 +84,7 @@ export default function LoginPage() {
       });
 
       const data = await res.json().catch(() => ({}));
-      console.log("response:", res.status, data);
+      //console.log("response:", res.status, data);
 
       setUserEmail(email); 
     
@@ -114,7 +114,7 @@ export default function LoginPage() {
               setErrorMsg(cleanMessage);
           }
       } catch (err) {
-            console.error("fetch error:", err);
+            //console.error("fetch error:", err);
             setError("Something went wrong");
           }
       };

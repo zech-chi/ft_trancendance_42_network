@@ -203,7 +203,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
       }
 
       if (message) {
-        // console.log("Error exists, cannot send message.");
+        // //console.log("Error exists, cannot send message.");
         return;
       }
 
@@ -230,13 +230,13 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
 
         if (!result.ok) {
           const data = await result.json();
-          // console.error("Failed to send message:", data);
+          // //console.error("Failed to send message:", data);
           setMessage("Failed to send message. Please try again.");
           return;
         }
 
         const data = await result.json();
-        // console.log("Fetched data successfully:", data);
+        // //console.log("Fetched data successfully:", data);
 
         // Update the contact's last message
         setContactsList((prevContacts) => {
@@ -259,7 +259,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
         reorderContacts(contact.id);
       }
     } catch (error) {
-      // console.error("Error sending message:", error);
+      // //console.error("Error sending message:", error);
       setMessage("An unexpected error occurred. Please try again.");
     } finally {
       setIsSending(false); // Always reset sending state
@@ -291,7 +291,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
     // check if contact is null just return
     if (!contact) return;
     async function fetchData() {
-      // console.log("Fetching messages for contact:", currentUserId, contact?.id);
+      // //console.log("Fetching messages for contact:", currentUserId, contact?.id);
       try {
         const res = await fetchWithAuth(ApiRoutes.getMessages, {
           method: "POST",
@@ -306,14 +306,14 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
           }),
         });
         if (!res.ok) {
-          // console.error("Server responded with an error here here ");
+          // //console.error("Server responded with an error here here ");
           throw new Error('Server responded with an error');
         }
         const result = await res.json();
-        // console.log("Fetched messages:", result.messages);
+        // //console.log("Fetched messages:", result.messages);
         setMessagesList(result.messages.reverse());
       } catch (error) {
-        console.error(error);
+        //console.error(error);
       }
     }
     fetchData();
@@ -338,10 +338,10 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
         throw new Error("Failed to upload file");
       }
       const result = await response.json();
-      // console.log("File uploaded successfully:", result);
+      // //console.log("File uploaded successfully:", result);
       return result;
     } catch (error) {
-      // console.error("Error uploading file:", error);
+      // //console.error("Error uploading file:", error);
       setMessage("Failed to upload file or media not supported. Please try again.");
       return null; // Return null or handle the error as needed
     }
@@ -399,10 +399,10 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
 
     } catch (error) {
       if (error instanceof Error) {
-        console.error("File handling failed:", error.message);
+        //console.error("File handling failed:", error.message);
         setMessage(error.message);
       } else {
-        console.error("Unknown error during upload:", error);
+        //console.error("Unknown error during upload:", error);
         setMessage("An unknown error occurred during upload.");
       }
     } finally {
@@ -419,7 +419,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
       return;
     }
     // Logic to block the user goes here
-    // console.log(`Blocking action from : ${currentUserId} -> ${contact.id}`);
+    // //console.log(`Blocking action from : ${currentUserId} -> ${contact.id}`);
     // Close the confirmation block after blocking
     try {
       const response = await fetchWithAuth(ApiRoutes.blockUser, {
@@ -461,7 +461,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
       });
 
     } catch (error) {
-      // console.error("Error blocking user:", error);
+      // //console.error("Error blocking user:", error);
       setMessage("Failed to block user. Please try again.");
     }
     setisClickedBlockIcon(false);
@@ -473,7 +473,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
       return;
     }
     // Logic to unblock the user goes here
-    // console.log(`Unblocking user: ${contact.username}`);
+    // //console.log(`Unblocking user: ${contact.username}`);
     // Close the confirmation block after unblocking
     try {
       const response = await fetchWithAuth(ApiRoutes.unblockUser, {
@@ -515,7 +515,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
         });
       });
     } catch (error) {
-      // console.error("Error unblocking user:", error);
+      // //console.error("Error unblocking user:", error);
       setMessage("Failed to unblock user. Please try again.");
     }
     setisClickedBlockIcon(false);
@@ -526,7 +526,7 @@ function MainChat({ contact, showSidebar, setShowSidebar, reorderContacts, curre
       return;
     }
     // Logic to cancel the block action goes here
-    // console.log(`Cancelled blocking user: ${contact.username}`);
+    // //console.log(`Cancelled blocking user: ${contact.username}`);
     // Close the confirmation block
     setisClickedBlockIcon(false);
   };

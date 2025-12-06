@@ -24,7 +24,7 @@ export async function PongPlugin(fastify: FastifyInstance)
     return data;
 
     } catch(err) {
-      console.error(err);
+      //console.error(err);
       reply.code(400);
       return { success: false, error: "something went wrong try again later!" };
     }

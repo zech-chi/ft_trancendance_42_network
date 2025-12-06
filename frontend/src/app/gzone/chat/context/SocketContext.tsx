@@ -28,7 +28,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 socket.disconnect();
                 setSocket(null);
             }
-            console.log("No user ID found, socket disconnected.");
+            //console.log("No user ID found, socket disconnected.");
             return
         }
 
@@ -41,18 +41,18 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setSocket(newSocket);
 
         newSocket.on('connect', () => {
-            console.log(`Socket connected with ID: ${newSocket.id}`);
+            //console.log(`Socket connected with ID: ${newSocket.id}`);
         });
 
         newSocket.on('onlineUsers', (users: string[]) => {
             setOnlineUsers(users);
-            console.log("Updated online users:", users);
+            //console.log("Updated online users:", users);
         });
 
         return () => {
             newSocket.disconnect();
             newSocket.off('getOnlineUsers');
-            console.log("Socket disconnected");
+            //console.log("Socket disconnected");
         };
 
     }, [userId]);

@@ -30,18 +30,18 @@ export const handleInvite = ({
 }: HandleInviteParams) => {
   // Vérifier si une invitation est déjà en cours pour cet ami
   const currentState = getInviteStatus(friendId);
-  console.log(`🎯 Attempting to invite friend ${friendId}, current state:`, currentState.status);
+  //console.log(`🎯 Attempting to invite friend ${friendId}, current state:`, currentState.status);
 
   if (currentState.status !== "idle") {
-    console.log(`⚠️ Invitation already in progress for friend ${friendId}:`, currentState.status);
+    //console.log(`⚠️ Invitation already in progress for friend ${friendId}:`, currentState.status);
     return; // Empêcher les clics multiples
   }
 
   // Marquer comme "sending" immédiatement
-  console.log(`🔄 Setting state to 'sending' for friend ${friendId}`);
+  //console.log(`🔄 Setting state to 'sending' for friend ${friendId}`);
   updateInviteStatus(friendId, "sending");
 
-  console.log(`📤 Emitting send_invite event for friend ${friendId}`);
+  //console.log(`📤 Emitting send_invite event for friend ${friendId}`);
   socket?.emit("send_invite", {
     from: loggedUserId,
     fromName: loggedUserName,

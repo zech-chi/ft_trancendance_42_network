@@ -95,7 +95,7 @@ export default function LobbyPage({ params }: { params: Promise<{ id: string }> 
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
-      console.error("Failed to copy game ID:", err)
+      //console.error("Failed to copy game ID:", err)
     }
   }
 

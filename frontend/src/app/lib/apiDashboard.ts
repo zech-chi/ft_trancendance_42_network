@@ -76,7 +76,7 @@ else
     });
 if (!response.ok) {
 //   throw new Error('Failed to fetch games');
-  console.log("Error");
+  //console.log("Error");
   return [];
 }
 const data = await response.json();
@@ -118,7 +118,7 @@ export const fetchCalendarData = async (userName: string) => {
   }
   
   const data = await response.json();
-  console.log("~~~~~~~~~~~~~~~~, ", data);
+  //console.log("~~~~~~~~~~~~~~~~, ", data);
   return data;
 }
 

@@ -95,7 +95,7 @@ export function RadarChart() {
                 }
                 setRadarData(values);
             } catch (error) {
-                console.error("Failed to fetch radar data:", error);
+                //console.error("Failed to fetch radar data:", error);
             }
         };
     

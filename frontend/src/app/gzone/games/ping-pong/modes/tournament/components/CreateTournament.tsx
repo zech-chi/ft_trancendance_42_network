@@ -31,7 +31,7 @@ export default function CreateTournament() {
         initializeTournament();
         resetTournament();
         // Here you would typically handle form submission, e.g., send data to the server
-        console.log("Tournament Created:", {
+        //console.log("Tournament Created:", {
             name: t_name,
             number_of_players: t_number_of_players,
             isPrivate: t_isPrivate,
@@ -50,10 +50,10 @@ export default function CreateTournament() {
             }
             toast.success("Tournament created successfully!", { id: "tournament_created" });
             router.push(`/gzone/games/ping-pong/modes/tournament/${data.tournamentId}`);
-            console.log("Tournament successfully created:", data);
+            //console.log("Tournament successfully created:", data);
         });
         socketContext.socket?.on("joined_tournament", async (data) => {
-            console.log("✅ Join tournament response:", data);
+            //console.log("✅ Join tournament response:", data);
             if (data?.status) {
                 if (data.newUserJoinedId !== loggedUserId) { 
                     toast.success(data.newUserJoinedId, {id: data.newUserJoinedId} );

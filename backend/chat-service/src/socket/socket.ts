@@ -35,7 +35,7 @@ export function setupSocket(server: HttpServer) {
     ioInstance = io;  // save for later global access
 
   io.on("connection", async (socket) => {
-    console.log("A user connected:", socket.id);
+    //console.log("A user connected:", socket.id);
 
     // add the new user to the online users map
     // assuming the user ID is sent in the handshake query
@@ -48,25 +48,25 @@ export function setupSocket(server: HttpServer) {
       }
 
       onlineUsers.get(userId)!.add(socket.id);
-      console.log(`User ${userId} connected on socket ${socket.id}`);
+      //console.log(`User ${userId} connected on socket ${socket.id}`);
       
     }
 
-    console.log("Online users:", onlineUsers);
+    //console.log("Online users:", onlineUsers);
 
     // Emit the updated list of online users to all clients
     io.emit("onlineUsers", Array.from(onlineUsers.keys()));
 
     // Handle incoming messages
     socket.on("message", (data) => {
-      console.log("Message received:", data);
+      //console.log("Message received:", data);
       // Broadcast the message to all connected clients
       io.emit("message", data);
     });
 
     // Handle disconnection
     socket.on("disconnect", async () => {
-      console.log("A user disconnected:", socket.id);
+      //console.log("A user disconnected:", socket.id);
      // Remove socket from all users
       for (const [uid, sockets] of onlineUsers) {
         // sockets.delete(socket.id);
@@ -86,7 +86,7 @@ export function setupSocket(server: HttpServer) {
             // is the one that was actually in the call.
             // If it's a different tab (different socket ID), ignore it.
             if (currentCall.socketId === socket.id) {
-              console.log(`Active call socket disconnected for user ${uid}. Ending call.`);
+              //console.log(`Active call socket disconnected for user ${uid}. Ending call.`);
               
               const partnerId = currentCall.partnerId;
               
@@ -107,7 +107,7 @@ export function setupSocket(server: HttpServer) {
                 }
               }
             } else {
-               console.log(`User ${uid} disconnected a secondary tab. Call continues on active socket.`);
+               //console.log(`User ${uid} disconnected a secondary tab. Call continues on active socket.`);
             }
           }
 
@@ -122,8 +122,8 @@ export function setupSocket(server: HttpServer) {
       // Emit the updated list of online users to all clients
       io.emit("onlineUsers", Array.from(onlineUsers.keys()));
 
-      console.log(`keys of onlineUsers after disconnection:`, Array.from(onlineUsers.keys()));
-      console.log("Online users after disconnection:", onlineUsers);
+      //console.log(`keys of onlineUsers after disconnection:`, Array.from(onlineUsers.keys()));
+      //console.log("Online users after disconnection:", onlineUsers);
     });
   
   
@@ -175,7 +175,7 @@ export function setupSocket(server: HttpServer) {
         targetSockets.forEach(socketId => {
           // Forward the answer back to the original caller
           if (callerCallState && callerCallState.socketId === socketId) {
-            console.log("==========> hhhhhhhh  Emitting answer-made to caller:", to);
+            //console.log("==========> hhhhhhhh  Emitting answer-made to caller:", to);
             io.to(socketId).emit('answer-made', { answer, from: socket.handshake.query.userId });
           }
         });
@@ -183,7 +183,7 @@ export function setupSocket(server: HttpServer) {
 
       const answererSockets = onlineUsers.get(answererId);
       if (answererSockets) {
-        console.log("==========> Emitting call-accepted to answerer:", answererId);
+        //console.log("==========> Emitting call-accepted to answerer:", answererId);
         answererSockets.forEach(socketId => {
           io.to(socketId).emit('call-accepted', { from: answererId, to });
         });
@@ -206,7 +206,7 @@ export function setupSocket(server: HttpServer) {
 
     // A user has ended the call
     socket.on('end-call', (data) => {
-      console.log("Call ended by user:", data);
+      //console.log("Call ended by user:", data);
       const { to, from } = data;
       const targetSockets = onlineUsers.get(to.toString());
 
@@ -214,7 +214,7 @@ export function setupSocket(server: HttpServer) {
       const senderCallState = userCallState.get(from.toString());
 
        if (!senderCallState || senderCallState.socketId !== socket.id) {
-        console.log(`End-call ignored. Requesting socket ${socket.id} is not the active call socket.`);
+        //console.log(`End-call ignored. Requesting socket ${socket.id} is not the active call socket.`);
         return;
       }
 
@@ -227,7 +227,7 @@ export function setupSocket(server: HttpServer) {
         });
       }
       else {
-        console.log(`User ${to} is not online, cannot end call.`);
+        //console.log(`User ${to} is not online, cannot end call.`);
       }
     });
 
@@ -256,7 +256,7 @@ export function setupSocket(server: HttpServer) {
         }
     });});
 
-  console.log("Socket.io server is set up and listening for connections.");
+  //console.log("Socket.io server is set up and listening for connections.");
 }
 
 export function getSocketIoServer(): SocketIoServer | null {
@@ -266,23 +266,23 @@ export function getSocketIoServer(): SocketIoServer | null {
 // this function is used to send a message to a specific user
 export function sendMessageToUser(userId: string, message: any) {
   const sockets = onlineUsers.get(userId);
-  console.log(`Sending message to user ${userId}:`, message);
+  //console.log(`Sending message to user ${userId}:`, message);
   if (sockets) {
     sockets.forEach((socketId) => {
       ioInstance?.to(socketId).emit("receive-message", message);
     });
-    console.log(`Message sent to user ${userId}:`, message);
+    //console.log(`Message sent to user ${userId}:`, message);
   } else {
-    console.log(`User ${userId} is not online.`);
+    //console.log(`User ${userId} is not online.`);
   }
 }
 
 // send the event block or unblock user to the specific user
 // export function sendBlockEventToUser(userId: string, event: string, friendId: string) {
 //   const sockets = onlineUsers.get(friendId); 
-//   console.log("=====> sockets:", sockets);
-//   console.log("onlineUsers:", onlineUsers);
-//   console.log(`Sending ${event} event to user ${friendId} for contact ${userId}`);
+//   //console.log("=====> sockets:", sockets);
+//   //console.log("onlineUsers:", onlineUsers);
+//   //console.log(`Sending ${event} event to user ${friendId} for contact ${userId}`);
 //   if (sockets) {
 //     sockets.forEach((socketId) => {
 //       ioInstance?.to(socketId).emit(event, {
@@ -290,9 +290,9 @@ export function sendMessageToUser(userId: string, message: any) {
 //         friendId, // the user who is blocked or unblocked
 //       }); // !to change to friendId
 //     });
-//     console.log(`Event ${event} sent to user ${friendId} for contact ${userId}`);
+//     //console.log(`Event ${event} sent to user ${friendId} for contact ${userId}`);
 //   } else {
-//     console.log(`User ${friendId} is not online.`);
+//     //console.log(`User ${friendId} is not online.`);
 //   }
 // }
 // /backend/controllers/blockUser.ts
@@ -301,9 +301,9 @@ export function sendBlockEventToUser(userId: string, event: string, friendId: st
   const friendSockets = onlineUsers.get(friendId);
   const userSockets = onlineUsers.get(userId);
 
-  console.log(`[sendBlockEventToUser] Emitting ${event} event`);
-  console.log(`→ To blocker (${userId}) sockets:`, userSockets);
-  console.log(`→ To blocked (${friendId}) sockets:`, friendSockets);
+  //console.log(`[sendBlockEventToUser] Emitting ${event} event`);
+  //console.log(`→ To blocker (${userId}) sockets:`, userSockets);
+  //console.log(`→ To blocked (${friendId}) sockets:`, friendSockets);
 
   // Notify the blocked user (userB)
   if (friendSockets) {
@@ -314,7 +314,7 @@ export function sendBlockEventToUser(userId: string, event: string, friendId: st
       });
     });
   } else {
-    console.log(`User ${friendId} is not online.`);
+    //console.log(`User ${friendId} is not online.`);
   }
 
   //  Also notify the blocker (userA) in all their sessions
@@ -326,17 +326,17 @@ export function sendBlockEventToUser(userId: string, event: string, friendId: st
       });
     });
   } else {
-    console.log(`User ${userId} is not online.`);
+    //console.log(`User ${userId} is not online.`);
   }
 
-  console.log(`Event ${event} emitted to both users.`);
+  //console.log(`Event ${event} emitted to both users.`);
 }
 
 
 // this function will be used to set the online status of a user in back-end
 export async function setOnlineTodb(userId: string, status: boolean, updateLastSeen: boolean) {
 
-  console.log(`Setting online status for user ${userId} to ${status}`);
+  //console.log(`Setting online status for user ${userId} to ${status}`);
 
 
   try {
@@ -350,13 +350,13 @@ export async function setOnlineTodb(userId: string, status: boolean, updateLastS
       });
 
       if (!res.ok) {
-        console.log(`Failed to update online status for user ${userId}`);
+        //console.log(`Failed to update online status for user ${userId}`);
       }
       else {
-        console.log(`User ${userId} online status updated to ${status}`);
+        //console.log(`User ${userId} online status updated to ${status}`);
       }
   } catch (error) {
-      console.error('Error updating online status:', error);
+      //console.error('Error updating online status:', error);
   }
 
 }
@@ -365,7 +365,7 @@ export async function setOnlineTodb(userId: string, status: boolean, updateLastS
 export function sendDeleteOrUpdateMessageEventToUser(userId: string, from: string ,event: string, messageId: string, Updatemessage: string) {
   const sockets = onlineUsers.get(userId);
   const fromSockets = onlineUsers.get(from);
-  console.log(`Sending ${event} event to user ${userId} for message ${messageId}`);
+  //console.log(`Sending ${event} event to user ${userId} for message ${messageId}`);
   if (sockets) {
     sockets.forEach((socketId) => {
       ioInstance?.to(socketId).emit(event, {
@@ -375,9 +375,9 @@ export function sendDeleteOrUpdateMessageEventToUser(userId: string, from: strin
         Updatemessage
       });
     });
-    console.log(`Event ${event} sent to user ${userId} for message ${messageId}`);
+    //console.log(`Event ${event} sent to user ${userId} for message ${messageId}`);
   } else {
-    console.log(`User ${userId} is not online.`);
+    //console.log(`User ${userId} is not online.`);
   }
 
   // 🔥 Also notify the sender (from) in all their session
@@ -390,8 +390,8 @@ export function sendDeleteOrUpdateMessageEventToUser(userId: string, from: strin
         Updatemessage
       });
     });
-    console.log(`Event ${event} sent to sender ${from} for message ${messageId}`);
+    //console.log(`Event ${event} sent to sender ${from} for message ${messageId}`);
   } else {
-    console.log(`Sender ${from} is not online.`);
+    //console.log(`Sender ${from} is not online.`);
   }
 }

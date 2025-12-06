@@ -30,19 +30,19 @@ export default function JoinTournament() {
   useEffect(() => {
     initializeTournament();
     resetTournament();
-    console.log("📡 Requesting all public tournaments...");
+    //console.log("📡 Requesting all public tournaments...");
     socketContext.socket?.emit("get_all_available_public_tournaments");
 
     // socketContext.socket?.on("all_available_public_tournaments", (data) => {
-    //   console.log("✅ Received tournaments:", data);
+    //   //console.log("✅ Received tournaments:", data);
     //   setPublicTournaments(data.tournaments || []);
     // });
 
     socketContext.socket?.on("all_available_public_tournaments", (data) => {
-      console.log("✅ Received tournaments:", data);
+      //console.log("✅ Received tournaments:", data);
     
       if (data && Array.isArray(data.tournaments)) {
-        console.log("🏆 Tournaments List:", data.tournaments);
+        //console.log("🏆 Tournaments List:", data.tournaments);
         setPublicTournaments(data.tournaments);
       } else {
         console.warn("⚠️ Unexpected tournament data format:", data);
@@ -54,7 +54,7 @@ export default function JoinTournament() {
       
 
     socketContext.socket?.on("joined_tournament", async (data) => {
-        console.log("✅ Join tournament response:", data);
+        //console.log("✅ Join tournament response:", data);
         if (data?.status) {
             if (data.newUserJoinedId !== loggedUserId) {
               const playerInfo = await getNameAndAvatarFromId(data.newUserJoinedId);

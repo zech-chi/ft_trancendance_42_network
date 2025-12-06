@@ -61,7 +61,7 @@ function generateInviteId(): string {
 
 function updateUserState(userId: number, state: 'available' | 'sending' | 'pending_response' | 'in_game') {
   userInvitationStates.set(userId, state);
-  console.log(`📋 User ${userId} state updated to: ${state}`);
+  //console.log(`📋 User ${userId} state updated to: ${state}`);
 }
 
 function getUserState(userId: number): 'available' | 'sending' | 'pending_response' | 'in_game' {
@@ -76,7 +76,7 @@ function cleanupInvitation(inviteId: string, fromUserId: number, toUserId: numbe
   updateUserState(fromUserId, 'available');
   updateUserState(toUserId, 'available');
 
-  console.log(`🧹 Cleaned up invitation ${inviteId} between users ${fromUserId} and ${toUserId}`);
+  //console.log(`🧹 Cleaned up invitation ${inviteId} between users ${fromUserId} and ${toUserId}`);
 }
 
 // 🔹 Cleanup function for orphaned user states
@@ -95,7 +95,7 @@ function cleanupOrphanedStates() {
         updateUserState(userId, 'available');
         playerRooms.delete(userId);
         cleaned++;
-        console.log(`🧹 Cleaned orphaned state for user ${userId}: was in_game but no active room`);
+        //console.log(`🧹 Cleaned orphaned state for user ${userId}: was in_game but no active room`);
       }
     }
 
@@ -104,12 +104,12 @@ function cleanupOrphanedStates() {
       now - (pendingInvitations.get(userId)?.timestamp || now) > 5 * 60 * 1000) {
       updateUserState(userId, 'available');
       cleaned++;
-      console.log(`🧹 Cleaned old ${state} state for user ${userId}`);
+      //console.log(`🧹 Cleaned old ${state} state for user ${userId}`);
     }
   }
 
   if (cleaned > 0) {
-    console.log(`🧹 Cleanup completed: ${cleaned} orphaned states cleaned`);
+    //console.log(`🧹 Cleanup completed: ${cleaned} orphaned states cleaned`);
   }
 }
 
@@ -125,10 +125,10 @@ export function SocketFunction(fastify: FastifyInstance) {
     },
   });
 
-  console.log("✅ Socket server initialized");
+  //console.log("✅ Socket server initialized");
 
   io.on("connection", (socket) => {
-    console.log("✅ New client connected:", socket.id);
+    //console.log("✅ New client connected:", socket.id);
 
     // Register tournament-related events here
     registerTournamentEvents(socket, tournamentSystem, io);
@@ -143,10 +143,10 @@ export function SocketFunction(fastify: FastifyInstance) {
         socket.data.user = user; // Store user data directly on the socket
         onlineUsers.set(user.id, socket.id);
         updateUserState(user.id, 'available'); // Set initial state
-        console.log(`📌 ${user.username} is online (socket: ${socket.id})`);
+        //console.log(`📌 ${user.username} is online (socket: ${socket.id})`);
         socket.emit("register_confirmed", { userId: user.id });
       } catch (error) {
-        console.error("❌ DB error during register:", error);
+        //console.error("❌ DB error during register:", error);
         socket.emit("register_error", { message: "Registration failed" });
       }
     });
@@ -156,7 +156,7 @@ export function SocketFunction(fastify: FastifyInstance) {
       const userId = socket.data.user?.id;
       if (!userId) return;
 
-      console.log(`🧹 Manual cleanup requested by user ${userId}`);
+      //console.log(`🧹 Manual cleanup requested by user ${userId}`);
       cleanupOrphanedStates();
 
       socket.emit("cleanup_completed", {
@@ -166,13 +166,13 @@ export function SocketFunction(fastify: FastifyInstance) {
 
     // 🔹 Send a game invitation to another user (with state management)
     socket.on("send_invite", ({ from, fromName, to, game }) => {
-      console.log("INVITER:", from, to, game);
+      //console.log("INVITER:", from, to, game);
       const fromUserId = from;
       const toUserId = to;
 
       // Check if sender is available
       const senderState = getUserState(fromUserId);
-      console.log(`📋 Sender ${fromUserId} state: ${senderState}`);
+      //console.log(`📋 Sender ${fromUserId} state: ${senderState}`);
       if (senderState !== 'available') {
         socket.emit("invite_error", {
           message: `You cannot send invites while ${senderState}`,
@@ -185,7 +185,7 @@ export function SocketFunction(fastify: FastifyInstance) {
       // Check if receiver exists and is online
       const receiverSocketId = onlineUsers.get(toUserId);
       if (!receiverSocketId) {
-        console.log(`toUserId ${toUserId} is offline or does not exist : online ${onlineUsers.get(toUserId)}`);
+        //console.log(`toUserId ${toUserId} is offline or does not exist : online ${onlineUsers.get(toUserId)}`);
         socket.emit("invite_error", { message: "User is offline", to: toUserId });
         return;
       }
@@ -226,7 +226,7 @@ export function SocketFunction(fastify: FastifyInstance) {
       });
 
       // Send invitation
-      console.log(`📨 Sending invitation from ${fromUserId} to ${toUserId} , received socket: ${receiverSocketId}`);
+      //console.log(`📨 Sending invitation from ${fromUserId} to ${toUserId} , received socket: ${receiverSocketId}`);
       io.to(receiverSocketId).emit("receive_invite", {
         from,
         fromName,
@@ -259,14 +259,14 @@ export function SocketFunction(fastify: FastifyInstance) {
         }
       }, 30000); // 30 seconds timeout
 
-      console.log(`📤 Invitation sent: ${from} → User ${toUserId} (ID: ${inviteId})`);
+      //console.log(`📤 Invitation sent: ${from} → User ${toUserId} (ID: ${inviteId})`);
     });
 
     // 🔹 Decline an invitation (with state cleanup)
     socket.on("decline_invite", async ({ decliner, inviter, inviteId }) => {
-      console.log("DECLINER:", decliner);
-      console.log("INVITER:", inviter);
-      console.log("INVITE_ID:", inviteId);
+      //console.log("DECLINER:", decliner);
+      //console.log("INVITER:", inviter);
+      //console.log("INVITE_ID:", inviteId);
 
       const inviterSocketId = onlineUsers.get(inviter);
       if (inviterSocketId) {
@@ -287,7 +287,7 @@ export function SocketFunction(fastify: FastifyInstance) {
           inviteId: inviteId
         });
 
-        console.log(`❌ Invitation ${inviteId} declined by ${decliner.username}`);
+        //console.log(`❌ Invitation ${inviteId} declined by ${decliner.username}`);
       }
     });
 
@@ -295,8 +295,8 @@ export function SocketFunction(fastify: FastifyInstance) {
 
     // Synchronized invitation acceptance with race condition prevention
     socket.on("accept_invite", async ({ inviter, inviterName, accepter, inviteId }) => {
-      console.log("🎯 Accept invite received from:", socket.data.user?.username);
-      console.log("INVITE_ID:", inviteId);
+      //console.log("🎯 Accept invite received from:", socket.data.user?.username);
+      //console.log("INVITE_ID:", inviteId);
 
       // Verify invitation exists and is valid
       const pendingInvite = pendingInvitations.get(accepter.id);
@@ -318,7 +318,7 @@ export function SocketFunction(fastify: FastifyInstance) {
       try {
         // Authentication check
         if (!socket.data.user || socket.data.user.id !== accepter.id) {
-          console.error("❌ User authentication failed");
+          //console.error("❌ User authentication failed");
           socket.emit("game_error", { message: "User authentication failed" });
           return;
         }
@@ -329,14 +329,14 @@ export function SocketFunction(fastify: FastifyInstance) {
           return;
         }
 
-        console.log(`✅ inviter: ${inviter}, accepter: ${accepter}`);
+        //console.log(`✅ inviter: ${inviter}, accepter: ${accepter}`);
         const inviterSocketId = onlineUsers.get(inviter);
         const accepterSocketId = onlineUsers.get(accepter.id);
-        console.log("INVITER SOCKET ID:", inviterSocketId);
-        console.log("ACCEPTER SOCKET ID:", accepterSocketId);
+        //console.log("INVITER SOCKET ID:", inviterSocketId);
+        //console.log("ACCEPTER SOCKET ID:", accepterSocketId);
 
         if (!inviterSocketId || !accepterSocketId) {
-          console.error("❌ One of the users is offline");
+          //console.error("❌ One of the users is offline");
           socket.emit("game_error", { message: "User is offline" });
           return;
         }
@@ -401,7 +401,7 @@ export function SocketFunction(fastify: FastifyInstance) {
 
         // Send to room
         io.to(roomId).emit("game_started", gameStartData);
-        console.log(`🎮 Game started event sent to room ${roomId} (invite: ${inviteId})`);
+        //console.log(`🎮 Game started event sent to room ${roomId} (invite: ${inviteId})`);
 
         // Auto-start the game with proper synchronization
         setTimeout(() => {
@@ -413,7 +413,7 @@ export function SocketFunction(fastify: FastifyInstance) {
               state: "playing",
               timestamp: Date.now()
             });
-            console.log(`🚀 Game auto-started in room ${roomId}`);
+            //console.log(`🚀 Game auto-started in room ${roomId}`);
           }
         }, 2000);
 
@@ -427,7 +427,7 @@ export function SocketFunction(fastify: FastifyInstance) {
 
 
     socket.on("accept_invite_tournament", async ({ inviter, inviterName, accepter, tournamentId }) => {
-      console.log("🎯 Accept invite received from:", socket.data.user?.username);
+      //console.log("🎯 Accept invite received from:", socket.data.user?.username);
 
       // Critical section: Prevent race conditions during room creation
       const lockKey = `${inviter}-${accepter.id}`;
@@ -442,7 +442,7 @@ export function SocketFunction(fastify: FastifyInstance) {
       try {
         // Authentication check
         if (!socket.data.user || socket.data.user.id !== accepter.id) {
-          console.error("❌ User authentication failed");
+          //console.error("❌ User authentication failed");
           socket.emit("game_error", { message: "User authentication failed" });
           return;
         }
@@ -453,14 +453,14 @@ export function SocketFunction(fastify: FastifyInstance) {
           return;
         }
 
-        console.log(`✅ inviter: ${inviter}, accepter: ${accepter.id}`);
+        //console.log(`✅ inviter: ${inviter}, accepter: ${accepter.id}`);
         const inviterSocketId = onlineUsers.get(inviter);
         const accepterSocketId = onlineUsers.get(accepter.id);
-        console.log("INVITER SOCKET ID:", inviterSocketId);
-        console.log("ACCEPTER SOCKET ID:", accepterSocketId);
+        //console.log("INVITER SOCKET ID:", inviterSocketId);
+        //console.log("ACCEPTER SOCKET ID:", accepterSocketId);
 
         if (!inviterSocketId || !accepterSocketId) {
-          console.error("❌ One of the users is offline");
+          //console.error("❌ One of the users is offline");
           socket.emit("game_error", { message: "User is offline" });
           return;
         }
@@ -536,7 +536,7 @@ export function SocketFunction(fastify: FastifyInstance) {
               state: "playing",
               timestamp: Date.now()
             });
-            console.log(`🚀 Game auto-started in room ${roomId}`);
+            //console.log(`🚀 Game auto-started in room ${roomId}`);
           }
         }, 2000);
 
@@ -620,12 +620,12 @@ export function SocketFunction(fastify: FastifyInstance) {
         timestamp: Date.now()
       });
 
-      console.log(`✅ User  ${socket.data.user?.username} re-joined room: ${roomId}`);
+      //console.log(`✅ User  ${socket.data.user?.username} re-joined room: ${roomId}`);
     });
 
     // 🔹 Handle client disconnect (browser closed, tab closed, network issue)
     socket.on("disconnect", async () => {
-      console.log("❌ Client disconnected:", socket.id);
+      //console.log("❌ Client disconnected:", socket.id);
 
       if (socket.data.user) {
         const userId = socket.data.user.id;
@@ -650,7 +650,7 @@ export function SocketFunction(fastify: FastifyInstance) {
             if (wasInActiveGame) {
               // User was in an active game - DON'T clean up the invitation
               // Just notify the inviter that user temporarily left during game
-              console.log(`⚠️ User ${socket.data.user.username} disconnected during active game. Keeping invitation ${userPendingInvite.inviteId} pending.`);
+              //console.log(`⚠️ User ${socket.data.user.username} disconnected during active game. Keeping invitation ${userPendingInvite.inviteId} pending.`);
 
               const inviterSocketId = onlineUsers.get(userPendingInvite.from);
               if (inviterSocketId) {
@@ -685,7 +685,7 @@ export function SocketFunction(fastify: FastifyInstance) {
 
               if (targetInActiveGame) {
                 // Target is in active game - keep invitation pending
-                console.log(`⚠️ Invitation sender ${socket.data.user.username} disconnected but target is in active game. Keeping invitation ${invitation.inviteId} pending.`);
+                //console.log(`⚠️ Invitation sender ${socket.data.user.username} disconnected but target is in active game. Keeping invitation ${invitation.inviteId} pending.`);
 
                 const targetSocketId = onlineUsers.get(targetUserId);
                 if (targetSocketId) {
@@ -740,7 +740,7 @@ export function SocketFunction(fastify: FastifyInstance) {
                   timestamp: Date.now(),
                   ...(room?.tounrnamentId && { tournamentId: room.tounrnamentId }),
                 });
-                console.log(`🛑 Game in room ${roomId} ended due to ${socket.data.user.username} disconnection.`);
+                //console.log(`🛑 Game in room ${roomId} ended due to ${socket.data.user.username} disconnection.`);
 
                 // 🔧 FIX: Reset the disconnected player's state to available
                 updateUserState(userId, 'available');
@@ -749,7 +749,7 @@ export function SocketFunction(fastify: FastifyInstance) {
                 room.players.forEach(player => {
                   if (player.id !== userId) { // Don't reset the disconnected player twice
                     updateUserState(player.id, 'available');
-                    console.log(`🔄 Reset state to available for remaining player: ${player.username}`);
+                    //console.log(`🔄 Reset state to available for remaining player: ${player.username}`);
                   }
                 });
 
@@ -758,7 +758,7 @@ export function SocketFunction(fastify: FastifyInstance) {
                   cleanupOrphanedStates();
                 }, 1000);
               } else {
-                console.log(`⚠️ ${socket.data.user.username} disconnected but game already ended naturally.`);
+                //console.log(`⚠️ ${socket.data.user.username} disconnected but game already ended naturally.`);
               }
 
               // Clean up the room from memory after a short delay
@@ -767,7 +767,7 @@ export function SocketFunction(fastify: FastifyInstance) {
                 if (rooms.has(roomId)) { // Check if it still exists before deleting
                   rooms.delete(roomId);
                   room.players.forEach(p => playerRooms.delete(p.id));
-                  console.log(`🗑️ Room ${roomId} cleaned up.`);
+                  //console.log(`🗑️ Room ${roomId} cleaned up.`);
                 }
               }, 5000); // 5 seconds to ensure client gets notification
             }
@@ -780,7 +780,7 @@ export function SocketFunction(fastify: FastifyInstance) {
             updateUserState(userId, 'available');
           }
         } catch (error) {
-          console.error("❌ Error handling disconnect for user:", userId, error);
+          //console.error("❌ Error handling disconnect for user:", userId, error);
         }
       }
     });
@@ -790,7 +790,7 @@ export function SocketFunction(fastify: FastifyInstance) {
       const senderId = socket.data.user?.id;
       if (!senderId) return;
 
-      console.log(`❌ User ${senderId} cancelling invitation ${inviteId} to user ${targetUserId}`);
+      //console.log(`❌ User ${senderId} cancelling invitation ${inviteId} to user ${targetUserId}`);
 
       // Find and remove the pending invitation
       const pendingInvite = pendingInvitations.get(targetUserId);
@@ -816,19 +816,19 @@ export function SocketFunction(fastify: FastifyInstance) {
           message: "Invitation cancelled successfully"
         });
 
-        console.log(`✅ Invitation ${inviteId} cancelled successfully`);
+        //console.log(`✅ Invitation ${inviteId} cancelled successfully`);
       } else {
         socket.emit("invite_error", {
           message: "Invitation not found or already processed",
           to: targetUserId
         });
-        console.log(`⚠️ Could not find invitation ${inviteId} to cancel`);
+        //console.log(`⚠️ Could not find invitation ${inviteId} to cancel`);
       }
     });
 
     // 🔹 Debug event to test force leave
     socket.on("debug_force_leave", ({ targetUserId }: { targetUserId: number }) => {
-      console.log(`🐛 Debug: Forcing leave for user ${targetUserId}`);
+      //console.log(`🐛 Debug: Forcing leave for user ${targetUserId}`);
       const targetSocketId = onlineUsers.get(targetUserId);
       if (targetSocketId) {
         io.to(targetSocketId).emit("force_leave_game", {
@@ -836,9 +836,9 @@ export function SocketFunction(fastify: FastifyInstance) {
           message: "Debug force leave test",
           timestamp: Date.now()
         });
-        console.log(`🐛 Debug: Sent force_leave_game to user ${targetUserId}`);
+        //console.log(`🐛 Debug: Sent force_leave_game to user ${targetUserId}`);
       } else {
-        console.log(`🐛 Debug: User ${targetUserId} not found online`);
+        //console.log(`🐛 Debug: User ${targetUserId} not found online`);
       }
     });
 
@@ -883,13 +883,13 @@ export function SocketFunction(fastify: FastifyInstance) {
             });
 
             if (!res.ok) {
-              console.log(`Failed to update online status for user`);
+              //console.log(`Failed to update online status for user`);
             }
             else {
-              console.log('=========> Successfully updated match result in DB');
+              //console.log('=========> Successfully updated match result in DB');
             }
           } catch (error) {
-            console.error('Error updating online status:', error);
+            //console.error('Error updating online status:', error);
           }
           // Notify the OTHER player(s) in the room
           socket.to(roomId).emit("game_ended", {
@@ -899,7 +899,7 @@ export function SocketFunction(fastify: FastifyInstance) {
             timestamp: Date.now(),
             ...(room?.tounrnamentId && { tournamentId: room.tounrnamentId }),
           });
-          console.log(`🚪 User ${socket.data.user.username} explicitly left game room ${roomId}.`);
+          //console.log(`🚪 User ${socket.data.user.username} explicitly left game room ${roomId}.`);
 
           // 🔧 FIX: Reset the leaving player's state to available
           updateUserState(userId, 'available');
@@ -908,7 +908,7 @@ export function SocketFunction(fastify: FastifyInstance) {
           room.players.forEach(player => {
             if (player.id !== userId) { // Don't reset the leaving player twice
               updateUserState(player.id, 'available');
-              console.log(`🔄 Reset state to available for remaining player: ${player.username}`);
+              //console.log(`🔄 Reset state to available for remaining player: ${player.username}`);
             }
           });
 
@@ -917,7 +917,7 @@ export function SocketFunction(fastify: FastifyInstance) {
             cleanupOrphanedStates();
           }, 1000);
         } else {
-          console.log(`⚠️ ${socket.data.user.username} left but game already ended naturally.`);
+          //console.log(`⚠️ ${socket.data.user.username} left but game already ended naturally.`);
         }
 
         // Clean up the room immediately (or after a very short delay)
@@ -925,7 +925,7 @@ export function SocketFunction(fastify: FastifyInstance) {
           if (rooms.has(roomId)) {
             rooms.delete(roomId);
             room.players.forEach(p => playerRooms.delete(p.id));
-            console.log(`🗑️ Room ${roomId} cleaned up.`);
+            //console.log(`🗑️ Room ${roomId} cleaned up.`);
           }
         }, 1000);
       }
@@ -1013,7 +1013,7 @@ export function SocketFunction(fastify: FastifyInstance) {
         scorer: scorer.id,
         timestamp: now
       });
-      console.log(`⚽ Score! ${scorer.username} has ${scorer.score} points.`);
+      //console.log(`⚽ Score! ${scorer.username} has ${scorer.score} points.`);
     }
 
     // 5. Broadcast game state to all players in the room
@@ -1058,13 +1058,13 @@ export function SocketFunction(fastify: FastifyInstance) {
         });
 
         if (!res.ok) {
-          console.log(`Failed to update online status for user`);
+          //console.log(`Failed to update online status for user`);
         }
         else {
-          console.log('=========> Successfully updated match result in DB');
+          //console.log('=========> Successfully updated match result in DB');
         }
       } catch (error) {
-        console.error('Error updating online status:', error);
+        //console.error('Error updating online status:', error);
       }
       // Reset player states to available
       room.players.forEach(player => {
@@ -1078,7 +1078,7 @@ export function SocketFunction(fastify: FastifyInstance) {
         timestamp: now,
         tournamentId: room.tounrnamentId,
       });
-      console.log(`🏆 Game in room ${roomId} ended. Winner: ${winner.id}`);
+      //console.log(`🏆 Game in room ${roomId} ended. Winner: ${winner.id}`);
 
       // Force cleanup of any orphaned states after game ends
       setTimeout(() => {
@@ -1090,7 +1090,7 @@ export function SocketFunction(fastify: FastifyInstance) {
         if (rooms.has(roomId)) {
           rooms.delete(roomId);
           room.players.forEach(p => playerRooms.delete(p.id));
-          console.log(`🗑️ Room ${roomId} fully removed.`);
+          //console.log(`🗑️ Room ${roomId} fully removed.`);
         }
       }, 10000); // 10 seconds delay
     }
@@ -1104,7 +1104,7 @@ export function SocketFunction(fastify: FastifyInstance) {
       dx: (Math.random() > 0.5 ? 3 : -3), // Reduced from 6 to 3
       dy: (Math.random() - 0.5) * 4, // Reduced from 6 to 4
     };
-    console.log("🔄 Ball reset:", room.ball);
+    //console.log("🔄 Ball reset:", room.ball);
   }
 }
 

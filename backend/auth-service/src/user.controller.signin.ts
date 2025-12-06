@@ -95,7 +95,7 @@ export async function LoginUser(
       user: { id: user.id, email: user.email, userName: user.userName, twoFARequired: false },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    //console.error("Login error:", error);
     return reply.code(400).send({ message: "Something went wrong" });
   }
 }

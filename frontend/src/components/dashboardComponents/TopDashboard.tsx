@@ -115,7 +115,7 @@ function ProfileInfo({ user, friendshipStatus, setFriendshipStatus }: {user : Us
   //   }
 
 //   useEffect(() => {
-//     console.log("Friendship status updated:", friendshipStatus);
+//     //console.log("Friendship status updated:", friendshipStatus);
 //  }, [friendshipStatus]);
 
 
@@ -140,9 +140,9 @@ function ProfileInfo({ user, friendshipStatus, setFriendshipStatus }: {user : Us
             }
             const data = await response.json();
             setFriendshipStatus({status: "pending", blocked_by: null});
-            console.log(data);
+            //console.log(data);
         } catch (error) {
-            console.error("Error sending friend request:", error);
+            //console.error("Error sending friend request:", error);
             // should use  state do display the error for the loged user
         }
     };
@@ -270,7 +270,7 @@ function DisplayLevel({ progress }: LevelInfoProps): JSX.Element {
       <div className="relative bg-white/10 w-full h-2 md:h-2.5 xl:h-3 mr-10 rounded-4xl border-1 md:border-1.5 xl:border-2  border-[#1CBABA]/30 mt-0 md:mt-0.5 xl:mt-2 mb-2.5">
         <motion.div
           className="absolute top-0 left-0 h-full rounded-4xl bg-[#1CBABA] border-1 md:border-1.5 xl:border-2  border-white/40" 
-          animate={{ width: `${progress * 100}%` }}
+          animate={{ width: `${(progress * 100).toFixed(2)}%` }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         />
       </div>

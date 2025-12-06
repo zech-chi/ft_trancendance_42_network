@@ -20,7 +20,7 @@ export class TournamentSystem {
         const tournament = new Tournament(id, name, numberOfPlayers, isPrivate, createdBy, io);
         this.tournaments.set(id, tournament);
         if (this.DEBUG) {
-            console.log(`🏆 [TournamentSystem] Created tournament: ${name} (ID: ${id}) by ${createdBy}`);
+            //console.log(`🏆 [TournamentSystem] Created tournament: ${name} (ID: ${id}) by ${createdBy}`);
         }
         // add player who created the tournament as the first player
         return tournament;
@@ -47,7 +47,7 @@ export class TournamentSystem {
         // check if player is already in a tournament
         if (this.ocupiedUsers.has(playerId)) {
             if (this.DEBUG) {
-                console.log(`⚠️ [TournamentSystem] Player ${playerId} is already in a tournament and cannot join another.`);
+                //console.log(`⚠️ [TournamentSystem] Player ${playerId} is already in a tournament and cannot join another.`);
             }
             return {status: false, message: "you already in a tournament"};
         }
@@ -57,7 +57,7 @@ export class TournamentSystem {
             if (status) {
                 this.ocupiedUsers.add(playerId);
                 if (this.DEBUG) {
-                    console.log(`👥 [TournamentSystem] Player ${playerId} joined tournament: ${tournament.getName()} (ID: ${tournamentId})`);
+                    //console.log(`👥 [TournamentSystem] Player ${playerId} joined tournament: ${tournament.getName()} (ID: ${tournamentId})`);
                 }
                 return {status: status, message: "Player joined the tournament successfully"};
             }
@@ -151,7 +151,7 @@ export class TournamentSystem {
             if (tournament.getState() === 'completed') {
                 this.tournaments.delete(id);
                 if (this.DEBUG) {
-                    console.log(`🧹 [TournamentSystem] Removed completed tournament: ${tournament.getName()} (ID: ${id})`);
+                    //console.log(`🧹 [TournamentSystem] Removed completed tournament: ${tournament.getName()} (ID: ${id})`);
                 }
             }
             // delete players from ocupiedUsers
@@ -167,7 +167,7 @@ export class TournamentSystem {
                 // remove tournament
                 tournament.setState('completed');
                 if (this.DEBUG) {
-                    console.log(`❌ [TournamentSystem] Removed tournament: ${tournament.getName()} (ID: ${tournamentId}) due to player disconnect`);
+                    //console.log(`❌ [TournamentSystem] Removed tournament: ${tournament.getName()} (ID: ${tournamentId}) due to player disconnect`);
                 }
                 return tournamentId;
             }
@@ -183,12 +183,12 @@ export class TournamentSystem {
                 // if (tournament.isAllPlayersDeconnected()) {
                 //     tournament.setState('completed');
                 //     if (this.DEBUG) {
-                //         console.log(`❌ [TournamentSystem] All players disconnected. Marked tournament: ${tournament.getName()} (ID: ${tournamentId}) as completed`);
+                //         //console.log(`❌ [TournamentSystem] All players disconnected. Marked tournament: ${tournament.getName()} (ID: ${tournamentId}) as completed`);
                 //     }
                 // }
                 this.ocupiedUsers.delete(playerId);
                 if (this.DEBUG) {
-                    console.log(`🗑️ [TournamentSystem] Removed occupied player: ${playerId} from tournament: ${tournament.getName()} (ID: ${tournamentId})`);
+                    //console.log(`🗑️ [TournamentSystem] Removed occupied player: ${playerId} from tournament: ${tournament.getName()} (ID: ${tournamentId})`);
                 }
             }
         }

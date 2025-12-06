@@ -42,7 +42,7 @@ export function useAudioRecorder() {
                 setRecordingTime(prevTime => prevTime + 1);
             }, 1000);
         } catch (error) {
-            console.error('Error starting recording:', error);
+            //console.error('Error starting recording:', error);
         }
     };
 

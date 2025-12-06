@@ -86,7 +86,7 @@ export function PingPongCanvas({
     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D | null;
 
     if (!ctx) {
-      console.log("CANVAS PROBLEM");
+      //console.log("CANVAS PROBLEM");
       return;
     }
 

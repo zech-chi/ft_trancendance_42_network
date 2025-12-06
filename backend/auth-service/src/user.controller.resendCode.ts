@@ -37,7 +37,7 @@ export async function resendVerificationCode(
     
     return reply.code(200).send({ message: "Verification code resent" });
   } catch (err) {
-    console.error("Resend verification code error:", err);
+    //console.error("Resend verification code error:", err);
     return reply.code(400).send({ message: "Something went wrong" });
   }
 }  

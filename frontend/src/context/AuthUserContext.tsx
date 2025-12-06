@@ -29,7 +29,7 @@ export const AuthUserProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     async function checkAuth() {
       const user = await fetchUser();
-      console.log("Fetched user in AuthUserProvider:", user);
+      //console.log("Fetched user in AuthUserProvider:", user);
       if (!user || !user.userName) {
         setSelectedUserId(0);
         setSelectedUserName(null);

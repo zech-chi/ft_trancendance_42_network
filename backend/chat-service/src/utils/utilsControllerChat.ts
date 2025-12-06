@@ -87,7 +87,7 @@ export async function checkUserExists(reply:FastifyReply ,userId: string): Promi
         reply.status(404).send({ status: 'error',  message: 'to User not found.' });
         return false;
     }
-    console.log("========> User exists:", userExists);
+    //console.log("========> User exists:", userExists);
     return (true);
 }
 
@@ -122,7 +122,7 @@ export async function checkFriendship(reply: FastifyReply,from: string, to: stri
         reply.status(403).send({ status: 'error', message: errorMessage });
         return false;
     }
-    console.log("========> Are friends:", friendship);
+    //console.log("========> Are friends:", friendship);
     return (true);
 }
 
@@ -188,7 +188,7 @@ export async function insertMessageToDatabase(
 // this function will fetch all messages between two users and format them to a structured format
 export async function getFormattedMessages(reply: FastifyReply, from: string, to: string, limit: number, offset: number): Promise<Message[]> {
 
-  console.log("Fetching messages from:", from, "to:", to, "with limit:", limit, "and offset:", offset);
+  //console.log("Fetching messages from:", from, "to:", to, "with limit:", limit, "and offset:", offset);
     // const stmt = db.prepare(`
     //     SELECT * FROM messages
     //     WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
@@ -213,8 +213,8 @@ export async function getFormattedMessages(reply: FastifyReply, from: string, to
     const data = await response.json();
     const rows = data.messages as MessageRow[];
 
-    console.log("Messages fetched from database:", rows);
-    rows.forEach(msg => {console.log(`===========>  ${typeof msg.timestamp}  <==========`)});
+    //console.log("Messages fetched from database:", rows);
+    rows.forEach(msg => {//console.log(`===========>  ${typeof msg.timestamp}  <==========`)});
     return rows.map(msg => ({
         id: msg.id,
         message: msg.message,
@@ -363,7 +363,7 @@ type FriendDbRow = {
     //     userId  // for the new JOIN condition (sender_id)
     // ) as FriendDbRow[];
   
-    // console.log(">>>>>>>>>>>> rows as a resulst : ", rows);
+    // //console.log(">>>>>>>>>>>> rows as a resulst : ", rows);
 
     const response = await fetch(ApidataBase.getFriends, {
         method: 'POST',
@@ -373,12 +373,12 @@ type FriendDbRow = {
         body: JSON.stringify({ userId })
     });
     if (!response.ok) {
-        console.error('Failed to fetch friends from DB service');
+        //console.error('Failed to fetch friends from DB service');
         return [];
     }
     const data = await response.json();
     const rows = data.friends as FriendDbRow[];
-    console.log(">>>>>>>>>>>> rows as a resulst : ", rows);
+    //console.log(">>>>>>>>>>>> rows as a resulst : ", rows);
     
     // Map the database rows to your frontend Contact type
     const contacts: Contact[] = rows.map(row => ({
@@ -459,7 +459,7 @@ export async function checkMessageId(reply: FastifyReply, messageId: string, fro
     const data = await response.json();
     const message = data.exists;
 
-    console.log("Message that will be deleted is ===> ", message);
+    //console.log("Message that will be deleted is ===> ", message);
     
     if (!message) {
       reply.status(404).send({ status: 'error', message: 'Message not found or your are not the sender' });

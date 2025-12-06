@@ -36,7 +36,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     if (loggedUserId && loggedUserName) return; // If we already have user data, skip fetching
     async function checkAuth() {
       const user = await fetchUser();
-      console.log("Fetched user:", user);
+      //console.log("Fetched user:", user);
       if (!user || !user.userName) {
         setLoggedUserName(null);
         setLoggedUserId(0);
@@ -75,7 +75,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   //   useEffect(() => {
   //     async function checkAuth() {
   //         const user = await fetchUser();
-  //         console.log("Fetched user:", user);
+  //         //console.log("Fetched user:", user);
   //         if (!user || !user.userName) {
   //             setLoggedUserName(null);
   //             setLoggedUserId(0);
@@ -117,14 +117,14 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             id: loggedUserId,
             username: loggedUserName,
           });
-          console.log("✅ User registered on socket:", loggedUserId);
+          //console.log("✅ User registered on socket:", loggedUserId);
         } else {
           setCurrentUser(null);
         }
       } catch (err) {
         setIsConnected(false);
         setCurrentUser(null);
-        console.error("Failed to register user on socket:", err);
+        //console.error("Failed to register user on socket:", err);
       }
     });
 
@@ -133,7 +133,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       fetchMakePlayerOnline(loggedUserId, false);
 
       setIsConnected(false);
-      console.log("Disconnected from server");
+      //console.log("Disconnected from server");
     });
 
     setSocket(newSocket);

@@ -87,13 +87,13 @@ function checkSizeLimit(
     ? parseInt(request.headers["content-length"])
     : 0;
 
-      // console.log("==================> Content-Length:", contentLength, MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES, "  " ,getFileType(request.headers["content-type"]) , " ", data.mimetype);
+      // //console.log("==================> Content-Length:", contentLength, MAX_AUDIO_SIZE_IN_BYTES, MAX_FILE_SIZE_IN_BYTES, "  " ,getFileType(request.headers["content-type"]) , " ", data.mimetype);
   if (
     contentLength > MAX_FILE_SIZE_IN_BYTES ||
     (getFileType(data.mimetype) === "audio" &&
       contentLength > MAX_AUDIO_SIZE_IN_BYTES)
   ) {
-    // console.error("File size exceeds limit:", contentLength);
+    // //console.error("File size exceeds limit:", contentLength);
     reply.status(400).send({
       error: "ko",
       message: `File size exceeds the limit of ${
@@ -150,7 +150,7 @@ async function insertIntoDatabase(from: string, to: string, data: any, filename:
 
   const responseData = await response.json();
   const id = responseData.messageId;
-  // console.log("File metadata saved to database with ID:", id);
+  // //console.log("File metadata saved to database with ID:", id);
 
   // send the message via socket.io
    const messageData = {
@@ -178,10 +178,10 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
   
   // extract the from and to ids from params
   const {from, to} = request.params as { from: string, to: string };
-  // console.log(`#######################################File upload request from user ${from} to contact ${to}`);
+  // //console.log(`#######################################File upload request from user ${from} to contact ${to}`);
 
     if (!checkIds(reply, from, to, "You cannot send a file to yourself.")){
-      // console.log("here 2");
+      // //console.log("here 2");
       return; // If checkIds returns false, exit the function
     }
 
@@ -191,33 +191,33 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
 
     // check userif exist to send 
      if (!(await checkUserExists(reply, to))) {
-        // console.log("here 3");
+        // //console.log("here 3");
           return; // If the user does not exist, exit the function
      }
 
     // check friendship between from and to
      if (!(await checkFriendship(reply, from, to, "You can only send messages to friends.", true))) {
-        // console.log("here 4");
+        // //console.log("here 4");
           return; // If the users are not friends, exit the function
     }
 
     const data = await request.file();
     const uploadDir = createUploadDir();
 
-  // console.log("File upload request received:", data);
+  // //console.log("File upload request received:", data);
   
   // Check if the file data is valid
   if (!checkDataFile(reply, data) || !data) {
     return; // If no file is uploaded, exit the function
   }
 
-  // console.log("Checking file size limit...");
+  // //console.log("Checking file size limit...");
     if (!checkSizeLimit(request, reply, data)) {
       data.file.resume(); // Consume the stream to prevent hanging
       return reply; // If size limit is exceeded, exit the function
     }
 
-  // console.log("mimetype:", data.mimetype);
+  // //console.log("mimetype:", data.mimetype);
   // Check if the file type is allowed
   if (!isAllowedMimeType(reply, data.mimetype)) {
     return; // If the mimetype is not allowed, exit the function
@@ -225,7 +225,7 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
 
   try {
     // check if size limit is exceeded using content-length header
-    // console.log("Checking file size limit...");
+    // //console.log("Checking file size limit...");
     // if (!checkSizeLimit(request, reply, data)) {
     //   data.file.resume(); // Consume the stream to prevent hanging
     //   return reply; // If size limit is exceeded, exit the function
@@ -248,7 +248,7 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     // check if is pdf
     let thumbnailPath: string | null = null;
     if(isPdf(data.mimetype)) {
-      // console.log("File is a PDF, converting to images...");
+      // //console.log("File is a PDF, converting to images...");
       thumbnailPath = await ConvertFirstPageToImage(filePath);
       if (thumbnailPath) {
         // thumbnailPath = `${request.protocol}://localhost:5006/api/chat/uploads/${thumbnailPath}`;
@@ -279,7 +279,7 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
     });
 
   } catch (err) {
-    // console.error("Failed to save file:", err);
+    // //console.error("Failed to save file:", err);
     return reply.status(400).send({
       status: "error",
       message: "Could not save the file.",
@@ -289,7 +289,7 @@ export async function uploadFile(request: FastifyRequest, reply: FastifyReply) {
 
 // function to get a file from uploads directory
 export async function getFile(request: FastifyRequest, reply: FastifyReply) {
-  // console.log(" mara min hona Received request to get file:", request.params);
+  // //console.log(" mara min hona Received request to get file:", request.params);
   try {
     
     // // Require logged-in user (add real auth check here)
@@ -325,7 +325,7 @@ export async function getFile(request: FastifyRequest, reply: FastifyReply) {
 
     return reply.send(fs.createReadStream(filePath));
   } catch (error) {
-    // console.error("Error retrieving file:", error);
+    // //console.error("Error retrieving file:", error);
     return reply
       .status(400)
       .send({ status: "error", message: "something go wrong while geting the file!" });
@@ -335,7 +335,7 @@ export async function getFile(request: FastifyRequest, reply: FastifyReply) {
 // Function to convert PDF to images
 async function ConvertFirstPageToImage(pdfPath: string): Promise<string | null> {
 
-  // console.log("Converting PDF to images...--------------------------->>>>");
+  // //console.log("Converting PDF to images...--------------------------->>>>");
   const outputDir = createUploadDir();
 
   const options = {
@@ -350,10 +350,10 @@ async function ConvertFirstPageToImage(pdfPath: string): Promise<string | null> 
   try {
     const converter = fromPath(pdfPath, options);
     const result = await converter(1, { responseType: "image" });
-    // console.log("Image saved at:", result.path); //  result.path is the file path
+    // //console.log("Image saved at:", result.path); //  result.path is the file path
     return result.name ?? null;
   } catch (error) {
-    console.error("Failed to convert PDF to image:", error);
+    //console.error("Failed to convert PDF to image:", error);
   }
   return null; // Return null if conversion fails
 }

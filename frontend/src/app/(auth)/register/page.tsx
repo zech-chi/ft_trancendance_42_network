@@ -51,7 +51,7 @@ export default function SignupPage() {
 
     const handleSubmit = async () => {
         try {
-            console.log("Attempting registration with", { userName, fullName, email, password });
+            //console.log("Attempting registration with", { userName, fullName, email, password });
             const res = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -70,7 +70,7 @@ export default function SignupPage() {
             router.push("/login");
             
         } catch (error) {
-            console.error("Error during signup:", error);
+            //console.error("Error during signup:", error);
         }
     }
 

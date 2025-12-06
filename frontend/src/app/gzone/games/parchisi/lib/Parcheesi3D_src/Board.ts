@@ -87,23 +87,23 @@ export class Board {
         this.moveAbleMap.set(2, new BABYLON.Vector2(0, 0));
         this.moveAbleMap.set(3, new BABYLON.Vector2(0, 0));
         this.moveAbleMap.set(4, new BABYLON.Vector2(0, 0));
-        console.log("You are playing as :", this.playerUserName);
-        console.log("Socket initialized:", this.socket.id);
-        console.log("Game ID:", this.gameId);
-        console.log("Is Local Game:", this.isLocal);
+        //console.log("You are playing as :", this.playerUserName);
+        //console.log("Socket initialized:", this.socket.id);
+        //console.log("Game ID:", this.gameId);
+        //console.log("Is Local Game:", this.isLocal);
     }
 
     public setMoveAble(data: MoveAbleType) {
         if (!data) {
-            console.error("Invalid moveAble data:", data);
+            //console.error("Invalid moveAble data:", data);
             return;
         }
         if (!this.isLocal && data.sphere_type !== this.playerColor) {
             return;
         }
-        console.log("Moveable data received:", data);
+        //console.log("Moveable data received:", data);
         this.moveAbleMap.set(data.sphere_id, new BABYLON.Vector2(data.choice1, data.choice2 || 0));
-        console.log("Moveable map updated:", this.moveAbleMap);
+        //console.log("Moveable map updated:", this.moveAbleMap);
     }
 
     public async setPlayerTurn(color: PlayerColor) {
@@ -375,7 +375,7 @@ export class Board {
         }
     }
     private async createSphere(sphere: SphereType) {
-        console.log("->sphere" + sphere.type + String(sphere.id));
+        //console.log("->sphere" + sphere.type + String(sphere.id));
         const sphereName = "sphere" + sphere.type + String(sphere.id);
         const sphereMesh = BABYLON.MeshBuilder.CreateSphere(sphereName, {
             diameter: sphere.diameter,
@@ -396,8 +396,8 @@ export class Board {
                     BABYLON.ActionManager.OnPickTrigger,
                     (evt) => {
                         this.resetBoxes();~
-                        console.log("Sphere clicked:", sphereMesh.name);
-                        console.log("moveAble : ", this.moveAbleMap.get(Number(sphere.id)));
+                        //console.log("Sphere clicked:", sphereMesh.name);
+                        //console.log("moveAble : ", this.moveAbleMap.get(Number(sphere.id)));
                         if (this.clickedSphereColor === sphere.type) {
                             if (this.moveAbleMap.get(Number(sphere.id))?.x !== 0) {
                                 this.box1 = this.createBoxWithChoice(this.moveAbleMap.get(Number(sphere.id))?.x as number, sphereMesh.position);
@@ -417,7 +417,7 @@ export class Board {
                                 new BABYLON.ExecuteCodeAction(
                                     BABYLON.ActionManager.OnPickTrigger,
                                     (evt) => {
-                                        console.log("Box 1 clicked, you choose:", this.moveAbleMap.get(Number(sphere.id))?.x);
+                                        //console.log("Box 1 clicked, you choose:", this.moveAbleMap.get(Number(sphere.id))?.x);
                                         // emit the move request to the server
                                         if (this.socket.connected) {
                                             this.socket.emit("moveRequest", {
@@ -427,7 +427,7 @@ export class Board {
                                                 choice: this.moveAbleMap.get(Number(sphere.id))?.x
                                             });
                                         } else {
-                                            console.error("Socket not connected!");
+                                            //console.error("Socket not connected!");
                                         }
                                         this.resetBoxes();
                                         this.resetMoveAbleMap();
@@ -441,7 +441,7 @@ export class Board {
                                 new BABYLON.ExecuteCodeAction(
                                     BABYLON.ActionManager.OnPickTrigger,
                                     (evt) => {
-                                        console.log("Box 2 clicked, you choose:", this.moveAbleMap.get(Number(sphere.id))?.y);
+                                        //console.log("Box 2 clicked, you choose:", this.moveAbleMap.get(Number(sphere.id))?.y);
                                         if (this.socket.connected) {
                                             this.socket.emit("moveRequest", {
                                                 gameId: this.gameId,
@@ -450,7 +450,7 @@ export class Board {
                                                 choice: this.moveAbleMap.get(Number(sphere.id))?.y
                                             });
                                         } else {
-                                            console.error("Socket not connected!");
+                                            //console.error("Socket not connected!");
                                         }
                                         this.resetBoxes();
                                         this.resetMoveAbleMap();
@@ -527,16 +527,16 @@ export class Board {
         });
         
         button.onPointerDownObservable.add(() => {
-            console.log(`${type} button clicked`);
+            //console.log(`${type} button clicked`);
             // Emit the roll dice event to the server
             // this.socket.emit("requestRollDices", { color: type });
             if (this.socket.connected) {
                 this.socket.emit("requestRollDices", { color: type, gameId: this.gameId });
-                console.log("Dice rolled for color:", type);
+                //console.log("Dice rolled for color:", type);
             } else {
-                console.error("Socket not connected!");
+                //console.error("Socket not connected!");
             }
-            // console.log("Dice rolled for color:", type);
+            // //console.log("Dice rolled for color:", type);
             button.isVisible = false; // hide the button after clicking
         });
 
@@ -662,7 +662,7 @@ export class Board {
         // fetch the avatar image from the server
         // and create a cylinder with the avatar image as texture
         if (!obj.userName || !obj.color) {
-            console.error("Invalid player data:", obj);
+            //console.error("Invalid player data:", obj);
             return;
         }
 
@@ -670,7 +670,7 @@ export class Board {
             this.playerColor = obj.color;
         }
 
-        console.log(this.playerColor, "   ", this.playerUserName);
+        //console.log(this.playerColor, "   ", this.playerUserName);
         const user : User =  await fetchUser(obj.userName);
         
         var cylinder = BABYLON.MeshBuilder.CreateCylinder(`${obj.color}Cylinder_${obj.userName}`, {
@@ -698,7 +698,7 @@ export class Board {
         return new Promise<void>((resolve) => {
             const mesh = this.scene.getMeshByName(meshName);
             if (!mesh) {
-                console.log(`Error in moveMeshWithQueue ${meshName} mesh not found `);
+                //console.log(`Error in moveMeshWithQueue ${meshName} mesh not found `);
                 resolve();
                 return ;
             }
@@ -707,7 +707,7 @@ export class Board {
             const endPosition = new BABYLON.Vector3(position.x, position.y, position.z);
             
             if (startPosition.equals(endPosition)) {
-                console.log(`Mesh ${meshName} is already at the target position.`);
+                //console.log(`Mesh ${meshName} is already at the target position.`);
                 resolve();
                 return;
             }
@@ -771,7 +771,7 @@ export class Board {
                 false,    // loop: whether the animation should loop (true/false)
                 speed,     // speedRatio: 1.0 means normal speed (2.0 = twice as fast)
                 () => {
-                    console.log(`Animation finished for ${meshName} at position:`, position);
+                    //console.log(`Animation finished for ${meshName} at position:`, position);
                     resolve();
                 }
             );
@@ -814,7 +814,7 @@ export class Board {
             }
         } else {
             if (!instruction.place || !instruction.where) {
-                console.error("Invalid move instruction:", instruction);
+                //console.error("Invalid move instruction:", instruction);
                 return;
             }
             placeToMove = LOCATIONS[instruction.place][instruction.where];
@@ -822,12 +822,12 @@ export class Board {
 
         // check if placeToMove is valid
         if (!placeToMove) {
-            console.error("Invalid place to move:", placeToMove);
+            //console.error("Invalid place to move:", placeToMove);
             return;
         }
 
         await this.moveAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeToMove, instruction.speed).then(() => {
-            console.log("move animation completed");
+            //console.log("move animation completed");
         });
     }
 
@@ -836,7 +836,7 @@ export class Board {
         return new Promise<void>((resolve) => {
             const mesh = this.scene.getMeshByName(meshName);
             if (!mesh) {
-                console.error(`Error in jumpAnimation: Mesh with name ${meshName} not found.`);
+                //console.error(`Error in jumpAnimation: Mesh with name ${meshName} not found.`);
                 resolve();
                 return;
             }
@@ -912,7 +912,7 @@ export class Board {
                         mesh.rotationQuaternion = BABYLON.Quaternion.FromLookDirectionLH(direction.normalize(), new BABYLON.Vector3(0, 1, 0));
                     }
                 }
-                console.log(`Jump animation finished for ${meshName} at position:`, positions);
+                //console.log(`Jump animation finished for ${meshName} at position:`, positions);
                 resolve();
             });
         });
@@ -936,7 +936,7 @@ export class Board {
                     break;
             }
             await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
-                console.log("Jump animation completed");
+                //console.log("Jump animation completed");
             });
             // this.addMeme();
         } else if (instruction.se7en && instruction.place !== undefined && instruction.where !== undefined) {
@@ -956,7 +956,7 @@ export class Board {
                     break;
             }
             await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
-                console.log("Jump animation completed");
+                //console.log("Jump animation completed");
             });
         }  else if (instruction.final && instruction.place !== undefined) {
             let placeTojump;
@@ -975,15 +975,15 @@ export class Board {
                     break;
             }
             await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, placeTojump, instruction.speed, instruction.maxHeight).then(() => {
-                console.log("Jump animation completed");
+                //console.log("Jump animation completed");
             });
         } else {
             if (!instruction.place || !instruction.where) {
-                console.error("Invalid jump instruction:", instruction);
+                //console.error("Invalid jump instruction:", instruction);
                 return;
             }
             await this.jumpAnimation("sphere" + instruction.sphere_type + instruction.sphere_id, LOCATIONS[instruction.place][instruction.where], instruction.speed, instruction.maxHeight).then(() => {
-                console.log("Jump animation completed");
+                //console.log("Jump animation completed");
             });
         }
     }

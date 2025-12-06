@@ -23,9 +23,9 @@ export const IncomingCall = ({ call, onAccept, onReject }: IncomingCallProps) =>
     try {
       callSound = new Audio("/sounds/callSound.mp3");
       callSound.loop = true;        // loop the ringtone
-      callSound.play().catch((err) => console.error("Failed to play sound:", err));
+      callSound.play().catch((err) => //console.error("Failed to play sound:", err));
     } catch (error) {
-      console.error("Error initializing call sound:", error);
+      //console.error("Error initializing call sound:", error);
     }
     return () => {
       callSound.pause();

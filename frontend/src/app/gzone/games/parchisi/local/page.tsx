@@ -28,7 +28,7 @@ export default function LocalGamePage() {
       const gameId = await createGame(players);
       router.push(`/gzone/games/parchisi/game/${gameId}`);
     } catch (err) {
-      console.error(err);
+      //console.error(err);
       // alert("Failed to create game. Please try again.");
     }
   };
