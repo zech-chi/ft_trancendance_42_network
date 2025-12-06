@@ -290,10 +290,3 @@ export default function InviteToPlay() {
     </div>
   );
 }
-//         {/* Footer hint */}
-
-//       </div>
-//     </div>
-//   );
-// }
-// }

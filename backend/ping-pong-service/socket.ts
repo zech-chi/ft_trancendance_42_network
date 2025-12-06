@@ -363,7 +363,7 @@ export function SocketFunction(fastify: FastifyInstance) {
               lastUpdate: now
             },
           ],
-          ball: { x: 400, y: 300, dx: 6, dy: 3 },
+          ball: { x: 400, y: 300, dx: 3, dy: 2 }, // Reduced from dx: 6, dy: 3
           width: 800,
           height: 600,
           paddleWidth: 15,
@@ -487,7 +487,7 @@ export function SocketFunction(fastify: FastifyInstance) {
               lastUpdate: now
             },
           ],
-          ball: { x: 400, y: 300, dx: 6, dy: 3 },
+          ball: { x: 400, y: 300, dx: 3, dy: 2 }, // Reduced from dx: 6, dy: 3
           width: 800,
           height: 600,
           paddleWidth: 15,
@@ -972,11 +972,11 @@ export function SocketFunction(fastify: FastifyInstance) {
         ball.y <= paddleBottom // Ball's top edge before paddle's bottom edge
       ) {
         // Reverse horizontal direction and slightly increase speed
-        ball.dx = -ball.dx * 1.02; // Small speed boost
+        ball.dx = -ball.dx * 1.01; // Reduced from 1.02 to 1.01 for slower speed increase
 
         // Adjust vertical direction based on where the ball hit the paddle
         const hitPos = (ball.y - paddleTop) / paddleHeight - 0.5; // -0.5 to 0.5
-        ball.dy = hitPos * 8; // Adjust angle, 8 is a sensitivity factor
+        ball.dy = hitPos * 6; // Reduced from 8 to 6 for less extreme angles
 
         // Prevent ball from getting stuck in paddle (push it out slightly)
         if (player.side === "left") {
@@ -1101,8 +1101,8 @@ export function SocketFunction(fastify: FastifyInstance) {
     room.ball = {
       x: room.width / 2,
       y: room.height / 2,
-      dx: (Math.random() > 0.5 ? 6 : -6), // Random horizontal direction
-      dy: (Math.random() - 0.5) * 6, // Random vertical angle
+      dx: (Math.random() > 0.5 ? 3 : -3), // Reduced from 6 to 3
+      dy: (Math.random() - 0.5) * 4, // Reduced from 6 to 4
     };
     console.log("🔄 Ball reset:", room.ball);
   }

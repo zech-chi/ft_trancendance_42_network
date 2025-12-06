@@ -79,9 +79,9 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
   const width = 800;
   const height = 600;
   const paddleWidth = 10;
-  const paddleHeight = 100;
-  const ballSize = 10;
-  const paddleSpeed = 8;
+  const paddleHeight = 120;
+  const ballSize = 18;
+  const paddleSpeed = 15;
 
   // Timestamp for movement throttling (optimized for 120 FPS)
   const lastMoveTime = useRef<number>(0);
@@ -713,7 +713,7 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
                       VS
                     </div>
                     <div className="text-white/40 text-xs mt-1">
-                      First to {maxScore}
+                      First to 8
                     </div>
                   </div>
 
@@ -808,10 +808,9 @@ const PingPongCanvasRemote: React.FC<PingPongCanvasRemoteProps> = ({
 
             {/* Buttons Section - Below Canvas */}
             <div className="mt-4 flex flex-wrap gap-2 justify-center items-center">
-              {/* Control Mode Toggle */}[#FFB700]
               <button
                 onClick={toggleControlMode}
-                className="bg-[#1CBABA] hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                className="bg-[#1CBABA]  text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
               >
                 Controls: {controlMode} (Press M)
               </button>

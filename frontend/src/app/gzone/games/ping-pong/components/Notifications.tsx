@@ -41,7 +41,7 @@ export default function Notifications() {
       console.log(`📩 Invitation received from ${fromName}`, from, "inviteId:", inviteId);
 
       toast.custom((t) => (
-        <div className={`${t.visible ? "animate-custom-enter" : "animate-custom-leave"} max-w-md w-full bg-black/20 backdrop-blur-xl rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}>
+        <div className={`${t.visible ? "animate-custom-enter" : "animate-custom-leave"} max-w-md w-full bg-gray/10 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]  border border-white/30 rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}>
           <div className="flex-1 w-0 p-4">
             <div className="flex items-start">
               <div className="ml-3 flex-1">
@@ -67,7 +67,7 @@ export default function Notifications() {
                 toast.remove();
 
               }}
-              className="p-4 font-bold text-green-600 hover:text-green-800 cursor-pointer"
+              className="p-4 font-bold text-[#1CBABA]  cursor-pointer"
             >
               Accept
             </button>
@@ -83,7 +83,7 @@ export default function Notifications() {
                 // toast.dismiss(); 
                 toast.remove();
               }}
-              className="p-4 font-bold text-red-600 hover:text-red-800 cursor-pointer"
+              className="p-4 font-bold text-[#FFB700] cursor-pointer"
             >
               Decline
             </button>

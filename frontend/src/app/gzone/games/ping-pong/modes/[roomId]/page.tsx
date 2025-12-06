@@ -60,7 +60,9 @@ export default function GamePage() {
   }
 
   if (error || !user) {
-    router.push("/gzone/games/ping-pong");
+    // router.push("/gzone/games/ping-pong");
+    window.location.href = "/gzone/games/ping-pong";
+    return null;
   }
 
   return (
@@ -76,7 +78,7 @@ export default function GamePage() {
         )}
       </div>
 
-      <PingPongCanvasRemote
+     <PingPongCanvasRemote
         tableUrl={settings.bgTable}
         paddleColor={settings.paddle}
         ballUrl={settings.ball}

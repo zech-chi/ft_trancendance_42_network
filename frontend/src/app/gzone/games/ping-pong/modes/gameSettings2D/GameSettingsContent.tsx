@@ -692,8 +692,8 @@ export default function GameSettingsContent({ onClose }: GameSettingsContentProp
     { id: 3, ballImg: "/images/Balls/ball4.png", name: "Lightning" },
     { id: 4, ballImg: "/images/Balls/ball5.png", name: "Galaxy" },
     { id: 5, ballImg: "/images/Balls/ball6.png", name: "Neon" },
-    { id: 6, ballImg: "/images/Balls/ball4.png", name: "Magic" },
-    { id: 7, ballImg: "/images/Balls/ball5.png", name: "Crystal" },
+    { id: 6, ballImg: "/images/Balls/ball13.png", name: "Magic" },
+    { id: 7, ballImg: "/images/Balls/ball8.png", name: "Crystal" },
   ];
 
   const ScoreList = [
