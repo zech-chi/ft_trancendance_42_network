@@ -379,7 +379,7 @@ function ProfileLanguageEmail({ email }: PropsProfileLanguageEmail) {
               className="w-full appearance-none bg-gradient-to-r from-[rgba(0,0,0,0.8)] to-transparent text-[#1CBABA]
            font-bold px-4 py-4 text-center focus:outline-none focus:border-amber-500"
               onChange={(e) => {
-                alert("Selected language:" + e.target.value);
+                // alert("Selected language:" + e.target.value);
               }}
             >
               <option

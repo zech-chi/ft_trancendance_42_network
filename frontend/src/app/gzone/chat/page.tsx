@@ -80,7 +80,7 @@ function Chat() {
       // Scenario 1: We just answered an incoming call.
       // The `incomingCall` object is our source of truth.
       if (incomingCall && !isCallStarted) {
-        const partner = contactsList.find(c => c.id.toString() === incomingCall.from);
+        const partner = contactsList.find(c => c.id.toString() == incomingCall.from);
         if (partner) {
           setCallPartner(partner);
           return; // Exit early, we found our partner.

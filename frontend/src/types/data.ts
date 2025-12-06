@@ -40,7 +40,7 @@ const themes: CustomizationType[] = [
   },
   {
     theme_ds: "hotel",
-    textureimage: "/parchisi_src/Hotel.jpg",
+    textureimage: "/parchisi_src/hotel.jpg",
     istextureonline: false,
     showpic: "/parchisi_src/hotel_pv.jpeg",
   },

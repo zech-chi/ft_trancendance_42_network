@@ -335,14 +335,45 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const joinLobby = async (gameId: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       if (!socket) return reject("No socket connected");
-
+  
       const username = loggedUserName;
+  
+      // emit join
       socket.emit("joinGame", { gameId, username });
-
-      socket.once("gameJoined", (data: { success: boolean; error?: string }) => {
+  
+      // Create a timeout to prevent forever waiting
+      const timeout = setTimeout(() => {
+        cleanup();
+        reject("Server did not respond. Try another room.");
+      }, 4000);
+  
+      function cleanup() {
+        clearTimeout(timeout);
+        if (!socket) return;
+        socket.off("gameJoined", onJoined);
+        socket.off("error", onError);
+        socket.off("roomFull", onRoomFull);
+      }
+  
+      function onJoined(data: { success: boolean; error?: string }) {
+        cleanup();
         if (data.success) resolve();
-        else reject(data.error || "Failed to join game");
-      });
+        else reject(data.error || "Failed to join.");
+      }
+  
+      function onError({ message }: { message: string }) {
+        cleanup();
+        reject(message);
+      }
+  
+      function onRoomFull({ message }: { message: string }) {
+        cleanup();
+        reject("Room full: " + message);
+      }
+      if (!socket) return;
+      socket.once("gameJoined", onJoined);
+      socket.once("error", onError);
+      socket.once("roomFull", onRoomFull);
     });
   };
   
