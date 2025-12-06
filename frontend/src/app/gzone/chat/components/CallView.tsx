@@ -100,9 +100,6 @@ export const CallView: React.FC<CallViewProps> = ({
       </div>
       <div className={` ${type === "audio" ? "" : "hidden"}
         absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2 rounded-lg`}>
-        <p className="text-white">
-          {type === "audio" ? "call audio" : "call video"}
-        </p>
         <Image
           src={avatar}
           alt="Profile Friends"
