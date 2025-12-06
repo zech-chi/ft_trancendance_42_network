@@ -13,7 +13,7 @@ import metricsPlugin from "fastify-metrics";
 
 dotenv.config();
  
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_CALLBACK) {
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_CALLBACK || !process.env.JWT_SECRETS || !process.env.HOST) {
   throw new Error('Missing required Google OAuth environment variables: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK');
 }
 
@@ -42,13 +42,13 @@ fastify.register(fastifyOauth2, {
 
 
 fastify.register(cors, {
-  origin: ['http://localhost:3000', "https://localhost:3000"], // allow your frontend's origin
+  origin: ['http://localhost:3000', "https://localhost:3000", `${process.env.HOST}:3000`], // allow your frontend's origin
   credentials: true,               // <— important!
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ✅ important
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // important
 });
 
 fastify.register(fastifyJwt, {
-  secret: process.env.JWT_SECRETS || "super-realy-secret-key"
+  secret: process.env.JWT_SECRETS
 });
 
 for (const schema of userSchemas.schemas) {

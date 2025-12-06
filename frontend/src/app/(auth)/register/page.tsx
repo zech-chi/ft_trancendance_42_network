@@ -8,6 +8,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FlowGraphConsoleLogBlock } from "@babylonjs/core";
 import {fetchUser} from "@/app/(auth)/login/page"
+import dotenv from "dotenv";
+
+dotenv.config();
+
+if (!process.env.HOST) {
+  throw new Error('Missing required environment variable: HOST');
+}
 
 export default function SignupPage() {
  
@@ -44,7 +51,7 @@ export default function SignupPage() {
     }
 
     const handleGoogle = () => {
-      window.location.href = "/api/auth/login/google";
+      window.location.href = `${process.env.HOST}/api/auth/login/google`;
     };
 
 

@@ -8,9 +8,6 @@ import { API_ROUTES } from "./utils/APIrouts";
 import { verifyEmail } from './user.controller.verifyEmail';
 import { resendVerificationCode } from './user.controller.resendCode';
 import { clearAccessTokenCookie, clearTmp2FACookie, clearRefreshTokenCookie,  setAccessTokenCookie, setRefreshTokenCookie, setTmp2FACookie } from './utils/auth.utils';
-// import TwoFASetup from './user.controller.TwoFASetup';
-// import TwoFAEnable from './user.controller.TwoFAEnable';
-// import TwoFAVerify from './user.controller.TwoFAVerify';
 import { generateQRCode } from "./utils/qrcode";
 import { generateSecret, verifyToken } from "./utils/twofa";
 
@@ -453,14 +450,11 @@ export async function authRoutes(app: FastifyInstance) {
       const token = await fastifyAny.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req);
       const googleAccessToken = token.token.access_token;
     
-      console.log('Access Token =======>> ', googleAccessToken);
     
       // fetch user info
       const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
         headers: { Authorization: `Bearer ${googleAccessToken}` }
       }).then(res => res.json());
-    
-      console.log('User info =======>> ', userInfo);
       // if gmail already in databae
       const fullName = userInfo.name;
       let imageUrl = userInfo.picture;
@@ -520,7 +514,7 @@ export async function authRoutes(app: FastifyInstance) {
           );
           setTmp2FACookie(reply, tmp_2fa);
           // await reply.send({ message: "2FA required" });
-          return reply.redirect('http://localhost');
+          return reply.redirect(`${process.env.HOST}`);
         }  
       }
 
@@ -551,9 +545,9 @@ export async function authRoutes(app: FastifyInstance) {
     // Set cookies
     setAccessTokenCookie(reply, accessToken);
     setRefreshTokenCookie(reply, refreshToken);
-    console.log("✅ Google login successful. Tokens set.");
+    console.log(" Google login successful. Tokens set.");
     // Redirect to frontend
-    return reply.redirect('http://localhost');
+    return reply.redirect(`${process.env.HOST}`);
   
 } catch(error) {
         console.log(error);

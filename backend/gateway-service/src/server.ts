@@ -9,7 +9,10 @@ import dotenv from "dotenv"
 
 dotenv.config();
 
-console.log("======>", process.env.JWT_SECRETS)
+if (!process.env.JWT_SECRETS) {
+  console.error("JWT_SECRETS is not defined in environment variables.");
+  process.exit(1);
+}
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -70,7 +73,7 @@ fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyRepl
   if (!isApi && !isSocket) return;
 
   // 3. Read token from cookies
-  const secret = process.env.JWT_SECRETS || "super-realy-secret-key";
+  const secret = process.env.JWT_SECRETS as string;
   const access = request.cookies.access_token;
   const refresh = request.cookies.refresh_token;
 
