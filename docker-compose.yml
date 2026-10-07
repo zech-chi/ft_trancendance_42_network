@@ -348,7 +348,8 @@ services:
       nofile:
         soft: 65536
         hard: 65536
-    mem_limit: 1g
+    # Allow room for the JVM heap and Elasticsearch's native memory.
+    mem_limit: 2g
     mem_reservation: 512m
     ports:
       - "9200:9200"

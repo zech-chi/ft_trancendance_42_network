@@ -289,11 +289,7 @@ export default async function socketManager(io: Server) {
         room.broadcast("removePlayer", { id: player.id });
         //console.log(chalk.red(`Player ${player.userName} removed from game ${id}`));
     
-        //console.log(
-          chalk.red(
-            `Checking ==> Players left in game ${id}: ${room.players.length}`
-          )
-        );
+
     
         // ⚠️ ROOM CLEANUP LOGIC
         const remaining = room.players.length;

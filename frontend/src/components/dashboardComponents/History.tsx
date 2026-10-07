@@ -196,7 +196,7 @@ export function History({ game, setGame }: HistoryProps): JSX.Element {
                 //console.log("Games fetched: ", games);
               }
             )
-            .catch((err) => //console.error("Error: ", err));
+            .catch((err) => console.error("Error: ", err));
         }
     }, [game]);
 

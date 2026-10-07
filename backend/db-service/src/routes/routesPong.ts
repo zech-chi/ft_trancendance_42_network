@@ -96,9 +96,6 @@ export async function updateRadarData(fastify: FastifyInstance, userId: number, 
     const updateStmt = db.prepare(`UPDATE RadarData SET ${setClause} WHERE userId = ?`);
     updateStmt.run(...values);
   
-    //console.log(
-      `✅ RadarData updated for user ${userId} (${winner ? "Winner" : "Loser"})`
-    );
   } catch (err) {
     //console.error("❌ Error updating RadarData:", err);
   }

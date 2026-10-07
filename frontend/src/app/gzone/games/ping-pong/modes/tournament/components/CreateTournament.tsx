@@ -30,13 +30,6 @@ export default function CreateTournament() {
         e.preventDefault();
         initializeTournament();
         resetTournament();
-        // Here you would typically handle form submission, e.g., send data to the server
-        //console.log("Tournament Created:", {
-            name: t_name,
-            number_of_players: t_number_of_players,
-            isPrivate: t_isPrivate,
-            createdBy: loggedUserId,
-        });
         socketContext.socket?.emit("create_tournament", {
             name: t_name,
             number_of_players: t_number_of_players,

@@ -214,7 +214,6 @@ export async function getFormattedMessages(reply: FastifyReply, from: string, to
     const rows = data.messages as MessageRow[];
 
     //console.log("Messages fetched from database:", rows);
-    rows.forEach(msg => {//console.log(`===========>  ${typeof msg.timestamp}  <==========`)});
     return rows.map(msg => ({
         id: msg.id,
         message: msg.message,

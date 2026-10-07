@@ -19,8 +19,8 @@ RUN apt-get update && apt-get install -y \
 # Copy only package.json & package-lock.json first
 COPY package*.json ./
 
-# Install dependencies inside container
-RUN npm install --build-from-source --legacy-peer-deps
+# Use the image's Node headers when compiling native dependencies.
+RUN npm_config_nodedir=/usr/local npm install --build-from-source --legacy-peer-deps
 
 # Copy all source code including src
 COPY . .

@@ -784,7 +784,7 @@ export function Friends({ choice }: { choice: FriendsChoice }): JSX.Element {
                     //console.log("Friends data: ", data);
                 }
             )
-            .catch((err) => //console.error("Error: ", err));
+            .catch((err) => console.error("Error: ", err));
 
         }
     }, [choice, loggedUserName, changeComponent]);

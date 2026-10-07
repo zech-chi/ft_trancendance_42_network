@@ -395,7 +395,7 @@ export class Board {
                 new BABYLON.ExecuteCodeAction(
                     BABYLON.ActionManager.OnPickTrigger,
                     (evt) => {
-                        this.resetBoxes();~
+                        this.resetBoxes();
                         //console.log("Sphere clicked:", sphereMesh.name);
                         //console.log("moveAble : ", this.moveAbleMap.get(Number(sphere.id)));
                         if (this.clickedSphereColor === sphere.type) {

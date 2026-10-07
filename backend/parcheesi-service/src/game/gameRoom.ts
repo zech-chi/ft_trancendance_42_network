@@ -363,11 +363,10 @@ export class GameRoom {
         // lm.moves typically [5]
         const decision = this.logic.movePieceDecision(currentPlayer, lm.piece, lm.moves[0]);
         if (decision !== undefined && decision.allowed) {
-          if (decision.capture !== null)
-            //console.log(chalk.blue(`this piece is cuptured : ${this.players[decision.capture?.playerId - 1]}`));
           await this.executeMoveDecision(decision);
+        } else {
+          return false;
         }
-        else{//console.log(chalk.red("leave-base decision not allowed")); return false;}
       }
       this.updateRemainMoves();
       return true;

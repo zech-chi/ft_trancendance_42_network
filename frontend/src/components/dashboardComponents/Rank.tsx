@@ -109,7 +109,7 @@ export function Rank(): JSX.Element {
               setUsers(data);
               //console.log(users);
             })
-            .catch((err) => //console.log('Error: ', err));
+            .catch((err) => console.error('Error: ', err));
         }, 0);
       }
     });
